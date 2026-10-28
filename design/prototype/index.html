@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>跟班 Sidekick · 交互原型</title><link rel="icon" href="../brand/sidekick-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="../brand/tokens.css"><link rel="stylesheet" href="prototype.css"></head>
+<body>
+<svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+<symbol id="i-today" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M7.5 3v4M16.5 3v4M3.5 10h17M8 14h3M8 17h6"/></symbol>
+<symbol id="i-inbox" viewBox="0 0 24 24"><path d="m5 4-3 11v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4L19 4Z"/><path d="M2 15h6l2 3h4l2-3h6M8 8h8M9 11h6"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M3 6h.1M3 12h.1M3 18h.1"/></symbol>
+<symbol id="i-report" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h16M4 18h16M4 12h16"/><circle cx="8" cy="6" r="2.5"/><circle cx="16" cy="12" r="2.5"/><circle cx="10" cy="18" r="2.5"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+<symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></symbol>
+<symbol id="i-source" viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H5V3Z"/><path d="M15 3v5h4M8 12h8M8 16h5"/></symbol>
+<symbol id="i-link" viewBox="0 0 24 24"><path d="m10 14 4-4m-7 6-2 2a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m8 0 2-2a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0" transform="translate(3 0) scale(.8)"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.8 6.2L21 12l-6.2 2.8L12 21l-2.8-6.2L3 12l6.2-2.8Z"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 5V3H4v13h2"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5M5.3 7a8 8 0 0 1 13-2L20 8M4 16l1.7 3a8 8 0 0 0 13-2"/></symbol>
+<symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v10H3Z"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></symbol>
+</defs></svg>
+<div class="preview-bar"><span><strong>sidekick</strong> · 首轮交互原型</span><span>演示数据 · 不连接真实服务 <a href="../brand/">查看品牌板 <span aria-hidden="true">↗</span></a></span></div>
+<div class="app-shell">
+ <div class="window-bar"><div class="traffic" aria-hidden="true"><span></span><span></span><span></span></div><span>跟班 Sidekick</span><span class="window-demo">设计预览</span></div>
+ <aside class="sidebar" aria-label="主导航">
+  <a class="identity" aria-label="跟班 Sidekick，打开今日工作台" href="#today" data-page="today"><img src="../brand/sidekick-mark.svg" alt=""><span>sidekick<small>盯着呢，老板。</small></span></a>
+  <nav>
+   <button data-page="today" aria-label="今日工作台" title="今日工作台" class="nav-item active"><svg class="icon"><use href="#i-today"/></svg><span class="nav-label">今日工作台</span><span class="nav-short" aria-hidden="true">今日</span></button>
+   <button data-page="inbox" aria-label="待确认" title="待确认" class="nav-item"><svg class="icon"><use href="#i-inbox"/></svg><span class="nav-label">待确认</span><span class="nav-short" aria-hidden="true">待确认</span><b id="nav-inbox-count">3</b></button>
+   <button data-page="all" aria-label="全部事项" title="全部事项" class="nav-item"><svg class="icon"><use href="#i-list"/></svg><span class="nav-label">全部事项</span><span class="nav-short" aria-hidden="true">事项</span></button>
+   <button data-page="report" aria-label="日报复盘" title="日报复盘" class="nav-item"><svg class="icon"><use href="#i-report"/></svg><span class="nav-label">日报复盘</span><span class="nav-short" aria-hidden="true">日报</span></button>
+  </nav>
+  <div class="sidebar-bottom"><button data-page="settings" aria-label="设置" title="设置" class="nav-item"><svg class="icon"><use href="#i-settings"/></svg><span class="nav-label">设置</span><span class="nav-short" aria-hidden="true">设置</span></button><div class="connection"><span class="status-dot"></span><span>飞书连接 · 演示</span></div><div class="profile"><span class="avatar">我</span><span>我的工作空间<small>仅本地交互演示</small></span></div></div>
+ </aside>
+ <main class="workspace">
+  <header class="toolbar"><span id="page-label">今日工作台</span><div class="toolbar-actions"><button class="icon-button" data-action="search" aria-label="搜索事项"><svg class="icon"><use href="#i-search"/></svg></button><button class="icon-button" data-action="reminder" aria-label="预览飞书提醒"><svg class="icon"><use href="#i-bell"/></svg><i class="notification-dot"></i></button><span class="toolbar-divider"></span><button class="button primary" data-action="intake"><svg class="icon"><use href="#i-plus"/></svg><span>快速录入</span><kbd>⌘ K</kbd></button></div></header>
+  <div id="view" class="view"></div><div id="review-bar" class="review-bar" role="region" aria-label="待确认签收操作" hidden></div>
+ </main>
+</div>
+<button class="desktop-pet" data-action="pet" aria-label="与班班互动"><img id="floating-pet" src="../brand/banban-idle.svg" alt="班班"><span class="pet-caption">班班在这儿</span></button>
+<div id="pet-bubble" class="pet-bubble" hidden><p>老板，有新进展替你记下了。</p><button class="text-button" data-action="pet-progress">看看进展 <svg class="icon"><use href="#i-arrow"/></svg></button></div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<dialog id="intake-dialog" class="dialog intake-dialog" aria-labelledby="intake-title"></dialog>
+<dialog id="detail-dialog" class="dialog detail-dialog" aria-labelledby="detail-title"></dialog>
+<dialog id="reminder-dialog" class="dialog reminder-dialog" aria-labelledby="reminder-title"></dialog>
+<script src="prototype.js"></script>
+</body></html>

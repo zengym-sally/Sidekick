@@ -1,0 +1,391 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-28T17:27:15.220258Z",
+  "title": "Design System: 跟班 Sidekick",
+  "extensions": {
+    "colorMeta": {
+      "ink": {
+        "role": "primary",
+        "displayName": "墨蓝 Ink",
+        "tonalRamp": [
+          "oklch(15% 0.07309 256.69)",
+          "oklch(25% 0.07309 256.69)",
+          "oklch(37% 0.07309 256.69)",
+          "oklch(49% 0.07309 256.69)",
+          "oklch(61% 0.07309 256.69)",
+          "oklch(73% 0.07309 256.69)",
+          "oklch(85% 0.07309 256.69)",
+          "oklch(95% 0.07309 256.69)"
+        ]
+      },
+      "night": {
+        "role": "primary",
+        "displayName": "深墨 Night",
+        "tonalRamp": [
+          "oklch(15% 0.04922 255.17)",
+          "oklch(25% 0.04922 255.17)",
+          "oklch(37% 0.04922 255.17)",
+          "oklch(49% 0.04922 255.17)",
+          "oklch(61% 0.04922 255.17)",
+          "oklch(73% 0.04922 255.17)",
+          "oklch(85% 0.04922 255.17)",
+          "oklch(95% 0.04922 255.17)"
+        ]
+      },
+      "amber": {
+        "role": "primary",
+        "displayName": "琥珀 Amber",
+        "tonalRamp": [
+          "oklch(15% 0.12955 70.80)",
+          "oklch(25% 0.12955 70.80)",
+          "oklch(37% 0.12955 70.80)",
+          "oklch(49% 0.12955 70.80)",
+          "oklch(61% 0.12955 70.80)",
+          "oklch(73% 0.12955 70.80)",
+          "oklch(85% 0.12955 70.80)",
+          "oklch(95% 0.12955 70.80)"
+        ]
+      },
+      "ivory": {
+        "role": "neutral",
+        "displayName": "象牙 Ivory",
+        "tonalRamp": [
+          "oklch(15% 0.00983 87.47)",
+          "oklch(25% 0.00983 87.47)",
+          "oklch(37% 0.00983 87.47)",
+          "oklch(49% 0.00983 87.47)",
+          "oklch(61% 0.00983 87.47)",
+          "oklch(73% 0.00983 87.47)",
+          "oklch(85% 0.00983 87.47)",
+          "oklch(95% 0.00983 87.47)"
+        ]
+      },
+      "brick": {
+        "role": "secondary",
+        "displayName": "砖红 Brick",
+        "tonalRamp": [
+          "oklch(15% 0.15080 33.75)",
+          "oklch(25% 0.15080 33.75)",
+          "oklch(37% 0.15080 33.75)",
+          "oklch(49% 0.15080 33.75)",
+          "oklch(61% 0.15080 33.75)",
+          "oklch(73% 0.15080 33.75)",
+          "oklch(85% 0.15080 33.75)",
+          "oklch(95% 0.15080 33.75)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "纸白 Surface",
+        "tonalRamp": [
+          "oklch(15% 0.00569 84.57)",
+          "oklch(25% 0.00569 84.57)",
+          "oklch(37% 0.00569 84.57)",
+          "oklch(49% 0.00569 84.57)",
+          "oklch(61% 0.00569 84.57)",
+          "oklch(73% 0.00569 84.57)",
+          "oklch(85% 0.00569 84.57)",
+          "oklch(95% 0.00569 84.57)"
+        ]
+      },
+      "sidebar": {
+        "role": "neutral",
+        "displayName": "侧栏 Sidebar",
+        "tonalRamp": [
+          "oklch(15% 0.01153 84.58)",
+          "oklch(25% 0.01153 84.58)",
+          "oklch(37% 0.01153 84.58)",
+          "oklch(49% 0.01153 84.58)",
+          "oklch(61% 0.01153 84.58)",
+          "oklch(73% 0.01153 84.58)",
+          "oklch(85% 0.01153 84.58)",
+          "oklch(95% 0.01153 84.58)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "分隔 Line",
+        "tonalRamp": [
+          "oklch(15% 0.01083 100.84)",
+          "oklch(25% 0.01083 100.84)",
+          "oklch(37% 0.01083 100.84)",
+          "oklch(49% 0.01083 100.84)",
+          "oklch(61% 0.01083 100.84)",
+          "oklch(73% 0.01083 100.84)",
+          "oklch(85% 0.01083 100.84)",
+          "oklch(95% 0.01083 100.84)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "次要文字 Muted",
+        "tonalRamp": [
+          "oklch(15% 0.02630 248.36)",
+          "oklch(25% 0.02630 248.36)",
+          "oklch(37% 0.02630 248.36)",
+          "oklch(49% 0.02630 248.36)",
+          "oklch(61% 0.02630 248.36)",
+          "oklch(73% 0.02630 248.36)",
+          "oklch(85% 0.02630 248.36)",
+          "oklch(95% 0.02630 248.36)"
+        ]
+      },
+      "soft-ink": {
+        "role": "neutral",
+        "displayName": "浅墨 Soft Ink",
+        "tonalRamp": [
+          "oklch(15% 0.00691 247.90)",
+          "oklch(25% 0.00691 247.90)",
+          "oklch(37% 0.00691 247.90)",
+          "oklch(49% 0.00691 247.90)",
+          "oklch(61% 0.00691 247.90)",
+          "oklch(73% 0.00691 247.90)",
+          "oklch(85% 0.00691 247.90)",
+          "oklch(95% 0.00691 247.90)"
+        ]
+      },
+      "soft-amber": {
+        "role": "primary",
+        "displayName": "浅琥珀 Soft Amber",
+        "tonalRamp": [
+          "oklch(15% 0.03354 81.99)",
+          "oklch(25% 0.03354 81.99)",
+          "oklch(37% 0.03354 81.99)",
+          "oklch(49% 0.03354 81.99)",
+          "oklch(61% 0.03354 81.99)",
+          "oklch(73% 0.03354 81.99)",
+          "oklch(85% 0.03354 81.99)",
+          "oklch(95% 0.03354 81.99)"
+        ]
+      },
+      "soft-brick": {
+        "role": "secondary",
+        "displayName": "浅砖红 Soft Brick",
+        "tonalRamp": [
+          "oklch(15% 0.01831 43.22)",
+          "oklch(25% 0.01831 43.22)",
+          "oklch(37% 0.01831 43.22)",
+          "oklch(49% 0.01831 43.22)",
+          "oklch(61% 0.01831 43.22)",
+          "oklch(73% 0.01831 43.22)",
+          "oklch(85% 0.01831 43.22)",
+          "oklch(95% 0.01831 43.22)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "品牌字标",
+        "purpose": "品牌板的拉丁字标；不用于操作页面大标题。"
+      },
+      "headline": {
+        "displayName": "页面标题",
+        "purpose": "桌面页面主标题；窄窗口与宽窗口依 CSS 调整。"
+      },
+      "title": {
+        "displayName": "列表分组",
+        "purpose": "待我处理、待我跟进等分组。"
+      },
+      "body": {
+        "displayName": "事项标题",
+        "purpose": "可点击事项标题。"
+      },
+      "label": {
+        "displayName": "操作标签",
+        "purpose": "按钮和设置标签。"
+      },
+      "meta": {
+        "displayName": "来源元信息",
+        "purpose": "来源、负责人和次要状态。"
+      },
+      "latin": {
+        "displayName": "拉丁与计数",
+        "purpose": "日期、数字、计数与局部代码示例。"
+      }
+    },
+    "shadows": [
+      {
+        "name": "preview-shell",
+        "value": "0 14px 48px #16283f1c",
+        "purpose": "模拟应用外框；不用于普通内容卡。"
+      },
+      {
+        "name": "pet-bubble",
+        "value": "0 12px 30px #16283f29",
+        "purpose": "班班气泡。"
+      },
+      {
+        "name": "toast",
+        "value": "0 5px 20px #16283f20",
+        "purpose": "底部状态提示。"
+      },
+      {
+        "name": "dialog",
+        "value": "0 20px 90px #16283f33",
+        "purpose": "模态对话框。"
+      },
+      {
+        "name": "review-bar-narrow",
+        "value": "0 -5px 18px #16283f0a",
+        "purpose": "窄窗口底部签收栏。"
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(.22,1,.36,1)",
+        "purpose": "按钮、桌宠反馈及开关过渡。"
+      },
+      {
+        "name": "control-transition",
+        "value": "150ms",
+        "purpose": "按钮底色、按下位移和开关。"
+      },
+      {
+        "name": "pet-transition",
+        "value": "200ms",
+        "purpose": "桌宠悬停上移；不是角色动画。"
+      },
+      {
+        "name": "spinner",
+        "value": "700ms linear infinite",
+        "purpose": "模拟加载旋转；prefers-reduced-motion 与工作模式停用。"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "prototype-wide-min",
+        "value": "1500px"
+      },
+      {
+        "name": "prototype-compact-max",
+        "value": "1160px"
+      },
+      {
+        "name": "prototype-short-nav-max",
+        "value": "960px"
+      },
+      {
+        "name": "prototype-stacked-max",
+        "value": "760px"
+      },
+      {
+        "name": "prototype-desktop-min",
+        "value": "761px"
+      },
+      {
+        "name": "brand-compact-max",
+        "value": "1000px"
+      },
+      {
+        "name": "brand-stacked-max",
+        "value": "700px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "琥珀主操作",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "快速录入与签收；当前页面模拟操作。",
+      "html": "<button type=\"button\" class=\"ds-button-primary\"><svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.65\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M12 5v14M5 12h14\"/></svg>快速录入</button>",
+      "css": ".ds-button-primary{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid transparent;border-radius:7px;min-height:36px;padding:12px 13px;font-family:var(--font,\"PingFang SC\",\"Noto Sans SC\",-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif);font-size:12px;font-weight:550;cursor:pointer;transition:background .15s var(--ease,cubic-bezier(.22,1,.36,1)),transform .15s var(--ease,cubic-bezier(.22,1,.36,1));background:var(--amber,#c8872b);color:var(--night,#16283f)}.ds-button-primary:hover{background:#d4953a}.ds-button-primary:active{transform:translateY(1px)}.ds-button-primary:focus-visible{outline:3px solid var(--amber,#c8872b);outline-offset:3px}.ds-button-primary:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-button-primary{transition:none}}"
+    },
+    {
+      "name": "墨蓝确认操作",
+      "kind": "button",
+      "refersTo": "button-dark",
+      "description": "保存偏好或确认事项等明确动作。",
+      "html": "<button type=\"button\" class=\"ds-button-dark\">保存偏好</button>",
+      "css": ".ds-button-dark{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid transparent;border-radius:7px;min-height:36px;padding:12px 13px;font-family:var(--font,\"PingFang SC\",\"Noto Sans SC\",-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif);font-size:12px;font-weight:550;cursor:pointer;transition:background .15s var(--ease,cubic-bezier(.22,1,.36,1)),transform .15s var(--ease,cubic-bezier(.22,1,.36,1));background:var(--ink,#1f3a5f);color:var(--ivory,#f6f3ec)}.ds-button-dark:hover{background:var(--night,#16283f)}.ds-button-dark:active{transform:translateY(1px)}.ds-button-dark:focus-visible{outline:3px solid var(--amber,#c8872b);outline-offset:3px}.ds-button-dark:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-button-dark{transition:none}}"
+    },
+    {
+      "name": "描边次操作",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "编辑、预览和取消等次级动作。",
+      "html": "<button type=\"button\" class=\"ds-button-ghost\">编辑</button>",
+      "css": ".ds-button-ghost{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid transparent;border-radius:7px;min-height:36px;padding:12px 13px;font-family:var(--font,\"PingFang SC\",\"Noto Sans SC\",-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif);font-size:12px;font-weight:550;cursor:pointer;transition:background .15s var(--ease,cubic-bezier(.22,1,.36,1)),transform .15s var(--ease,cubic-bezier(.22,1,.36,1));background:transparent;color:var(--ink,#1f3a5f);border-color:var(--line,#deddd5)}.ds-button-ghost:hover{background:var(--sidebar,#eeeae2)}.ds-button-ghost:active{transform:translateY(1px)}.ds-button-ghost:focus-visible{outline:3px solid var(--amber,#c8872b);outline-offset:3px}.ds-button-ghost:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-button-ghost{transition:none}}"
+    },
+    {
+      "name": "搜索输入",
+      "kind": "input",
+      "refersTo": "search-input",
+      "description": "纸白输入面，名称与焦点可辨。",
+      "html": "<input class=\"ds-search-input\" aria-label=\"搜索事项或负责人\" placeholder=\"搜索事项或负责人\">",
+      "css": ".ds-search-input{border:1px solid var(--line,#deddd5);background:var(--surface,#fffdf9);border-radius:7px;padding:12px;color:var(--ink,#1f3a5f);caret-color:var(--ink,#1f3a5f);width:240px;max-width:100%;min-width:0;font-family:var(--font,\"PingFang SC\",\"Noto Sans SC\",-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif);font-size:12px}.ds-search-input:focus-visible{outline:3px solid var(--amber,#c8872b);outline-offset:3px;outline-offset:2px}"
+    },
+    {
+      "name": "当前导航项",
+      "kind": "nav",
+      "refersTo": "nav-item-active",
+      "description": "墨蓝选中态；960px 以下保留短标签。",
+      "html": "<nav class=\"ds-nav\" aria-label=\"主导航示例\"><button type=\"button\" class=\"ds-nav-item\" aria-current=\"page\" aria-label=\"今日工作台\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.65\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3.5\" y=\"5\" width=\"17\" height=\"15.5\" rx=\"3\"/><path d=\"M7.5 3v4M16.5 3v4M3.5 10h17M8 14h3M8 17h6\"/></svg><span class=\"ds-nav-label\">今日工作台</span><span class=\"ds-nav-short\" aria-hidden=\"true\">今日</span></button></nav>",
+      "css": ".ds-nav{width:196px;padding:12px;background:var(--sidebar,#eeeae2)}.ds-nav-item{width:100%;border:0;display:flex;gap:12px;align-items:center;padding:12px 14px;min-height:43px;border-radius:12px;text-align:left;background:var(--ink,#1f3a5f);color:var(--ivory,#f6f3ec);font-family:var(--font,\"PingFang SC\",\"Noto Sans SC\",-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif);font-size:13px;font-weight:600;cursor:pointer}.ds-nav-item:focus-visible{outline:3px solid var(--amber,#c8872b);outline-offset:3px}.ds-nav-short{display:none}@media(max-width:960px){.ds-nav{width:66px;padding:8px}.ds-nav-item{flex-direction:column;justify-content:center;gap:5px;padding:9px 4px;min-height:62px}.ds-nav-item svg{width:20px;height:20px}.ds-nav-label{display:none}.ds-nav-short{display:block;font-size:12px;line-height:1.5;white-space:nowrap}}"
+    },
+    {
+      "name": "文字状态标签",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "中性、待确认与问题状态；静态标签无交互。",
+      "html": "<div class=\"ds-chip-group\"><span class=\"ds-chip\">演示资料</span><span class=\"ds-chip ds-chip-warning\">等待确认</span><span class=\"ds-chip ds-chip-danger\">模拟连接失败</span></div>",
+      "css": ".ds-chip-group{display:flex;flex-wrap:wrap;gap:12px}.ds-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 7px;border-radius:5px;line-height:1.4;background:var(--soft-ink,#e7ebef);color:var(--ink,#1f3a5f);font-family:var(--font,\"PingFang SC\",\"Noto Sans SC\",-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif);font-size:12px;white-space:nowrap}.ds-chip-warning{background:var(--soft-amber,#f5e8d1);color:#79501b}.ds-chip-danger{background:var(--soft-brick,#f6e7e1);color:var(--brick,#b4442c)}"
+    },
+    {
+      "name": "候选签收卡",
+      "kind": "card",
+      "refersTo": "candidate-card",
+      "description": "可勾选、编辑并核对原文；预览不执行签收。",
+      "html": "<article class=\"ds-candidate\"><div class=\"ds-candidate-top\"><input class=\"ds-candidate-check\" type=\"checkbox\" checked aria-label=\"选择候选：整理模型网关接入清单\"><input class=\"ds-candidate-title\" value=\"整理模型网关接入清单\" aria-label=\"候选事项标题\"></div><blockquote class=\"ds-candidate-quote\">“由我整理模型网关接入清单，周五17点前提交。”</blockquote><div class=\"ds-candidate-footer\"><span>有原文依据 · 未入库</span><button type=\"button\" class=\"ds-candidate-discard\">丢弃这条</button></div></article>",
+      "css": ".ds-candidate{padding:18px;background:var(--surface,#fffdf9);color:var(--ink,#1f3a5f);border-radius:12px;border:1px solid var(--line,#deddd5);font-family:var(--font,\"PingFang SC\",\"Noto Sans SC\",-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif)}.ds-candidate-top{display:flex;gap:12px;align-items:center}.ds-candidate-check{accent-color:var(--ink,#1f3a5f);width:16px;height:16px;flex-shrink:0}.ds-candidate-title{background:transparent;border:0;color:var(--ink,#1f3a5f);width:100%;min-width:0;padding:4px 0;font-family:var(--font,\"PingFang SC\",\"Noto Sans SC\",-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif);font-size:13px;font-weight:550}.ds-candidate-quote{font-size:12px;color:var(--muted,#566370);line-height:1.8;padding:0;margin:12px 0 0 27px}.ds-candidate-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:13px 0 0 27px;font-size:12px;color:var(--muted,#566370)}.ds-candidate-discard{border:0;padding:2px 0;background:transparent;color:var(--ink,#1f3a5f);font-family:var(--font,\"PingFang SC\",\"Noto Sans SC\",-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif);font-size:12px;cursor:pointer}.ds-candidate-discard:hover{text-decoration:underline;text-underline-offset:4px}.ds-candidate-check:focus-visible,.ds-candidate-title:focus-visible,.ds-candidate-discard:focus-visible{outline:3px solid var(--amber,#c8872b);outline-offset:3px}@media(max-width:760px){.ds-candidate{padding:13px}.ds-candidate-quote,.ds-candidate-footer{margin-left:0}}"
+    },
+    {
+      "name": "事项与进展行",
+      "kind": "custom",
+      "refersTo": "task-row",
+      "description": "进展紧贴原事项，交付线索不等于完成。",
+      "html": "<div class=\"ds-task-row\"><button type=\"button\" class=\"ds-complete\" aria-label=\"标记完成：跟进接入方案交付，确认验收结论\"><svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.65\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m5 12 4 4L19 6\"/></svg></button><div><button type=\"button\" class=\"ds-task-title\">跟进接入方案交付，确认验收结论</button><div class=\"ds-progress\"><span class=\"ds-progress-dot\"></span><span>新进展 · 林川发来了方案文件，等你检查验收。</span></div></div><span class=\"ds-due\">今天 14:30</span></div>",
+      "css": ".ds-task-row{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:12px;padding:18px 0;border-bottom:1px solid var(--line,#deddd5);align-items:start;color:var(--ink,#1f3a5f);font-family:var(--font,\"PingFang SC\",\"Noto Sans SC\",-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif)}.ds-complete{display:grid;place-items:center;width:24px;height:24px;padding:0;border:1.4px solid #7b858e;border-radius:50%;background:transparent;cursor:pointer}.ds-complete svg{display:none}.ds-complete:hover{background:var(--soft-ink,#e7ebef);border-color:var(--ink,#1f3a5f)}.ds-task-title{display:block;text-align:left;padding:0;border:0;background:none;color:var(--ink,#1f3a5f);font-family:var(--font,\"PingFang SC\",\"Noto Sans SC\",-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif);font-size:13px;line-height:1.65;letter-spacing:.02em;cursor:pointer}.ds-task-title:hover{color:var(--night,#16283f);text-decoration:underline;text-underline-offset:4px}.ds-progress{display:flex;align-items:start;gap:6px;margin-top:12px;padding:12px;background:#edece5;border-radius:5px;color:#52616e;font-size:12px;line-height:1.65}.ds-progress-dot{width:4px;height:4px;border-radius:50%;background:var(--amber,#c8872b);margin-top:5px;flex-shrink:0}.ds-due{white-space:nowrap;padding-top:5px;color:var(--muted,#566370);font-family:var(--latin,var(--font,\"PingFang SC\",\"Noto Sans SC\",-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif));font-size:12px;font-weight:500}.ds-complete:focus-visible,.ds-task-title:focus-visible{outline:3px solid var(--amber,#c8872b);outline-offset:3px}@media(max-width:760px){.ds-task-row{grid-template-columns:24px minmax(0,1fr);gap:10px}.ds-task-title{font-size:12px}.ds-due{grid-column:2;padding-top:0;margin-top:-4px}}"
+    },
+    {
+      "name": "待确认签收操作栏",
+      "kind": "custom",
+      "refersTo": "review-bar",
+      "description": "选中数与主操作同列；页面内窄窗口固定位置由应用布局负责。",
+      "html": "<div class=\"ds-review-bar\" role=\"region\" aria-label=\"待确认签收操作\"><div class=\"ds-review-summary\"><button type=\"button\" class=\"ds-select-all\">取消全选</button><span>已选 3 / 3 条</span></div><button type=\"button\" class=\"ds-sign\"><svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.65\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m5 12 4 4L19 6\"/></svg>签收选中事项 3</button></div>",
+      "css": ".ds-review-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:76px;padding:16px 32px;background:var(--ivory,#f6f3ec);border-top:1px solid var(--line,#deddd5);font-family:var(--font,\"PingFang SC\",\"Noto Sans SC\",-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif)}.ds-review-summary{display:flex;align-items:center;gap:16px;color:var(--muted,#566370);font-size:12px}.ds-select-all{display:inline-flex;border:0;padding:2px 0;background:transparent;color:var(--ink,#1f3a5f);font-family:var(--font,\"PingFang SC\",\"Noto Sans SC\",-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif);font-size:12px;cursor:pointer}.ds-select-all:hover{text-decoration:underline;text-underline-offset:4px}.ds-sign{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid transparent;border-radius:7px;min-height:36px;padding:12px 13px;font-family:var(--font,\"PingFang SC\",\"Noto Sans SC\",-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif);font-size:12px;font-weight:550;cursor:pointer;transition:background .15s var(--ease,cubic-bezier(.22,1,.36,1)),transform .15s var(--ease,cubic-bezier(.22,1,.36,1));background:var(--amber,#c8872b);color:var(--night,#16283f);white-space:nowrap}.ds-sign:hover{background:#d4953a}.ds-select-all:focus-visible{outline:3px solid var(--amber,#c8872b);outline-offset:3px}.ds-sign:active{transform:translateY(1px)}.ds-sign:focus-visible{outline:3px solid var(--amber,#c8872b);outline-offset:3px}.ds-sign:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-sign{transition:none}}@media(max-width:760px){.ds-review-bar{padding:12px 18px;box-shadow:0 -5px 18px #16283f0a}.ds-review-summary{gap:9px;flex-wrap:wrap}.ds-sign{padding:11px}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "有分寸的桌面跟班",
+    "overview": "象牙底承载工作，墨蓝组织信息，琥珀标出行动。界面以扫描和操作为先；穿小马甲的圆豆「班班」承担亲和感，反馈简短、克制。\n\n这是基于已渲染浅色原型的代码提取记录，视觉值以 [tokens.css](design/brand/tokens.css)、[prototype.css](design/prototype/prototype.css) 和 [brand.css](design/brand/brand.css) 为准。品牌方向已定，SVG 与应用图标仍为首轮草案，不代表最终商标或生产资产验收。当前没有深色主题。",
+    "keyCharacteristics": [
+      "扁平事项列表与温和圆角，依靠文字层级和分隔线组织信息。",
+      "主操作和问题状态各有固定颜色，状态同时有文字说明。",
+      "中文系统无衬线与拉丁品牌字配合，桌宠表情服务反馈。"
+    ],
+    "rules": [
+      {
+        "name": "The Action Color Rule",
+        "body": "琥珀强调行动与提醒，砖红表达问题；两者不互换职责。",
+        "section": "colors"
+      },
+      {
+        "name": "The Quiet Surface Rule",
+        "body": "普通列表与候选卡保持扁平，浮层才通过阴影表达覆盖关系。",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** 从实际 CSS 复用现有颜色、字系、层级与圆角；品牌资产沿用当前 SVG 底稿。",
+      "**Do** 保留状态文字、来源依据、可见键盘焦点，以及窄导航短标签和持续可见的签收操作。",
+      "**Do** 将候选、进展线索和用户确认的完成分别呈现，模拟连接与演示数据保持明确标注。"
+    ],
+    "donts": [
+      "**Don't** 把新进展或发现交付直接表现为完成，也不要把未签收候选算成正式事项。",
+      "**Don't** 将四态 SVG 草案称为已验证的原生动画、点击穿透、多屏适配或最终商标。",
+      "**Don't** 将当前页面内存中的状态称为持久化，或把真实 AI、飞书、Bash、MCP、存储及原生窗口写成已接入。"
+    ]
+  }
+}

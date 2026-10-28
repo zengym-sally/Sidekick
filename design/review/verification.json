@@ -1,0 +1,33 @@
+{
+  "status": "passed",
+  "checks": [
+    "今日工作台与初始候选",
+    "飞书稍后提醒不改变截止",
+    "文本入口与取消异步整理",
+    "候选编辑、预览、选择签收与丢弃",
+    "手工录入、编辑、完成与删除",
+    "搜索空态与清除",
+    "三个角色的个性化与模型演示",
+    "来源加载、失败、恢复与收集周期",
+    "工作目录、Skills与MCP仅模拟状态",
+    "日报演示标注与模拟生成",
+    "窄窗口与品牌板"
+  ],
+  "browserErrors": [],
+  "screenshots": [
+    "today-desktop.png",
+    "task-detail-desktop.png",
+    "inbox-desktop.png",
+    "inbox-empty-desktop.png",
+    "agents-desktop.png",
+    "source-error-desktop.png",
+    "tools-desktop.png",
+    "report-desktop.png",
+    "today-narrow.png",
+    "inbox-narrow-viewport.png",
+    "inbox-narrow.png",
+    "brand-narrow.png",
+    "brand-desktop.png"
+  ],
+  "scope": "HTML design prototype only; no production integration"
+}

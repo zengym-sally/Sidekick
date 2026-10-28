@@ -1,0 +1,44 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "space grotesk",
+        "files": [
+          "design/prototype/index.html"
+        ],
+        "createdAt": "2026-10-28T17:12:00.919Z",
+        "reason": "user confirmed: Space Grotesk is the fixed Sidekick Latin and numeric brand typeface."
+      },
+      {
+        "rule": "overused-font",
+        "value": "space grotesk",
+        "files": [
+          "design/brand/index.html"
+        ],
+        "createdAt": "2026-10-28T17:12:00.947Z",
+        "reason": "user confirmed: Space Grotesk is the fixed Sidekick Latin brand typeface."
+      },
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "design/brand/index.html"
+        ],
+        "createdAt": "2026-10-28T17:13:23.072Z",
+        "reason": "user confirmed: Ivory #F6F3EC is the fixed Sidekick brand canvas."
+      },
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "design/prototype/index.html"
+        ],
+        "createdAt": "2026-10-28T17:13:23.100Z",
+        "reason": "Designer intentional: muted desktop surround and user-confirmed Ivory canvas express the fixed Sidekick palette."
+      }
+    ]
+  }
+}

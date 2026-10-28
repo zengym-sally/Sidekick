@@ -1,0 +1,17 @@
+.DS_Store
+**/.DS_Store
+.idea/
+.env
+.env.*
+!.env.example
+node_modules/
+target/
+dist/
+build/
+*.sqlite
+*.sqlite-*
+*.db
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/decisions/
+*.local.json
