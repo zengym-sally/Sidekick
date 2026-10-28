@@ -38,6 +38,15 @@
         ],
         "createdAt": "2026-10-28T17:13:23.100Z",
         "reason": "Designer intentional: muted desktop surround and user-confirmed Ivory canvas express the fixed Sidekick palette."
+      },
+      {
+        "rule": "overused-font",
+        "value": "space grotesk",
+        "files": [
+          "design/brand/tokens.css"
+        ],
+        "createdAt": "2026-10-28T17:31:56.208Z",
+        "reason": "user confirmed: Space Grotesk is the fixed Sidekick Latin and numeric typeface recorded in PRODUCT.md, DESIGN.md, and the approved product baseline."
       }
     ]
   }

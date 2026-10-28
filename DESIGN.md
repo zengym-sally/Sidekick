@@ -69,6 +69,14 @@ spacing:
   page: "32px"
   wide: "40px"
 components:
+  button-quick-entry:
+    backgroundColor: "{colors.soft-amber}"
+    textColor: "{colors.ink}"
+    typography: "{typography.label}"
+    rounded: "{rounded.control}"
+    padding: "12px 13px"
+  button-quick-entry-hover:
+    backgroundColor: "#eedcbf"
   button-primary:
     backgroundColor: "{colors.amber}"
     textColor: "{colors.night}"
@@ -153,7 +161,7 @@ components:
 ### Primary
 
 - **墨蓝 Ink / 深墨 Night**：主要文字、选中导航与深色按钮；深墨用于深色交互反馈。
-- **琥珀 Amber / 浅琥珀 Soft Amber**：快速录入、签收、焦点与待确认提示；琥珀按钮使用深墨文字。
+- **琥珀 Amber / 浅琥珀 Soft Amber**：浅琥珀底＋墨蓝字用于顶部快速录入；实心琥珀底＋深墨字用于签收等当前页主操作；琥珀也用于焦点和待确认提示。
 
 ### Secondary
 
@@ -165,7 +173,7 @@ components:
 - **侧栏 Sidebar / 分隔 Line**：稳定导航与结构分界。
 - **次要文字 Muted / 浅墨 Soft Ink**：元信息与中性反馈。正文、标签和状态均需保留文字可辨性。
 
-**The Action Color Rule.** 琥珀强调行动与提醒，砖红表达问题；两者不互换职责。
+**The Action Color Rule.** 顶部全局快速录入使用浅琥珀，签收等当前主操作使用实心琥珀；砖红表达问题。
 
 当前 CSS 的次要文字对比度：对象牙为 5.55:1，对侧栏为 5.13:1；深墨对琥珀为 4.94:1。这只覆盖上述组合，不构成整站无障碍认证。JSON 中合成的色阶仅用于面板预览，不是新增界面令牌。
 
@@ -203,7 +211,7 @@ Space Grotesk 本地可变字体声明覆盖字重 300–700；随资产保留 [
 
 ## Components
 
-- **Buttons**：琥珀主操作、墨蓝确认操作、描边次操作；常规最小高度 36px，小按钮最小高度 30px。悬停变换底色，按下位移 1px，禁用降低不透明度；键盘焦点使用琥珀 3px 外框、3px 间距。
+- **Buttons**：浅琥珀全局录入、实心琥珀主操作、墨蓝确认操作、描边次操作；常规最小高度 36px，小按钮最小高度 30px。悬停变换底色，按下位移 1px，禁用降低不透明度；键盘焦点默认使用琥珀 3px 外框、3px 间距；浅琥珀快速录入使用墨蓝外框。
 - **Inputs / Fields**：纸白底、细描边、墨蓝文字和插入符；表单标签可见，搜索另有无障碍名称。错误以砖红文字明确说明，不能只靠颜色。
 - **Navigation**：当前项墨蓝底与象牙文字，同时设置 `aria-current`；窄导航继续显示短标签。保留今日、待确认、全部事项、日报与设置的当前入口。
 - **Chips / Cards**：标签是简短状态，不承担主操作。候选卡包含勾选、可编辑字段、原文摘录与丢弃入口；未签收不能混入正式事项。
