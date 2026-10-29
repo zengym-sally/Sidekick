@@ -1,0 +1,5 @@
+{
+  "productName": "Sidekick S2 Verify",
+  "identifier": "com.sidekick.s2.verify",
+  "app": {"windows":[{"label":"main","title":"跟班 Sidekick · S2 原生夹具","width":1240,"height":820,"minWidth":640,"minHeight":600}]}
+}

@@ -1,4 +1,5 @@
 pub mod local_store;
+mod runtime_host;
 mod storage_probe;
 mod store_commands;
 
@@ -72,9 +73,10 @@ pub fn run() {
                 .macos_launcher(tauri_plugin_autostart::MacosLauncher::LaunchAgent)
                 .build(),
         )
-        .invoke_handler(tauri::generate_handler![run_s0_probes,store_commands::workspace_info,store_commands::read_profile,store_commands::save_profile,store_commands::initialize_workspace,store_commands::list_todos,store_commands::todo_history,store_commands::create_todo,store_commands::update_todo,store_commands::set_todo_completed,store_commands::delete_todo,store_commands::open_workspace_directory])
+        .invoke_handler(tauri::generate_handler![run_s0_probes,store_commands::workspace_info,store_commands::read_profile,store_commands::save_profile,store_commands::initialize_workspace,store_commands::list_todos,store_commands::todo_history,store_commands::create_todo,store_commands::update_todo,store_commands::set_todo_completed,store_commands::delete_todo,store_commands::open_workspace_directory,runtime_host::organize_text,runtime_host::revise_candidate,runtime_host::test_model,runtime_host::active_model_run,store_commands::read_model_configuration,store_commands::save_model_configuration,store_commands::list_import_batches,store_commands::todo_source_links,store_commands::read_import_batch,store_commands::read_model_run,store_commands::save_candidate,store_commands::discard_candidate,store_commands::apply_candidate_preview,store_commands::sign_candidates,store_commands::cancel_model_run])
         .setup(|app| {
             app.manage(store_commands::LocalState::new(app.path().app_data_dir()?));
+            app.manage(runtime_host::RuntimeState::default());
             WebviewWindowBuilder::new(app, "pet", WebviewUrl::App("index.html?pet=1".into()))
                 .title("班班 · S0")
                 .inner_size(128.0, 128.0)
@@ -129,6 +131,7 @@ pub fn run() {
         .build(tauri::generate_context!())
         .expect("Tauri host failed")
         .run(|app, event| {
+            if matches!(event,tauri::RunEvent::Exit) {if let Ok(directory)=app.path().resource_dir(){app.state::<runtime_host::RuntimeState>().shutdown(&directory.join("s0-runtime"));}}
             #[cfg(target_os = "macos")]
             if let tauri::RunEvent::Reopen { .. } = event {
                 if let Some(window) = app.get_webview_window("main") {

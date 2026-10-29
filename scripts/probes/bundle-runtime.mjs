@@ -27,6 +27,17 @@ const result = await build({
   logLevel: 'info',
   metafile: true,
 });
+const business = await build({
+  entryPoints: ['runtime/organizer-entry.mjs'], outfile: join(directory, 'organizer.mjs'),
+  bundle: true, platform: 'node', target: 'node24', format: 'esm',
+  banner: { js: "import { createRequire as runtimeRequire } from 'node:module'; const require = runtimeRequire(import.meta.url);" },
+  nodePaths: [join(resolve(source), 'node_modules')],
+  alias: {
+    '@sidekick/pi-bash': join(resolve(source), 'packages/coding-agent/dist/core/tools/bash.js'),
+    '@sidekick/pi-read': join(resolve(source), 'packages/coding-agent/dist/core/tools/read.js'),
+  }, logLevel: 'info', metafile: true,
+});
+await copyFile('runtime/bash-worker.mjs', join(directory, 'bash-worker.mjs'));
 await copyFile(process.execPath, join(directory, 'node'));
 await chmod(join(directory, 'node'), 0o755);
 await copyFile(resolve(dirname(process.execPath), '../LICENSE'), join(directory, 'NODE-LICENSE'));
@@ -38,7 +49,7 @@ await cp('tests/probes/fixtures/skills', join(directory, 'skills'), { recursive:
 await copyFile(join(source, 'LICENSE'), join(directory, 'PI-LICENSE'));
 await cp(join(source, 'packages/mcp/LICENSES'), join(directory, 'licenses/pi-mcp'), { recursive: true });
 const packages = new Map();
-for (const input of Object.keys(result.metafile.inputs)) {
+for (const input of new Set([...Object.keys(result.metafile.inputs), ...Object.keys(business.metafile.inputs)])) {
   let parent = dirname(resolve(input));
   while (parent !== dirname(parent)) {
     try {
@@ -62,5 +73,5 @@ for (const input of Object.keys(result.metafile.inputs)) {
   }
 }
 await writeFile(join(directory, 'licenses/inventory.json'), JSON.stringify([...packages.values()], null, 2));
-await writeFile(join(directory, 'source.json'), JSON.stringify({ ...metadata, node: process.version, larkCli: '1.0.98', role: 'S0 synthetic diagnostic Runtime; no production business claims' }, null, 2));
+await writeFile(join(directory, 'source.json'), JSON.stringify({ ...metadata, node: process.version, larkCli: '1.0.98', role: 'S0 diagnostics and S2 organizer Runtime; business state belongs to the Rust host' }, null, 2));
 console.log('Bundled diagnostic Runtime prepared; no model credentials included.');

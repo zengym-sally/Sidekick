@@ -1,11 +1,13 @@
 use crate::local_store::{
-    AppStore, ProfileInput, ProfileSave, StoreError, Todo, TodoEvent, TodoInput, UserProfile,
-    WorkspaceInfo,
+    AppStore, BatchSummary, Candidate, ImportBatch, ModelConfigInput, ModelConfigSave,
+    ModelConfiguration, ModelRun, ProfileInput, ProfileSave, SignChoice, StoreError, Todo,
+    TodoEvent, TodoInput, UserProfile, WorkspaceInfo,
 };
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use tauri::{Emitter, State};
 
+#[derive(Clone)]
 pub struct LocalState {
     app_dir: PathBuf,
     store: Arc<Mutex<Option<AppStore>>>,
@@ -17,6 +19,19 @@ impl LocalState {
             store: Arc::new(Mutex::new(None)),
         }
     }
+    pub(crate) fn access<T>(
+        &self,
+        action: impl FnOnce(&mut AppStore) -> Result<T, StoreError>,
+    ) -> Result<T, StoreError> {
+        let mut guard = self.store.lock().map_err(|_| StoreError {
+            code: "STORAGE_UNAVAILABLE",
+            message: "本地存储暂不可用，请重启应用。",
+        })?;
+        if guard.is_none() {
+            *guard = Some(AppStore::open(self.app_dir.clone())?);
+        }
+        action(guard.as_mut().expect("store initialized above"))
+    }
 }
 
 async fn call<T, F>(state: State<'_, LocalState>, action: F) -> Result<T, StoreError>
@@ -24,23 +39,13 @@ where
     T: Send + 'static,
     F: FnOnce(&mut AppStore) -> Result<T, StoreError> + Send + 'static,
 {
-    let shared = state.store.clone();
-    let directory = state.app_dir.clone();
-    tauri::async_runtime::spawn_blocking(move || {
-        let mut guard = shared.lock().map_err(|_| StoreError {
+    let state = state.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || state.access(action))
+        .await
+        .map_err(|_| StoreError {
             code: "STORAGE_UNAVAILABLE",
-            message: "本地存储暂不可用，请重启应用。",
-        })?;
-        if guard.is_none() {
-            *guard = Some(AppStore::open(directory)?);
-        }
-        action(guard.as_mut().expect("store initialized above"))
-    })
-    .await
-    .map_err(|_| StoreError {
-        code: "STORAGE_UNAVAILABLE",
-        message: "本地存储任务中断，请重试。",
-    })?
+            message: "本地存储任务中断，请重试。",
+        })?
 }
 fn changed(app: &tauri::AppHandle, todo: &Todo) {
     let _ = app.emit(
@@ -163,4 +168,139 @@ pub async fn open_workspace_directory(state: State<'_, LocalState>) -> Result<()
             })
     })
     .await
+}
+
+#[tauri::command]
+pub async fn read_model_configuration(
+    state: State<'_, LocalState>,
+) -> Result<Option<ModelConfiguration>, StoreError> {
+    call(state, |s| s.read_models()).await
+}
+#[tauri::command]
+pub async fn save_model_configuration(
+    state: State<'_, LocalState>,
+    input: ModelConfigInput,
+) -> Result<ModelConfigSave, StoreError> {
+    call(state, move |s| s.save_models(input)).await
+}
+#[tauri::command]
+pub async fn list_import_batches(
+    state: State<'_, LocalState>,
+) -> Result<Vec<BatchSummary>, StoreError> {
+    call(state, |s| s.list_batches()).await
+}
+#[tauri::command]
+pub async fn read_import_batch(
+    state: State<'_, LocalState>,
+    id: String,
+) -> Result<ImportBatch, StoreError> {
+    call(state, move |s| s.batch(&id)).await
+}
+#[tauri::command]
+pub async fn todo_source_links(
+    state: State<'_, LocalState>,
+    id: String,
+) -> Result<Vec<crate::local_store::TodoSourceLink>, StoreError> {
+    call(state, move |s| s.todo_source_links(&id)).await
+}
+#[tauri::command]
+pub async fn read_model_run(
+    state: State<'_, LocalState>,
+    runtime: State<'_, crate::runtime_host::RuntimeState>,
+    id: String,
+) -> Result<ModelRun, StoreError> {
+    let active = runtime.active_run();
+    call(state, move |s| {
+        let run = s.model_run(&id)?;
+        if active.as_deref() != Some(&id) && ["running", "queued"].contains(&run.status.as_str()) {
+            s.interrupt_model_run(&id)
+        } else {
+            Ok(run)
+        }
+    })
+    .await
+}
+
+fn ingestion_changed(app: &tauri::AppHandle, source: &str) {
+    let _ = app.emit(
+        "organizer-changed",
+        serde_json::json!({"sourceId":source,"phase":"changed"}),
+    );
+}
+#[tauri::command]
+pub async fn save_candidate(
+    app: tauri::AppHandle,
+    state: State<'_, LocalState>,
+    id: String,
+    expected_version: i64,
+    input: TodoInput,
+    time_reviewed: bool,
+    operation_id: String,
+) -> Result<Candidate, StoreError> {
+    let c = call(state, move |s| {
+        s.edit_candidate(&id, expected_version, input, time_reviewed, &operation_id)
+    })
+    .await?;
+    ingestion_changed(&app, &c.source_id);
+    Ok(c)
+}
+#[tauri::command]
+pub async fn discard_candidate(
+    app: tauri::AppHandle,
+    state: State<'_, LocalState>,
+    id: String,
+    expected_version: i64,
+    operation_id: String,
+) -> Result<Candidate, StoreError> {
+    let c = call(state, move |s| {
+        s.discard_candidate(&id, expected_version, &operation_id)
+    })
+    .await?;
+    ingestion_changed(&app, &c.source_id);
+    Ok(c)
+}
+#[tauri::command]
+pub async fn apply_candidate_preview(
+    app: tauri::AppHandle,
+    state: State<'_, LocalState>,
+    run_id: String,
+    expected_version: i64,
+    operation_id: String,
+) -> Result<Candidate, StoreError> {
+    let c = call(state, move |s| {
+        s.apply_preview(&run_id, expected_version, &operation_id)
+    })
+    .await?;
+    ingestion_changed(&app, &c.source_id);
+    Ok(c)
+}
+#[tauri::command]
+pub async fn sign_candidates(
+    app: tauri::AppHandle,
+    state: State<'_, LocalState>,
+    choices: Vec<SignChoice>,
+    operation_id: String,
+) -> Result<Vec<Todo>, StoreError> {
+    let todos = call(state, move |s| s.sign_candidates(choices, &operation_id)).await?;
+    for todo in &todos {
+        changed(&app, todo);
+    }
+    let _ = app.emit("organizer-changed", serde_json::json!({"phase":"changed"}));
+    Ok(todos)
+}
+#[tauri::command]
+pub async fn cancel_model_run(
+    app: tauri::AppHandle,
+    state: State<'_, LocalState>,
+    runtime: State<'_, crate::runtime_host::RuntimeState>,
+    id: String,
+) -> Result<ModelRun, StoreError> {
+    let selected = id.clone();
+    let run = call(state, move |s| s.cancel_run(&selected)).await?;
+    runtime.cancel(&id);
+    let _ = app.emit(
+        "organizer-changed",
+        serde_json::json!({"runId":id,"phase":"changed"}),
+    );
+    Ok(run)
 }

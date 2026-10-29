@@ -1,0 +1,237 @@
+{
+  "date": "2026-10-29",
+  "version": "0.2.0",
+  "status": "implementation and layered verification passed; native exit criteria partially unverified; S3 not started",
+  "environment": {
+    "macOS": "27.0.1",
+    "arch": "arm64",
+    "node": "v24.20.0",
+    "npm": "12.2.1",
+    "rust": "rustc 1.89.0 (29483883e 2025-08-04)"
+  },
+  "git": {
+    "pushedBase": "84e67b8f9ba2da4e3098f2f78affb59353392bff",
+    "remoteMainVerified": true,
+    "s2": "uncommitted; not pushed"
+  },
+  "check": {
+    "command": "npm run check",
+    "exitCode": 0,
+    "jsPassed": 61,
+    "rustPassed": 40,
+    "rustIgnoredExplicitLive": 1,
+    "failed": 0,
+    "log": "check.log"
+  },
+  "live": {
+    "command": "SIDEKICK_MODEL_ENV=\"$PWD/.env.deepseek\" npm run test:s2-live",
+    "exitCode": 0,
+    "passed": 1,
+    "durationSeconds": 14.87,
+    "modelId": "deepseek-flash",
+    "candidateCount": 3,
+    "unsignedCandidateWrites": 0,
+    "beforeSignIncludingManualTarget": 1,
+    "afterSign": 2,
+    "revisionPreview": true,
+    "linkedWithoutOverwrite": true,
+    "duplicateIdempotent": true,
+    "restartEqual": true,
+    "keychainCredential": true,
+    "isolatedWorkspace": true,
+    "log": "live-model.log",
+    "scope": "real model + bundled Pi + production Rust storage, not native UI E2E"
+  },
+  "review": {
+    "design": "A and B APPROVE",
+    "delivery": "A and B round 2 APPROVE",
+    "unresolvedP1P2": 0
+  },
+  "nativeUi": {
+    "scope": "earlier isolated S2 verify app + local synthetic HTTP model",
+    "passed": [
+      "default workspace",
+      "profile default tab",
+      "JSON model config",
+      "connection test",
+      "manual target",
+      "4 persisted candidates",
+      "manual candidate edit",
+      "discard",
+      "revision backend succeeded",
+      "SQLite quick_check ok"
+    ],
+    "unverified": [
+      "final code native UI rerun",
+      "secure API Key input and GUI keychain save",
+      "preview application",
+      "manual association and batch sign",
+      "detail and quit/relaunch UI consistency"
+    ],
+    "blocker": "ScreenCaptureKit -3812; preserved, not marked complete",
+    "storageCheckpoint": {
+      "path": "native-storage-checkpoint.json",
+      "sha256": "8f93c4802a06069ed6abd9bcbd6128ea9a470735173c6e850a4782be23bd76c9"
+    }
+  },
+  "browserUi": {
+    "sizes": [
+      [
+        1240,
+        820
+      ],
+      [
+        640,
+        900
+      ]
+    ],
+    "horizontalOverflow": false,
+    "reviewBar": [
+      {
+        "viewport": [
+          1240,
+          820
+        ],
+        "top": 747,
+        "bottom": 820
+      },
+      {
+        "viewport": [
+          640,
+          900
+        ],
+        "top": 831,
+        "bottom": 900
+      }
+    ],
+    "finalWarnErrorCount": 0,
+    "coldReloadVerified": true,
+    "scope": "synthetic API, real Vue/CSS; not restart evidence"
+  },
+  "build": {
+    "command": "npm run probe:app",
+    "exitCode": 0,
+    "codesignVerifyExitCode": 0,
+    "signature": "ad-hoc; not notarized",
+    "app": "src-tauri/target/release/bundle/macos/Sidekick.app",
+    "bundleVersion": "0.2.0",
+    "identifier": "com.sidekick.s0",
+    "log": "build.log",
+    "sha256": {
+      "Contents/MacOS/sidekick": "56da5324da3691f9767fc55a0caf0bb4cfdea93e5149f66cb6a76bae58664086",
+      "Contents/Resources/s0-runtime/organizer.mjs": "5594fbe55eddda686fe49d2a550483669d4b322ab22b35eee52e43cc3faca2a5",
+      "Contents/Resources/s0-runtime/bash-worker.mjs": "86f7c3b89b62f11c77b1eade4d85335f58a50ed381f356824e4d425ceb81d7f7"
+    }
+  },
+  "productionFrontend": {
+    "fixtureMarkersAbsent": true,
+    "businessCommandsPresent": true
+  },
+  "selectedCredentialScan": {
+    "occurrences": 0,
+    "scope": "modified and untracked files, dist, text resources, current check/build/live logs; no secret value recorded"
+  },
+  "preservedMissingEvidence": [
+    "historical S0 remaining probes",
+    "historical S1 native profile full workflow",
+    "S2 native UI items listed above"
+  ],
+  "sourceSha256": {
+    "DESIGN.md": "7828046898a739261e278cd59118fd4b91c702cfdaa88213e5a0c34e1cfffefe",
+    "README.md": "554cf49a69f14b67db76852723ab987af535f820ea64aef2f082f49ef1d80f89",
+    "docs/product/01-产品定义.md": "1a26144a8324a682f245c54324c596aee6b9d86c83322d63d3474bf06090f2d6",
+    "docs/product/02-用户流程.md": "3f94b3d9c040597f2b4909a53e27c05347e6a1e98acfc2fc5b28532728ed0aca",
+    "docs/product/03-智能体与架构.md": "9840606891aba30b48e1828f890bec4e68003edefead644f679335da7440ea00",
+    "docs/product/04-分期交付与验收.md": "d455924c8898a264267c8796772f2424f178fea4c51f9f890a9122f3fe90c6a3",
+    "docs/product/05-第一阶段实施计划.md": "7edfe53846238d527bf4e99fe4404598a6279a0d92eb4642cd569acc97606c6b",
+    "docs/reviews/s2-20261029.md": "26ced6888bce3eb165b5e993749c9d500ab9a8b00aa337113ae14219d0f9a816",
+    "package-lock.json": "dcaf3010018954eed68b3c2d2c362a071db3cd9ae85c24009f39f773dc580bba",
+    "package.json": "73cb1af32199a2a412488603a45dd25c4a6769cf615e88e5d12935b863d55331",
+    "runtime/bash-worker.mjs": "86f7c3b89b62f11c77b1eade4d85335f58a50ed381f356824e4d425ceb81d7f7",
+    "runtime/dates.d.mts": "d39e57a04a9a7fda05b05e27ff2f8e2c9cd2d5b2233def3afb0126abdf513704",
+    "runtime/dates.mjs": "a97a957dabae72c7bc6c5049d301f50cc884e5d2cf973192370bd313bb0b69d9",
+    "runtime/managed-bash.mjs": "efe0b87f2a2f476010b6b5b9748d13f817497c93cf5e364415d2bc8a2d804773",
+    "runtime/organizer-contract.mjs": "831673c336ea4a2b46a749aafcdb25d57794864f8d13ad9e1db40cae63435364",
+    "runtime/organizer-entry.mjs": "4953f237da616e4832c7a3bfa2b284b8cdc1f6841d68918da35cc6786f0adc39",
+    "scripts/probes/bundle-runtime.mjs": "3d21032ce2a83594c35f8da9ff2d88409cb321132d76c9632fab879481319631",
+    "src-tauri/Cargo.lock": "eaa003114ebe7ec443ae0e3e1954c09b4293f82ba890b586758900e0508bd54b",
+    "src-tauri/Cargo.toml": "05ca2783a4f484aad0c42a3fac7a73a69fd1265aef3c8cc37eb88c128dbffffd",
+    "src-tauri/migrations/002_ingestion.sql": "43d9c92a8948a73cf0bc8bc08f1793c0470fee52dd3f459ebbf14d98ce08ba73",
+    "src-tauri/src/ingestion.rs": "091fa4c1752ee5b50fe4d567b96e1de101165f458742488dd41aaea8493b98a2",
+    "src-tauri/src/ingestion_tests.rs": "c9216521ec14eb644d3b6d9243549ba2b4567ff0789569b901152e1cda2c5384",
+    "src-tauri/src/lib.rs": "3bbcfd799cfa99b8ee3d5a669f23ef9e6f03324a426a6606e4cb86d64d7f93dd",
+    "src-tauri/src/local_store.rs": "9c4e16924fe762ab2a481eb461567e5c4c0ec00c32a07c4f80e85148411fb170",
+    "src-tauri/src/local_store_tests.rs": "53433728c69eee39ba4beef689cfbab4a19d3a48455cb6ef1f0e4633358bd68c",
+    "src-tauri/src/model_config.rs": "0d0eb40d75c56ea1c396cf65998476f1201b469a9b51732eac70cf488fd63bb8",
+    "src-tauri/src/model_config_tests.rs": "c06fc4bf63d2ed0e934604c2fd3e1b54de329d7eda1f7f15c84a56e72101b2df",
+    "src-tauri/src/runtime_host.rs": "8bae7212c5f4d3f51f5161c4d4619a4e7c287c0b459713facaef816cb15e1b4a",
+    "src-tauri/src/store_commands.rs": "edc9d4e1055ceed65382038124d59dd17d902343107060faad251e43e3d53af8",
+    "src-tauri/tauri.conf.json": "36c6689cf65d7c2c4e90ce2472b5da1af3c1adf03038e58ea5136b8fcff4278c",
+    "src/components/CandidateCard.vue": "1bdbc23934a39afc6d64e453b53229c051d1441c67d1e01c4f5ddd2deb7087a0",
+    "src/components/Icon.vue": "a00bf546845cd5fac65006a16d007acd968f75ac53c684478a9cf05ca8862a62",
+    "src/components/InboxView.vue": "4a4caff64fcbcd21f73c825e8696ec2fab723b354cf978b109c05a3e86eb469f",
+    "src/components/ModelSettingsPanel.vue": "1be663fd5b2119e31655ed16929e00d7d0102aafc5e1d499d8ed56ce03befa86",
+    "src/components/SettingsPanel.vue": "7dec38174d721701a2a99dc08a1efa8c53e5abf64fb3e0f9b3751eac80f9c5d8",
+    "src/components/TextIntake.vue": "22907f0cbe7bc01d702d28dd1e336224d099574e699dfdd435a6c87948d13104",
+    "src/components/TimeField.vue": "8716735366c6192ab932bcada5091065c16702eb86a34dc2e43d81017a0fe64a",
+    "src/components/TodoRow.vue": "b76f9c49d39618281542c7e59c3164afd0ad67d8939c6a9cd82c7976d83685f9",
+    "src/components/Workbench.vue": "a005424f729e551fed8c9040d3e2a879af7c17bfe2d3236061ff4055acab28bc",
+    "src/domain/candidate.ts": "6ab719da7931e2eba77668fceafd1156aebd1ad75757bb2267e0d69735d59b66",
+    "src/domain/organizer.ts": "160bdc53a2094e417ab3519b21847097be85d76d19d35b41e75e54816d1400be",
+    "src/domain/time.ts": "6e21c0881ebcd093f6a9993fa2ab22b671a0674a1d30d75ce413cd4fd3f73b9e",
+    "src/domain/todos.ts": "fa4c33827c43f227ea30ae4d0d6970431bb2f7c9794a15988ed02ee69236f29c",
+    "src/stores/models.ts": "2975a0cf33f1f78f62de660b522e117c5a3b04fddb5b3973ff1a72a494176dcd",
+    "src/stores/organizer.ts": "e4df0251d8cc825d3dc0b1940a772abdf888203992a4a1a32716ca4bf7b50b33",
+    "src/stores/todos.ts": "44e9b2f75630eb0787ce6318585c5eb871430b76f2fda7e14e3abd34938dfa81",
+    "src/style.css": "fa17ba0573e066cb3961cf4b1e65aff04038a8a66e910c558c55681815edfb69",
+    "tests/fixtures/bash-lifecycle.mjs": "99b43e0267012a2cc1e6d58e6389e0bae2aea4ab550596e572e63df41c8e1da5",
+    "tests/fixtures/openai-ui-server.mjs": "dba65a9d413b07c7a55c6f8889388069f7e24d93f601f16db529b168cbc8cfe4",
+    "tests/fixtures/profile-ui/api.ts": "eeaff82cfdb9e46ea3c8738752a45a35b1097a8b36d4e5ba43f6aa66f181f535",
+    "tests/fixtures/profile-ui/organizer.ts": "0dfe20744a6afb57313e01091a536703107425b6b359fb1cd12bdef2fe2faffc",
+    "tests/fixtures/s2-verify.config.json": "580cade50e2147eee35f80f97e2a4b74e00eb6d87466a5c7f70abed2f2305f72",
+    "tests/s2-bash.test.mjs": "fadbe257bd5e663613ee56d7e3c19d3301c5dfa9d5a6b7dd434aa90833863706",
+    "tests/s2-client.test.mjs": "bfafe25029069a335de0b91f2b771bc66c7eb50e4def89f6dd9a14d23a7d7950",
+    "tests/s2-contract.test.mjs": "011f3454e27b9d38fbaa0cc86da129a1dc0b88d8fd4418e709b0f8449a18cecf",
+    "tests/s2-dates.test.mjs": "c81786449969c7128ea1f3ad4ba676b3e703285ee14e83e6fa41dcc2f82290a7",
+    "tests/s2-runtime.test.mjs": "817f79052a311ce3f4493e68d4857719f16ff9779523b0fcb1af4f302045364a"
+  },
+  "screenshots": {
+    "workbench-browser.jpg": {
+      "pixels": [
+        1240,
+        820
+      ],
+      "sha256": "e32baad2c5c17b2d9c59774ed0352a2b08714cb2ae79ca7136cd4dc44f76645c",
+      "provenance": "real Vue/CSS, synthetic browser API fixture; not native IPC, SQLite or AI evidence"
+    },
+    "confirmation-final-browser.jpg": {
+      "pixels": [
+        1240,
+        820
+      ],
+      "sha256": "b64d4adcc4eb7004b1598f3099a6a9cf706b95e372acfc9ce0643930b94c074b",
+      "provenance": "real Vue/CSS, synthetic browser API fixture; not native IPC, SQLite or AI evidence"
+    },
+    "confirmation-narrow-browser.jpg": {
+      "pixels": [
+        640,
+        900
+      ],
+      "sha256": "8f036119c2183be12bd4230f8925e1183dd7eb053b84d041756f7157fa7df7a8",
+      "provenance": "real Vue/CSS, synthetic browser API fixture; not native IPC, SQLite or AI evidence"
+    }
+  },
+  "logsSha256": {
+    "check.log": "ef2c9f661fa5aa1167a522512d33b0bc793ac4a1003cd47f167ac12cee5c30fd",
+    "build.log": "265bcc98ba9047b635fb9fdc83909f79d50eaefd2e69f2ae1e5c77154870836b",
+    "live-model.log": "021e1738b9bf6aa5ad64c4bbfd4e6537ed0f3d67be3cf963234e2e9a122a47f1"
+  },
+  "logNormalization": {
+    "date": "2026-10-29",
+    "files": [
+      "build.log",
+      "live-model.log"
+    ],
+    "change": "surplus trailing blank lines removed for Git whitespace checks; command output and results unchanged"
+  }
+}

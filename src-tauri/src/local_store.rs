@@ -11,7 +11,8 @@ use std::time::{SystemTime, UNIX_EPOCH};
 const ROOT_MARKER: &str = ".sidekick-workspace";
 const MAGIC: &[u8] = b"sidekick-workspace-v1\n";
 const APPLICATION_ID: i64 = 0x53444b31;
-const SELECT_TODO: &str = "SELECT id,title,kind,owner,priority,status,due_at_ms,due_timezone,due_local,followup_at_ms,followup_timezone,followup_local,tags_json,created_at_ms,updated_at_ms,completed_at_ms,deleted_at_ms,version,source FROM todos";
+const SELECT_TODO_V1: &str = "SELECT id,title,kind,owner,priority,status,due_at_ms,due_timezone,due_local,followup_at_ms,followup_timezone,followup_local,tags_json,created_at_ms,updated_at_ms,completed_at_ms,deleted_at_ms,version,source FROM todos";
+const SELECT_TODO: &str = "SELECT id,title,kind,owner,priority,status,due_at_ms,due_timezone,due_local,followup_at_ms,followup_timezone,followup_local,tags_json,created_at_ms,updated_at_ms,completed_at_ms,deleted_at_ms,version,capture_method,due_precision,followup_precision FROM todos";
 
 #[derive(Debug, Clone, Serialize)]
 pub struct StoreError {
@@ -71,12 +72,20 @@ fn now_ms() -> Result<i64> {
     .map_err(|_| invalid())
 }
 
+fn minute_precision() -> String {
+    "minute".into()
+}
+fn is_minute(precision: &str) -> bool {
+    precision == "minute"
+}
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct TimePoint {
     pub at_ms: i64,
     pub time_zone: String,
     pub local_text: String,
+    #[serde(default = "minute_precision", skip_serializing_if = "is_minute")]
+    pub precision: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -106,7 +115,8 @@ impl TodoInput {
             return Err(invalid());
         }
         for point in [&self.due, &self.followup].into_iter().flatten() {
-            if point.at_ms.unsigned_abs() > 8_640_000_000_000_000
+            if !["minute", "day"].contains(&point.precision.as_str())
+                || point.at_ms.unsigned_abs() > 8_640_000_000_000_000
                 || point.time_zone.is_empty()
                 || point.time_zone.len() > 128
                 || point.time_zone.chars().any(char::is_control)
@@ -229,6 +239,15 @@ pub struct ProfileSave {
 }
 #[cfg(test)]
 #[derive(Clone, Copy, PartialEq)]
+enum ModelWriteFault {
+    BeforeJournal,
+    AfterJournal,
+    AfterProviders,
+    AfterModels,
+    Uncertain,
+}
+#[cfg(test)]
+#[derive(Clone, Copy, PartialEq)]
 enum ProfileWriteFault {
     BeforeReplace,
     AfterReplace,
@@ -273,6 +292,8 @@ pub struct AppStore {
     init_fault: Option<InitPhase>,
     #[cfg(test)]
     profile_write_fault: Option<ProfileWriteFault>,
+    #[cfg(test)]
+    model_write_fault: Option<ModelWriteFault>,
 }
 
 fn private_dir(path: &Path) -> Result<()> {
@@ -406,7 +427,10 @@ fn prepare_root(path: &Path) -> Result<(PathBuf, File, bool)> {
     Ok((root, lock, only_marker))
 }
 fn migrations() -> Migrations<'static> {
-    Migrations::new(vec![M::up(include_str!("../migrations/001_todos.sql"))])
+    Migrations::new(vec![
+        M::up(include_str!("../migrations/001_todos.sql")),
+        M::up(include_str!("../migrations/002_ingestion.sql")),
+    ])
 }
 fn validate_existing_database(path: &Path, initializing: bool) -> Result<()> {
     if !path.exists() {
@@ -434,7 +458,7 @@ fn validate_existing_database(path: &Path, initializing: bool) -> Result<()> {
     let version: i64 = db
         .pragma_query_value(None, "user_version", |r| r.get(0))
         .map_err(db_error)?;
-    if version > 1 {
+    if version > 2 {
         return Err(StoreError::new(
             "SCHEMA_TOO_NEW",
             "数据由较新的跟班版本创建，请升级应用后打开。",
@@ -450,7 +474,7 @@ fn validate_existing_database(path: &Path, initializing: bool) -> Result<()> {
             |r| r.get(0),
         )
         .map_err(db_error)?;
-    if !(app == APPLICATION_ID && version == 1
+    if !(app == APPLICATION_ID && (1..=2).contains(&version)
         || initializing && app == 0 && version == 0 && tables == 0)
     {
         return Err(StoreError::new(
@@ -467,8 +491,13 @@ fn validate_existing_database(path: &Path, initializing: bool) -> Result<()> {
             "数据库完整性检查失败，原文件未重置。",
         ));
     }
-    if version == 1 {
-        db.prepare(SELECT_TODO).map_err(db_error)?;
+    if version >= 1 {
+        db.prepare(if version == 1 {
+            SELECT_TODO_V1
+        } else {
+            SELECT_TODO
+        })
+        .map_err(db_error)?;
         db.prepare(
             "SELECT operation_id,todo_id,request_json,before_json,after_json FROM todo_events",
         )
@@ -490,6 +519,8 @@ impl AppStore {
             init_fault: None,
             #[cfg(test)]
             profile_write_fault: None,
+            #[cfg(test)]
+            model_write_fault: None,
         };
         let bootstrap = store.app_dir.join("bootstrap.json");
         if bootstrap.exists() {
@@ -671,10 +702,23 @@ impl AppStore {
             "PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;",
         )
         .map_err(db_error)?;
+        let version: i64 = db
+            .pragma_query_value(None, "user_version", |r| r.get(0))
+            .map_err(db_error)?;
+        if version == 1 {
+            let backup = root
+                .join("backups")
+                .join(format!("before-schema-2-{}.sqlite", nonce()));
+            db.backup(rusqlite::MAIN_DB, &backup, None)
+                .map_err(db_error)?;
+            use std::os::unix::fs::PermissionsExt;
+            fs::set_permissions(&backup, fs::Permissions::from_mode(0o600)).map_err(io_error)?;
+        }
         self.check_fault(InitPhase::BeforeSchema)?;
         migrations().to_latest(&mut db).map_err(|_| {
             StoreError::new("MIGRATION_FAILED", "数据库初始化失败，事务已回滚。请重试。")
         })?;
+        db.execute("UPDATE runs SET status='interrupted',error_code='INTERRUPTED',finished_at_ms=?1 WHERE status IN ('queued','running')",[now_ms()?]).map_err(db_error)?;
         self.check_fault(InitPhase::Schema)?;
         db.prepare(SELECT_TODO).map_err(db_error)?;
         if initializing {
@@ -852,13 +896,7 @@ impl AppStore {
         if let Some(todo) = replay(&tx, operation_id, &request)? {
             return Ok(todo);
         }
-        let id: String = tx
-            .query_row("SELECT lower(hex(randomblob(16)))", [], |r| r.get(0))
-            .map_err(db_error)?;
-        let time = now_ms()?;
-        tx.execute("INSERT INTO todos(id,title,kind,owner,priority,status,due_at_ms,due_timezone,due_local,followup_at_ms,followup_timezone,followup_local,tags_json,created_at_ms,updated_at_ms,version,source) VALUES(?1,?2,?3,?4,?5,'open',?6,?7,?8,?9,?10,?11,?12,?13,?13,1,'manual')",
-            params![id,input.title,input.kind,input.owner,input.priority,input.due.as_ref().map(|p|p.at_ms),input.due.as_ref().map(|p|p.time_zone.as_str()),input.due.as_ref().map(|p|p.local_text.as_str()),input.followup.as_ref().map(|p|p.at_ms),input.followup.as_ref().map(|p|p.time_zone.as_str()),input.followup.as_ref().map(|p|p.local_text.as_str()),serde_json::to_string(&input.tags).map_err(|_|invalid())?,time]).map_err(db_error)?;
-        let todo = load_todo(&tx, &id)?;
+        let todo = insert_todo(&tx, &input, "manual")?;
         record_event(&tx, operation_id, "create", &request, None, &todo)?;
         tx.commit().map_err(db_error)?;
         Ok(todo)
@@ -880,8 +918,8 @@ impl AppStore {
         }
         let before = load_todo(&tx, id)?;
         validate_change(&before, version)?;
-        tx.execute("UPDATE todos SET title=?2,kind=?3,owner=?4,priority=?5,due_at_ms=?6,due_timezone=?7,due_local=?8,followup_at_ms=?9,followup_timezone=?10,followup_local=?11,tags_json=?12,updated_at_ms=?13,version=version+1 WHERE id=?1",
-            params![id,input.title,input.kind,input.owner,input.priority,input.due.as_ref().map(|p|p.at_ms),input.due.as_ref().map(|p|p.time_zone.as_str()),input.due.as_ref().map(|p|p.local_text.as_str()),input.followup.as_ref().map(|p|p.at_ms),input.followup.as_ref().map(|p|p.time_zone.as_str()),input.followup.as_ref().map(|p|p.local_text.as_str()),serde_json::to_string(&input.tags).map_err(|_|invalid())?,now_ms()?]).map_err(db_error)?;
+        tx.execute("UPDATE todos SET title=?2,kind=?3,owner=?4,priority=?5,due_at_ms=?6,due_timezone=?7,due_local=?8,followup_at_ms=?9,followup_timezone=?10,followup_local=?11,tags_json=?12,updated_at_ms=?13,version=version+1,due_precision=?14,followup_precision=?15 WHERE id=?1",
+            params![id,input.title,input.kind,input.owner,input.priority,input.due.as_ref().map(|p|p.at_ms),input.due.as_ref().map(|p|p.time_zone.as_str()),input.due.as_ref().map(|p|p.local_text.as_str()),input.followup.as_ref().map(|p|p.at_ms),input.followup.as_ref().map(|p|p.time_zone.as_str()),input.followup.as_ref().map(|p|p.local_text.as_str()),serde_json::to_string(&input.tags).map_err(|_|invalid())?,now_ms()?,input.due.as_ref().map(|p|p.precision.as_str()).unwrap_or("minute"),input.followup.as_ref().map(|p|p.precision.as_str()).unwrap_or("minute")]).map_err(db_error)?;
         let after = load_todo(&tx, id)?;
         record_event(&tx, operation_id, "update", &request, Some(&before), &after)?;
         tx.commit().map_err(db_error)?;
@@ -964,6 +1002,20 @@ fn validate_change(todo: &Todo, version: i64) -> Result<()> {
 }
 fn replay(tx: &Transaction<'_>, operation: &str, request: &str) -> Result<Option<Todo>> {
     use rusqlite::OptionalExtension;
+    if tx
+        .query_row(
+            "SELECT count(*) FROM ingestion_operations WHERE operation_id=?1",
+            [operation],
+            |r| r.get::<_, i64>(0),
+        )
+        .map_err(db_error)?
+        > 0
+    {
+        return Err(StoreError::new(
+            "OPERATION_CONFLICT",
+            "操作标识已用于其他内容，请重新操作。",
+        ));
+    }
     let previous: Option<(String, String)> = tx
         .query_row(
             "SELECT todo_id,request_json FROM todo_events WHERE operation_id=?1",
@@ -994,6 +1046,15 @@ fn record_event(
     tx.execute("INSERT INTO todo_events(operation_id,todo_id,action,occurred_at_ms,request_json,before_json,after_json) VALUES(?1,?2,?3,?4,?5,?6,?7)",params![operation,after.id,action,after.updated_at_ms,request,before.map(serde_json::to_string).transpose().map_err(|_|invalid())?,serde_json::to_string(after).map_err(|_|invalid())?]).map_err(db_error)?;
     Ok(())
 }
+fn insert_todo(tx: &Transaction<'_>, input: &TodoInput, method: &str) -> Result<Todo> {
+    let id: String = tx
+        .query_row("SELECT lower(hex(randomblob(16)))", [], |r| r.get(0))
+        .map_err(db_error)?;
+    let time = now_ms()?;
+    tx.execute("INSERT INTO todos(id,title,kind,owner,priority,status,due_at_ms,due_timezone,due_local,followup_at_ms,followup_timezone,followup_local,tags_json,created_at_ms,updated_at_ms,version,source,capture_method,due_precision,followup_precision) VALUES(?1,?2,?3,?4,?5,'open',?6,?7,?8,?9,?10,?11,?12,?13,?13,1,'manual',?14,?15,?16)",
+        params![id,input.title,input.kind,input.owner,input.priority,input.due.as_ref().map(|p|p.at_ms),input.due.as_ref().map(|p|p.time_zone.as_str()),input.due.as_ref().map(|p|p.local_text.as_str()),input.followup.as_ref().map(|p|p.at_ms),input.followup.as_ref().map(|p|p.time_zone.as_str()),input.followup.as_ref().map(|p|p.local_text.as_str()),serde_json::to_string(&input.tags).map_err(|_|invalid())?,time,method,input.due.as_ref().map(|p|p.precision.as_str()).unwrap_or("minute"),input.followup.as_ref().map(|p|p.precision.as_str()).unwrap_or("minute")]).map_err(db_error)?;
+    load_todo(tx, &id)
+}
 fn load_todo(db: &Connection, id: &str) -> Result<Todo> {
     db.query_row(&format!("{SELECT_TODO} WHERE id=?1"), [id], todo_row)
         .map_err(db_error)
@@ -1005,6 +1066,7 @@ fn point_row(row: &Row<'_>, index: usize) -> rusqlite::Result<Option<TimePoint>>
             at_ms,
             time_zone: row.get(index + 1)?,
             local_text: row.get(index + 2)?,
+            precision: row.get(if index == 6 { 19 } else { 20 })?,
         }),
         None => None,
     })
@@ -1035,3 +1097,11 @@ fn todo_row(row: &Row<'_>) -> rusqlite::Result<Todo> {
 #[cfg(test)]
 #[path = "local_store_tests.rs"]
 mod tests;
+
+#[path = "ingestion.rs"]
+mod ingestion;
+pub use ingestion::*;
+
+#[path = "model_config.rs"]
+mod model_config;
+pub use model_config::*;

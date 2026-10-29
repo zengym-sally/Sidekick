@@ -1,6 +1,6 @@
 {
   "name": "sidekick",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "packageManager": "npm@12.2.1",
@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "typecheck": "vue-tsc --noEmit",
-    "check": "npm run typecheck && npm run test:s1-domain && npm run check:rust && npm run probe:runtime && npm run probe:card && npm run probe:contracts && npm run probe:native && npm run probe:toolchain && npm run probe:bundle && npm run probe:bundle-smoke",
+    "check": "npm run typecheck && npm run test:s1-domain && npm run test:s2-domain && npm run check:rust && npm run probe:runtime && npm run probe:card && npm run probe:contracts && npm run probe:native && npm run probe:toolchain && npm run test:s2-runtime && npm run probe:bundle-smoke",
     "build": "npm run typecheck && vite build",
     "tauri": "tauri",
     "probe:runtime": "npm --prefix tests/probes run test:runtime",
@@ -30,7 +30,13 @@
     "probe:app": "npm run probe:bundle && node scripts/probes/build-app.mjs",
     "build:s1-verify": "npm run probe:bundle && node scripts/probes/build-app.mjs tests/fixtures/s1-verify.config.json",
     "build:profile-verify": "npm run probe:bundle && node scripts/probes/build-app.mjs tests/fixtures/s1-profile-verify.config.json",
-    "dev:profile-ui": "vite --config tests/fixtures/profile-ui/vite.config.ts"
+    "dev:profile-ui": "vite --config tests/fixtures/profile-ui/vite.config.ts",
+    "test:s2-domain": "node --test --test-timeout=15000 tests/s2-dates.test.mjs tests/s2-contract.test.mjs tests/s2-bash.test.mjs tests/s2-client.test.mjs",
+    "test:s2-runtime": "npm run probe:bundle && node --test --test-timeout=15000 tests/s2-runtime.test.mjs",
+    "test:s2-live": "npm run probe:bundle && cargo test --manifest-path src-tauri/Cargo.toml --lib s2_live_text_preview_sign_and_restart -- --ignored --nocapture",
+    "test:s2-store": "cargo test --manifest-path src-tauri/Cargo.toml --lib local_store -- --test-threads=1",
+    "build:s2-verify": "npm run probe:bundle && node scripts/probes/build-app.mjs tests/fixtures/s2-verify.config.json",
+    "dev:s2-native-model": "node tests/fixtures/openai-ui-server.mjs"
   },
   "dependencies": {
     "@larksuite/cli": "1.0.98",

@@ -5,10 +5,11 @@ import { Button as TButton } from 'tdesign-vue-next';
 import { useProfile } from '../stores/profile';
 import { currentZone } from '../domain/todos';
 import Icon from './Icon.vue';
-const props=defineProps<{tab:'profile'|'general'|'about';root:string}>();
-const emit=defineEmits<{selectTab:[tab:'profile'|'general'|'about'];openDirectory:[]}>();
+import ModelSettingsPanel from './ModelSettingsPanel.vue';
+const props=defineProps<{tab:'profile'|'general'|'models'|'about';root:string}>();
+const emit=defineEmits<{selectTab:[tab:'profile'|'general'|'models'|'about'];openDirectory:[]}>();
 const profile=useProfile(),version=ref(''),versionError=ref(false),savedNotice=ref('');
-const tabs=[{id:'profile',label:'个人信息'},{id:'general',label:'通用设置'},{id:'about',label:'关于'}] as const;
+const tabs=[{id:'profile',label:'个人信息'},{id:'general',label:'通用设置'},{id:'models',label:'模型'},{id:'about',label:'关于'}] as const;
 async function save(){savedNotice.value='';try{await profile.save();savedNotice.value=profile.warning?'':'个人信息已保存。';}catch{}}
 async function loadVersion(){versionError.value=false;try{version.value=await getVersion();}catch{versionError.value=true;}}
 function tabKey(event:KeyboardEvent){
@@ -32,5 +33,6 @@ onMounted(loadVersion);
     </form>
   </section>
   <section v-show="tab==='general'" id="settings-panel-general" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-general"><h2>工作目录</h2><label for="workspace-location">当前保存位置</label><input id="workspace-location" class="path-input" :value="root" readonly><TButton class="button ghost" @click="emit('openDirectory')"><Icon name="folder"/>打开目录</TButton><p class="muted">事项与个人偏好保存在这个工作目录，重开应用后会继续使用。</p><h2>时间显示</h2><p>当前设备时区：{{ currentZone() }}</p><p class="muted">交付截止与下次跟进分别保存，修改一个时间不会连带修改另一个。</p></section>
-  <section v-show="tab==='about'" id="settings-panel-about" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-about"><h2>跟班 Sidekick</h2><p>盯着呢，老板。</p><p v-if="version">版本 {{ version }}</p><p v-else-if="versionError">暂时无法读取版本。<button class="text-button" @click="loadVersion">重新读取</button></p><p v-else class="muted">正在读取版本…</p><h2>当前可用</h2><p>手工录入、事项管理与本地保存。</p><p class="muted">智能整理、持续收集、提醒与日报仍在开发中。</p></section>
+  <section v-show="tab==='models'" id="settings-panel-models" role="tabpanel" aria-labelledby="settings-tab-models"><ModelSettingsPanel v-if="tab==='models'"/></section>
+  <section v-show="tab==='about'" id="settings-panel-about" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-about"><h2>跟班 Sidekick</h2><p>盯着呢，老板。</p><p v-if="version">版本 {{ version }}</p><p v-else-if="versionError">暂时无法读取版本。<button class="text-button" @click="loadVersion">重新读取</button></p><p v-else class="muted">正在读取版本…</p><h2>当前可用</h2><p>手工录入、文本智能整理、人工签收与本地事项管理。</p><p class="muted">持续收集、提醒与日报仍在开发中。</p></section>
 </template>

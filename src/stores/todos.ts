@@ -19,23 +19,24 @@ export function createTodoModel(api:Backend) {
   }
   async function boot(){workspace.value=await api('workspace_info') as WorkspaceInfo;if(!workspace.value.needsSetup)await refresh();}
   async function initialize(path:string|null){workspace.value=await api('initialize_workspace',{path,timeZone:Intl.DateTimeFormat().resolvedOptions().timeZone}) as WorkspaceInfo;await refresh();}
+  function applyCommitted(result:Todo[]){++generation;for(const todo of result){const previous=rows.value.find(t=>t.id===todo.id);if(!previous||previous.version<=todo.version)rows.value=[todo,...rows.value.filter(t=>t.id!==todo.id)];}}
   async function mutation(command:string,args:Record<string,unknown>){
     ++generation;loading.value=false;saving.value=true;
     try {
       const result=await api(command,args) as Todo;
-      const previous=rows.value.find(t=>t.id===result.id);
-      if(!previous || previous.version<=result.version)rows.value=[result,...rows.value.filter(t=>t.id!==result.id)];
+      applyCommitted([result]);
       try{await refresh();}catch{error.value='事项已保存，但清单暂时无法刷新。请重试刷新。';}
       return result;
     }
     finally{saving.value=false;}
   }
-  return {workspace,rows,loading,saving,error,refresh,boot,initialize,
+  return {workspace,rows,loading,saving,error,refresh,boot,initialize,applyCommitted,
     create:(input:TodoInput,operationId:string)=>mutation('create_todo',{input,operationId}),
     update:(todo:Todo,input:TodoInput,operationId:string)=>mutation('update_todo',{id:todo.id,expectedVersion:todo.version,input,operationId}),
     setCompleted:(todo:Todo,completed:boolean,operationId:string)=>mutation('set_todo_completed',{id:todo.id,expectedVersion:todo.version,completed,operationId}),
     deleteTodo:(todo:Todo,operationId:string)=>mutation('delete_todo',{id:todo.id,expectedVersion:todo.version,operationId}),
     history:(id:string)=>api('todo_history',{id}) as Promise<TodoEvent[]>,
+    sources:(id:string)=>api('todo_source_links',{id}) as Promise<{sourceId:string;evidence:string;association:string;createdAtMs:number}[]>,
     openDirectory:()=>api('open_workspace_directory'),
   };
 }

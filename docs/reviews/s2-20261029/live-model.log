@@ -1,0 +1,22 @@
+npm notice run sidekick@0.2.0 test:s2-live
+npm notice run npm run probe:bundle && cargo test --manifest-path src-tauri/Cargo.toml --lib s2_live_text_preview_sign_and_restart -- --ignored --nocapture
+npm notice run sidekick@0.2.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 103ms
+
+  build/s0-runtime/organizer.mjs  2.0mb ⚠️
+
+⚡ Done in 81ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+   Compiling sidekick v0.2.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.31s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-9deb5f13eae758ba)
+
+running 1 test
+S2_LIVE {"afterSign":2,"beforeSignIncludingManualTarget":1,"candidateCount":3,"duplicateIdempotent":true,"isolatedWorkspace":true,"keychainCredential":true,"linkedWithoutOverwrite":true,"modelId":"deepseek-flash","restartEqual":true,"revisionPreview":true,"status":"passed","unsignedCandidateWrites":0}
+test runtime_host::tests::s2_live_text_preview_sign_and_restart ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 40 filtered out; finished in 14.87s

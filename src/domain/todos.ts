@@ -1,6 +1,7 @@
-export interface TimePoint { atMs:number; timeZone:string; localText:string }
+import { calendarDate,dayEnd } from '../../runtime/dates.mjs';
+export interface TimePoint { atMs:number; timeZone:string; localText:string; precision?:'day' }
 export interface TodoInput { title:string; kind:'action'|'followup'; owner:string; priority:'low'|'medium'|'high'; due:TimePoint|null; followup:TimePoint|null; tags:string[] }
-export interface Todo { id:string; data:TodoInput; status:'open'|'completed'|'deleted'; createdAtMs:number; updatedAtMs:number; completedAtMs:number|null; deletedAtMs:number|null; version:number; source:'manual' }
+export interface Todo { id:string; data:TodoInput; status:'open'|'completed'|'deleted'; createdAtMs:number; updatedAtMs:number; completedAtMs:number|null; deletedAtMs:number|null; version:number; source:'manual'|'signed_ai' }
 export interface TodoEvent { operationId:string; action:string; occurredAtMs:number; before:Todo|null; after:Todo }
 export interface WorkspaceInfo { needsSetup:boolean; root:string|null; defaultRoot:string; pendingRoot:string|null }
 export interface Filters { kind?:string; status?:string; date?:string; owner?:string; tag?:string; query?:string }
@@ -38,7 +39,10 @@ export function offsetLabel(at:number):string {
 export function displayTime(at:number):string {
   return new Intl.DateTimeFormat('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(at));
 }
-export function effectiveTime(todo:Todo):number|null {return (todo.data.kind==='followup'?todo.data.followup?.atMs??todo.data.due?.atMs:todo.data.due?.atMs)??null;}
+export function displayPoint(point:TimePoint):string {return point.precision==='day'?new Intl.DateTimeFormat('zh-CN',{timeZone:point.timeZone,year:'numeric',month:'numeric',day:'numeric'}).format(new Date(point.atMs))+'（仅日期）':displayTime(point.atMs);}
+export function isOverdue(todo:Todo,now=Date.now()):boolean {const point=todo.data.due;if(todo.status!=='open'||!point)return false;return point.precision==='day'?(dayEnd(point.atMs,point.timeZone)??Infinity)<=now:point.atMs<now;}
+export function effectivePoint(todo:Todo):TimePoint|null{return todo.data.kind==='followup'?todo.data.followup??todo.data.due:todo.data.due;}
+export function effectiveTime(todo:Todo):number|null {const point=effectivePoint(todo);if(!point)return null;if(point.precision!=='day')return point.atMs;const [y,m,d]=calendarDate(point.atMs,point.timeZone).split('-').map(Number);return new Date(y,m-1,d,12).getTime();}
 function dayRange(now:number):[number,number] {const d=new Date(now);return [new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(),new Date(d.getFullYear(),d.getMonth(),d.getDate()+1).getTime()];}
 export function filterTodos(rows:Todo[],filters:Filters={},now=Date.now()):Todo[] {
   const [start,end]=dayRange(now);const monday=new Date(start);monday.setDate(monday.getDate()-(monday.getDay()+6)%7);const next=new Date(monday);next.setDate(next.getDate()+7);
@@ -53,7 +57,7 @@ export function filterTodos(rows:Todo[],filters:Filters={},now=Date.now()):Todo[
     if(filters.date==='undated' && (todo.data.due||todo.data.followup))return false;
     if(filters.date==='today' && (time===null||time>=end))return false;
     if(filters.date==='week' && (time===null||time<monday.getTime()||time>=next.getTime()))return false;
-    if(filters.date==='overdue' && (todo.status!=='open'||todo.data.due===null||todo.data.due.atMs>=now))return false;
+    if(filters.date==='overdue' && !isOverdue(todo,now))return false;
     return true;
   });
 }
@@ -61,3 +65,5 @@ export function todayLists(rows:Todo[],now=Date.now()):{action:Todo[];followup:T
   const entries=filterTodos(rows,{status:'open',date:'today'},now).sort((a,b)=>(effectiveTime(a)??Infinity)-(effectiveTime(b)??Infinity));
   return {action:entries.filter(t=>t.data.kind==='action'),followup:entries.filter(t=>t.data.kind==='followup')};
 }
+
+export function displayInZone(at:number,timeZone:string):string{return new Intl.DateTimeFormat('zh-CN',{timeZone,year:'numeric',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(at));}

@@ -1,0 +1,16 @@
+import type { TodoInput } from './todos';
+export interface CandidateDraft {fields:TodoInput;evidence:string;dueExpression:string|null;followupExpression:string|null;warnings:string[];unresolved:boolean}
+export interface Candidate {id:string;sourceId:string;runId:string;status:'pending'|'accepted'|'discarded';version:number;draft:CandidateDraft;acceptedTodoId:string|null}
+export interface ModelRun {id:string;sourceId:string|null;kind:'extract'|'revise'|'test';status:'running'|'queued'|'succeeded'|'failed'|'cancelled'|'interrupted';snapshot:Record<string,unknown>;input:Record<string,unknown>;candidateId:string|null;candidateVersion:number|null;preview:CandidateDraft|null;errorCode:string|null;createdAtMs:number;finishedAtMs:number|null}
+export interface TextSource {id:string;rawText:string;sourceAtMs:number|null;importedAtMs:number;anchorAtMs:number;timeZone:string;succeededRunId:string|null}
+export interface ImportBatch {source:TextSource;run:ModelRun|null;candidates:Candidate[];previews:ModelRun[];started:boolean}
+export interface BatchSummary {id:string;excerpt:string;importedAtMs:number;pending:number;total:number;status:string}
+export interface SignChoice {candidateId:string;expectedVersion:number;fields:TodoInput;timeReviewed:boolean;target:{id:string;expectedVersion:number}|null}
+export interface Provider {id:string;name?:string;apiFormat:string;baseUrl:string;auth:{type:string;apiKeyEnv?:string;apiKeyRef?:string};network?:Record<string,unknown>;enabled?:boolean;[key:string]:unknown}
+export interface ModelDefinition {id:string;name?:string;providerId:string;apiModelId:string;[key:string]:unknown}
+export interface ProviderDocument {providers:Provider[];[key:string]:unknown}
+export interface ModelDocument {models:ModelDefinition[];[key:string]:unknown}
+export interface ModelConfiguration {providers:ProviderDocument;models:ModelDocument;defaultModelId:string;revision:string;credentialStatus:Record<string,string>}
+const errors:Record<string,string>={MODEL_NOT_CONFIGURED:'还没有默认模型，先到模型设置中配置。',CREDENTIAL_MISSING:'缺少模型密钥，请在模型设置中保存API Key。',MODEL_AUTH:'模型认证失败，请核对密钥和服务地址。',MODEL_NETWORK:'暂时无法连接模型服务，请检查网络后重试。',MODEL_RATE_LIMIT:'模型服务暂时限流，请稍后重试。',MODEL_TIMEOUT:'整理已超时，原文保留，可重试。',MODEL_INVALID_OUTPUT:'模型结果未通过校验，未新增正式事项，可重试或手工记录。',MODEL_SERVICE:'模型服务返回错误，原文保留，可重试。',CANCELLED:'已取消，未签收的内容不会入库。',INTERRUPTED:'上次整理被中断，可从保留的原文重试。',INVALID_TIMEZONE:'时区无法识别，请选择有效的IANA时区。',RUNTIME_EXIT:'整理进程意外退出，原文已保留。',RUNTIME_PROTOCOL:'整理进程返回了不符合约定的数据，结果未写入。',RUNTIME_START:'未能启动随包整理进程，请检查安装包。'};
+export function runError(run:ModelRun|null):string{return run?.errorCode?(errors[run.errorCode]||'任务未完成，原文和已有结果保留，请刷新后重试。'):'';}
+export function isRunning(run:ModelRun|null):boolean{return !!run&&['running','queued'].includes(run.status);}

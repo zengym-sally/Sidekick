@@ -1,0 +1,27 @@
+{
+  "provenance": "early isolated native S2 app with local synthetic model; read-only checkpoint after UI automation stopped, not UI relaunch evidence",
+  "quickCheck": "ok",
+  "schemaVersion": 2,
+  "todos": 1,
+  "candidateStatus": {
+    "discarded": 1,
+    "pending": 3
+  },
+  "runs": [
+    {
+      "kind": "extract",
+      "status": "succeeded",
+      "count": 1
+    },
+    {
+      "kind": "revise",
+      "status": "succeeded",
+      "count": 1
+    },
+    {
+      "kind": "test",
+      "status": "succeeded",
+      "count": 1
+    }
+  ]
+}

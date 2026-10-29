@@ -188,9 +188,9 @@ fn profile_unknown_commit_result_does_not_change_todos_or_history() {
     assert_eq!(store.history(&todo.id).unwrap().len(), 1);
 }
 
-struct Fixture(PathBuf);
+pub(super) struct Fixture(pub(super) PathBuf);
 impl Fixture {
-    fn new() -> Self {
+    pub(super) fn new() -> Self {
         let path =
             std::env::temp_dir().join(format!("sidekick-s1-{}-{}", std::process::id(), nonce()));
         fs::create_dir_all(&path).unwrap();
@@ -202,7 +202,7 @@ impl Fixture {
     fn root(&self) -> PathBuf {
         self.0.join("workspace")
     }
-    fn store(&self) -> AppStore {
+    pub(super) fn store(&self) -> AppStore {
         AppStore::open(self.app()).unwrap()
     }
 }
@@ -212,7 +212,7 @@ impl Drop for Fixture {
     }
 }
 
-fn input() -> TodoInput {
+pub(super) fn input() -> TodoInput {
     TodoInput {
         title: "验收：准备清单".into(),
         kind: "followup".into(),
@@ -222,11 +222,13 @@ fn input() -> TodoInput {
             at_ms: 1793347200000,
             time_zone: "Asia/Shanghai".into(),
             local_text: "2026-10-30T16:00".into(),
+            precision: "minute".into(),
         }),
         followup: Some(TimePoint {
             at_ms: 1793257200000,
             time_zone: "Asia/Shanghai".into(),
             local_text: "2026-10-29T15:00".into(),
+            precision: "minute".into(),
         }),
         tags: vec!["验收".into(), "验收".into()],
     }
@@ -477,7 +479,7 @@ fn future_schema_and_missing_ready_database_never_fall_back_to_empty_data() {
     assert_eq!(fs::read(&db_path).unwrap(), bytes);
     {
         let db = Connection::open(&db_path).unwrap();
-        db.pragma_update(None, "user_version", 1).unwrap();
+        db.pragma_update(None, "user_version", 2).unwrap();
     }
     let store = fixture.store();
     assert_eq!(store.get(&todo.id).unwrap().id, todo.id);

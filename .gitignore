@@ -12,7 +12,10 @@ build/
 *.sqlite
 *.sqlite-*
 *.db
+*.db-*
 .impeccable/review/
 .impeccable/mocks/
 .impeccable/decisions/
+.impeccable/hook.cache.json
+.impeccable/questions/
 *.local.json

@@ -1,12 +1,14 @@
+import { organizerFixture } from './organizer';
 const parameters=new URLSearchParams(location.search);
 let initialized=!parameters.has('onboarding');
 const rows:unknown[]=[];
 const workspace=()=>({needsSetup:!initialized,root:initialized?'/fixture/sidekick':null,defaultRoot:'/fixture/sidekick',pendingRoot:null});
 const defaults=()=>({version:1,name:'小明同学',address:'BOSS'});
 export async function invoke(command:string,args?:Record<string,unknown>){
+  const organized=organizerFixture(command,args?JSON.parse(JSON.stringify(args)):args,rows);if(organized!==undefined)return JSON.parse(JSON.stringify(organized));
   if(command==='workspace_info')return workspace();
   if(command==='initialize_workspace'){initialized=true;return workspace();}
-  if(command==='list_todos')return rows;
+  if(command==='list_todos')return structuredClone(rows);
   if(command==='create_todo'){
     const input=args?.input as {tags:string[]};
     const todo={id:crypto.randomUUID(),data:{...input,tags:input.tags.filter(Boolean)},version:1,status:'open',source:'manual',createdAtMs:Date.now(),updatedAtMs:Date.now(),completedAtMs:null,deletedAtMs:null};
@@ -25,4 +27,4 @@ export async function invoke(command:string,args?:Record<string,unknown>){
 }
 export async function listen(){return ()=>{};}
 export async function open(){return null;}
-export async function getVersion(){return '0.1.0（界面样本）';}
+export async function getVersion(){return '0.2.0（界面样本）';}

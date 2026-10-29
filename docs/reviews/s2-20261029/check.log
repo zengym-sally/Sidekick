@@ -1,0 +1,201 @@
+npm notice run sidekick@0.2.0 check
+npm notice run npm run typecheck && npm run test:s1-domain && npm run test:s2-domain && npm run check:rust && npm run probe:runtime && npm run probe:card && npm run probe:contracts && npm run probe:native && npm run probe:toolchain && npm run test:s2-runtime && npm run probe:bundle-smoke
+npm notice run sidekick@0.2.0 typecheck
+npm notice run vue-tsc --noEmit
+npm notice run sidekick@0.2.0 test:s1-domain
+npm notice run node --test tests/s1-domain.test.mjs tests/s1-state.test.mjs tests/s1-profile.test.mjs
+✔ manual dates preserve UTC, timezone, expression and unchanged values (9.368916ms)
+✔ DST gaps and invalid dates fail; repeated times require explicit choice (1.992292ms)
+✔ editing only the offset of a repeated time preserves the chosen occurrence (1.055709ms)
+✔ today follow-ups use next follow-up independently of delivery; deleted stays excluded (1.298917ms)
+✔ type, owner, tag, status and text filters combine without mutating records (0.106083ms)
+✔ profile read failure leaves a safe default and cannot overwrite the unread file (0.776ms)
+✔ save failure preserves the draft and the previous saved value (0.231417ms)
+✔ late read success or failure cannot replace a successful save (0.190167ms)
+✔ a late load or save keeps a newer session draft intact (0.093541ms)
+✔ post-replace warning publishes the current value; unknown result requires a fresh read (0.112583ms)
+✔ nickname copy is explicit, accepts long legal names and never binds or saves (0.1025ms)
+✔ a late old response cannot replace a newer authoritative snapshot (0.627541ms)
+✔ read failure retains the previous snapshot and exposes an error (0.215125ms)
+✔ a committed write is not reported as unsaved when the follow-up read fails (0.204625ms)
+✔ a failed mutation invalidates an old read without leaving refresh disabled (0.104709ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 101.793
+npm notice run sidekick@0.2.0 test:s2-domain
+npm notice run node --test --test-timeout=15000 tests/s2-dates.test.mjs tests/s2-contract.test.mjs tests/s2-bash.test.mjs tests/s2-client.test.mjs
+✔ managed Bash preserves output and exit status while redacting the active credential (67.573375ms)
+✔ the run deadline bounds a missing or excessive Bash timeout (372.389167ms)
+✔ a crashed guardian is reaped together with its already-running Bash child (70.091083ms)
+✔ SIGKILL --runtime closes the life channel and reaps the owned tool group (104.560708ms)
+✔ SIGKILL --host closes the life channel and reaps the owned tool group (136.168458ms)
+✔ late source reads cannot replace the current selection (10.198292ms)
+✔ a committed sign result survives a failed post-commit read (0.256209ms)
+✔ candidate refresh preserves a newer draft and requires explicit reload (0.343125ms)
+✔ saving candidate fields preserves the explicit selection and target association (0.137167ms)
+✔ date-only editing and overdue checks preserve the original day and timezone (2.645791ms)
+✔ a model save response does not clear a newer JSON draft, and JSON edits invalidate prior test success (0.641875ms)
+✔ basic model editing preserves imported metadata and other models without mutating the saved snapshot (0.509042ms)
+✔ saving one model editor preserves the other editor draft until an explicit reset (0.360583ms)
+✔ model strings become typed candidates with exact evidence and independent dates (10.131541ms)
+✔ a title-only revision preserves original temporal coordinates, zone and precision (0.751042ms)
+✔ empty results are valid; malformed, oversized or date-fabricating results fail (0.212208ms)
+✔ relative dates use the supplied source anchor and keep delivery and follow-up separate (10.590125ms)
+✔ calendar dates cross years without inventing a clock (0.184209ms)
+✔ DST gaps and repeated instants remain unresolved instead of choosing a guess (0.97825ms)
+✔ alternatives, unsupported relative dates and ambiguous midnight never get combined into a guess (0.47675ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 794.232834
+npm notice run sidekick@0.2.0 check:rust
+npm notice run cargo fmt --manifest-path src-tauri/Cargo.toml --check && cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.55s
+npm notice run sidekick@0.2.0 probe:runtime
+npm notice run npm --prefix tests/probes run test:runtime
+npm notice run test:runtime
+npm notice run node --test --test-timeout=30000 runtime.test.mjs
+✔ source packages come from the same pinned workspace (2.574333ms)
+✔ Bash executes scripts with cwd, environment, streaming and nonzero status (222.22375ms)
+✔ Bash timeout terminates its child process group (506.691167ms)
+✔ Bash cancel terminates its child process group (8.072458ms)
+✔ Skills load explicit complete packages, relative Read/Bash, rescan and collisions (26.595083ms)
+✔ MCP stdio discovers and calls tools, distinguishes errors, cancels and closes (544.110917ms)
+✔ MCP reports missing executable instead of a successful connection (0.670417ms)
+✔ MCP Streamable HTTP initializes, invokes, rejects 401 and establishes a fresh connection (34.698458ms)
+✔ Agent traverses a real HTTP streaming adapter and Bash tool loop using a controlled model fixture (89.865625ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1833.395875
+npm notice run sidekick@0.2.0 probe:card
+npm notice run npm --prefix tests/probes run test:card
+npm notice run test:card
+npm notice run node --test card-state.test.mjs
+✔ complete is explicit and duplicate delivery takes effect once (0.402958ms)
+✔ snooze changes reminder and preserves deadline and pending state (0.063875ms)
+✔ wrong user, wrong card and stale version cannot change the fixture (0.070333ms)
+✔ malformed action and missing event ID leave the fixture untouched (0.070042ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 43.135708
+npm notice run sidekick@0.2.0 probe:contracts
+npm notice run npm --prefix tests/probes run test:contracts
+npm notice run test:contracts
+npm notice run node --test probe-contract.test.mjs listener-lifecycle.test.mjs
+✔ SIGINT stops only the owned child and preserves the interruption status (31.483584ms)
+✔ SIGTERM stops only the owned child and preserves the interruption status (27.976334ms)
+✔ a child that ignores SIGTERM is reaped within the bounded cleanup (2031.964833ms)
+✔ the controlled source yields one complete follow-up candidate (0.347541ms)
+✔ missing fields and dates inconsistent with the source fail validation (0.075083ms)
+✔ the review counterexample and invalid batch structures cannot report success (0.058583ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2135.016291
+npm notice run sidekick@0.2.0 probe:native
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib -- --test-threads=1
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.35s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-9deb5f13eae758ba)
+
+running 41 tests
+test local_store::ingestion::tests::s2_backup_path_failure_leaves_v1_untouched_and_migration_ddl_rolls_back ... ok
+test local_store::ingestion::tests::s2_batch_second_failure_rolls_back_every_todo_candidate_and_operation ... ok
+test local_store::ingestion::tests::s2_cancel_and_result_have_one_transaction_winner ... ok
+test local_store::ingestion::tests::s2_multiple_links_use_the_initial_target_version_without_overwriting_fields ... ok
+test local_store::ingestion::tests::s2_rejected_and_zero_result_sources_do_not_rerun ... ok
+test local_store::ingestion::tests::s2_result_commit_failure_never_leaves_a_partial_candidate_batch ... ok
+test local_store::ingestion::tests::s2_revision_is_only_a_preview_and_old_candidate_versions_cannot_apply ... ok
+test local_store::ingestion::tests::s2_unsigned_candidates_never_create_todos_and_signing_replays_current_state ... ok
+test local_store::ingestion::tests::s2_v1_wal_migration_backs_up_and_preserves_history_and_replay ... ok
+test local_store::model_config::tests::explicit_auth_carriers_and_invalid_journals_never_replace_current_config ... ok
+test local_store::model_config::tests::model_documents_preserve_metadata_and_validate_references_without_secrets ... ok
+test local_store::model_config::tests::model_json_rejects_plain_secrets_and_conflicting_auth ... ok
+test local_store::model_config::tests::model_pair_recovery_never_exposes_mixed_revisions ... ok
+test local_store::model_config::tests::uncertain_model_save_keeps_journal_and_blocks_further_saves_or_tasks ... ok
+test local_store::tests::a_new_app_namespace_never_rebuilds_a_damaged_existing_root ... ok
+test local_store::tests::active_root_cannot_be_replaced_and_missing_root_is_not_recreated ... ok
+test local_store::tests::app_lock_blocks_two_instances_even_before_different_roots_are_chosen ... ok
+test local_store::tests::blank_invalid_and_undated_inputs_have_explicit_results ... ok
+test local_store::tests::committed_data_recovers_after_abrupt_process_stop ... ok
+test local_store::tests::dangling_marker_is_rejected_without_writing_outside_the_root ... ok
+test local_store::tests::each_initialization_interruption_can_resume_the_same_root ... ok
+test local_store::tests::edit_one_time_never_rewrites_the_other_and_completion_is_reversible ... ok
+test local_store::tests::failed_initial_schema_rolls_back_tables_version_and_product_identity ... ok
+test local_store::tests::future_schema_and_missing_ready_database_never_fall_back_to_empty_data ... ok
+test local_store::tests::hard_link_marker_never_changes_an_outside_file ... ok
+test local_store::tests::invalid_or_unknown_profile_is_not_overwritten ... ok
+test local_store::tests::manual_create_and_cold_reopen_preserve_fields_and_history ... ok
+test local_store::tests::old_reopen_and_deleted_mutations_are_rejected ... ok
+test local_store::tests::profile_defaults_save_and_cold_reopen_do_not_modify_todos ... ok
+test local_store::tests::profile_file_links_are_rejected_without_changing_the_target ... ok
+test local_store::tests::profile_unknown_commit_result_does_not_change_todos_or_history ... ok
+test local_store::tests::profile_write_failure_reconciles_the_authoritative_committed_value ... ok
+test local_store::tests::reading_a_legacy_empty_nickname_uses_the_default_without_rewriting_the_file ... ok
+test local_store::tests::retries_take_effect_once_and_return_current_authoritative_state ... ok
+test local_store::tests::root_lock_blocks_a_second_app_namespace ... ok
+test local_store::tests::sql_values_are_bound_and_history_failure_rolls_back_the_todo ... ok
+test local_store::tests::unknown_nonempty_directory_is_never_adopted_or_overwritten ... ok
+test runtime_host::tests::s2_live_text_preview_sign_and_restart ... ignored, explicit real model integration using the owner-selected private file
+test storage_probe::tests::keychain_synthetic_roundtrip ... ok
+test storage_probe::tests::sqlite_migration_wal_backup_restore_and_lock ... ok
+test storage_probe::tests::workspace_switch_preserves_source_on_failure_and_rejects_merge ... ok
+
+test result: ok. 40 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 2.92s
+
+npm notice run sidekick@0.2.0 probe:toolchain
+npm notice run python3 tests/probes/toolchain.py
+{"status": "passed", "cases": [{"case": "configured", "loaded": false, "error": "mis-aligned LINKEDIT string pool"}, {"case": "host", "loaded": true, "error": null}, {"case": "wrapped", "loaded": true, "error": null}], "workaroundNeededOnThisHost": true}
+npm notice run sidekick@0.2.0 test:s2-runtime
+npm notice run npm run probe:bundle && node --test --test-timeout=15000 tests/s2-runtime.test.mjs
+npm notice run sidekick@0.2.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 107ms
+
+  build/s0-runtime/organizer.mjs  2.0mb ⚠️
+
+⚡ Done in 84ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+✔ bundled Pi calls the API model ID and returns validated dated candidates without leaking credentials (862.759625ms)
+✔ Pi persisted truncated tool output stays inside the private run directory with mode 600 (227.730542ms)
+✔ authentication and malformed model results fail with safe categories (232.235458ms)
+✔ transient failures retry the current model request within the configured bound (549.37225ms)
+✔ in-flight model cancel stops without candidates (113.704958ms)
+✔ in-flight model eof stops without candidates (117.43475ms)
+✔ in-flight model deadline stops without candidates (411.972875ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2563.990834
+npm notice run sidekick@0.2.0 probe:bundle-smoke
+npm notice run node tests/probes/bundle-smoke.mjs
+{"status":"passed","node":"v24.20.0","arch":"arm64","agentAvailable":true,"skillCount":1,"read":true,"bash":true,"bashFindsBundledCli":true,"mcpStdio":true,"mcpStreamableHttp":true,"mcpAgentToolRoundtrip":true,"externalModel":false,"businessWrites":0}
