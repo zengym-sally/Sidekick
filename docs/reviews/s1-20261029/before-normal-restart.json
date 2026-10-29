@@ -1,0 +1,60 @@
+{
+  "syntheticOnly": true,
+  "rows": [
+    {
+      "id": "f206172be72112c90cb4dc7f620abe62",
+      "title": "S1验收A：整理清单",
+      "kind": "action",
+      "owner": "我",
+      "status": "open",
+      "due_at_ms": null,
+      "due_timezone": null,
+      "due_local": null,
+      "followup_at_ms": null,
+      "followup_timezone": null,
+      "followup_local": null,
+      "version": 3
+    },
+    {
+      "id": "f3945964b2481356c8922b488a0879f2",
+      "title": "S1验收B：跟进方案交付",
+      "kind": "followup",
+      "owner": "合成负责人",
+      "status": "open",
+      "due_at_ms": 1793350800000,
+      "due_timezone": "Asia/Shanghai",
+      "due_local": "2026-10-30T17:00",
+      "followup_at_ms": 1793260800000,
+      "followup_timezone": "Asia/Shanghai",
+      "followup_local": "2026-10-29T16:00",
+      "version": 2
+    }
+  ],
+  "events": [
+    {
+      "operation_id": "7cf72770-5e19-45d1-95a5-9444d7480d5b",
+      "todo_id": "f206172be72112c90cb4dc7f620abe62",
+      "action": "create"
+    },
+    {
+      "operation_id": "ba493c41-04e4-4171-a0cd-8898e8da0b05",
+      "todo_id": "f3945964b2481356c8922b488a0879f2",
+      "action": "create"
+    },
+    {
+      "operation_id": "75aa42fa-739f-4cfb-9f23-d97e2c2b67b3",
+      "todo_id": "f3945964b2481356c8922b488a0879f2",
+      "action": "update"
+    },
+    {
+      "operation_id": "82293fe9-2fc7-4f67-a2b4-7efd5beaee21",
+      "todo_id": "f206172be72112c90cb4dc7f620abe62",
+      "action": "complete"
+    },
+    {
+      "operation_id": "ebc773f2-6ac2-47fd-8850-745bbfeac08c",
+      "todo_id": "f206172be72112c90cb4dc7f620abe62",
+      "action": "reopen"
+    }
+  ]
+}

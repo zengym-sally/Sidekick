@@ -1,0 +1,27 @@
+{
+  "entry": {
+    "bg": "rgb(245, 232, 209)",
+    "border": "rgba(0, 0, 0, 0)",
+    "fg": "rgb(31, 58, 95)"
+  },
+  "commit": {
+    "bg": "rgb(200, 135, 43)",
+    "border": "rgba(0, 0, 0, 0)",
+    "fg": "rgb(22, 40, 63)",
+    "ripple": "#c38327"
+  },
+  "commitFocus": {
+    "bg": "rgb(200, 135, 43)",
+    "border": "rgba(0, 0, 0, 0)",
+    "fg": "rgb(22, 40, 63)",
+    "focus": true,
+    "outline": "rgb(31, 58, 95)"
+  },
+  "entryFocus": {
+    "bg": "rgb(245, 232, 209)",
+    "border": "rgba(0, 0, 0, 0)",
+    "fg": "rgb(31, 58, 95)",
+    "focus": true,
+    "ripple": "#e8d1ad"
+  }
+}

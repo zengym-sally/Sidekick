@@ -1,0 +1,6 @@
+{
+  "identifier": "workspace-picker",
+  "description": "Native folder selection for the main workspace window only.",
+  "windows": ["main"],
+  "permissions": ["dialog:allow-open"]
+}

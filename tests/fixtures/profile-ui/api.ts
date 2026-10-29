@@ -1,0 +1,28 @@
+const parameters=new URLSearchParams(location.search);
+let initialized=!parameters.has('onboarding');
+const rows:unknown[]=[];
+const workspace=()=>({needsSetup:!initialized,root:initialized?'/fixture/sidekick':null,defaultRoot:'/fixture/sidekick',pendingRoot:null});
+const defaults=()=>({version:1,name:'小明同学',address:'BOSS'});
+export async function invoke(command:string,args?:Record<string,unknown>){
+  if(command==='workspace_info')return workspace();
+  if(command==='initialize_workspace'){initialized=true;return workspace();}
+  if(command==='list_todos')return rows;
+  if(command==='create_todo'){
+    const input=args?.input as {tags:string[]};
+    const todo={id:crypto.randomUUID(),data:{...input,tags:input.tags.filter(Boolean)},version:1,status:'open',source:'manual',createdAtMs:Date.now(),updatedAtMs:Date.now(),completedAtMs:null,deletedAtMs:null};
+    rows.push(todo);return todo;
+  }
+  if(command==='read_profile'){
+    if(parameters.has('readError'))throw {message:'合成场景：个人配置暂不可读。'};
+    const saved=localStorage.getItem('sidekick-profile-ui-fixture');return saved?JSON.parse(saved):defaults();
+  }
+  if(command==='save_profile'){
+    if(parameters.has('saveError'))throw {message:'合成场景：暂时无法保存。'};
+    const input=args?.input as {name:string;address:string};const profile={version:1,name:input.name.trim()||'小明同学',address:input.address.trim()||'BOSS'};
+    localStorage.setItem('sidekick-profile-ui-fixture',JSON.stringify(profile));return {profile,warning:null};
+  }
+  throw {message:'此界面夹具不提供该业务命令。'};
+}
+export async function listen(){return ()=>{};}
+export async function open(){return null;}
+export async function getVersion(){return '0.1.0（界面样本）';}

@@ -1,0 +1,16 @@
+{
+  "productName": "Sidekick S1 Verify R2",
+  "identifier": "com.sidekick.s1.verify.r2",
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "跟班 Sidekick · S1 验收",
+        "width": 1240,
+        "height": 820,
+        "minWidth": 640,
+        "minHeight": 600
+      }
+    ]
+  }
+}

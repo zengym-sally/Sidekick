@@ -1,4 +1,6 @@
+pub mod local_store;
 mod storage_probe;
+mod store_commands;
 
 use serde_json::{json, Value};
 use std::process::Command;
@@ -64,13 +66,15 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_notification::init())
+        .plugin(tauri_plugin_dialog::init())
         .plugin(
             tauri_plugin_autostart::Builder::new()
                 .macos_launcher(tauri_plugin_autostart::MacosLauncher::LaunchAgent)
                 .build(),
         )
-        .invoke_handler(tauri::generate_handler![run_s0_probes])
+        .invoke_handler(tauri::generate_handler![run_s0_probes,store_commands::workspace_info,store_commands::read_profile,store_commands::save_profile,store_commands::initialize_workspace,store_commands::list_todos,store_commands::todo_history,store_commands::create_todo,store_commands::update_todo,store_commands::set_todo_completed,store_commands::delete_todo,store_commands::open_workspace_directory])
         .setup(|app| {
+            app.manage(store_commands::LocalState::new(app.path().app_data_dir()?));
             WebviewWindowBuilder::new(app, "pet", WebviewUrl::App("index.html?pet=1".into()))
                 .title("班班 · S0")
                 .inner_size(128.0, 128.0)
@@ -80,14 +84,15 @@ pub fn run() {
                 .shadow(false)
                 .always_on_top(true)
                 .skip_taskbar(true)
+                .visible(false)
                 .build()?;
             WebviewWindowBuilder::new(app, "quick", WebviewUrl::App("index.html?quick=1".into()))
                 .title("跟班 · 快捷入口探针")
                 .inner_size(560.0, 260.0)
                 .visible(false)
                 .build()?;
-            let show = MenuItem::with_id(app, "show", "打开探针", true, None::<&str>)?;
-            let quit = MenuItem::with_id(app, "quit", "退出探针", true, None::<&str>)?;
+            let show = MenuItem::with_id(app, "show", "打开工作台", true, None::<&str>)?;
+            let quit = MenuItem::with_id(app, "quit", "退出跟班", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&show, &quit])?;
             TrayIconBuilder::new()
                 .icon(tauri::image::Image::new_owned(
@@ -121,6 +126,16 @@ pub fn run() {
                 let _ = window.hide();
             }
         })
-        .run(tauri::generate_context!())
-        .expect("S0 Tauri host failed");
+        .build(tauri::generate_context!())
+        .expect("Tauri host failed")
+        .run(|app, event| {
+            #[cfg(target_os = "macos")]
+            if let tauri::RunEvent::Reopen { .. } = event {
+                if let Some(window) = app.get_webview_window("main") {
+                    let _ = window.unminimize();
+                    let _ = window.show();
+                    let _ = window.set_focus();
+                }
+            }
+        });
 }

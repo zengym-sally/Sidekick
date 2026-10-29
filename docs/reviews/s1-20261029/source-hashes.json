@@ -1,0 +1,18 @@
+{
+  "src-tauri/src/lib.rs": "96fa78703c63330db13c6a3b503d9fad86d78bcb0e0b14e73f87c775b3fd5b05",
+  "src/App.vue": "8915fe0a8da4f3b1f1eea7d6990695913a36702142d997b1e45566b74d1e8dd6",
+  "src/style.css": "92a097c9600dbb162206cb85ced1d4b86d5955252e9a00257746c00081717d4d",
+  "src-tauri/migrations/001_todos.sql": "eae39795f8003e8236b72056bb1b7e2eea82d82c5e2933a493c95fec09657667",
+  "src-tauri/src/local_store.rs": "efed819b096284d29cb4e010be2e4cb74146546012ec10312e935273586acc46",
+  "src-tauri/src/local_store_tests.rs": "00a14c001ed5e34b582886b727f18f943906c538dc83012d6eeeeab618940eeb",
+  "src-tauri/src/store_commands.rs": "54b1faf6a5bd2fccab98ad1c139fc5fe289d247d02eb6d6784df5331156fc4c7",
+  "src/components/Icon.vue": "42402cc6418bda76c94fa26b31f44cdc83ba46d8b21abf8698212f11698bd2d5",
+  "src/components/ProbePanel.vue": "5a3cb34b1cafdd1af47ff563cb7ad00504f12b6ae7a169bc2c420b7f0b236b48",
+  "src/components/TodoRow.vue": "40eff9c3fd17ed18a3be5e746d33ab6af9fd6ff36c9370cb62bf917b90efdc33",
+  "src/components/Workbench.vue": "c662f07cef9661c7aa9ee54c668fea18a3ece5bb1c33bc3b42d2b63f351e7ebd",
+  "src/domain/todos.ts": "bc509a5369346b0b608af5549daa62eea89f1b5a5f140f03ab28b62e1fe7de0c",
+  "src/stores/todos.ts": "08a7d3231ead552c7ee5c16594c6a3b82594bccdd83f8288669eb9b362291eba",
+  "tests/fixtures/s1-verify.config.json": "39d2e54c9ed946fc5c772dced78dfd0f30644d81635506e4956abf6b334a1fd6",
+  "tests/s1-domain.test.mjs": "8ea32938179bd0e01ff97b6ee7b17d2c8b46266a9f0c7405b61d846865cf6dc3",
+  "tests/s1-state.test.mjs": "26c9c54e4467ed86be41b000730f04381f22a31be2834ddc759aabbdcbe3d9b5"
+}

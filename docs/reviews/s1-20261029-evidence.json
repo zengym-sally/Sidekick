@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-29",
+  "baseCommit": "446aa3f21c35eda06a768cc9f4e2baf182b6831b",
+  "scope": "S1 manual local workflow only",
+  "check": {
+    "exitCode": 0,
+    "jsPassed": 28,
+    "rustPassed": 20,
+    "s1ClientPassed": 9,
+    "s1StorePassed": 17,
+    "externalModel": false
+  },
+  "reviews": {
+    "correctness": "APPROVE",
+    "safety": "APPROVE"
+  },
+  "native": {
+    "syntheticOnly": true,
+    "normalRestartUiObserved": true,
+    "abruptStopSignal": "SIGKILL",
+    "stoppedPid": 71981,
+    "restartedPid": 45834,
+    "sameRootDatabaseOpenFilesObserved": true,
+    "snapshotExactlyEqual": true,
+    "todoRows": 3,
+    "historyRows": 8,
+    "quickCheck": "ok",
+    "postKillScreenshot": "unverified: ScreenCaptureKit -3811"
+  },
+  "s0": "partial; all remaining checks retained",
+  "s1Git": "uncommitted; not pushed",
+  "screenshots": {
+    "deleted-history-native.png": {
+      "pixels": [
+        4718592,
+        4292935744
+      ],
+      "sha256": "20f1e338df250289c7c4cfb2b384317fd8379c1e244ef196685010f9bffaece9"
+    },
+    "all-native.png": {
+      "pixels": [
+        4718592,
+        4292935744
+      ],
+      "sha256": "ac218111b8917393f4f203e9ae3e572b205135d20fc43a263cb8487c46c9bce8"
+    },
+    "today-narrow-native.png": {
+      "pixels": [
+        4718592,
+        4292935744
+      ],
+      "sha256": "14958db1001ffc32c9ae200ee3d6a3abddc60dc6a686315a45fd39465440a4eb"
+    },
+    "today-restored-native.png": {
+      "pixels": [
+        4718592,
+        4292935744
+      ],
+      "sha256": "37b6e2912f5200ad4c8fedbb61c03978cba2a4bfa51ba41a04b54f4334e57abb"
+    },
+    "normal-app-welcome.png": {
+      "pixels": [
+        4718592,
+        4292935744
+      ],
+      "sha256": "84989ca14a2c8e9335246fc7932d4f98fe71e8e183491a1124b463ed1f8aeedd"
+    }
+  },
+  "normalApp": {
+    "path": "src-tauri/target/release/bundle/macos/Sidekick.app",
+    "buildExitCode": 0,
+    "architecture": "arm64",
+    "signature": "ad-hoc",
+    "codesignVerifyExitCode": 0,
+    "notarized": false,
+    "diskKiB": 181864,
+    "welcomeUiObserved": true,
+    "workspaceInitialized": false
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-29",
+  "scope": "S1 profile and action semantics; pet remains S4",
+  "defaults": {
+    "nickname": "小明同学",
+    "address": "BOSS"
+  },
+  "tests": {
+    "jsPassed": 34,
+    "rustPassed": 26,
+    "failures": 0,
+    "checkExitCode": 0,
+    "buildExitCode": 0,
+    "codesignVerifyExitCode": 0
+  },
+  "review": "APPROVE",
+  "nativeUi": "not fully verified: ScreenCaptureKit -3811/-3812",
+  "browserUi": "real Vue/CSS with synthetic mock API; not real SQLite/IPC evidence",
+  "normalApp": "src-tauri/target/release/bundle/macos/Sidekick.app",
+  "git": "uncommitted; not pushed",
+  "sourceSha256": {
+    "src/components/Workbench.vue": "21cbf76901d4c9f799fd03befbf8a948d3ff7320203a95a7b7218a476c468747",
+    "src/components/SettingsPanel.vue": "34d545032f819d2adae09e5a07ebd001a84485d9057343f764dd55daca69dbda",
+    "src/stores/profile.ts": "081d50e112c7f0a256b271e0fd3440168e601f6859b1fd5b00ab517fa7b611db",
+    "src/style.css": "34a9f1b42abfe434c2489fa8161e4589a72cc88a3a6317676e74d09ca259b43c",
+    "design/brand/tokens.css": "7c17be629f03c20effb731bffe92cb9ca66d1f0f3513c780441b26513ec0d712",
+    "src-tauri/src/local_store.rs": "0f25130d476733962f9f10ffb475a18823dcb2510d1292e3f6d7566a9b9b2671",
+    "src-tauri/src/local_store_tests.rs": "2fb0fa13399a2477340b4de48e719973d8fb122faf4417be6efe2a0440f7fbf0",
+    "src-tauri/src/store_commands.rs": "d317ab0077b50bcf92d6d501e1eedf8856ef718345911bf214ea1b95384bcff1",
+    "src-tauri/src/lib.rs": "6a0277193321fee50760303a75d5239ea11af21f6133640c800615a239ac170c",
+    "tests/s1-profile.test.mjs": "855db82062ddf75e2fac816a90fc90927f20ddb7f1ee253e0d9ba8a8b828ce6b",
+    "tests/fixtures/profile-ui/api.ts": "1cf43be53d2a1dfe10898c7a39c050933b1c2e5bee022428f3989cdb26de51f1",
+    "tests/fixtures/profile-ui/vite.config.ts": "0245c260211dd82368ed0feaa8c83d221d3f6b313f05e9dfd0db1942173ab0c2",
+    "tests/fixtures/s1-profile-verify.config.json": "c25e95ec77d4f2f2024fd22e4223fbfdb0a6b9ee8e9886dfc2c71beefc572c36",
+    "package.json": "1c1145cea79f4e632065ab910cb09643d663ae499c9f29657d11a49fbba71f97"
+  },
+  "screenshots": {
+    "welcome-browser.png": {
+      "pixels": [
+        65536,
+        4292542531
+      ],
+      "sha256": "d2fc2b44378ec7d7f1848c6042d623877dd9924c8a2ad251fe6a0e6cc499dd31",
+      "provenance": "browser mock fixture"
+    },
+    "profile-narrow-browser.png": {
+      "pixels": [
+        65536,
+        4292542531
+      ],
+      "sha256": "ca9dd702075614688ca45963424286771424c39576b65b8886c1715ca43a71ca",
+      "provenance": "browser mock fixture"
+    },
+    "profile-browser.png": {
+      "pixels": [
+        65536,
+        4292542531
+      ],
+      "sha256": "5e5a9df37aef137587de8d2fe806f6d99c8e843fb96dd0aceb32cf0417953a8e",
+      "provenance": "browser mock fixture"
+    }
+  },
+  "productionFrontend": {
+    "latestProfileStringsPresent": true,
+    "mockFixtureMarkersAbsent": true
+  }
+}

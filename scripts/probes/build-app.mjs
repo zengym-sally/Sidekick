@@ -11,5 +11,7 @@ if (process.platform === 'darwin' && Number(release().split('.')[0]) >= 26) {
   env.RUSTC_WRAPPER = wrapper;
   console.log('Applying the S0 host proc-macro workaround; target application deployment settings remain intact.');
 }
-const result = spawnSync(resolve('node_modules/.bin/tauri'), ['build', '--bundles', 'app'], { env, stdio: 'inherit' });
+const args=['build','--bundles','app'];
+if(process.argv[2])args.push('--config',resolve(process.argv[2]));
+const result = spawnSync(resolve('node_modules/.bin/tauri'), args, { env, stdio: 'inherit' });
 process.exit(result.status ?? 1);

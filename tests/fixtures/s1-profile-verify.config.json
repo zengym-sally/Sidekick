@@ -1,0 +1,16 @@
+{
+  "productName": "Sidekick Profile Verify",
+  "identifier": "com.sidekick.s1.profile.verify",
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "跟班 Sidekick · 个人设置验收",
+        "width": 1240,
+        "height": 820,
+        "minWidth": 640,
+        "minHeight": 600
+      }
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "syntheticOnly": true,
+  "rows": [
+    {
+      "id": "f206172be72112c90cb4dc7f620abe62",
+      "title": "S1验收A：整理清单",
+      "kind": "action",
+      "owner": "我",
+      "status": "open",
+      "due_at_ms": null,
+      "due_timezone": null,
+      "due_local": null,
+      "followup_at_ms": null,
+      "followup_timezone": null,
+      "followup_local": null,
+      "version": 1
+    },
+    {
+      "id": "f3945964b2481356c8922b488a0879f2",
+      "title": "S1验收B：跟进方案交付",
+      "kind": "followup",
+      "owner": "合成负责人",
+      "status": "open",
+      "due_at_ms": 1793350800000,
+      "due_timezone": "Asia/Shanghai",
+      "due_local": "2026-10-30T17:00",
+      "followup_at_ms": 1793257200000,
+      "followup_timezone": "Asia/Shanghai",
+      "followup_local": "2026-10-29T15:00",
+      "version": 1
+    }
+  ],
+  "events": 2
+}
