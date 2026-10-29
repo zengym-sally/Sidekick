@@ -6,6 +6,7 @@
 !.env.example
 node_modules/
 target/
+src-tauri/gen/schemas/
 dist/
 build/
 *.sqlite

@@ -1,0 +1,168 @@
+{
+  "date": "2026-10-29",
+  "stage": "S0",
+  "overallStatus": "partial",
+  "productionBusinessCapabilitiesVerified": false,
+  "environment": {
+    "macOS": "27.0.1",
+    "build": "26A434",
+    "architecture": "arm64",
+    "node": "24.20.0",
+    "npm": "12.2.1",
+    "rust": "1.89.0"
+  },
+  "source": {
+    "piCommit": "ad702637fdf6fbd3f965c5dba0b14bae100b74eb",
+    "piTree": "e89822b0d7a2baf5cc518d3baf568e8dceb73c68",
+    "subtreeMerge": "591bb7d625dcf037ce995f72e3c1af8d8569c56e",
+    "vendorWorktreeClean": true,
+    "appChangesCommitted": false,
+    "pushPerformed": false
+  },
+  "finalGate": {
+    "command": "npm run check && npm run probe:app",
+    "exitCode": 0,
+    "localTests": {
+      "runtime": 9,
+      "card": 4,
+      "contracts": 6,
+      "native": 3,
+      "failed": 0
+    },
+    "upstreamMcpFocusedTests": 46,
+    "fmtClippyTypecheck": "passed"
+  },
+  "artifact": {
+    "relativePath": "src-tauri/target/release/bundle/macos/Sidekick S0.app",
+    "bytes": 184969364,
+    "nodeBytes": 121911744,
+    "cliBytes": 47729835,
+    "runtimeJsBytes": 2428980,
+    "runtimeSha256": "5755b3da081412439974b2cc7f0d68436b8fa85bab1d35035749da92bf100b63",
+    "rootLockSha256": "1df237e1949bbae511de9e49be6af539e2d43e2f8a4476bb8fcfb15257fa8fcc",
+    "piLockSha256": "5acba9a5ff112c8dd4e62c5ac686199c3a0f99721b86302bb3bb0f35d640ecb1",
+    "signing": "ad-hoc",
+    "signatureVerifyExit": 0,
+    "notarized": false
+  },
+  "nativeInstallReport": {
+    "autostart": {
+      "enabled": false,
+      "query": "ok"
+    },
+    "bundledCli": "lark-cli version 1.0.98",
+    "keychain": {
+      "backend": "macOS login Keychain",
+      "fixtureRemoved": true,
+      "readback": true,
+      "status": "passed",
+      "syntheticOnly": true
+    },
+    "notificationPermission": "Ok(Granted)",
+    "runtime": {
+      "agentAvailable": true,
+      "arch": "arm64",
+      "bash": true,
+      "bashFindsBundledCli": true,
+      "businessWrites": 0,
+      "externalModel": false,
+      "mcpAgentToolRoundtrip": true,
+      "mcpStdio": true,
+      "mcpStreamableHttp": true,
+      "node": "v24.20.0",
+      "read": true,
+      "skillCount": 1,
+      "status": "passed"
+    },
+    "scope": "S0 synthetic diagnostics only",
+    "shortcut": {
+      "duplicateRejected": true,
+      "registered": true
+    },
+    "storage": {
+      "concurrentLockRejected": true,
+      "futureSchemaRejected": true,
+      "migrationRollback": true,
+      "migrationVersion": 2,
+      "restoredRows": 1,
+      "sqliteVersion": "3.51.3",
+      "status": "passed",
+      "transactionRollback": true,
+      "walBackupRows": 1
+    },
+    "windows": {
+      "clickThroughApiRoundtrip": true,
+      "count": 3,
+      "displayUnplug": "not yet observed",
+      "fullscreenInteraction": "not yet observed",
+      "monitors": 1,
+      "petAlwaysOnTop": true,
+      "scaleFactors": [
+        2.0
+      ]
+    },
+    "workspaceSwitch": {
+      "atomicPointerSwitch": true,
+      "failedSwitchRetainedOldRoot": true,
+      "implicitMergeRejected": true,
+      "oldDataPreserved": true,
+      "scope": "filesystem and SQLite migration primitive; application task coordination remains G1",
+      "status": "passed"
+    }
+  },
+  "installedRuntimeLiveModel": {
+    "modelId": "deepseek-flash",
+    "status": "passed",
+    "syntheticInput": true,
+    "strictSampleContract": true,
+    "skillRead": true,
+    "referenceRead": true,
+    "exactScriptAndResultVerified": true,
+    "candidates": 1,
+    "businessWrites": 0,
+    "sampleMilliseconds": 3495,
+    "performanceBaseline": false
+  },
+  "skills": {
+    "explicitLocalPackagesLoaded": 28,
+    "defaultGlobalScan": false,
+    "productSeedInstallation": false
+  },
+  "feishu": {
+    "resourceType": "docx",
+    "revision": 11,
+    "contentCharacters": 14621,
+    "sourceBodyInRepository": false,
+    "cardSentToOwner": true,
+    "realCallbacks": 2,
+    "completedSyntheticA": true,
+    "snoozedSyntheticB": true,
+    "snoozePreservedDeadline": true,
+    "cardUpdateAccepted": true,
+    "sharedBusStopped": false,
+    "activeTaskConsumersAfterCleanup": 0
+  },
+  "resourceSample": {
+    "scope": "single idle sample of the host; excludes unattributed WebKit/XPC processes",
+    "hostCount": 1,
+    "hostRssKiB": 117104,
+    "hostCpuPercent": 0.0
+  },
+  "independentReviews": {
+    "correctness": "APPROVE after revision",
+    "safety": "APPROVE after revision"
+  },
+  "remaining": [
+    "Minutes resource sample",
+    "known @message coverage and pagination",
+    "real Feishu WS network interruption recovery",
+    "pixel hit testing and drag bounds",
+    "fullscreen Spaces",
+    "multi-monitor unplug and scale",
+    "actual login launch",
+    "notification denial and visible delivery",
+    "sleep recovery",
+    "independent Mac installation",
+    "production G1 wiring"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "sidekick-s0-probes",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "prepare:pi": "node prepare-pi.mjs",
+    "test:runtime": "node --test --test-timeout=30000 runtime.test.mjs",
+    "test:card": "node --test card-state.test.mjs",
+    "test:contracts": "node --test probe-contract.test.mjs listener-lifecycle.test.mjs",
+    "test:lark-skills": "node lark-skills.mjs",
+    "test:model-live": "node model-live.mjs",
+    "listen:card": "node listen-card.mjs"
+  }
+}

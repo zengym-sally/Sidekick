@@ -1,0 +1,66 @@
+import { createRequire } from 'node:module';
+import { execFileSync } from 'node:child_process';
+import { chmod, copyFile, cp, mkdir, readFile, writeFile, readdir, realpath } from 'node:fs/promises';
+import { dirname, join, resolve, sep } from 'node:path';
+
+if (process.env.SIDEKICK_PI_ROOT) throw new Error('Delivery builds only use the reviewed vendor/pi subtree; unset SIDEKICK_PI_ROOT.');
+const source = resolve('vendor/pi');
+const sourcePackages = join(await realpath(source), 'packages') + sep;
+const metadata = JSON.parse(await readFile('tests/probes/pi-source.json', 'utf8'));
+const actualTree = execFileSync('git', ['rev-parse', 'HEAD:vendor/pi'], { encoding: 'utf8' }).trim();
+if (actualTree !== metadata.tree) throw new Error('Pi tree does not match the reviewed source provenance.');
+if (execFileSync('git', ['status', '--porcelain', '--untracked-files=all', '--', 'vendor/pi'], { encoding: 'utf8' }).trim()) throw new Error('Review changes to the Pi subtree before packaging.');
+const require = createRequire(join(resolve(source), 'package.json'));
+const { build } = require('esbuild');
+const directory = resolve('build/s0-runtime');
+await mkdir(directory, { recursive: true });
+const result = await build({
+  entryPoints: ['runtime/s0-entry.mjs'], outfile: join(directory, 'probe.mjs'),
+  bundle: true, platform: 'node', target: 'node24', format: 'esm',
+  banner: { js: "import { createRequire as s0CreateRequire } from 'node:module'; const require = s0CreateRequire(import.meta.url);" },
+  nodePaths: [join(resolve(source), 'node_modules')],
+  alias: {
+    '@sidekick/pi-bash': join(resolve(source), 'packages/coding-agent/dist/core/tools/bash.js'),
+    '@sidekick/pi-read': join(resolve(source), 'packages/coding-agent/dist/core/tools/read.js'),
+    '@sidekick/pi-skills': join(resolve(source), 'packages/coding-agent/dist/core/skills.js'),
+  },
+  logLevel: 'info',
+  metafile: true,
+});
+await copyFile(process.execPath, join(directory, 'node'));
+await chmod(join(directory, 'node'), 0o755);
+await copyFile(resolve(dirname(process.execPath), '../LICENSE'), join(directory, 'NODE-LICENSE'));
+await copyFile('node_modules/@larksuite/cli/bin/lark-cli', join(directory, 'lark-cli'));
+await chmod(join(directory, 'lark-cli'), 0o755);
+await copyFile('node_modules/@larksuite/cli/LICENSE', join(directory, 'LARK-CLI-LICENSE'));
+await copyFile('design/brand/fonts/OFL.txt', join(directory, 'FONT-OFL.txt'));
+await cp('tests/probes/fixtures/skills', join(directory, 'skills'), { recursive: true });
+await copyFile(join(source, 'LICENSE'), join(directory, 'PI-LICENSE'));
+await cp(join(source, 'packages/mcp/LICENSES'), join(directory, 'licenses/pi-mcp'), { recursive: true });
+const packages = new Map();
+for (const input of Object.keys(result.metafile.inputs)) {
+  let parent = dirname(resolve(input));
+  while (parent !== dirname(parent)) {
+    try {
+      const info = JSON.parse(await readFile(join(parent, 'package.json'), 'utf8'));
+      if (info.name?.startsWith('@earendil-works/') && !(await realpath(parent)).startsWith(sourcePackages)) throw new Error('A Pi dependency resolved outside the reviewed source workspace.');
+      if (info.name && !packages.has(info.name)) {
+        packages.set(info.name, { name: info.name, version: info.version, license: info.license });
+        const licenseDirectory = join(directory, 'licenses', info.name.replaceAll('/', '_'));
+        await mkdir(licenseDirectory, { recursive: true });
+        for (const name of await readdir(parent)) {
+          if (/^(license|licence|copying|notice)(\.|$)/i.test(name)) {
+            await copyFile(join(parent, name), join(licenseDirectory, name));
+          }
+        }
+      }
+      break;
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+    }
+    parent = dirname(parent);
+  }
+}
+await writeFile(join(directory, 'licenses/inventory.json'), JSON.stringify([...packages.values()], null, 2));
+await writeFile(join(directory, 'source.json'), JSON.stringify({ ...metadata, node: process.version, larkCli: '1.0.98', role: 'S0 synthetic diagnostic Runtime; no production business claims' }, null, 2));
+console.log('Bundled diagnostic Runtime prepared; no model credentials included.');

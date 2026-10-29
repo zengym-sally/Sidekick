@@ -1,0 +1,6 @@
+{
+  "identifier": "s0-main",
+  "description": "Local S0 windows and drag only; no frontend shell execution.",
+  "windows": ["main", "pet", "quick"],
+  "permissions": ["core:default", "core:window:allow-start-dragging"]
+}

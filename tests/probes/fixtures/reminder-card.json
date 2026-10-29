@@ -1,0 +1,33 @@
+{
+  "schema": "2.0",
+  "config": { "width_mode": "compact", "update_multi": true },
+  "header": {
+    "title": { "tag": "plain_text", "content": "Sidekick S0 · 提醒回调测试" },
+    "subtitle": { "tag": "plain_text", "content": "仅合成事项，不修改真实任务" },
+    "template": "yellow",
+    "icon": { "tag": "standard_icon", "token": "todo_colorful" }
+  },
+  "body": {
+    "direction": "vertical", "padding": "12px", "vertical_spacing": "12px",
+    "elements": [
+      {
+        "tag": "column_set", "flex_mode": "none", "background_style": "yellow-50",
+        "columns": [{ "tag": "column", "width": "weighted", "weight": 1, "padding": "12px", "elements": [
+          { "tag": "markdown", "content": "**请分别点击两个测试按钮**\n完成：标记合成事项 A。\n稍后提醒：只调整合成事项 B 的提醒时间。" }
+        ] }]
+      },
+      {
+        "tag": "column_set", "flex_mode": "none", "horizontal_spacing": "8px",
+        "columns": [
+          { "tag": "column", "width": "weighted", "weight": 1, "elements": [
+            { "tag": "button", "element_id": "complete_s0", "text": { "tag": "plain_text", "content": "完成测试 A" }, "type": "primary_filled", "width": "fill", "behaviors": [{ "type": "callback", "value": { "probe": "sidekick-s0", "action": "complete", "todoId": "s0-fixture-a", "version": 1 } }] }
+          ] },
+          { "tag": "column", "width": "weighted", "weight": 1, "elements": [
+            { "tag": "button", "element_id": "snooze_s0", "text": { "tag": "plain_text", "content": "稍后提醒测试 B" }, "type": "default", "width": "fill", "behaviors": [{ "type": "callback", "value": { "probe": "sidekick-s0", "action": "snooze", "todoId": "s0-fixture-b", "version": 1 } }] }
+          ] }
+        ]
+      },
+      { "tag": "markdown", "content": "<font color='grey'>按钮结果写入本机临时测试记录；不发送给其他同事。</font>", "text_size": "notation" }
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "name": "sidekick",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@12.2.1",
+  "engines": { "node": ">=24", "npm": ">=12" },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "typecheck": "vue-tsc --noEmit",
+    "check": "npm run typecheck && npm run check:rust && npm run probe:runtime && npm run probe:card && npm run probe:contracts && npm run probe:native && npm run probe:toolchain && npm run probe:bundle && npm run probe:bundle-smoke",
+    "build": "npm run typecheck && vite build",
+    "tauri": "tauri",
+    "probe:runtime": "npm --prefix tests/probes run test:runtime",
+    "probe:prepare-pi": "npm --prefix tests/probes run prepare:pi",
+    "probe:prepare-cli": "node node_modules/@larksuite/cli/scripts/install.js",
+    "probe:card": "npm --prefix tests/probes run test:card",
+    "probe:contracts": "npm --prefix tests/probes run test:contracts",
+    "probe:bundle-smoke": "node tests/probes/bundle-smoke.mjs",
+    "check:rust": "cargo fmt --manifest-path src-tauri/Cargo.toml --check && cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings",
+    "probe:model": "npm --prefix tests/probes run test:model-live",
+    "probe:bundle": "node scripts/probes/bundle-runtime.mjs",
+    "probe:native": "cargo test --manifest-path src-tauri/Cargo.toml --lib -- --test-threads=1",
+    "probe:toolchain": "python3 tests/probes/toolchain.py",
+    "probe:app": "npm run probe:bundle && node scripts/probes/build-app.mjs"
+  },
+  "dependencies": {
+    "@larksuite/cli": "1.0.98",
+    "@tauri-apps/api": "2.11.1",
+    "@vueuse/core": "15.0.0",
+    "motion-v": "2.9.0",
+    "pinia": "4.1.0",
+    "tdesign-vue-next": "1.20.10",
+    "vue": "3.5.44"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.3.3",
+    "@tauri-apps/cli": "2.11.5",
+    "@types/node": "24.19.2",
+    "@vitejs/plugin-vue": "6.0.10",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3",
+    "vite": "8.3.5",
+    "vue-tsc": "3.3.13"
+  }
+}
