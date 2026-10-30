@@ -1,0 +1,53 @@
+{
+  "layer": "fresh controlled Rust host/process tests; not native GUI or Keychain",
+  "recordFiles": 58,
+  "rawSnapshotMethods": {
+    "initialize": 45,
+    "notifications/initialized": 42,
+    "tools/list": 178
+  },
+  "deduplicatedMethods": {
+    "initialize": 44,
+    "notifications/initialized": 41,
+    "tools/list": 177
+  },
+  "toolsCall": 0,
+  "policy": "group by isolatedApp; validate cumulative record prefixes, count longest log once while preserving repeated requests inside each log",
+  "containedSnapshots": [
+    {
+      "snapshot": "gate-1.json",
+      "containedIn": "gate-2.json",
+      "records": 6
+    }
+  ],
+  "separateSigkillCases": {
+    "host": {
+      "runtimeExited": true,
+      "ownedGroupsGone": [
+        68500
+      ],
+      "unrelatedControlAliveAtCapture": true
+    },
+    "runtime": {
+      "runtimeExited": true,
+      "ownedGroupsGone": [
+        69207
+      ],
+      "unrelatedControlAliveAtCapture": true
+    },
+    "guardian": {
+      "runtimeExited": true,
+      "ownedGroupsGone": [
+        69848
+      ],
+      "unrelatedControlAliveAtCapture": true
+    },
+    "service": {
+      "runtimeExited": true,
+      "ownedGroupsGone": [
+        70543
+      ],
+      "unrelatedControlAliveAtCapture": true
+    }
+  }
+}

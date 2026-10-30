@@ -1,0 +1,28 @@
+{
+  "scope": "default-closed adapter code and focused fake/static evidence, before final aggregate",
+  "A": {
+    "reviewer": "p2_keychain_delivery_a",
+    "verdict": "APPROVE",
+    "findings": [],
+    "verifiedInputs": 12,
+    "testsIndependentlyExecuted": false
+  },
+  "B": {
+    "reviewer": "p2_keychain_delivery_b_independent",
+    "verdict": "APPROVE",
+    "findings": [],
+    "verifiedInputs": 12,
+    "testsIndependentlyExecuted": false
+  },
+  "discardedAttempt": {
+    "reviewer": "p2_keychain_delivery_b",
+    "reason": "coordination message exposed the other face verdict; interrupted and replaced by a fresh-context reviewer; not used for gate"
+  },
+  "independence": "retained A and replacement B used fork_turns=none and received no other delivery verdict or author expected answer",
+  "doesNotApprove": [
+    "unexecuted final aggregate",
+    "OS Keychain persistence",
+    "native GUI acceptance",
+    "P2 completion"
+  ]
+}

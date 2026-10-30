@@ -1,0 +1,19 @@
+COMMAND cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_keychain -- --test-threads=1
+START_UTC 2026-10-30T15:18:44.592487+00:00
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+error[E0599]: no function or associated item named `from_mode` found for struct `Permissions` in the current scope
+   --> src/mcp_keychain_tests.rs:406:55
+    |
+406 |     fs::set_permissions(&other_path, fs::Permissions::from_mode(0o600)).unwrap();
+    |                                                       ^^^^^^^^^ function or associated item not found in `Permissions`
+    |
+    = help: items from traits can only be used if the trait is in scope
+help: trait `PermissionsExt` which provides `from_mode` is implemented but not in scope; perhaps you want to import it
+    |
+1   + use std::os::unix::fs::PermissionsExt;
+    |
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `sidekick` (lib test) due to 1 previous error
+
+EXIT_CODE 101

@@ -1,0 +1,13 @@
+COMMAND cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_keychain -- --test-threads=1
+START_UTC 2026-10-30T15:17:51.162584+00:00
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+error[E0432]: unresolved import `super::mcp_keychain`
+ --> src/mcp_keychain_tests.rs:1:12
+  |
+1 | use super::mcp_keychain::*;
+  |            ^^^^^^^^^^^^ could not find `mcp_keychain` in `super`
+
+For more information about this error, try `rustc --explain E0432`.
+error: could not compile `sidekick` (lib test) due to 1 previous error
+
+EXIT_CODE 101

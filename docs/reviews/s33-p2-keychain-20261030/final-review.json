@@ -1,0 +1,32 @@
+{
+  "reviewer": "p2_keychain_delivery_a",
+  "mode": "read-only final evidence verification; no tests executed",
+  "verdict": "APPROVE",
+  "findings": [],
+  "verifiedManifestFiles": 91,
+  "verifiedGeneratedArtifacts": 6,
+  "checks": 13,
+  "serial": true,
+  "defaultRustResult": [
+    116,
+    2,
+    1
+  ],
+  "processSnapshots": 58,
+  "isolatedApps": 53,
+  "rawMethods": [
+    45,
+    42,
+    178
+  ],
+  "independentMethods": [
+    44,
+    41,
+    177
+  ],
+  "toolsCall": 0,
+  "planCoreUnchanged": true,
+  "productTestAndRunnerSourcesUnchanged": true,
+  "scopeDoesNotIncludeOSOrNativeAcceptance": true,
+  "verifiedSnapshotScope": "manifest before this final review record was added; the record itself is appended afterward"
+}

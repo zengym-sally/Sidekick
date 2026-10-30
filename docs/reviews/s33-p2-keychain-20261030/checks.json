@@ -1,0 +1,173 @@
+[
+  {
+    "label": "01-red-message",
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "src-tauri/Cargo.toml",
+      "--lib",
+      "mcp_security_unavailable_message",
+      "--",
+      "--test-threads=1"
+    ],
+    "startedUtc": "2026-10-30T15:16:32.105714+00:00",
+    "finishedUtc": "2026-10-30T15:16:37.219331+00:00",
+    "exitCode": 101,
+    "log": "docs/reviews/s33-p2-keychain-20261030/raw/01-red-message.log"
+  },
+  {
+    "label": "02-red-adapter-absent",
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "src-tauri/Cargo.toml",
+      "--lib",
+      "mcp_keychain",
+      "--",
+      "--test-threads=1"
+    ],
+    "startedUtc": "2026-10-30T15:17:51.162584+00:00",
+    "finishedUtc": "2026-10-30T15:17:52.089876+00:00",
+    "exitCode": 101,
+    "log": "docs/reviews/s33-p2-keychain-20261030/raw/02-red-adapter-absent.log"
+  },
+  {
+    "label": "03-adapter-focused",
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "src-tauri/Cargo.toml",
+      "--lib",
+      "mcp_keychain",
+      "--",
+      "--test-threads=1"
+    ],
+    "startedUtc": "2026-10-30T15:18:44.592487+00:00",
+    "finishedUtc": "2026-10-30T15:18:47.193664+00:00",
+    "exitCode": 101,
+    "log": "docs/reviews/s33-p2-keychain-20261030/raw/03-adapter-focused.log"
+  },
+  {
+    "label": "04-adapter-focused",
+    "command": [
+      "npm",
+      "run",
+      "test:s33-keychain-adapter"
+    ],
+    "startedUtc": "2026-10-30T15:18:59.468923+00:00",
+    "finishedUtc": "2026-10-30T15:19:05.805204+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-keychain-20261030/raw/04-adapter-focused.log"
+  },
+  {
+    "label": "10-security-store",
+    "command": [
+      "npm",
+      "run",
+      "test:s33-security-store"
+    ],
+    "startedUtc": "2026-10-30T15:19:27.281633+00:00",
+    "finishedUtc": "2026-10-30T15:19:31.413069+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-keychain-20261030/raw/10-security-store.log"
+  },
+  {
+    "label": "11-config-store",
+    "command": [
+      "npm",
+      "run",
+      "test:s33-config-store"
+    ],
+    "startedUtc": "2026-10-30T15:19:31.461561+00:00",
+    "finishedUtc": "2026-10-30T15:19:32.598189+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-keychain-20261030/raw/11-config-store.log"
+  },
+  {
+    "label": "12-js-security",
+    "command": [
+      "npm",
+      "run",
+      "test:s33-security-domain"
+    ],
+    "startedUtc": "2026-10-30T15:19:32.642407+00:00",
+    "finishedUtc": "2026-10-30T15:19:32.901066+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-keychain-20261030/raw/12-js-security.log"
+  },
+  {
+    "label": "13-js-ui",
+    "command": [
+      "npm",
+      "run",
+      "test:s33-ui-domain"
+    ],
+    "startedUtc": "2026-10-30T15:19:32.941774+00:00",
+    "finishedUtc": "2026-10-30T15:19:33.184282+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-keychain-20261030/raw/13-js-ui.log"
+  },
+  {
+    "label": "14-typecheck",
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "startedUtc": "2026-10-30T15:19:33.226934+00:00",
+    "finishedUtc": "2026-10-30T15:19:36.133131+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-keychain-20261030/raw/14-typecheck.log"
+  },
+  {
+    "label": "15-rust-static",
+    "command": [
+      "npm",
+      "run",
+      "check:rust"
+    ],
+    "startedUtc": "2026-10-30T15:19:36.174902+00:00",
+    "finishedUtc": "2026-10-30T15:19:40.294670+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-keychain-20261030/raw/15-rust-static.log"
+  },
+  {
+    "label": "16-feature-static",
+    "command": [
+      "npm",
+      "run",
+      "check:s33-verification"
+    ],
+    "startedUtc": "2026-10-30T15:19:40.337179+00:00",
+    "finishedUtc": "2026-10-30T15:19:44.037229+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-keychain-20261030/raw/16-feature-static.log"
+  },
+  {
+    "label": "90-final-p2",
+    "command": [
+      "npm",
+      "run",
+      "check:s33-p2"
+    ],
+    "startedUtc": "2026-10-30T15:27:13.201834+00:00",
+    "finishedUtc": "2026-10-30T15:29:24.550057+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-keychain-20261030/raw/90-final-p2.log"
+  },
+  {
+    "label": "91-final-rust-no-keychain",
+    "command": [
+      "npm",
+      "run",
+      "test:rust-no-keychain"
+    ],
+    "startedUtc": "2026-10-30T15:29:24.593670+00:00",
+    "finishedUtc": "2026-10-30T15:29:56.751306+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-keychain-20261030/raw/91-final-rust-no-keychain.log"
+  }
+]

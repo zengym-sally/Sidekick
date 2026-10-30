@@ -1,0 +1,26 @@
+{
+  "atUtc": "2026-10-30T15:31:28.540689+00:00",
+  "action": [
+    "ps",
+    "-axo",
+    "pid,ppid,stat,etime,command"
+  ],
+  "patterns": [
+    "target/debug/examples/s33-mcp-host",
+    "mcp-probe.mjs",
+    "mcp-guardian.mjs",
+    "node --test",
+    "cargo test",
+    "cargo build",
+    "cargo clippy",
+    "Sidekick MCP Verify.app/Contents/MacOS/sidekick"
+  ],
+  "excludedCurrentCommandAncestors": true,
+  "matchingVerificationProcesses": [],
+  "ordinaryRootOpened": false,
+  "realKeychainCalled": false,
+  "nativeUiRetried": false,
+  "fullNpmCheckExecuted": false,
+  "activeCommitHooks": [],
+  "commitSigningConfigured": false
+}

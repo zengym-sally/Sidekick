@@ -1,0 +1,100 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-QP6a5M/isolated",
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793374097082,
+      "pid": 80891,
+      "ppid": 80808,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793374097085,
+      "pid": 80891,
+      "ppid": 80808,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793374097114,
+      "pid": 80928,
+      "ppid": 80891,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793374097145,
+      "pid": 80966,
+      "ppid": 80928,
+      "role": "grandchild"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793374097165,
+      "pid": 80891,
+      "ppid": 80808,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793374097165,
+      "pid": 80891,
+      "ppid": 80808,
+      "role": "service"
+    },
+    {
+      "event": "tail-written",
+      "at": 1793374097187,
+      "pid": 80891,
+      "ppid": 80808,
+      "role": "service"
+    }
+  ],
+  "audits": [
+    {
+      "at": 1793374102087,
+      "actor": "cleaner",
+      "group": 80808,
+      "proofPid": 80840,
+      "run": "mcp-probe-80702-1793374096938903000",
+      "nonce": "1f113679-18bb-4d73-bb01-1173d33bfb23",
+      "signal": "SIGSTOP",
+      "matched": true
+    },
+    {
+      "at": 1793374102094,
+      "actor": "cleaner",
+      "group": 80808,
+      "proofPid": 80840,
+      "run": "mcp-probe-80702-1793374096938903000",
+      "nonce": "1f113679-18bb-4d73-bb01-1173d33bfb23",
+      "signal": "SIGKILL",
+      "matched": true
+    }
+  ],
+  "groupsGone": [
+    80808
+  ],
+  "proofAt": 1793374102272
+}

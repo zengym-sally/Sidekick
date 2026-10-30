@@ -79,6 +79,18 @@ const OP1: &str = "op-00000000-0000-4000-8000-000000000001";
 const OP2: &str = "op-00000000-0000-4000-8000-000000000002";
 const SECRET: &str = "synthetic-private-marker-only-in-memory";
 #[test]
+fn mcp_security_unavailable_message_does_not_claim_that_io_never_occurred() {
+    let f = Fixture::new();
+    let mut s = f.store();
+    s.initialize(None, "UTC").unwrap();
+    let error = s
+        .save_mcp_secrets(secret_input(&s, None, OP1, SECRET))
+        .unwrap_err();
+    assert_eq!(error.code, "MCP_CREDENTIAL_UNAVAILABLE");
+    assert!(!error.message.contains("未访问钥匙串"));
+    assert!(!error.message.contains("尚未启用"));
+}
+#[test]
 fn mcp_security_fake_credentials_are_bound_redacted_and_resolved_only_inside_host() {
     let f = Fixture::new();
     let mut s = f.store();

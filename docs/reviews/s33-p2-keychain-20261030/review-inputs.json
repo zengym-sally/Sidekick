@@ -1,0 +1,74 @@
+{
+  "baseCommit": "6a77e8c99d3f6fd2629a4cd4374c178b425e9466",
+  "changedInputs": [
+    {
+      "path": "README.md",
+      "bytes": 18548,
+      "sha256": "41eefa637a9d41e3af0628b2749c93d9d3cbf1c13b04ec0382013b2d2cef8772"
+    },
+    {
+      "path": "docs/product/05-第一阶段实施计划.md",
+      "bytes": 186999,
+      "sha256": "2530d5d6d67fa95ea29075b81707a91d5f95d98032beeb3aab2511892fa6aa39"
+    },
+    {
+      "path": "package.json",
+      "bytes": 8278,
+      "sha256": "89d305e4edf9ce60d28d8fbc41c7223ab2dafb5aac7f27a7dcab891089ed664c"
+    },
+    {
+      "path": "src-tauri/src/local_store.rs",
+      "bytes": 45457,
+      "sha256": "fef9bcbc2fbacb6d969cb7e351a045d7aa8acdc3f46dfe63f93465e2eac8ccd7"
+    },
+    {
+      "path": "src-tauri/src/mcp_config.rs",
+      "bytes": 6450,
+      "sha256": "faec16e4dafde03aa601e657baaea27233a62e51e1803ccd09959195e07015ad"
+    },
+    {
+      "path": "src-tauri/src/mcp_security.rs",
+      "bytes": 35032,
+      "sha256": "2d8635a86d9191141c7161f35b2e248b92f9ef23293c3e09ffafbddba2c619ab"
+    },
+    {
+      "path": "src-tauri/src/mcp_security_tests.rs",
+      "bytes": 32750,
+      "sha256": "e229c5fc7f9dc6f14c7c40fe4a624b412e0dc6d7a0a747b0a06aa89e62d0f7f6"
+    },
+    {
+      "path": "src-tauri/src/mcp_keychain.rs",
+      "bytes": 3713,
+      "sha256": "db4e1692140eeafd39fee5cd3fb1577fd9ddb50a35229040925f9ac33d824dd0"
+    },
+    {
+      "path": "src-tauri/src/mcp_keychain_tests.rs",
+      "bytes": 19014,
+      "sha256": "263c091d8ff3c15b0bd3452463fe49dae3549021c337bb477e75e35f0a4ce527"
+    },
+    {
+      "path": "src/stores/mcpDiagnostics.ts",
+      "bytes": 10162,
+      "sha256": "a73998fa99ee27a1f54f7b03983e89ed4f91397043da5fe96672a5cb0c561979"
+    },
+    {
+      "path": "tests/s33-ui-state.test.mjs",
+      "bytes": 11676,
+      "sha256": "f40c368ab4c8640b0c489864501814c2e679139608e626a6f9dbdef206dbc4f9"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/run-check.py",
+      "bytes": 1514,
+      "sha256": "22f04b33df4b23bf374eede5ec79627e6e0f05c2bd23d6374b28fe9f910ebb2b"
+    }
+  ],
+  "ignoredDependencies": [],
+  "newUntrackedInputs": [
+    "src-tauri/src/mcp_keychain.rs",
+    "src-tauri/src/mcp_keychain_tests.rs",
+    "docs/reviews/s33-p2-keychain-20261030/run-check.py"
+  ],
+  "fullCheckExecuted": false,
+  "realKeychainCalled": false,
+  "toolsCall": 0
+}

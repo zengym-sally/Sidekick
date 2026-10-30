@@ -1,0 +1,29 @@
+{
+  "coreSha256": "f09b7d684b9578379a05c55f8debba4bba5fb7f9ffc540d26f60d6f32744ec9c",
+  "independence": "fresh contexts fork_turns=none, read-only, no expected answer",
+  "A": {
+    "reviewer": "p2_keychain_plan_a",
+    "verdict": "APPROVE",
+    "findings": [],
+    "coverage": [
+      "R3 classification",
+      "locked dependency API/upsert",
+      "existing journal/reference compatibility",
+      "all five default call sites",
+      "adapter plus low-level fake acceptance"
+    ]
+  },
+  "B": {
+    "reviewer": "p2_keychain_plan_b",
+    "verdict": "APPROVE",
+    "findings": [],
+    "coverage": [
+      "default closed no switches",
+      "scope namespace and exact account",
+      "platform error redaction",
+      "empty-entry collision vs Missing",
+      "partial/uncertain write recovery",
+      "no OS acceptance claim"
+    ]
+  }
+}

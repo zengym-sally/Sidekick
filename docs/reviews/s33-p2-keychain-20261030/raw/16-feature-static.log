@@ -1,0 +1,8 @@
+COMMAND npm run check:s33-verification
+START_UTC 2026-10-30T15:19:40.337179+00:00
+npm notice run sidekick@0.3.0 check:s33-verification
+npm notice run cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --features s33-mcp-verification,s33-mcp-ui-verification -- -D warnings
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.48s
+
+EXIT_CODE 0

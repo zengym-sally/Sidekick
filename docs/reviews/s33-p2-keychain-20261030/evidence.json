@@ -1,0 +1,540 @@
+{
+  "version": 1,
+  "baseCommit": "6a77e8c99d3f6fd2629a4cd4374c178b425e9466",
+  "planCoreSha256": "f09b7d684b9578379a05c55f8debba4bba5fb7f9ffc540d26f60d6f32744ec9c",
+  "planReview": "plan-review.json",
+  "deliveryReview": "delivery-review.json",
+  "executedChecks": "checks.json",
+  "reviewSnapshot": "review-inputs.json",
+  "currentPlanDiffersFromReviewSnapshotOnlyByAppendOnlyEvidence": true,
+  "productAndRunnerSourcesUnchangedAfterReview": true,
+  "finalP2AggregatePassed": true,
+  "defaultRustLibrary": {
+    "passed": 116,
+    "originalIgnored": 2,
+    "explicitFiltered": 1,
+    "filteredTest": "storage_probe::tests::keychain_synthetic_roundtrip",
+    "completeProbeNativePassed": false
+  },
+  "adapterTests": 11,
+  "topLevelCommands": {
+    "total": 13,
+    "exit0": 10,
+    "redOrSetupFailures": 3
+  },
+  "processSummary": "process-summary.json",
+  "finalProcessRecordFiles": 58,
+  "toolsCall": 0,
+  "realKeychainCalled": false,
+  "adapterCodeImplemented": true,
+  "adapterActivation": "hard-coded disabled; no runtime switch",
+  "ordinaryRootUpgradeProductEntryImplemented": false,
+  "fullNpmCheckExecuted": false,
+  "nativeUiRetried": false,
+  "nativeGuiAccepted": false,
+  "historicalNativeGapsRemainOpen": true,
+  "p2Complete": false,
+  "dependenciesLockfilesMigrationsVendorBrandUnchanged": true,
+  "generatedArtifacts": [
+    {
+      "path": "src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/MacOS/sidekick",
+      "bytes": 16644128,
+      "sha256": "e17f4f65ef900e5dbc8b3eaade3f00307a6f1c40fc733c0a4f4afb77592206ba",
+      "generatedNotCommitted": true
+    },
+    {
+      "path": "src-tauri/target/release/bundle/macos/Sidekick.app/Contents/MacOS/sidekick",
+      "bytes": 16653424,
+      "sha256": "a9484f38b3f03f02cb971d25b52d349cc0501bcc8b2aafe669557e3f6729d575",
+      "generatedNotCommitted": true
+    },
+    {
+      "path": "src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs",
+      "bytes": 5616,
+      "sha256": "db198566a9e0671ab68794ea22a7ad4f9772e6754e9e138f7fb1c64749c9fa68",
+      "generatedNotCommitted": true
+    },
+    {
+      "path": "build/s0-runtime/mcp-probe.mjs",
+      "bytes": 34778,
+      "sha256": "e3a6d47da8852e211d3c5d2d8ba9ba26fd0ed415050de9e78db23aa4cc3a6610",
+      "generatedNotCommitted": true
+    },
+    {
+      "path": "build/s0-runtime/mcp-guardian.mjs",
+      "bytes": 4596,
+      "sha256": "ebabdf1622c78f1d0729cc0aefb3b401087b53853d59b9a7d1410db54cec0f1d",
+      "generatedNotCommitted": true
+    },
+    {
+      "path": "build/s0-runtime/node",
+      "bytes": 121911744,
+      "sha256": "9d050fd455b56426e25d4d603c7c501cbb2630348e836cf221dcce748e90588a",
+      "generatedNotCommitted": true
+    }
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 18548,
+      "sha256": "41eefa637a9d41e3af0628b2749c93d9d3cbf1c13b04ec0382013b2d2cef8772"
+    },
+    {
+      "path": "docs/product/05-第一阶段实施计划.md",
+      "bytes": 187836,
+      "sha256": "31b58577e3760a8ed0cb9b9d4d534133876d438e6224ee96b21f15df1057bd7c"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030.md",
+      "bytes": 7899,
+      "sha256": "6622dcc83ba5a853e9d8b6f0edf734c9f4a10438840593ad6131d330f73b91a6"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/checks.json",
+      "bytes": 4540,
+      "sha256": "de4c6ce0750ed8ed6e0e38c9aebb7133d2ca80e37d67654550672e9878038f72"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/delivery-review.json",
+      "bytes": 939,
+      "sha256": "15c781a81c345dccf577fbd1f116ea83c90f5dddd1ee5c3a0dfb6b25fd5016a9"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/final-review.json",
+      "bytes": 725,
+      "sha256": "10ea06282b5fdbe761d525095ee9606a6e98bf9583eba088f60ef30a376af3d7"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/final-state.json",
+      "bytes": 631,
+      "sha256": "f6342060de711dbff588688a984bc0735b5052b0ea42841ecb6fea9814df01b9"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/gate-audit.json",
+      "bytes": 187,
+      "sha256": "381f8ef363765c996af95ae458b69c53f423c52c86b2eb02ad9d4a66fe134e18"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/plan-review.json",
+      "bytes": 841,
+      "sha256": "001031a8c8e82d03bc6bf936b870d36f224cae8f3c3cf2b984afa7bef13c3fb2"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/process-summary.json",
+      "bytes": 1251,
+      "sha256": "29e4e46b1038dc23293d9166b1a69a86092574695a64dfe89a5637b4a68379b1"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/artifact-collision-1.json",
+      "bytes": 2006,
+      "sha256": "948a87325556d413ecfa13d67c79809cd572614eedc1a0fbb935fd91f20a136b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/bad-then-valid-1.json",
+      "bytes": 2006,
+      "sha256": "a388f4dd3d809c43d847ed76649d413fc1093230c45b3ab6e91fe6e7620813a5"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/blocked-cancel-1.json",
+      "bytes": 235,
+      "sha256": "1f9db1343a6516755d7492bf0a211b255499e6710dddd8a606e0cd75a9b13b52"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/blocked-writer-1.json",
+      "bytes": 758,
+      "sha256": "8ec1436290ebe7f852e97c28e248b4166fa9f765f56b1f506aa4ecd296b8eeff"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/cancel-initialize-1.json",
+      "bytes": 1933,
+      "sha256": "8545a66a92cc807567d35a15987ba161c6f9b4a8c91afa0fb4744be5f80338de"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/cancel-list-1.json",
+      "bytes": 2270,
+      "sha256": "6a81fc3c24790157c572baf41464b9f9fdb70458570b07c17198d8a6a5696790"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/cancel-unconfirmed-1.json",
+      "bytes": 840,
+      "sha256": "5f0d6fc76c7998914d4c00156aa2ae5ba3d11e110bd38b85ce26970cbf8c7e39"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/carrier-symlink-refusal-1.json",
+      "bytes": 194,
+      "sha256": "8277762e9f00e8a8cc4125339dbc7ae91e44fcbadc1cf8abccaacbab1efce5e4"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/catalog-exact-1.json",
+      "bytes": 2006,
+      "sha256": "6e77f435b01e2c4ec9eeabe059532441dcee75505a2362484a52c116517d4135"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/catalog-plus-one-1.json",
+      "bytes": 2006,
+      "sha256": "3bac91b370cdac69ea81602241e0438be1b1cac584eb22f88cdcf216d596129e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/changed-1.json",
+      "bytes": 2006,
+      "sha256": "ba0c1ee31e67764668a355455c6d12e17b3320bcbbad5f91f57e56db5686096c"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/cycle-1.json",
+      "bytes": 2192,
+      "sha256": "e661d8729aec2164572219d55370b669eca849eacf46dd758c8e0e56fc4c041a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/drain-fence-1.json",
+      "bytes": 2142,
+      "sha256": "807b5cf24420c3558b61bd47e8724220797194b4d139d5d5cb196e8f10d1df8f"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/duplicate-response-1.json",
+      "bytes": 2006,
+      "sha256": "a005eade71b2ff522db1fabf4d0081f752680bb03c731b1f749192234eaefc9a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/duplicate-tool-1.json",
+      "bytes": 2193,
+      "sha256": "284279d5fd468180308d286b7093b81f5fcd914555f04f605125b91284acaa92"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/gate-1.json",
+      "bytes": 2006,
+      "sha256": "28c9133dd62d232c324f0b8e222ac0dfc3baa59920ff6c8539234c677d054fd4"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/gate-2.json",
+      "bytes": 3574,
+      "sha256": "d20f68660e6be38897549e629bd04028c105ff2ba5c410893eafd589a527bfa0"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/invalid-utf8-1.json",
+      "bytes": 2006,
+      "sha256": "f6606dae85d6a7493d6f56b24fedfd129f37b853eedc971e71c0ca11a5a1e209"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/kill-guardian-1.json",
+      "bytes": 2128,
+      "sha256": "4ca2319ea5435853187614a73e3273d3f0428d619d19b4fe2f5f8697ea31b198"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/kill-host-1.json",
+      "bytes": 2128,
+      "sha256": "12528679daf4aa3d335aad5b6aad1d0e4a6d1a099feecf199c19cf7cd18c6d48"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/kill-runtime-1.json",
+      "bytes": 2392,
+      "sha256": "bd9e7d102f698edebad4f5a6f17a4a5e015f70374d53b30e225bc490b603234a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/kill-service-1.json",
+      "bytes": 2128,
+      "sha256": "7627f997462a8688223bd96f58ce895280af66b8ade27f743c2aff93ed714e6d"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/large-1.json",
+      "bytes": 2006,
+      "sha256": "49d9751c970535d4c1f0d403be62ebc561422e57e9b1a80ad4c317cbee91ad48"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/large-bootstrap-1.json",
+      "bytes": 8597,
+      "sha256": "9e790c5ffb1f92529da3bf58785a1af24dec22c58ace0ddfbf0c16a6225c13f4"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/limit-1.json",
+      "bytes": 2006,
+      "sha256": "fb5145e306e4b382675bcd4fa21a202eaddb985358203d744cf5eba10d1a3108"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/normal-1.json",
+      "bytes": 2193,
+      "sha256": "3bab81cfc1064f23ba5c0dc9d8f91df746dcea340586d4b00aae80e608996df7"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/notifications-overflow-1.json",
+      "bytes": 2006,
+      "sha256": "f11a3c95873a018dfeada50d8e11f4b013689cc9811f59b739ce971e512efa70"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/oversize-then-valid-1.json",
+      "bytes": 2006,
+      "sha256": "90fe117b207f1b67709ecde412d699ff24cd5d2c9a72344ea78aabda926f492b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/pages-exact-1.json",
+      "bytes": 13526,
+      "sha256": "248c4eccb7dfa1fa32aaa2686ef5d752c1706fc8d452915996381e0fa9713586"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/pages-plus-one-1.json",
+      "bytes": 13526,
+      "sha256": "c59e22ff8999440d12d6d2a5776e1a03a0bd6b2bb2f9ca9a2da3bb2cd19f48fc"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/policy-cancel-before-ack-1.json",
+      "bytes": 1390,
+      "sha256": "e081375997bd6467573bef067057c1fa06fac0541d8200634a8d4aeafa2b55fe"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/policy-duplicate-owner-1.json",
+      "bytes": 1811,
+      "sha256": "91f60d0177b3a581d3cb96701cb69ecec64442708f1b41f9a4e669d473141134"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/policy-missing-ack-1.json",
+      "bytes": 1168,
+      "sha256": "c92ab6a0747e40b3125d0b4a941e73eab4d25aa40dab7f2979cb797c5375eefc"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/policy-wrong-ack-1.json",
+      "bytes": 1167,
+      "sha256": "1c5a46702e96625a5e0cf3d7eb89e28476881a8d6cda144a56d7bffb0840e063"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/preflight-command-1.json",
+      "bytes": 2193,
+      "sha256": "1099db84513bf91a32eb23fc08e5482a757b8b4f03a0e5bf58e11a830c833129"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/preflight-command-2.json",
+      "bytes": 1001,
+      "sha256": "7b2b3c04dc77dc161bbd345d3b53d9d877efaac7f8c9afa4995b4cec2694460e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/preflight-cwd-1.json",
+      "bytes": 2193,
+      "sha256": "7d3778f34396085511d4ac1f947d8c6a872ad49324dbf76d75a6e1d8434ef954"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/preflight-cwd-2.json",
+      "bytes": 1005,
+      "sha256": "8fc200ab7c8683c4b2a2226b71e01fe11bbf461415f016b23a906740f4d9a3f0"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/preflight-environment-1.json",
+      "bytes": 2193,
+      "sha256": "9585068fd67bce1b1fbaa02871dc47fe34bfe3f74a081fec01cdf29b3aba2e0b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/preflight-environment-2.json",
+      "bytes": 993,
+      "sha256": "caabf8a1ac7ea9f1cedfcbba8424d9617e559fa48d1a010255f451c530f5afbb"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/preflight-resources-1.json",
+      "bytes": 2193,
+      "sha256": "7125fffa02038f7826b2377219a11173e1d65f203d3e333802f70ad2b1d48d43"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/preflight-resources-2.json",
+      "bytes": 1007,
+      "sha256": "af0ab57cf86398ddd22d3d9bf983f37c9fae05d3f9edaeede2316f88fb33dbd8"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/ref-1.json",
+      "bytes": 2006,
+      "sha256": "eeb7ed3279fafc1edbef7865554467b64779807abfe3012d7b56c2f4f697a12c"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/reverse-slot-reservations-1.json",
+      "bytes": 223,
+      "sha256": "b6a5ff73827af1f2ddf1189d8a1ebe051c0c2e3e0a902a417600ec8995280e62"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/schema-exact-1.json",
+      "bytes": 2006,
+      "sha256": "730d6deaaa291418bfd5d469761c4b1432a59038c60479896b51c600648cd96f"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/schema-plus-one-1.json",
+      "bytes": 2006,
+      "sha256": "484a9f90a45c9bc904379c827a7032147ae261038580cc3acd6c492472040965"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/secret-1.json",
+      "bytes": 2035,
+      "sha256": "7f76d926a757b9eb9ee7cf56b50e0ac43093436985c96c1b7aa5158a8bf6816b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/slow-pages-1.json",
+      "bytes": 2193,
+      "sha256": "48ad954baca1ea94f577b2aec3861cebe9430cd76deb21a1ee29bc2fcf4cd0b1"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/stale-old-nonce-1.json",
+      "bytes": 2193,
+      "sha256": "242d1a037a7b30cbd0782f3df2169837687b42ce1490fa12ab4849ed805e71bb"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/stale-old-run-1.json",
+      "bytes": 2193,
+      "sha256": "0604d9824973cd41dff1a92fe2486d6dbc887053d2ca568929780900cc9073ba"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/stderr-allowed-1.json",
+      "bytes": 2006,
+      "sha256": "da23a9eaf67f6b1a92c5219415eeee23fd77a1cf8d065f0f681f3ffcee7453df"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/stderr-overflow-1.json",
+      "bytes": 2006,
+      "sha256": "52d652769aaa182b6ff5e5b87308a7ffaf34597965c848cfd825116edf7f9e84"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/tail-bad-1.json",
+      "bytes": 2006,
+      "sha256": "df7533831b2e672e7a5dae7c97621774f986a7f055928aba6f237f79c4aa77fb"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/tail-incomplete-1.json",
+      "bytes": 2006,
+      "sha256": "53174d19622b0dcbc9a2dd995649b274b4e2e31e89cb203fa264b9812125cba1"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/unknown-response-1.json",
+      "bytes": 2006,
+      "sha256": "6041b40f6c5dcf33aae66162ea11f010d8f032edd238b1773423c01888b6c439"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/unregistered-owner-1.json",
+      "bytes": 795,
+      "sha256": "8f6ea6b6799bc754f4762073392999ced20b48f7cfb8dd7fc073126dfeed68c0"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/v3-refusal-1.json",
+      "bytes": 206,
+      "sha256": "7d6665d8cf864ecd8a982c3869b6a6b86966310d85f16e842a399b49f0647415"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/processes-final/wait-init-1.json",
+      "bytes": 1669,
+      "sha256": "061f6442e5be12c853d6b49c62d9048790ddc9dc4ae265ff51cff75b41a09d70"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/raw/01-red-message.log",
+      "bytes": 1259,
+      "sha256": "686781dcce3371a439fc2ec73f7097d428059634af1ef3a99a0697b0ba6dae85"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/raw/02-red-adapter-absent.log",
+      "bytes": 574,
+      "sha256": "ca62ac25dcd20382131442ca4d59869b1858e648a4a3f01761162882a5e51382"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/raw/03-adapter-focused.log",
+      "bytes": 1007,
+      "sha256": "36b0936b71afc3dcd3f1a0f80a84a09b4038ab0e5b3fa3df097fdfb22c1c6435"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/raw/04-adapter-focused.log",
+      "bytes": 1884,
+      "sha256": "9556acda30d6737b20e1ed2bb53237489609f133d009149ef9a09c2769d8fc29"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/raw/10-security-store.log",
+      "bytes": 3023,
+      "sha256": "03835ff8830dce53208892a264a4af85c69637613a7cd078da0c27401b7dc64e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/raw/11-config-store.log",
+      "bytes": 1167,
+      "sha256": "fe90f306970175d03da435fdd4b780d1848c3ade2a6a1d22877a5e6725e5d40b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/raw/12-js-security.log",
+      "bytes": 1036,
+      "sha256": "a9f143b6fa1f9f551a349bd7f243ea304a55c1cf7e2aab16756c169a54100ea4"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/raw/13-js-ui.log",
+      "bytes": 1934,
+      "sha256": "bc67436bb7d0dd656e87e82f03e3de9552f8aa2be9d2a2037aa5beef4d97d55a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/raw/14-typecheck.log",
+      "bytes": 154,
+      "sha256": "ae4fb1f071a49c054de951d347c49aa262ec648d82f4980d13b87299c69dd29e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/raw/15-rust-static.log",
+      "bytes": 434,
+      "sha256": "105bf78fabc201dc01bc45e217d1d1a750a640949edaab5cbfb32639a1a5009a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/raw/16-feature-static.log",
+      "bytes": 456,
+      "sha256": "1464a886699e131fb04ed8a355b9a8b8067a02a6e19b7d89ce2ff2264ddb3bfd"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/raw/90-final-p2.log",
+      "bytes": 37824,
+      "sha256": "035389e09afde39acead9c00d8b83cfdb7109e0cb84ddb171e02cd0c3559fca5"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/raw/91-final-rust-no-keychain.log",
+      "bytes": 13696,
+      "sha256": "7bd4fa0411dd4551c4290de77713e969b008a503be087ace38e0dc8887a8e771"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/review-inputs.json",
+      "bytes": 2345,
+      "sha256": "f480f027b51efa37e2f986379c4594335e10ceffa347a2cc25a804e415241a63"
+    },
+    {
+      "path": "docs/reviews/s33-p2-keychain-20261030/run-check.py",
+      "bytes": 1514,
+      "sha256": "22f04b33df4b23bf374eede5ec79627e6e0f05c2bd23d6374b28fe9f910ebb2b"
+    },
+    {
+      "path": "package.json",
+      "bytes": 8278,
+      "sha256": "89d305e4edf9ce60d28d8fbc41c7223ab2dafb5aac7f27a7dcab891089ed664c"
+    },
+    {
+      "path": "src-tauri/src/local_store.rs",
+      "bytes": 45457,
+      "sha256": "fef9bcbc2fbacb6d969cb7e351a045d7aa8acdc3f46dfe63f93465e2eac8ccd7"
+    },
+    {
+      "path": "src-tauri/src/mcp_config.rs",
+      "bytes": 6450,
+      "sha256": "faec16e4dafde03aa601e657baaea27233a62e51e1803ccd09959195e07015ad"
+    },
+    {
+      "path": "src-tauri/src/mcp_keychain.rs",
+      "bytes": 3713,
+      "sha256": "db4e1692140eeafd39fee5cd3fb1577fd9ddb50a35229040925f9ac33d824dd0"
+    },
+    {
+      "path": "src-tauri/src/mcp_keychain_tests.rs",
+      "bytes": 19014,
+      "sha256": "263c091d8ff3c15b0bd3452463fe49dae3549021c337bb477e75e35f0a4ce527"
+    },
+    {
+      "path": "src-tauri/src/mcp_security.rs",
+      "bytes": 35032,
+      "sha256": "2d8635a86d9191141c7161f35b2e248b92f9ef23293c3e09ffafbddba2c619ab"
+    },
+    {
+      "path": "src-tauri/src/mcp_security_tests.rs",
+      "bytes": 32750,
+      "sha256": "e229c5fc7f9dc6f14c7c40fe4a624b412e0dc6d7a0a747b0a06aa89e62d0f7f6"
+    },
+    {
+      "path": "src/stores/mcpDiagnostics.ts",
+      "bytes": 10162,
+      "sha256": "a73998fa99ee27a1f54f7b03983e89ed4f91397043da5fe96672a5cb0c561979"
+    },
+    {
+      "path": "tests/s33-ui-state.test.mjs",
+      "bytes": 11676,
+      "sha256": "f40c368ab4c8640b0c489864501814c2e679139608e626a6f9dbdef206dbc4f9"
+    }
+  ],
+  "finalEvidenceReview": "final-review.json",
+  "manifestExtendedAfterFinalReviewOnlyBy": "final-review.json"
+}

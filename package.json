@@ -66,8 +66,9 @@
     "test:s33-ui-artifacts": "node --test --test-timeout=15000 tests/s33-ui-artifacts.test.mjs",
     "check:s33-p2-runtime": "npm run test:s33-ui-safety && npm run test:s33-discovery && npm run test:s33-verification-guards && npm run check:s33-verification",
     "check:s33-p2-package": "npm run build:s33-ui-verify && npm run probe:app && npm run test:s33-ui-artifacts",
-    "check:s33-p2": "npm run typecheck && npm run check:rust && npm run test:s33-config-domain && npm run test:s33-security-domain && npm run test:s33-ui-domain && npm run test:s33-config-store && npm run test:s33-security-store && npm run test:s33-schema-store && npm run test:s33-catalog-store && npm run check:s33-p2-runtime && npm run check:s33-p2-package",
-    "test:rust-no-keychain": "cargo test --manifest-path src-tauri/Cargo.toml --lib -- --skip storage_probe::tests::keychain_synthetic_roundtrip --test-threads=1"
+    "check:s33-p2": "npm run typecheck && npm run check:rust && npm run test:s33-config-domain && npm run test:s33-security-domain && npm run test:s33-ui-domain && npm run test:s33-config-store && npm run test:s33-security-store && npm run test:s33-keychain-adapter && npm run test:s33-schema-store && npm run test:s33-catalog-store && npm run check:s33-p2-runtime && npm run check:s33-p2-package",
+    "test:rust-no-keychain": "cargo test --manifest-path src-tauri/Cargo.toml --lib -- --skip storage_probe::tests::keychain_synthetic_roundtrip --test-threads=1",
+    "test:s33-keychain-adapter": "cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_keychain -- --test-threads=1"
   },
   "dependencies": {
     "@larksuite/cli": "1.0.98",

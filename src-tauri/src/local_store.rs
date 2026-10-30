@@ -1220,6 +1220,9 @@ mod mcp_config_tests;
 #[path = "mcp_security_tests.rs"]
 mod mcp_security_tests;
 
+#[path = "mcp_keychain.rs"]
+mod mcp_keychain;
+
 #[cfg(test)]
 #[path = "mcp_schema_tests.rs"]
 mod mcp_schema_tests;

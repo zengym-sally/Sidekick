@@ -115,7 +115,7 @@ pub(super) fn variable(value: &str) -> bool {
             .enumerate()
             .all(|(i, b)| b == b'_' || b.is_ascii_alphabetic() || i > 0 && b.is_ascii_digit())
 }
-fn valid_id(id: &str) -> bool {
+pub(super) fn valid_id(id: &str) -> bool {
     id.starts_with("mcp-")
         && id.len() <= 64
         && id.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-')

@@ -1,6 +1,7 @@
 use super::mcp_config::{
     check_configuration, check_server, config_error, conflict, limit, CONFIG_LIMIT,
 };
+use super::mcp_keychain::production_credentials;
 use super::*;
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
@@ -40,9 +41,6 @@ impl PreparedMcpEnvironment {
     }
 }
 pub(super) enum McpCredentialFailure {
-    // The production backend is deliberately disabled; injected backends still
-    // need to distinguish missing values from unavailable storage.
-    #[cfg_attr(not(test), allow(dead_code))]
     Missing,
     Unavailable,
 }
@@ -62,27 +60,6 @@ pub(super) trait McpCredentialBackend {
 }
 pub(super) trait McpEnvironmentSource {
     fn get(&self, name: &str) -> Option<String>;
-}
-struct UnavailableCredentials;
-impl McpCredentialBackend for UnavailableCredentials {
-    fn available(&self) -> bool {
-        false
-    }
-    fn get(
-        &self,
-        _scope: &str,
-        _reference: &str,
-    ) -> std::result::Result<String, McpCredentialFailure> {
-        Err(McpCredentialFailure::Unavailable)
-    }
-    fn put(
-        &self,
-        _scope: &str,
-        _reference: &str,
-        _value: &str,
-    ) -> std::result::Result<(), McpCredentialFailure> {
-        Err(McpCredentialFailure::Unavailable)
-    }
 }
 struct ProcessEnvironment;
 impl McpEnvironmentSource for ProcessEnvironment {
@@ -145,7 +122,7 @@ fn scope_error() -> StoreError {
 fn unavailable() -> StoreError {
     StoreError::new(
         "MCP_CREDENTIAL_UNAVAILABLE",
-        "真实安全存储尚未启用，未访问钥匙串。请使用已有环境变量引用；真实凭据接入需另行批准。",
+        "安全存储不可用或安全值读回未确认，请重新读取配置后核对；也可使用明确的宿主变量引用。",
     )
 }
 fn missing() -> StoreError {
@@ -164,7 +141,7 @@ pub(super) fn valid_operation(value: &str) -> bool {
             .bytes()
             .all(|b| b.is_ascii_hexdigit() || b == b'-')
 }
-fn valid_value(value: &str) -> bool {
+pub(super) fn valid_value(value: &str) -> bool {
     !value.is_empty() && value.len() <= VALUE_LIMIT && !value.contains('\0')
 }
 fn revision(old: &str) -> String {
@@ -454,7 +431,7 @@ impl AppStore {
         Ok(view)
     }
     pub fn mcp_configuration(&self) -> Result<McpConfigurationView> {
-        self.mcp_configuration_with(&UnavailableCredentials)
+        self.mcp_configuration_with(&production_credentials())
     }
     pub(super) fn mcp_configuration_with(
         &self,
@@ -586,7 +563,7 @@ impl AppStore {
         };
         match (written, actual) {
             (result, Ok(actual)) if actual == target => Ok(McpConfigSave {
-                configuration: self.mcp_view(&actual, &UnavailableCredentials, None)?,
+                configuration: self.mcp_view(&actual, &production_credentials(), None)?,
                 server_id,
                 warning: result
                     .err()
@@ -737,7 +714,7 @@ impl AppStore {
         }
     }
     pub fn save_mcp_secrets(&self, input: McpSecretInput) -> Result<McpConfigSave> {
-        self.save_mcp_secrets_with(input, &UnavailableCredentials)
+        self.save_mcp_secrets_with(input, &production_credentials())
     }
     pub(super) fn save_mcp_secrets_with(
         &self,
@@ -891,7 +868,7 @@ impl AppStore {
         self.prepare_mcp_environment_with(
             id,
             expected_revision,
-            &UnavailableCredentials,
+            &production_credentials(),
             &ProcessEnvironment,
         )
     }
@@ -912,7 +889,7 @@ impl AppStore {
         self.prepare_mcp_environment_mode(
             id,
             revision,
-            &UnavailableCredentials,
+            &production_credentials(),
             &ProcessEnvironment,
             true,
         )

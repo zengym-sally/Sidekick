@@ -1,0 +1,26 @@
+COMMAND cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_security_unavailable_message -- --test-threads=1
+START_UTC 2026-10-30T15:16:32.105714+00:00
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.54s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 1 test
+test local_store::mcp_security_tests::mcp_security_unavailable_message_does_not_claim_that_io_never_occurred ... FAILED
+
+failures:
+
+---- local_store::mcp_security_tests::mcp_security_unavailable_message_does_not_claim_that_io_never_occurred stdout ----
+
+thread 'local_store::mcp_security_tests::mcp_security_unavailable_message_does_not_claim_that_io_never_occurred' panicked at src/mcp_security_tests.rs:88:5:
+assertion failed: !error.message.contains("未访问钥匙串")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    local_store::mcp_security_tests::mcp_security_unavailable_message_does_not_claim_that_io_never_occurred
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 107 filtered out; finished in 0.06s
+
+error: test failed, to rerun pass `--lib`
+
+EXIT_CODE 101
