@@ -317,3 +317,36 @@ test('verification carrier rejects a symlink app even with copied valid marker',
   assert.throws(() => execFileSync(binary, [alias, f.nonce, directory, '--reopen'], { env: { PATH: '/usr/bin:/bin', TMPDIR: '/tmp' }, stdio: ['ignore', 'pipe', 'pipe'] }), error => error.status === 2 && error.stderr.toString().includes('VERIFY_INPUT'));
   await capture({ ...f, evidenceLabel: 'carrier-symlink-refusal' }, { kind: 'verification-only carrier boundary', refused: true });
 });
+
+for (const [kind, code] of [['command', 'MCP_COMMAND_MISSING'], ['cwd', 'MCP_DIRECTORY_MISSING'], ['environment', 'MCP_ENV_MISSING'], ['resources', 'MCP_DEPENDENCY_MISSING']]) test(`real host preparation rejects missing ${kind} without starting a service or losing history`, async () => {
+  const f = await fixture('normal'); f.evidenceLabel = `preflight-${kind}`;
+  try {
+    const control = (await f.h.request({ op: 'start', server: f.server, revision: f.revision })).ok;
+    assert.equal((await finish(f, control.id)).status, 'succeeded');
+    const catalog = (await f.h.request({ op: 'catalog', id: control.id })).ok;
+    assert.deepEqual(catalog.tools.map(t => t.name), ['lookup', 'second']);
+    await cleanupProof(f);
+    const beforeRecords = await records(f), beforeAudit = await readFile(join(f.app, 'signal-audit.jsonl'), 'utf8');
+    if (kind === 'resources') {
+      const empty = join(f.base, 'missing-assets'); await mkdir(empty, { mode: 0o700 });
+      await f.h.stop(); f.h = await host(f.app, f.nonce, true, empty);
+    } else {
+      const changes = kind === 'command' ? { command: join(f.base, 'missing-program') } : kind === 'cwd' ? { cwd: join(f.base, 'missing-directory') } : { env: [{ name: 'REQUIRED', source: 'environment', value: 'SIDEKICK_PREPARATION_MISSING' }] };
+      const saved = await f.h.request({ op: 'save', input: { ...f.input, id: f.server, expectedRevision: f.revision, server: { ...f.input.server, ...changes } } });
+      assert.ok(saved.ok, JSON.stringify(saved)); f.revision = saved.ok.configuration.revision;
+    }
+    const start = await f.h.request({ op: 'start', server: f.server, revision: f.revision }); assert.ok(start.ok, JSON.stringify(start));
+    const failed = start.ok; assert.equal(failed.status, 'failed', JSON.stringify(failed)); assert.equal(failed.errorCode, code);
+    assert.equal(failed.result, null); assert.equal((await f.h.request({ op: 'catalog', id: failed.id })).ok, null);
+    assert.equal((await f.h.request({ op: 'status' })).ok.active, null);
+    assert.deepEqual(await records(f), beforeRecords, 'preparation must not launch another service');
+    assert.equal(await readFile(join(f.app, 'signal-audit.jsonl'), 'utf8'), beforeAudit, 'no group signal without a service');
+    assert.deepEqual((await f.h.request({ op: 'catalog', id: control.id })).ok, catalog, 'prior valid catalog remains');
+    await f.h.stop(); f.h = await host(f.app, f.nonce, true);
+    const reopened = (await f.h.request({ op: 'read', id: failed.id })).ok;
+    assert.equal(reopened.status, 'failed'); assert.equal(reopened.errorCode, code);
+    assert.deepEqual((await f.h.request({ op: 'catalog', id: control.id })).ok, catalog);
+    assert.deepEqual(await records(f), beforeRecords, 'reopen must not auto-start a service');
+    await capture(f, { kind: 'actual Rust host preparation rejection with prior real process positive control', expectedCode: code, controlRunId: control.id, failed: reopened, priorCatalogPreserved: true, records: [], serviceStartsAfterRejection: 0, auditUnchanged: true, coldReopen: true });
+  } finally { await f.h.stop(); }
+});

@@ -1,0 +1,42 @@
+COMMAND npm run test:s32-domain
+START_UTC 2026-10-30T14:46:24.212257+00:00
+npm notice run sidekick@0.3.0 test:s32-domain
+npm notice run node --test --test-timeout=20000 tests/s32-skills.test.mjs tests/s32-client.test.mjs tests/s32-read.test.mjs
+✔ scan errors retain the visible index and disable restoration until successful reread (0.992583ms)
+✔ restoration sends the exact selected hash; unknown outcomes require rescan (0.414208ms)
+✔ a concurrent scan cannot replace an in-flight restore result or clear its busy state (0.176166ms)
+✔ general Read retains Pi home, at-prefix and file URI semantics (2.022959ms)
+✔ an absolute lexical prefix with dot segments cannot change skill context or proof (0.676667ms)
+✔ first install is complete; rescan preserves edits and intentional removal (109.136334ms)
+✔ same-name entries are all excluded; broken reference has a local diagnostic (76.550375ms)
+✔ symlinks and oversized files are diagnosed; no global default is loaded (71.255791ms)
+✔ a frozen task retains complete content while edits require rescan for new tasks (94.241625ms)
+✔ explicit restoration backs up edits and refuses a stale expected hash (113.233167ms)
+✔ failed scan does not replace the last published index (70.727875ms)
+✔ recovery restores the original package after interruption before publication (90.170417ms)
+✔ post-publication edits and malformed journals remain untouched and unknown (92.392ms)
+✔ parent links and a target created before publication cannot redirect or overwrite (81.709375ms)
+✔ parser diagnostics do not return source fragments or synthetic private markers (48.884333ms)
+✔ existing user package is preserved and identified as an installation conflict (36.957208ms)
+✔ fixed official closure includes its exact source support reference in the frozen layout (1543.924417ms)
+✔ ordinary source escape is rejected and changed pinned support cannot be substituted (265.822583ms)
+✔ published target deletion is a user change and is never silently rolled back (70.614667ms)
+✔ real yaml links are checked while both Markdown fence styles remain examples (57.800208ms)
+✔ missing backups and a journal path escape remain unknown without altering other files (118.909666ms)
+✔ longer closing fences and unclosed fences remain examples rather than dependencies (81.885833ms)
+✔ untrusted recovery journals cannot remove unknown or mismatched built-in packages (77.099792ms)
+✔ valid long-path packages have usable catalogs and large restore journals (10291.984792ms)
+✔ metadata links are not body references under the fixed Pi frontmatter rules (119.769291ms)
+✔ catalog publication budgets the complete UTF-8 restore response before replacement (59.142458ms)
+✔ recovery verifies the full fixed file metadata as well as the content digest (80.9745ms)
+✔ an unavailable fixed bundle leaves pending recovery explicitly unknown (148.015541ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13883.570541
+
+EXIT_CODE 0

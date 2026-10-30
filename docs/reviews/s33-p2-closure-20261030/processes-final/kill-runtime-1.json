@@ -1,0 +1,111 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-a9NMjB/isolated",
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793371507681,
+      "pid": 59728,
+      "ppid": 59616,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793371507683,
+      "pid": 59728,
+      "ppid": 59616,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793371507711,
+      "pid": 59768,
+      "ppid": 59728,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793371507742,
+      "pid": 59804,
+      "ppid": 59768,
+      "role": "grandchild"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793371507764,
+      "pid": 59728,
+      "ppid": 59616,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793371507764,
+      "pid": 59728,
+      "ppid": 59616,
+      "role": "service"
+    }
+  ],
+  "audits": [
+    {
+      "actor": "rust",
+      "at": 1793371507814,
+      "group": 59616,
+      "matched": true,
+      "nonce": "d7e0f418-85d3-45cc-8e3d-860d4d4438f1",
+      "proofPid": 59616,
+      "run": "mcp-probe-59511-1793371507537884000",
+      "signal": "-STOP"
+    },
+    {
+      "at": 1793371507822,
+      "actor": "cleaner",
+      "group": 59616,
+      "proofPid": 59616,
+      "run": "mcp-probe-59511-1793371507537884000",
+      "nonce": "d7e0f418-85d3-45cc-8e3d-860d4d4438f1",
+      "signal": "SIGSTOP",
+      "matched": true
+    },
+    {
+      "at": 1793371507827,
+      "actor": "cleaner",
+      "group": 59616,
+      "proofPid": 59616,
+      "run": "mcp-probe-59511-1793371507537884000",
+      "nonce": "d7e0f418-85d3-45cc-8e3d-860d4d4438f1",
+      "signal": "SIGKILL",
+      "matched": true
+    }
+  ],
+  "groupsGone": [
+    59616
+  ],
+  "proofAt": 1793371507877,
+  "runtime": {
+    "pid": 59577,
+    "exited": true
+  },
+  "unrelatedControl": {
+    "pid": 59572,
+    "alive": true
+  }
+}

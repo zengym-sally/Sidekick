@@ -1,0 +1,25 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-FbPTig/isolated",
+  "kind": "delayed owner frame with real stopped guardian/keeper and killed Runtime",
+  "result": {
+    "agentId": null,
+    "createdAtMs": 1793371517838,
+    "errorCode": "MCP_PROCESS",
+    "finishedAtMs": 1793371518085,
+    "id": "mcp-probe-70889-1793371517838407000",
+    "input": {
+      "serverId": "mcp-7db5d09ed7683c18fb1b075f"
+    },
+    "purpose": "mcp_probe",
+    "result": null,
+    "snapshot": {
+      "configurationRevision": "rev-c5fa54f17318f0aeb94abd3509bb76c462c8b7acf0cda5d17d403cd2de6c2ccc",
+      "connectTimeoutMs": 5000,
+      "serverId": "mcp-7db5d09ed7683c18fb1b075f"
+    },
+    "status": "failed"
+  },
+  "helpersGone": true,
+  "active": null
+}

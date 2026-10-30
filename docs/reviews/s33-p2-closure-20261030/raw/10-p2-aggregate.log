@@ -1,0 +1,455 @@
+COMMAND npm run check:s33-p2
+START_UTC 2026-10-30T14:44:21.090314+00:00
+npm notice run sidekick@0.3.0 check:s33-p2
+npm notice run npm run typecheck && npm run check:rust && npm run test:s33-config-domain && npm run test:s33-security-domain && npm run test:s33-ui-domain && npm run test:s33-config-store && npm run test:s33-security-store && npm run test:s33-schema-store && npm run test:s33-catalog-store && npm run check:s33-p2-runtime && npm run check:s33-p2-package
+npm notice run sidekick@0.3.0 typecheck
+npm notice run vue-tsc --noEmit
+npm notice run sidekick@0.3.0 check:rust
+npm notice run cargo fmt --manifest-path src-tauri/Cargo.toml --check && cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.03s
+npm notice run sidekick@0.3.0 test:s33-config-domain
+npm notice run node --test --test-timeout=15000 tests/s33-config.test.mjs
+✔ MCP configuration creates, renames, disables, removes and reopens without execution (3.678334ms)
+✔ MCP drafts survive switching services, reread and saving another service (0.433209ms)
+✔ MCP late reads do not replace newer reads or edits made while reading (0.14225ms)
+✔ MCP unknown save and conflict keep drafts and block writes until reread (0.47225ms)
+✔ MCP response loss is reconciled by reread without duplicating a new server (0.257666ms)
+✔ MCP readback after an uncertain edit preserves a newer draft (0.269333ms)
+✔ MCP removal response loss rereads history state without removing another service (0.185042ms)
+✔ MCP failed read cannot fabricate an empty ready configuration (0.200875ms)
+✔ MCP discarding an uncertain draft does not skip the required reread (0.197541ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 112.044542
+npm notice run sidekick@0.3.0 test:s33-security-domain
+npm notice run node --test --test-timeout=15000 tests/s33-security.test.mjs
+✔ secure input uses a dedicated command and never sends a persisted credential reference (3.670666ms)
+✔ secret response loss requires the exact durable operation receipt rather than matching empty fields (0.432833ms)
+✔ a committed secret response loss clears only the confirmed input after reread (0.428709ms)
+✔ a late secret save does not clear newer secret or ordinary drafts (0.347083ms)
+✔ the default unavailable backend blocks secure submissions without issuing a write (0.210334ms)
+✔ a foreign secret operation on reread cannot acknowledge the pending input (0.244084ms)
+✔ legal __proto__ secret names are submitted and confirmed for existing and new services (0.4895ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 110.677042
+npm notice run sidekick@0.3.0 test:s33-ui-domain
+npm notice run node --test --test-timeout=15000 tests/s33-ui-state.test.mjs
+✔ diagnosis uses saved identity, waits for verified catalog, cancels only the owned run (1.415583ms)
+✔ each read has an independent sequence: same-run running cannot replace terminal (0.158ms)
+✔ late catalog from A cannot replace B or a newer A run (0.171125ms)
+✔ unknown start is global and cannot adopt a prior active run or unlock on empty reads (0.359417ms)
+✔ unknown fast-completed start reconciles only a new matching history record (0.248125ms)
+✔ cleanup failure remains occupied, and old receipt metadata is not a full success (0.149833ms)
+✔ active query sequence prevents a delayed running slot from resurrecting after cleanup (0.077416ms)
+✔ late cancel response never replaces a newly observed task (0.136083ms)
+✔ a failed catalog read cannot reuse an old full-directory success (0.117792ms)
+✔ observer disposes a subscription that resolves after unmount and coalesces duplicate events (0.19075ms)
+✔ unconfirmed configuration prevents every diagnostic backend action (0.074375ms)
+✔ first cold read publishes completion through Vue reactivity without another refresh (0.560292ms)
+✔ a delayed start receipt cannot replace an observed succeeded (0.173958ms)
+✔ a delayed start receipt cannot replace an observed new-task (0.089917ms)
+✔ invalidated history read releases loading after a definite start refusal (0.206625ms)
+✔ an in-flight status success cannot erase a newer start refusal (0.1615ms)
+✔ an in-flight status failure cannot erase a newer start refusal (0.105167ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 108.514375
+npm notice run sidekick@0.3.0 test:s33-config-store
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_config -- --test-threads=1
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.31s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 6 tests
+test local_store::mcp_config_tests::mcp_config_crud_reopen_is_private_and_never_runs_a_command ... ok
+test local_store::mcp_config_tests::mcp_config_invalid_json_version_shape_links_and_limits_preserve_originals ... ok
+test local_store::mcp_config_tests::mcp_config_rejects_unknown_fields_duplicate_ids_and_nonprivate_files ... ok
+test local_store::mcp_config_tests::mcp_config_stale_revision_and_unknown_id_do_not_overwrite ... ok
+test local_store::mcp_config_tests::mcp_config_validates_fields_environment_and_encoded_budget ... ok
+test local_store::mcp_config_tests::mcp_config_write_failures_read_back_or_require_reconciliation ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 101 filtered out; finished in 0.69s
+
+npm notice run sidekick@0.3.0 test:s33-security-store
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_security -- --test-threads=1
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.28s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 19 tests
+test local_store::mcp_security_tests::mcp_security_64_values_and_resolved_environment_256k_exact_boundary ... ok
+test local_store::mcp_security_tests::mcp_security_archive_sync_failure_keeps_journal_and_retries_existing_archive_durably ... ok
+test local_store::mcp_security_tests::mcp_security_cold_reopen_missing_private_directory_preserves_moved_state ... ok
+test local_store::mcp_security_tests::mcp_security_complete_input_512k_exact_and_plus_one_independent_of_target_budget ... ok
+test local_store::mcp_security_tests::mcp_security_credential_replacement_keeps_old_refs_and_missing_values_remain_explicit ... ok
+test local_store::mcp_security_tests::mcp_security_default_backend_never_establishes_credential_access ... ok
+test local_store::mcp_security_tests::mcp_security_directory_permission_change_is_not_repaired_and_plaintext_is_rejected ... ok
+test local_store::mcp_security_tests::mcp_security_explicit_environment_does_not_inherit_or_expand_and_missing_values_fail ... ok
+test local_store::mcp_security_tests::mcp_security_failed_backend_and_wrong_readback_never_publish_or_remove_old_refs ... ok
+test local_store::mcp_security_tests::mcp_security_fake_credentials_are_bound_redacted_and_resolved_only_inside_host ... ok
+test local_store::mcp_security_tests::mcp_security_foreign_service_root_field_and_model_references_are_rejected_before_backend_io ... ok
+test local_store::mcp_security_tests::mcp_security_journal_and_archive_links_collision_permissions_block_without_overwrite ... ok
+test local_store::mcp_security_tests::mcp_security_journal_budget_has_valid_exact_control_and_rejects_plus_one ... ok
+test local_store::mcp_security_tests::mcp_security_journal_reconciles_actual_files_without_replaying_credentials_or_overwriting_config ... ok
+test local_store::mcp_security_tests::mcp_security_journal_third_state_unknown_fields_and_versions_preserve_exact_files ... ok
+test local_store::mcp_security_tests::mcp_security_same_field_retains_reference_rename_requires_new_value_and_revision_is_checked ... ok
+test local_store::mcp_security_tests::mcp_security_swapped_root_mcp_or_backup_paths_block_without_creating_outside_files ... ok
+test local_store::mcp_security_tests::mcp_security_unknown_or_untrusted_journal_preserves_all_state ... ok
+test local_store::mcp_security_tests::mcp_security_utf8_value_item_and_input_budgets_precede_backend_io ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 88 filtered out; finished in 3.84s
+
+npm notice run sidekick@0.3.0 test:s33-schema-store
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_schema -- --test-threads=1
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 20 tests
+test local_store::mcp_schema_tests::mcp_schema_004_accepts_null_role_probe_and_preserves_trial_rowid ... ok
+test local_store::mcp_schema_tests::mcp_schema_backup_collision_and_unknown_source_never_overwrite_or_migrate ... ok
+test local_store::mcp_schema_tests::mcp_schema_backup_copy_or_sync_failure_never_runs_ddl ... ok
+test local_store::mcp_schema_tests::mcp_schema_catalog_encoded_budget_32k_has_independent_exact_and_plus_one_controls ... ok
+test local_store::mcp_schema_tests::mcp_schema_copy_and_ddl_failures_rollback_full_chain_and_keep_verified_backup ... ok
+test local_store::mcp_schema_tests::mcp_schema_corrupt_probe_error_cannot_escape_the_closed_metadata_contract ... ok
+test local_store::mcp_schema_tests::mcp_schema_default_open_rejects_source_hardlink_before_writing_and_v4_damage_is_not_repaired ... ok
+test local_store::mcp_schema_tests::mcp_schema_default_open_stays_v3_and_commit_response_loss_requires_reopen ... ok
+test local_store::mcp_schema_tests::mcp_schema_hash_columns_reject_nul_suffixes_and_blob_bindings_on_insert_and_update ... ok
+test local_store::mcp_schema_tests::mcp_schema_missing_required_table_or_index_is_rejected_before_backup_or_ddl ... ok
+test local_store::mcp_schema_tests::mcp_schema_post_commit_identity_failure_is_unknown_and_blocks_current_handle ... ok
+test local_store::mcp_schema_tests::mcp_schema_private_source_and_side_permissions_are_rejected_without_repair ... ok
+test local_store::mcp_schema_tests::mcp_schema_probe_results_and_role_trial_are_separate_and_do_not_write_business_tables ... ok
+test local_store::mcp_schema_tests::mcp_schema_probe_validation_rejects_invalid_metadata_without_recording_success ... ok
+test local_store::mcp_schema_tests::mcp_schema_real_v1_v2_v3_upgrade_preserves_rows_rowids_indexes_and_wal_backup ... ok
+test local_store::mcp_schema_tests::mcp_schema_source_aliases_replacements_and_side_file_links_preserve_outside_files ... ok
+test local_store::mcp_schema_tests::mcp_schema_sqlite_like_user_table_name_cannot_hide_cascading_dependencies ... ok
+test local_store::mcp_schema_tests::mcp_schema_three_migration_version_guard_refuses_v4_without_downgrading ... ok
+test local_store::mcp_schema_tests::mcp_schema_tool_ledger_enforces_owner_response_hash_and_byte_constraints ... ok
+test local_store::mcp_schema_tests::mcp_schema_unknown_rebuilt_table_extensions_and_inbound_fks_are_rejected_before_backup ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 87 filtered out; finished in 4.40s
+
+npm notice run sidekick@0.3.0 test:s33-catalog-store
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_catalog -- --test-threads=1
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.26s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 6 tests
+test local_store::mcp_catalog_tests::mcp_catalog_database_committed_unknown_blocks_handle_until_cold_receipt_check ... ok
+test local_store::mcp_catalog_tests::mcp_catalog_file_synced_before_database_is_interrupted_not_replayed ... ok
+test local_store::mcp_catalog_tests::mcp_catalog_host_rechecks_schema_budget_and_sensitive_values ... ok
+test local_store::mcp_catalog_tests::mcp_catalog_prepared_directory_replacement_rejects_publish ... ok
+test local_store::mcp_catalog_tests::mcp_catalog_preserves_full_schema_and_cold_reopen_receipt ... ok
+test local_store::mcp_catalog_tests::mcp_catalog_rejects_links_tampering_and_replaced_parent ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 101 filtered out; finished in 0.97s
+
+npm notice run sidekick@0.3.0 check:s33-p2-runtime
+npm notice run npm run test:s33-ui-safety && npm run test:s33-discovery && npm run test:s33-verification-guards && npm run check:s33-verification
+npm notice run sidekick@0.3.0 test:s33-ui-safety
+npm notice run cargo build --manifest-path src-tauri/Cargo.toml --features s33-mcp-verification --example s33-mcp-host && node --test --test-timeout=15000 tests/s33-ui-safety.test.mjs
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.27s
+VERIFY_INPUT
+{"scenario":"synthetic redirected bootstrap","result":{"ok":false,"status":2,"error":"VERIFY_INPUT\n"},"sentinel":"[('running',)]"}
+✔ verification reopen rejects a valid outer marker whose bootstrap redirects to another synthetic root (713.081667ms)
+VERIFY_INPUT
+✔ verification rejects pending before target data access (107.875333ms)
+VERIFY_INPUT
+✔ verification rejects journal before target data access (117.513167ms)
+VERIFY_INPUT
+✔ verification rejects models before target data access (110.476083ms)
+VERIFY_INPUT
+✔ verification rejects workspace-link before target data access (113.15175ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1203.767333
+npm notice run sidekick@0.3.0 test:s33-discovery
+npm notice run npm run probe:bundle && cargo build --manifest-path src-tauri/Cargo.toml --features s33-mcp-verification --example s33-mcp-host && node --test --test-concurrency=1 --test-timeout=25000 tests/s33-catalog.test.mjs tests/s33-discovery.test.mjs
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 114ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 91ms
+
+  build/s0-runtime/skills-manager.mjs  346.8kb
+
+⚡ Done in 11ms
+
+  build/s0-runtime/mcp-probe.mjs  34.0kb
+
+⚡ Done in 4ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.15s
+✔ catalog keeps schema, rejects unsupported references and duplicate names (0.995166ms)
+✔ known referenced values in any key or string reject the entire catalog (0.107167ms)
+✔ budgets accept large legal catalogs and reject exact limit plus one (2.543167ms)
+{"scenario":"normal","modes":"normal","processes":3,"methods":["initialize","notifications/initialized","tools/list","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real Rust host discovers pages, cleans owned group and reopens full catalog (1760.616ms)
+{"scenario":"large","status":"succeeded","code":null,"modes":"large","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process large publishes only after valid discovery and cleanup (749.721875ms)
+{"scenario":"limit","status":"failed","code":"MCP_CATALOG_INVALID","modes":"limit","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process limit publishes only after valid discovery and cleanup (634.381125ms)
+{"scenario":"ref","status":"failed","code":"MCP_CATALOG_INVALID","modes":"ref","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process ref publishes only after valid discovery and cleanup (636.922209ms)
+{"scenario":"cycle","status":"failed","code":"MCP_CATALOG_INVALID","modes":"cycle","processes":3,"methods":["initialize","notifications/initialized","tools/list","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process cycle publishes only after valid discovery and cleanup (620.666875ms)
+{"scenario":"bad-then-valid","status":"failed","code":"MCP_PROTOCOL","modes":"bad-then-valid","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process bad-then-valid publishes only after valid discovery and cleanup (637.843375ms)
+{"scenario":"oversize-then-valid","status":"failed","code":"MCP_PROTOCOL","modes":"oversize-then-valid","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process oversize-then-valid publishes only after valid discovery and cleanup (636.094042ms)
+{"scenario":"unknown-response","status":"failed","code":"MCP_PROTOCOL","modes":"unknown-response","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process unknown-response publishes only after valid discovery and cleanup (640.27275ms)
+{"scenario":"duplicate-response","status":"failed","code":"MCP_PROTOCOL","modes":"duplicate-response","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process duplicate-response publishes only after valid discovery and cleanup (648.650917ms)
+{"scenario":"tail-bad","status":"failed","code":"MCP_PROTOCOL","modes":"tail-bad","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process tail-bad publishes only after valid discovery and cleanup (640.798416ms)
+{"scenario":"tail-incomplete","status":"failed","code":"MCP_PROTOCOL","modes":"tail-incomplete","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process tail-incomplete publishes only after valid discovery and cleanup (649.569958ms)
+{"scenario":"changed","status":"failed","code":"MCP_PROTOCOL","modes":"changed","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process changed publishes only after valid discovery and cleanup (644.13475ms)
+{"scenario":"wait-init","status":"failed","code":"MCP_TIMEOUT","modes":"wait-init","processes":3,"methods":["initialize"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process wait-init publishes only after valid discovery and cleanup (1488.570542ms)
+{"scenario":"catalog-exact","status":"succeeded","code":null,"modes":"catalog-exact","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process catalog-exact publishes only after valid discovery and cleanup (761.615ms)
+{"scenario":"catalog-plus-one","status":"failed","code":"MCP_CATALOG_INVALID","modes":"catalog-plus-one","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process catalog-plus-one publishes only after valid discovery and cleanup (650.2525ms)
+{"scenario":"schema-exact","status":"succeeded","code":null,"modes":"schema-exact","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process schema-exact publishes only after valid discovery and cleanup (664.445041ms)
+{"scenario":"schema-plus-one","status":"failed","code":"MCP_CATALOG_INVALID","modes":"schema-plus-one","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process schema-plus-one publishes only after valid discovery and cleanup (644.36325ms)
+{"scenario":"pages-exact","status":"succeeded","code":null,"modes":"pages-exact","processes":3,"methods":["initialize","notifications/initialized","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process pages-exact publishes only after valid discovery and cleanup (682.162ms)
+{"scenario":"pages-plus-one","status":"failed","code":"MCP_CATALOG_INVALID","modes":"pages-plus-one","processes":3,"methods":["initialize","notifications/initialized","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process pages-plus-one publishes only after valid discovery and cleanup (667.743208ms)
+{"scenario":"duplicate-tool","status":"failed","code":"MCP_CATALOG_INVALID","modes":"duplicate-tool","processes":3,"methods":["initialize","notifications/initialized","tools/list","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process duplicate-tool publishes only after valid discovery and cleanup (636.616333ms)
+{"scenario":"invalid-utf8","status":"failed","code":"MCP_PROTOCOL","modes":"invalid-utf8","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process invalid-utf8 publishes only after valid discovery and cleanup (644.429208ms)
+{"scenario":"stderr-overflow","status":"failed","code":"MCP_PROTOCOL","modes":"stderr-overflow","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process stderr-overflow publishes only after valid discovery and cleanup (657.825375ms)
+{"scenario":"notifications-overflow","status":"failed","code":"MCP_PROTOCOL","modes":"notifications-overflow","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process notifications-overflow publishes only after valid discovery and cleanup (633.227666ms)
+{"scenario":"slow-pages","status":"failed","code":"MCP_TIMEOUT","modes":"slow-pages","processes":3,"methods":["initialize","notifications/initialized","tools/list","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process slow-pages publishes only after valid discovery and cleanup (1452.693334ms)
+✔ shared slot, cancellation, active deletion and frozen edits use actual host (1134.56825ms)
+✔ cancel during initialize cleans descendants and frees slot (656.250875ms)
+{"scenario":"kill-host","modes":"wait-list","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ SIGKILL host still cleans owned group with unrelated control alive (637.970708ms)
+{"scenario":"kill-runtime","modes":"wait-list","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["-STOP","SIGSTOP","SIGKILL"]}
+✔ SIGKILL runtime still cleans owned group with unrelated control alive (589.127334ms)
+{"scenario":"kill-guardian","modes":"wait-list","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ SIGKILL guardian still cleans owned group with unrelated control alive (621.60575ms)
+{"scenario":"kill-service","modes":"wait-list","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ SIGKILL service still cleans owned group with unrelated control alive (628.727542ms)
+✔ explicit environment only; referenced secret output is never published (650.932583ms)
+{"scenario":"host-policy-missing-ack","kind":"verification-instrumented host with real guardian","status":"failed","serviceStarts":0}
+✔ verification-only host policy missing-ack cannot publish; bootstrap requires matching ACK (1328.263625ms)
+{"scenario":"host-policy-wrong-ack","kind":"verification-instrumented host with real guardian","status":"failed","serviceStarts":0}
+✔ verification-only host policy wrong-ack cannot publish; bootstrap requires matching ACK (389.800125ms)
+{"scenario":"host-policy-cancel-before-ack","kind":"verification-instrumented host with real guardian","status":"cancelled","serviceStarts":0}
+✔ verification-only host policy cancel-before-ack cannot publish; bootstrap requires matching ACK (396.898125ms)
+{"scenario":"host-policy-duplicate-owner","kind":"verification-instrumented host with real guardian","status":"failed","serviceStarts":1}
+✔ verification-only host policy duplicate-owner cannot publish; bootstrap requires matching ACK (387.342667ms)
+✔ verification-only blocked stdin cannot block host cancellation or deadline supervisor (1177.931542ms)
+✔ explicit cancellation while initialize has no response (613.563291ms)
+✔ isolated ordinary v3 refuses production start without auto migration (83.18525ms)
+✔ business and trial slot fixtures reject probe before preparation without model access (108.059291ms)
+✔ review regression one stale owner and result (old-run) cannot change current task (672.207209ms)
+✔ review regression one stale owner and result (old-nonce) cannot change current task (638.349ms)
+✔ review regression known publication collision finishes failed without overwriting (650.752917ms)
+✔ review regression blocked stdin explicitly cancels and releases only after Runtime exit (361.046292ms)
+✔ review regression cancellation cannot hide unconfirmed cleanup (994.17525ms)
+✔ review regression missing owner registration cannot release slot with live stopped helpers (406.304083ms)
+✔ review regression raw service tail written behind stopped guardian is still validated (5535.672125ms)
+✔ large escaped private bootstrap passes without copying P1 startup limit (661.052917ms)
+✔ nonempty bounded raw stderr is discarded while private control stream remains separate (636.628292ms)
+✔ verification carrier rejects a symlink app even with copied valid marker (126.385041ms)
+✔ real host preparation rejects missing command without starting a service or losing history (679.030959ms)
+✔ real host preparation rejects missing cwd without starting a service or losing history (675.739333ms)
+✔ real host preparation rejects missing environment without starting a service or losing history (664.786125ms)
+✔ real host preparation rejects missing resources without starting a service or losing history (683.627167ms)
+ℹ tests 56
+ℹ suites 0
+ℹ pass 56
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 41362.268125
+npm notice run sidekick@0.3.0 test:s33-verification-guards
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib --features s33-mcp-verification,s33-mcp-ui-verification verification -- --test-threads=1
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.08s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-ee09342fd1709b5a)
+
+running 2 tests
+test local_store::model_config::verification_tests::ui_verification_refuses_credential_access_before_any_root_or_backend ... ok
+test verification_root::tests::verification_guard_rechecks_model_journal_before_every_action ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 107 filtered out; finished in 0.12s
+
+npm notice run sidekick@0.3.0 check:s33-verification
+npm notice run cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --features s33-mcp-verification,s33-mcp-ui-verification -- -D warnings
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.40s
+npm notice run sidekick@0.3.0 check:s33-p2-package
+npm notice run npm run build:s33-ui-verify && npm run probe:app && npm run test:s33-ui-artifacts
+npm notice run sidekick@0.3.0 build:s33-ui-verify
+npm notice run npm run probe:bundle && node scripts/probes/build-app.mjs tests/fixtures/s33-ui-verify.config.json
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 107ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 86ms
+
+  build/s0-runtime/skills-manager.mjs  346.8kb
+
+⚡ Done in 11ms
+
+  build/s0-runtime/mcp-probe.mjs  34.0kb
+
+⚡ Done in 3ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+Applying the S0 host proc-macro workaround; target application deployment settings remain intact.
+        Info Looking up installed tauri packages to check mismatched versions...
+     Running beforeBuildCommand `npm run build`
+npm notice run sidekick@0.3.0 build
+npm notice run npm run typecheck && vite build
+npm notice run sidekick@0.3.0 typecheck
+npm notice run vue-tsc --noEmit
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 4300 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                          0.36 kB │ gzip:   0.28 kB
+dist/assets/SpaceGrotesk-Dcw4Q7AU.ttf  136.67 kB
+dist/assets/index-CPbmPbnq.css         156.71 kB │ gzip:  21.10 kB
+dist/assets/index-LNTC61Iq.js          642.64 kB │ gzip: 207.47 kB
+
+✓ built in 513ms
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `release` profile [optimized] target(s) in 15.92s
+       Built application at: /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/sidekick
+    Bundling Sidekick MCP Verify.app (/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app)
+     Signing with identity "-"
+Signing with identity "-"
+Signing /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/MacOS/sidekick
+/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/MacOS/sidekick: replacing existing signature
+Signing with identity "-"
+Signing /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app
+/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app: replacing existing signature
+        Warn skipping app notarization, no APPLE_ID & APPLE_PASSWORD & APPLE_TEAM_ID or APPLE_API_KEY & APPLE_API_ISSUER & APPLE_API_KEY_PATH environment variables found
+    Finished 1 bundle at:
+        /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app
+
+npm notice run sidekick@0.3.0 probe:app
+npm notice run npm run probe:bundle && node scripts/probes/build-app.mjs
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 106ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 87ms
+
+  build/s0-runtime/skills-manager.mjs  346.8kb
+
+⚡ Done in 10ms
+
+  build/s0-runtime/mcp-probe.mjs  34.0kb
+
+⚡ Done in 4ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+Applying the S0 host proc-macro workaround; target application deployment settings remain intact.
+        Info Looking up installed tauri packages to check mismatched versions...
+     Running beforeBuildCommand `npm run build`
+npm notice run sidekick@0.3.0 build
+npm notice run npm run typecheck && vite build
+npm notice run sidekick@0.3.0 typecheck
+npm notice run vue-tsc --noEmit
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 4300 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                          0.36 kB │ gzip:   0.28 kB
+dist/assets/SpaceGrotesk-Dcw4Q7AU.ttf  136.67 kB
+dist/assets/index-CPbmPbnq.css         156.71 kB │ gzip:  21.10 kB
+dist/assets/index-LNTC61Iq.js          642.64 kB │ gzip: 207.47 kB
+
+✓ built in 491ms
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `release` profile [optimized] target(s) in 15.24s
+       Built application at: /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/sidekick
+    Bundling Sidekick.app (/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick.app)
+     Signing with identity "-"
+Signing with identity "-"
+Signing /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick.app/Contents/MacOS/sidekick
+/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick.app/Contents/MacOS/sidekick: replacing existing signature
+Signing with identity "-"
+Signing /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick.app
+/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick.app: replacing existing signature
+        Warn skipping app notarization, no APPLE_ID & APPLE_PASSWORD & APPLE_TEAM_ID or APPLE_API_KEY & APPLE_API_ISSUER & APPLE_API_KEY_PATH environment variables found
+    Finished 1 bundle at:
+        /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick.app
+
+npm notice run sidekick@0.3.0 test:s33-ui-artifacts
+npm notice run node --test --test-timeout=15000 tests/s33-ui-artifacts.test.mjs
+{"layer":"actual macOS bundles; no GUI or MCP launch","ordinaryResourceEntries":556,"controlledServiceExcluded":true,"signatures":"both deep strict verified"}
+{"layer":"ordinary executable negative entry; no ordinary-root startup","exitCode":2,"stderr":"MCP UI verification is not enabled in this package"}
+✔ special-then-ordinary bundles keep the controlled service out of ordinary resources (274.309958ms)
+✔ ordinary executable refuses the verification flag before opening any work root (1067.943125ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1386.746916
+
+EXIT_CODE 0

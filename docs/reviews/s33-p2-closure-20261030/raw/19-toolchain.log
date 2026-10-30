@@ -1,0 +1,7 @@
+COMMAND npm run probe:toolchain
+START_UTC 2026-10-30T14:47:10.422252+00:00
+npm notice run sidekick@0.3.0 probe:toolchain
+npm notice run python3 tests/probes/toolchain.py
+{"status": "passed", "cases": [{"case": "configured", "loaded": false, "error": "mis-aligned LINKEDIT string pool"}, {"case": "host", "loaded": true, "error": null}, {"case": "wrapped", "loaded": true, "error": null}], "workaroundNeededOnThisHost": true}
+
+EXIT_CODE 0

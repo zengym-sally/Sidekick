@@ -1,0 +1,35 @@
+COMMAND npm run test:layout-runtime
+START_UTC 2026-10-30T14:47:17.337326+00:00
+npm notice run sidekick@0.3.0 test:layout-runtime
+npm notice run npm run probe:bundle && node --test --test-timeout=20000 tests/layout-runtime.test.mjs
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 100ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 89ms
+
+  build/s0-runtime/skills-manager.mjs  346.8kb
+
+⚡ Done in 11ms
+
+  build/s0-runtime/mcp-probe.mjs  34.0kb
+
+⚡ Done in 3ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+✔ bundled Runtime forwards model sampling, output cap and three reasoning states for OpenAI and DeepSeek (1450.431542ms)
+✔ Pi context safety headroom still reduces the configured output ceiling (118.060708ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1619.308583
+
+EXIT_CODE 0

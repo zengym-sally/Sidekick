@@ -1,0 +1,12 @@
+{
+  "listedLibraryTests": 107,
+  "onlySystemKeychainTest": [
+    "storage_probe::tests::keychain_synthetic_roundtrip"
+  ],
+  "realModelTestsRemainIgnoredInSource": [
+    "s2_live_text_preview_sign_and_restart",
+    "s31_live_isolated_organizer_trial_and_configuration_reopen"
+  ],
+  "nonemptySyntheticKeyCounterexample": "model_config_tests::catalog_revision_guard_precedes_secret_writes_and_targeted_test_keeps_default: stale expected_revision rejected before credential_write loop",
+  "inventoryOnlyNoTestExecuted": true
+}

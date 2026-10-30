@@ -1,0 +1,51 @@
+{
+  "baseCommit": "dfb9ac9893c9f9630dffc9ceb538724d2674eb1e",
+  "worktreeInitiallyClean": true,
+  "planCoreSha256": "8ba2606a1f95da5f643282aa0f602f5baebb030f40807f6c8ab8103f37c44c7b",
+  "fullCheckExecutedInP2": false,
+  "fullGateMissingFocusedScripts": [
+    "test:s33-ui-safety",
+    "test:s33-discovery",
+    "test:s33-lifecycle",
+    "test:s33-verification-guards",
+    "check:s33-verification",
+    "test:s33-ui-artifacts",
+    "build:s33-ui-verify",
+    "probe:app"
+  ],
+  "fullGateReachable": [
+    "check",
+    "check:rust",
+    "probe:bundle",
+    "probe:bundle-smoke",
+    "probe:card",
+    "probe:contracts",
+    "probe:native",
+    "probe:runtime",
+    "probe:toolchain",
+    "test:layout-domain",
+    "test:s1-domain",
+    "test:s2-domain",
+    "test:s2-runtime",
+    "test:s31-domain",
+    "test:s32-domain",
+    "test:s33-config-domain",
+    "test:s33-security-domain",
+    "test:s33-ui-domain",
+    "typecheck"
+  ],
+  "existingFullCheck": "npm run probe:bundle && npm run typecheck && npm run test:s1-domain && npm run test:s2-domain && npm run test:s31-domain && npm run test:layout-domain && npm run test:s32-domain && npm run test:s33-config-domain && npm run test:s33-security-domain && npm run test:s33-ui-domain && npm run check:rust && npm run probe:runtime && npm run probe:card && npm run probe:contracts && npm run probe:native && npm run probe:toolchain && npm run test:s2-runtime && node --test --test-timeout=15000 tests/s31-runtime.test.mjs && node --test --test-timeout=20000 tests/layout-runtime.test.mjs && node --test --test-timeout=20000 tests/s32-runtime.test.mjs && npm run probe:bundle-smoke",
+  "blockedFullSteps": {
+    "probe:native": "real macOS keychain synthetic roundtrip (not ignored)",
+    "probe:runtime": "legacy controlled MCP tools/call",
+    "probe:bundle-smoke": "bundled legacy MCP tools/call"
+  },
+  "nativeBranchPaused": true,
+  "initialPlanCoreSha256": "2f36a24fb633dae8b7802a12004b99ff9a9dcee4cba6e3ffd4019f18ca5d68fc",
+  "missingHostNegativeCases": [
+    "command",
+    "cwd",
+    "environment",
+    "runtime-assets"
+  ]
+}

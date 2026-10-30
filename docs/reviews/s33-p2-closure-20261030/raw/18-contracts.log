@@ -1,0 +1,22 @@
+COMMAND npm run probe:contracts
+START_UTC 2026-10-30T14:47:08.040879+00:00
+npm notice run sidekick@0.3.0 probe:contracts
+npm notice run npm --prefix tests/probes run test:contracts
+npm notice run test:contracts
+npm notice run node --test probe-contract.test.mjs listener-lifecycle.test.mjs
+✔ SIGINT stops only the owned child and preserves the interruption status (28.983625ms)
+✔ SIGTERM stops only the owned child and preserves the interruption status (29.182208ms)
+✔ a child that ignores SIGTERM is reaped within the bounded cleanup (2033.620125ms)
+✔ the controlled source yields one complete follow-up candidate (0.355792ms)
+✔ missing fields and dates inconsistent with the source fail validation (0.072ms)
+✔ the review counterexample and invalid batch structures cannot report success (0.057792ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2132.609459
+
+EXIT_CODE 0

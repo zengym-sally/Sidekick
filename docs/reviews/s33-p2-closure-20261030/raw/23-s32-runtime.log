@@ -1,0 +1,36 @@
+COMMAND npm run test:s32-runtime
+START_UTC 2026-10-30T14:47:20.031557+00:00
+npm notice run sidekick@0.3.0 test:s32-runtime
+npm notice run npm run probe:bundle && node --test --test-timeout=20000 tests/s32-runtime.test.mjs
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 102ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 84ms
+
+  build/s0-runtime/skills-manager.mjs  346.8kb
+
+⚡ Done in 9ms
+
+  build/s0-runtime/mcp-probe.mjs  34.0kb
+
+⚡ Done in 3ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+✔ bundled Agent reads two skill contexts sequentially and runs Bash (998.998917ms)
+✔ bundled Agent keeps a text-only model free of tools (161.6165ms)
+✔ proof recording never overwrites existing files or link targets (479.561708ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1713.828083
+
+EXIT_CODE 0

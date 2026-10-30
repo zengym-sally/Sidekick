@@ -1,0 +1,20 @@
+COMMAND npm run probe:card
+START_UTC 2026-10-30T14:47:07.739025+00:00
+npm notice run sidekick@0.3.0 probe:card
+npm notice run npm --prefix tests/probes run test:card
+npm notice run test:card
+npm notice run node --test card-state.test.mjs
+✔ complete is explicit and duplicate delivery takes effect once (0.40725ms)
+✔ snooze changes reminder and preserves deadline and pending state (0.062917ms)
+✔ wrong user, wrong card and stale version cannot change the fixture (0.068083ms)
+✔ malformed action and missing event ID leave the fixture untouched (0.072583ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 43.330458
+
+EXIT_CODE 0

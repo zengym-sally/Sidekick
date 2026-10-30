@@ -1,0 +1,26 @@
+{
+  "baseCommit": "dfb9ac9893c9f9630dffc9ceb538724d2674eb1e",
+  "planCoreSha256": "8ba2606a1f95da5f643282aa0f602f5baebb030f40807f6c8ab8103f37c44c7b",
+  "changedInputs": [
+    {
+      "path": "package.json",
+      "bytes": 8118,
+      "sha256": "b2f7a30363106c92ce6444e5cf7497fb59b1646b8907fd74fa00c07e0ca79683",
+      "ignored": false
+    },
+    {
+      "path": "tests/s33-discovery.test.mjs",
+      "bytes": 31396,
+      "sha256": "fa51837c04e8b3358c8208266026a6e8aadace06aa31136379fda11c1a3e5b06",
+      "ignored": false
+    },
+    {
+      "path": "README.md",
+      "bytes": 18319,
+      "sha256": "45fea22048753a73aa7fa00cc2ad18ace8513ff407bd63960a13af17151d57af",
+      "ignored": false
+    }
+  ],
+  "productRustAndVueUnchanged": true,
+  "finalAggregateNotYetExecuted": true
+}

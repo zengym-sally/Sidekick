@@ -1,0 +1,33 @@
+COMMAND npm run test:s2-domain
+START_UTC 2026-10-30T14:46:22.732447+00:00
+npm notice run sidekick@0.3.0 test:s2-domain
+npm notice run node --test --test-timeout=15000 tests/s2-dates.test.mjs tests/s2-contract.test.mjs tests/s2-bash.test.mjs tests/s2-client.test.mjs
+✔ managed Bash preserves output and exit status while redacting the active credential (63.58125ms)
+✔ the run deadline bounds a missing or excessive Bash timeout (363.591209ms)
+✔ a crashed guardian is reaped together with its already-running Bash child (71.019917ms)
+✔ SIGKILL --runtime closes the life channel and reaps the owned tool group (101.318166ms)
+✔ SIGKILL --host closes the life channel and reaps the owned tool group (132.838208ms)
+✔ late source reads cannot replace the current selection (9.074125ms)
+✔ a committed sign result survives a failed post-commit read (0.245875ms)
+✔ candidate refresh preserves a newer draft and requires explicit reload (0.455542ms)
+✔ saving candidate fields preserves the explicit selection and target association (0.237875ms)
+✔ date-only editing and overdue checks preserve the original day and timezone (3.041042ms)
+✔ catalog saves preserve a newer object draft and confirmed revision (1.183625ms)
+✔ saving one catalog object preserves another model draft until explicit discard (0.847709ms)
+✔ model strings become typed candidates with exact evidence and independent dates (9.876666ms)
+✔ a title-only revision preserves original temporal coordinates, zone and precision (0.670166ms)
+✔ empty results are valid; malformed, oversized or date-fabricating results fail (0.245625ms)
+✔ relative dates use the supplied source anchor and keep delivery and follow-up separate (10.118875ms)
+✔ calendar dates cross years without inventing a clock (0.140667ms)
+✔ DST gaps and repeated instants remain unresolved instead of choosing a guess (0.979792ms)
+✔ alternatives, unsupported relative dates and ambiguous midnight never get combined into a guess (0.467458ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 777.114584
+
+EXIT_CODE 0

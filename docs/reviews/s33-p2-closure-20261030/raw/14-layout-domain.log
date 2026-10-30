@@ -1,0 +1,28 @@
+COMMAND npm run test:layout-domain
+START_UTC 2026-10-30T14:46:23.925353+00:00
+npm notice run sidekick@0.3.0 test:layout-domain
+npm notice run node --test --test-timeout=15000 tests/layout-domain.test.mjs
+✔ civil calendar is independent of host DST and skipped days (4.087167ms)
+✔ application timezone controls input and display without changing existing instants (9.098917ms)
+✔ date-only civil date remains stable while current app day controls grouping and overdue (0.754583ms)
+✔ settings save failure and unknown results preserve drafts and block until reconciled (1.105709ms)
+✔ catalog keeps object drafts and secret replacements across selection, then preserves metadata on save (4.999375ms)
+✔ a lost first catalog save can be reread and discarded without duplicating the initial model (1.846333ms)
+✔ a pending global default survives unrelated saves but cannot apply a disabled model (0.738709ms)
+✔ new text uses the application zone while retries retain the captured source zone and anchor (3.823542ms)
+✔ an uncertain timezone blocks fresh temporal work while preserving captured-source retry (0.422625ms)
+✔ unknown timezone reread keeps a dirty draft when the disk retained the previous value (0.267792ms)
+✔ settings and catalog version conflicts require reread before another save (0.437667ms)
+✔ provider auth edits preserve unrelated nonsecret metadata and use exclusive references (0.174083ms)
+✔ unknown timezone blocks a new isolated agent trial until settings are read back (0.533917ms)
+✔ public control bridge keeps ARIA booleans distinct from HTML booleans and updates errors (4.027958ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 141.324917
+
+EXIT_CODE 0

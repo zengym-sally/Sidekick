@@ -1,0 +1,93 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-TZyqhI/isolated",
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793371501872,
+      "pid": 53196,
+      "ppid": 53110,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793371501875,
+      "pid": 53196,
+      "ppid": 53110,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793371501903,
+      "pid": 53232,
+      "ppid": 53196,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793371501936,
+      "pid": 53264,
+      "ppid": 53232,
+      "role": "grandchild"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793371501956,
+      "pid": 53196,
+      "ppid": 53110,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793371501957,
+      "pid": 53196,
+      "ppid": 53110,
+      "role": "service"
+    }
+  ],
+  "audits": [
+    {
+      "at": 1793371501993,
+      "actor": "cleaner",
+      "group": 53110,
+      "proofPid": 53110,
+      "run": "mcp-probe-53007-1793371501728104000",
+      "nonce": "670f55e6-f2ef-4a37-89d1-904623458937",
+      "signal": "SIGSTOP",
+      "matched": true
+    },
+    {
+      "at": 1793371501998,
+      "actor": "cleaner",
+      "group": 53110,
+      "proofPid": 53110,
+      "run": "mcp-probe-53007-1793371501728104000",
+      "nonce": "670f55e6-f2ef-4a37-89d1-904623458937",
+      "signal": "SIGKILL",
+      "matched": true
+    }
+  ],
+  "groupsGone": [
+    53110
+  ],
+  "proofAt": 1793371502148
+}

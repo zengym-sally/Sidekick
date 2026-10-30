@@ -1,0 +1,185 @@
+{
+  "scope": "P2 aggregate and independently permitted historical regressions; full npm check NOT executed",
+  "checks": [
+    {
+      "name": "10-p2-aggregate",
+      "command": [
+        "npm",
+        "run",
+        "check:s33-p2"
+      ],
+      "log": "docs/reviews/s33-p2-closure-20261030/raw/10-p2-aggregate.log",
+      "exitCode": 0,
+      "startedUtc": "2026-10-30T14:44:21.090314+00:00",
+      "finishedUtc": "2026-10-30T14:46:22.454410+00:00"
+    },
+    {
+      "name": "11-s1-domain",
+      "command": [
+        "npm",
+        "run",
+        "test:s1-domain"
+      ],
+      "log": "docs/reviews/s33-p2-closure-20261030/raw/11-s1-domain.log",
+      "exitCode": 0,
+      "startedUtc": "2026-10-30T14:46:22.455392+00:00",
+      "finishedUtc": "2026-10-30T14:46:22.731844+00:00"
+    },
+    {
+      "name": "12-s2-domain",
+      "command": [
+        "npm",
+        "run",
+        "test:s2-domain"
+      ],
+      "log": "docs/reviews/s33-p2-closure-20261030/raw/12-s2-domain.log",
+      "exitCode": 0,
+      "startedUtc": "2026-10-30T14:46:22.732447+00:00",
+      "finishedUtc": "2026-10-30T14:46:23.660198+00:00"
+    },
+    {
+      "name": "13-s31-domain",
+      "command": [
+        "npm",
+        "run",
+        "test:s31-domain"
+      ],
+      "log": "docs/reviews/s33-p2-closure-20261030/raw/13-s31-domain.log",
+      "exitCode": 0,
+      "startedUtc": "2026-10-30T14:46:23.660672+00:00",
+      "finishedUtc": "2026-10-30T14:46:23.923416+00:00"
+    },
+    {
+      "name": "14-layout-domain",
+      "command": [
+        "npm",
+        "run",
+        "test:layout-domain"
+      ],
+      "log": "docs/reviews/s33-p2-closure-20261030/raw/14-layout-domain.log",
+      "exitCode": 0,
+      "startedUtc": "2026-10-30T14:46:23.925353+00:00",
+      "finishedUtc": "2026-10-30T14:46:24.211671+00:00"
+    },
+    {
+      "name": "15-s32-domain",
+      "command": [
+        "npm",
+        "run",
+        "test:s32-domain"
+      ],
+      "log": "docs/reviews/s33-p2-closure-20261030/raw/15-s32-domain.log",
+      "exitCode": 0,
+      "startedUtc": "2026-10-30T14:46:24.212257+00:00",
+      "finishedUtc": "2026-10-30T14:46:38.239553+00:00"
+    },
+    {
+      "name": "16-rust-with-one-explicit-skip",
+      "command": [
+        "npm",
+        "run",
+        "test:rust-no-keychain"
+      ],
+      "log": "docs/reviews/s33-p2-closure-20261030/raw/16-rust-with-one-explicit-skip.log",
+      "exitCode": 0,
+      "startedUtc": "2026-10-30T14:46:38.242134+00:00",
+      "finishedUtc": "2026-10-30T14:47:07.738167+00:00"
+    },
+    {
+      "name": "17-card-domain",
+      "command": [
+        "npm",
+        "run",
+        "probe:card"
+      ],
+      "log": "docs/reviews/s33-p2-closure-20261030/raw/17-card-domain.log",
+      "exitCode": 0,
+      "startedUtc": "2026-10-30T14:47:07.739025+00:00",
+      "finishedUtc": "2026-10-30T14:47:08.040430+00:00"
+    },
+    {
+      "name": "18-contracts",
+      "command": [
+        "npm",
+        "run",
+        "probe:contracts"
+      ],
+      "log": "docs/reviews/s33-p2-closure-20261030/raw/18-contracts.log",
+      "exitCode": 0,
+      "startedUtc": "2026-10-30T14:47:08.040879+00:00",
+      "finishedUtc": "2026-10-30T14:47:10.421756+00:00"
+    },
+    {
+      "name": "19-toolchain",
+      "command": [
+        "npm",
+        "run",
+        "probe:toolchain"
+      ],
+      "log": "docs/reviews/s33-p2-closure-20261030/raw/19-toolchain.log",
+      "exitCode": 0,
+      "startedUtc": "2026-10-30T14:47:10.422252+00:00",
+      "finishedUtc": "2026-10-30T14:47:11.487220+00:00"
+    },
+    {
+      "name": "20-s2-runtime",
+      "command": [
+        "npm",
+        "run",
+        "test:s2-runtime"
+      ],
+      "log": "docs/reviews/s33-p2-closure-20261030/raw/20-s2-runtime.log",
+      "exitCode": 0,
+      "startedUtc": "2026-10-30T14:47:11.487745+00:00",
+      "finishedUtc": "2026-10-30T14:47:15.266176+00:00"
+    },
+    {
+      "name": "21-s31-runtime",
+      "command": [
+        "npm",
+        "run",
+        "test:s31-runtime"
+      ],
+      "log": "docs/reviews/s33-p2-closure-20261030/raw/21-s31-runtime.log",
+      "exitCode": 0,
+      "startedUtc": "2026-10-30T14:47:15.266682+00:00",
+      "finishedUtc": "2026-10-30T14:47:17.336673+00:00"
+    },
+    {
+      "name": "22-layout-runtime",
+      "command": [
+        "npm",
+        "run",
+        "test:layout-runtime"
+      ],
+      "log": "docs/reviews/s33-p2-closure-20261030/raw/22-layout-runtime.log",
+      "exitCode": 0,
+      "startedUtc": "2026-10-30T14:47:17.337326+00:00",
+      "finishedUtc": "2026-10-30T14:47:20.031038+00:00"
+    },
+    {
+      "name": "23-s32-runtime",
+      "command": [
+        "npm",
+        "run",
+        "test:s32-runtime"
+      ],
+      "log": "docs/reviews/s33-p2-closure-20261030/raw/23-s32-runtime.log",
+      "exitCode": 0,
+      "startedUtc": "2026-10-30T14:47:20.031557+00:00",
+      "finishedUtc": "2026-10-30T14:47:22.810944+00:00"
+    },
+    {
+      "name": "24-final-resource-exclusion",
+      "command": [
+        "npm",
+        "run",
+        "test:s33-ui-artifacts"
+      ],
+      "log": "docs/reviews/s33-p2-closure-20261030/raw/24-final-resource-exclusion.log",
+      "exitCode": 0,
+      "startedUtc": "2026-10-30T14:47:22.812502+00:00",
+      "finishedUtc": "2026-10-30T14:47:23.254236+00:00"
+    }
+  ]
+}

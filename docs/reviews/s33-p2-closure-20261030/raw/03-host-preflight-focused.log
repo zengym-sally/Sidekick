@@ -1,0 +1,20 @@
+COMMAND ['cargo', 'build', '--manifest-path', 'src-tauri/Cargo.toml', '--features', 's33-mcp-verification', '--example', 's33-mcp-host']
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.35s
+
+EXIT_CODE 0
+COMMAND ['node', '--test', '--test-concurrency=1', '--test-timeout=25000', '--test-name-pattern=real host preparation', 'tests/s33-discovery.test.mjs']
+✔ real host preparation rejects missing command without starting a service or losing history (1755.246667ms)
+✔ real host preparation rejects missing cwd without starting a service or losing history (667.395333ms)
+✔ real host preparation rejects missing environment without starting a service or losing history (682.556041ms)
+✔ real host preparation rejects missing resources without starting a service or losing history (685.782ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3835.969166
+
+EXIT_CODE 0

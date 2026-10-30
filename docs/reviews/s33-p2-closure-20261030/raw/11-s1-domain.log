@@ -1,0 +1,29 @@
+COMMAND npm run test:s1-domain
+START_UTC 2026-10-30T14:46:22.455392+00:00
+npm notice run sidekick@0.3.0 test:s1-domain
+npm notice run node --test tests/s1-domain.test.mjs tests/s1-state.test.mjs tests/s1-profile.test.mjs
+✔ manual dates preserve UTC, timezone, expression and unchanged values (11.2375ms)
+✔ DST gaps and invalid dates fail; repeated times require explicit choice (2.065ms)
+✔ editing only the offset of a repeated time preserves the chosen occurrence (1.094875ms)
+✔ today follow-ups use next follow-up independently of delivery; deleted stays excluded (2.327667ms)
+✔ type, owner, tag, status and text filters combine without mutating records (0.659833ms)
+✔ profile read failure leaves a safe default and cannot overwrite the unread file (0.771875ms)
+✔ save failure preserves the draft and the previous saved value (0.223583ms)
+✔ late read success or failure cannot replace a successful save (0.184375ms)
+✔ a late load or save keeps a newer session draft intact (0.095333ms)
+✔ post-replace warning publishes the current value; unknown result requires a fresh read (0.108334ms)
+✔ nickname copy is explicit, accepts long legal names and never binds or saves (0.096667ms)
+✔ a late old response cannot replace a newer authoritative snapshot (0.644542ms)
+✔ read failure retains the previous snapshot and exposes an error (0.212708ms)
+✔ a committed write is not reported as unsaved when the follow-up read fails (0.205875ms)
+✔ a failed mutation invalidates an old read without leaving refresh disabled (0.103125ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 126.62025
+
+EXIT_CODE 0

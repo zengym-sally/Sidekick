@@ -1,0 +1,120 @@
+COMMAND npm run test:rust-no-keychain
+START_UTC 2026-10-30T14:46:38.242134+00:00
+npm notice run sidekick@0.3.0 test:rust-no-keychain
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib -- --skip storage_probe::tests::keychain_synthetic_roundtrip --test-threads=1
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.40s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 106 tests
+test local_store::agent_config::tests::agent_save_reconciles_after_replace_and_blocks_an_unknown_result ... ok
+test local_store::agent_config::tests::cancelled_invalid_and_interrupted_trials_never_publish_results ... ok
+test local_store::agent_config::tests::invalid_config_and_links_never_overwrite_the_original ... ok
+test local_store::agent_config::tests::roles_resolve_models_and_protect_referenced_configuration ... ok
+test local_store::agent_config::tests::three_agents_save_reset_and_reopen_without_business_writes ... ok
+test local_store::agent_config::tests::trial_results_are_private_conditional_and_never_formal_candidates ... ok
+test local_store::agent_config::tests::v2_wal_is_backed_up_and_failed_v3_ddl_preserves_business_history ... ok
+test local_store::ingestion::tests::s2_backup_path_failure_leaves_v1_untouched_and_migration_ddl_rolls_back ... ok
+test local_store::ingestion::tests::s2_batch_second_failure_rolls_back_every_todo_candidate_and_operation ... ok
+test local_store::ingestion::tests::s2_cancel_and_result_have_one_transaction_winner ... ok
+test local_store::ingestion::tests::s2_multiple_links_use_the_initial_target_version_without_overwriting_fields ... ok
+test local_store::ingestion::tests::s2_rejected_and_zero_result_sources_do_not_rerun ... ok
+test local_store::ingestion::tests::s2_result_commit_failure_never_leaves_a_partial_candidate_batch ... ok
+test local_store::ingestion::tests::s2_revision_is_only_a_preview_and_old_candidate_versions_cannot_apply ... ok
+test local_store::ingestion::tests::s2_unsigned_candidates_never_create_todos_and_signing_replays_current_state ... ok
+test local_store::ingestion::tests::s2_v1_wal_migration_backs_up_and_preserves_history_and_replay ... ok
+test local_store::mcp_catalog_tests::mcp_catalog_database_committed_unknown_blocks_handle_until_cold_receipt_check ... ok
+test local_store::mcp_catalog_tests::mcp_catalog_file_synced_before_database_is_interrupted_not_replayed ... ok
+test local_store::mcp_catalog_tests::mcp_catalog_host_rechecks_schema_budget_and_sensitive_values ... ok
+test local_store::mcp_catalog_tests::mcp_catalog_prepared_directory_replacement_rejects_publish ... ok
+test local_store::mcp_catalog_tests::mcp_catalog_preserves_full_schema_and_cold_reopen_receipt ... ok
+test local_store::mcp_catalog_tests::mcp_catalog_rejects_links_tampering_and_replaced_parent ... ok
+test local_store::mcp_config_tests::mcp_config_crud_reopen_is_private_and_never_runs_a_command ... ok
+test local_store::mcp_config_tests::mcp_config_invalid_json_version_shape_links_and_limits_preserve_originals ... ok
+test local_store::mcp_config_tests::mcp_config_rejects_unknown_fields_duplicate_ids_and_nonprivate_files ... ok
+test local_store::mcp_config_tests::mcp_config_stale_revision_and_unknown_id_do_not_overwrite ... ok
+test local_store::mcp_config_tests::mcp_config_validates_fields_environment_and_encoded_budget ... ok
+test local_store::mcp_config_tests::mcp_config_write_failures_read_back_or_require_reconciliation ... ok
+test local_store::mcp_schema_tests::mcp_schema_004_accepts_null_role_probe_and_preserves_trial_rowid ... ok
+test local_store::mcp_schema_tests::mcp_schema_backup_collision_and_unknown_source_never_overwrite_or_migrate ... ok
+test local_store::mcp_schema_tests::mcp_schema_backup_copy_or_sync_failure_never_runs_ddl ... ok
+test local_store::mcp_schema_tests::mcp_schema_catalog_encoded_budget_32k_has_independent_exact_and_plus_one_controls ... ok
+test local_store::mcp_schema_tests::mcp_schema_copy_and_ddl_failures_rollback_full_chain_and_keep_verified_backup ... ok
+test local_store::mcp_schema_tests::mcp_schema_corrupt_probe_error_cannot_escape_the_closed_metadata_contract ... ok
+test local_store::mcp_schema_tests::mcp_schema_default_open_rejects_source_hardlink_before_writing_and_v4_damage_is_not_repaired ... ok
+test local_store::mcp_schema_tests::mcp_schema_default_open_stays_v3_and_commit_response_loss_requires_reopen ... ok
+test local_store::mcp_schema_tests::mcp_schema_hash_columns_reject_nul_suffixes_and_blob_bindings_on_insert_and_update ... ok
+test local_store::mcp_schema_tests::mcp_schema_missing_required_table_or_index_is_rejected_before_backup_or_ddl ... ok
+test local_store::mcp_schema_tests::mcp_schema_post_commit_identity_failure_is_unknown_and_blocks_current_handle ... ok
+test local_store::mcp_schema_tests::mcp_schema_private_source_and_side_permissions_are_rejected_without_repair ... ok
+test local_store::mcp_schema_tests::mcp_schema_probe_results_and_role_trial_are_separate_and_do_not_write_business_tables ... ok
+test local_store::mcp_schema_tests::mcp_schema_probe_validation_rejects_invalid_metadata_without_recording_success ... ok
+test local_store::mcp_schema_tests::mcp_schema_real_v1_v2_v3_upgrade_preserves_rows_rowids_indexes_and_wal_backup ... ok
+test local_store::mcp_schema_tests::mcp_schema_source_aliases_replacements_and_side_file_links_preserve_outside_files ... ok
+test local_store::mcp_schema_tests::mcp_schema_sqlite_like_user_table_name_cannot_hide_cascading_dependencies ... ok
+test local_store::mcp_schema_tests::mcp_schema_three_migration_version_guard_refuses_v4_without_downgrading ... ok
+test local_store::mcp_schema_tests::mcp_schema_tool_ledger_enforces_owner_response_hash_and_byte_constraints ... ok
+test local_store::mcp_schema_tests::mcp_schema_unknown_rebuilt_table_extensions_and_inbound_fks_are_rejected_before_backup ... ok
+test local_store::mcp_security_tests::mcp_security_64_values_and_resolved_environment_256k_exact_boundary ... ok
+test local_store::mcp_security_tests::mcp_security_archive_sync_failure_keeps_journal_and_retries_existing_archive_durably ... ok
+test local_store::mcp_security_tests::mcp_security_cold_reopen_missing_private_directory_preserves_moved_state ... ok
+test local_store::mcp_security_tests::mcp_security_complete_input_512k_exact_and_plus_one_independent_of_target_budget ... ok
+test local_store::mcp_security_tests::mcp_security_credential_replacement_keeps_old_refs_and_missing_values_remain_explicit ... ok
+test local_store::mcp_security_tests::mcp_security_default_backend_never_establishes_credential_access ... ok
+test local_store::mcp_security_tests::mcp_security_directory_permission_change_is_not_repaired_and_plaintext_is_rejected ... ok
+test local_store::mcp_security_tests::mcp_security_explicit_environment_does_not_inherit_or_expand_and_missing_values_fail ... ok
+test local_store::mcp_security_tests::mcp_security_failed_backend_and_wrong_readback_never_publish_or_remove_old_refs ... ok
+test local_store::mcp_security_tests::mcp_security_fake_credentials_are_bound_redacted_and_resolved_only_inside_host ... ok
+test local_store::mcp_security_tests::mcp_security_foreign_service_root_field_and_model_references_are_rejected_before_backend_io ... ok
+test local_store::mcp_security_tests::mcp_security_journal_and_archive_links_collision_permissions_block_without_overwrite ... ok
+test local_store::mcp_security_tests::mcp_security_journal_budget_has_valid_exact_control_and_rejects_plus_one ... ok
+test local_store::mcp_security_tests::mcp_security_journal_reconciles_actual_files_without_replaying_credentials_or_overwriting_config ... ok
+test local_store::mcp_security_tests::mcp_security_journal_third_state_unknown_fields_and_versions_preserve_exact_files ... ok
+test local_store::mcp_security_tests::mcp_security_same_field_retains_reference_rename_requires_new_value_and_revision_is_checked ... ok
+test local_store::mcp_security_tests::mcp_security_swapped_root_mcp_or_backup_paths_block_without_creating_outside_files ... ok
+test local_store::mcp_security_tests::mcp_security_unknown_or_untrusted_journal_preserves_all_state ... ok
+test local_store::mcp_security_tests::mcp_security_utf8_value_item_and_input_budgets_precede_backend_io ... ok
+test local_store::model_config::tests::catalog_revision_guard_precedes_secret_writes_and_targeted_test_keeps_default ... ok
+test local_store::model_config::tests::explicit_auth_carriers_and_invalid_journals_never_replace_current_config ... ok
+test local_store::model_config::tests::model_documents_preserve_metadata_and_validate_references_without_secrets ... ok
+test local_store::model_config::tests::model_json_rejects_plain_secrets_and_conflicting_auth ... ok
+test local_store::model_config::tests::model_pair_recovery_never_exposes_mixed_revisions ... ok
+test local_store::model_config::tests::nested_nonsecret_auth_metadata_survives_the_file_transaction ... ok
+test local_store::model_config::tests::uncertain_model_save_keeps_journal_and_blocks_further_saves_or_tasks ... ok
+test local_store::tests::a_new_app_namespace_never_rebuilds_a_damaged_existing_root ... ok
+test local_store::tests::active_root_cannot_be_replaced_and_missing_root_is_not_recreated ... ok
+test local_store::tests::app_lock_blocks_two_instances_even_before_different_roots_are_chosen ... ok
+test local_store::tests::application_settings_failure_reconciles_without_resetting_existing_values ... ok
+test local_store::tests::application_timezone_persists_without_moving_todos_and_rejects_stale_writes ... ok
+test local_store::tests::blank_invalid_and_undated_inputs_have_explicit_results ... ok
+test local_store::tests::committed_data_recovers_after_abrupt_process_stop ... ok
+test local_store::tests::dangling_marker_is_rejected_without_writing_outside_the_root ... ok
+test local_store::tests::each_initialization_interruption_can_resume_the_same_root ... ok
+test local_store::tests::edit_one_time_never_rewrites_the_other_and_completion_is_reversible ... ok
+test local_store::tests::failed_initial_schema_rolls_back_tables_version_and_product_identity ... ok
+test local_store::tests::future_schema_and_missing_ready_database_never_fall_back_to_empty_data ... ok
+test local_store::tests::hard_link_marker_never_changes_an_outside_file ... ok
+test local_store::tests::invalid_or_unknown_profile_is_not_overwritten ... ok
+test local_store::tests::manual_create_and_cold_reopen_preserve_fields_and_history ... ok
+test local_store::tests::old_reopen_and_deleted_mutations_are_rejected ... ok
+test local_store::tests::profile_defaults_save_and_cold_reopen_do_not_modify_todos ... ok
+test local_store::tests::profile_file_links_are_rejected_without_changing_the_target ... ok
+test local_store::tests::profile_unknown_commit_result_does_not_change_todos_or_history ... ok
+test local_store::tests::profile_write_failure_reconciles_the_authoritative_committed_value ... ok
+test local_store::tests::reading_a_legacy_empty_nickname_uses_the_default_without_rewriting_the_file ... ok
+test local_store::tests::retries_take_effect_once_and_return_current_authoritative_state ... ok
+test local_store::tests::root_lock_blocks_a_second_app_namespace ... ok
+test local_store::tests::sql_values_are_bound_and_history_failure_rolls_back_the_todo ... ok
+test local_store::tests::unknown_nonempty_directory_is_never_adopted_or_overwritten ... ok
+test runtime_host::tests::s2_live_text_preview_sign_and_restart ... ignored, explicit real model integration using the owner-selected private file
+test runtime_host::tests::s31_live_isolated_organizer_trial_and_configuration_reopen ... ignored, explicit real model trial using the owner-selected private file
+test skills_host::runtime_tests::host_trial_reads_frozen_skill_executes_script_and_preserves_business_tables ... ok
+test skills_host::tests::bundled_skills_scan_and_snapshot_use_the_same_private_workspace ... ok
+test skills_host::tests::management_process_timeout_and_stderr_are_bounded ... ok
+test storage_probe::tests::sqlite_migration_wal_backup_restore_and_lock ... ok
+test storage_probe::tests::workspace_switch_preserves_source_on_failure_and_rejects_merge ... ok
+
+test result: ok. 104 passed; 0 failed; 2 ignored; 0 measured; 1 filtered out; finished in 26.53s
+
+
+EXIT_CODE 0

@@ -1,0 +1,102 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-rbug6V/isolated",
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793371525347,
+      "pid": 79739,
+      "ppid": 79655,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793371525350,
+      "pid": 79739,
+      "ppid": 79655,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793371525378,
+      "pid": 79777,
+      "ppid": 79739,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793371525410,
+      "pid": 79817,
+      "ppid": 79777,
+      "role": "grandchild"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793371525429,
+      "pid": 79739,
+      "ppid": 79655,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793371525430,
+      "pid": 79739,
+      "ppid": 79655,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "page-2",
+      "at": 1793371525430,
+      "pid": 79739,
+      "ppid": 79655,
+      "role": "service"
+    }
+  ],
+  "audits": [
+    {
+      "at": 1793371525467,
+      "actor": "cleaner",
+      "group": 79655,
+      "proofPid": 79655,
+      "run": "mcp-probe-79556-1793371525199871000",
+      "nonce": "b1bae6fe-e9b0-44ff-911e-ea13603073a1",
+      "signal": "SIGSTOP",
+      "matched": true
+    },
+    {
+      "at": 1793371525472,
+      "actor": "cleaner",
+      "group": 79655,
+      "proofPid": 79655,
+      "run": "mcp-probe-79556-1793371525199871000",
+      "nonce": "b1bae6fe-e9b0-44ff-911e-ea13603073a1",
+      "signal": "SIGKILL",
+      "matched": true
+    }
+  ],
+  "groupsGone": [
+    79655
+  ],
+  "proofAt": 1793371525627
+}

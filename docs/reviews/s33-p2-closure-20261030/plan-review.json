@@ -1,0 +1,9 @@
+{
+  "reviewer": "p2_closure_plan_review",
+  "type": "independent read-only strategy artifact review",
+  "round1": "APPROVE_WITH_CHANGES",
+  "minor": "nonempty synthetic api_keys exists but is rejected before credential IO",
+  "round2": "APPROVE",
+  "extraCoverage": "four existing P2 preparation failure contracts; current-run catalog absent, prior catalog retained",
+  "noTestRerunsByReviewer": true
+}

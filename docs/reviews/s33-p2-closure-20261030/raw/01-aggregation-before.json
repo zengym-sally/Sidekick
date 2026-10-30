@@ -1,0 +1,13 @@
+{
+  "observedMissing": [
+    "test:s33-ui-safety",
+    "test:s33-discovery",
+    "test:s33-lifecycle",
+    "test:s33-verification-guards",
+    "check:s33-verification",
+    "test:s33-ui-artifacts",
+    "build:s33-ui-verify",
+    "probe:app"
+  ],
+  "satisfiesFocusedGateReachability": false
+}

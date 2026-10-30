@@ -1,0 +1,10 @@
+{
+  "reviewedInputsVerified": 3,
+  "planCoreSha256": "8ba2606a1f95da5f643282aa0f602f5baebb030f40807f6c8ab8103f37c44c7b",
+  "permittedSerialCommandsPassed": 15,
+  "liveMatchingVerificationProcesses": [],
+  "completeNpmCheckExecuted": false,
+  "nativeUiExecuted": false,
+  "realKeychainExecuted": false,
+  "ordinaryRootMigrationExecuted": false
+}

@@ -1,0 +1,597 @@
+{
+  "version": 1,
+  "baseCommit": "dfb9ac9893c9f9630dffc9ceb538724d2674eb1e",
+  "planCoreSha256": "8ba2606a1f95da5f643282aa0f602f5baebb030f40807f6c8ab8103f37c44c7b",
+  "planReview": "plan-review.json",
+  "deliveryReview": "delivery-review.json",
+  "executedChecks": "checks.json",
+  "processSummary": "process-summary.json",
+  "fullNpmCheckExecuted": false,
+  "executedSerialGroups": 15,
+  "p2AggregatePassed": true,
+  "controlledDiscoveryTests": 56,
+  "finalProcessRecordFiles": 58,
+  "toolsCall": 0,
+  "defaultRustLibrary": {
+    "passed": 104,
+    "originalIgnored": 2,
+    "explicitFiltered": 1,
+    "filteredTest": "storage_probe::tests::keychain_synthetic_roundtrip",
+    "completeProbeNativePassed": false
+  },
+  "historicalS31": {
+    "domainTests": 6,
+    "rustAgentTestsIncludedInDefaultLibrary": 7,
+    "controlledRuntimeTests": 2,
+    "realModelExecuted": false
+  },
+  "native": {
+    "executed": false,
+    "priorError": "Computer Use -10005 / ScreenCaptureKit -3811",
+    "permissionStatus": "parent-reported card pending; mapping not independently verified",
+    "userSnippetsParsedOnly": 3,
+    "stableDimensionsVerified": false
+  },
+  "unimplementedProductFeatures": [
+    "production MCP Keychain adapter",
+    "ordinary-root product upgrade trigger / GUI or IPC entry"
+  ],
+  "permissionsUnchanged": {
+    "realCredentials": false,
+    "ordinaryRootMigration": false,
+    "externalWrites": false,
+    "push": false
+  },
+  "p2Complete": false,
+  "historicalNativeGapsRemainOpen": true,
+  "generatedArtifacts": [
+    {
+      "path": "src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/MacOS/sidekick",
+      "bytes": 16577312,
+      "sha256": "427a73599c7af3bdf7f64127295b6dbbe71f545ef0e6238ed1eef2b0b12b02bb",
+      "generatedNotCommitted": true
+    },
+    {
+      "path": "src-tauri/target/release/bundle/macos/Sidekick.app/Contents/MacOS/sidekick",
+      "bytes": 16651616,
+      "sha256": "5b92618be9877cad5a60758bf8e431ebaf3454afaefe16d7e07c7f97f4b8ba5e",
+      "generatedNotCommitted": true
+    },
+    {
+      "path": "src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs",
+      "bytes": 5616,
+      "sha256": "db198566a9e0671ab68794ea22a7ad4f9772e6754e9e138f7fb1c64749c9fa68",
+      "generatedNotCommitted": true
+    },
+    {
+      "path": "build/s0-runtime/mcp-probe.mjs",
+      "bytes": 34778,
+      "sha256": "e3a6d47da8852e211d3c5d2d8ba9ba26fd0ed415050de9e78db23aa4cc3a6610",
+      "generatedNotCommitted": true
+    },
+    {
+      "path": "build/s0-runtime/mcp-guardian.mjs",
+      "bytes": 4596,
+      "sha256": "ebabdf1622c78f1d0729cc0aefb3b401087b53853d59b9a7d1410db54cec0f1d",
+      "generatedNotCommitted": true
+    },
+    {
+      "path": "build/s0-runtime/node",
+      "bytes": 121911744,
+      "sha256": "9d050fd455b56426e25d4d603c7c501cbb2630348e836cf221dcce748e90588a",
+      "generatedNotCommitted": true
+    }
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 18319,
+      "sha256": "45fea22048753a73aa7fa00cc2ad18ace8513ff407bd63960a13af17151d57af"
+    },
+    {
+      "path": "docs/product/05-\u7b2c\u4e00\u9636\u6bb5\u5b9e\u65bd\u8ba1\u5212.md",
+      "bytes": 181218,
+      "sha256": "e745dadbf9546b2c0a0ecd18c38cee4793a5c4238fc4de4e41a26b85bca97f2d"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030.md",
+      "bytes": 19566,
+      "sha256": "075d788dbd4485f2dd3e702fa402bfbbe32c8c9098fbcaace13be0a9ea38d06c"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/baseline.json",
+      "bytes": 2081,
+      "sha256": "a06d04ad264991a190bb465b0e56fb14715c4bd47b50bc06b2d0de1795d2e049"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/checks.json",
+      "bytes": 5257,
+      "sha256": "c6d6f62439a92b9b5e7644aeddf596686e251b0898a275395aa8069fff855dca"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/delivery-review.json",
+      "bytes": 914,
+      "sha256": "40fee8f1558d05d9f11fe90380845898662ad2ccb165059d901cb08c1318e3e2"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/final-state.json",
+      "bytes": 345,
+      "sha256": "effa2035e9908bd08f5d8b12fcbae1e5b59751fee806767c8b9295e630fd0908"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/native-audit.json",
+      "bytes": 525,
+      "sha256": "ad8c0ba5e88c06607af90a5a4530779d4d84f6a257dca59be08f2f7f50485c89"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/native-steps-syntax.json",
+      "bytes": 180,
+      "sha256": "7bef19eb78764060d6b9afbd9ea04b10fd947ab8882a0aab196d8f667fca6b10"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/plan-review.json",
+      "bytes": 403,
+      "sha256": "c71894922111aef7082915d7d34bd5ce98070f6ee91279e5624fc13f6ad1a394"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/process-summary.json",
+      "bytes": 1781,
+      "sha256": "2163bb4da2734028d57f163e9596ac73a21dd462b4bae040ac6d097f95948fe2"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/artifact-collision-1.json",
+      "bytes": 2006,
+      "sha256": "92f0977731225e697ac27ba44257045362cc5202d3b63586dbdbc142b6598228"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/bad-then-valid-1.json",
+      "bytes": 2006,
+      "sha256": "70cef899bc4e52c2a88b58e6cc435254292248bd4858545ee14dbaab62ee5592"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/blocked-cancel-1.json",
+      "bytes": 235,
+      "sha256": "edde2901eb133f288db950a0bae0397ef17930bb5d7b5309950be13ab3f469b2"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/blocked-writer-1.json",
+      "bytes": 758,
+      "sha256": "a01aacdc85a6168aff3b03701666469593ad2346e8043c59e3d076ab9d5f74a5"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/cancel-initialize-1.json",
+      "bytes": 1933,
+      "sha256": "692c5ee9fd984336c59eb87ee7dc398d62cc211bcf1c752183c84724c8dc944d"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/cancel-list-1.json",
+      "bytes": 2270,
+      "sha256": "ea7ee6384a923e8e196b23f910d7202334e18caa609c7b4064c21cc54c4cafe5"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/cancel-unconfirmed-1.json",
+      "bytes": 840,
+      "sha256": "5b5fd0c2bb1ed1fb5e9c9ab433decdc1b004285f28ee3a630db8e5a1a6f84920"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/carrier-symlink-refusal-1.json",
+      "bytes": 194,
+      "sha256": "e4cc22735eb12766761d4208b3e81fd49e93f82953a2f1d77f61df678f28c0cb"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/catalog-exact-1.json",
+      "bytes": 2006,
+      "sha256": "770d2eb087c587656511706042e5ed33180d854465ec19852cb2438a14abbaea"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/catalog-plus-one-1.json",
+      "bytes": 2006,
+      "sha256": "44ee45569a38e55c66d4b775d70d42c35ab2ca06a8260535271fbd3058a629c4"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/changed-1.json",
+      "bytes": 2006,
+      "sha256": "bcfcc566796196e289ba72976def090b95f0d6da6f80b80e321ab951e7db763d"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/cycle-1.json",
+      "bytes": 2192,
+      "sha256": "95e7aae208e7e81c487d3c05ab946b704d40167742d9e929ddb3bcbd36b26eb8"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/drain-fence-1.json",
+      "bytes": 2142,
+      "sha256": "a670fa40659fe39a7b2993d487569ab7fce4933acb75beb6b16df8ba7a2c3d99"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/duplicate-response-1.json",
+      "bytes": 2006,
+      "sha256": "505abf8087049f143f8306950032e6b7109d67ec08e3265ac1c326972bf238a3"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/duplicate-tool-1.json",
+      "bytes": 2193,
+      "sha256": "3544ce618335926643bbc65e3962137f593fca8ba737aec2e234c1417fdd241a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/gate-1.json",
+      "bytes": 2006,
+      "sha256": "a4e812ef1013da5fdd398f498914ba2faf0b32f38376df2ad2c6028b04bf8d8d"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/gate-2.json",
+      "bytes": 3574,
+      "sha256": "fe615a534835234e05ed31aef38323c5e361b7ca4004135c19a576f30deecee8"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/invalid-utf8-1.json",
+      "bytes": 2006,
+      "sha256": "8baf374f710d91559447922fecf4c48ad685bbad8707b7372f9836ee05aff235"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/kill-guardian-1.json",
+      "bytes": 2128,
+      "sha256": "14e6f8ed77d089365b193053cadd3d65e38d97c0b8dcd4400fad85cb95bc2b66"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/kill-host-1.json",
+      "bytes": 2128,
+      "sha256": "f4b597611eeb144c2147afa646479a4c8e9b4b81638b0e430bf1cce22f706950"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/kill-runtime-1.json",
+      "bytes": 2392,
+      "sha256": "27789e2e20cda4010b23b19ad4e2365429be0c48613ffb93e717fb3518b114e5"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/kill-service-1.json",
+      "bytes": 2128,
+      "sha256": "86617428be86a2440dd5079e8a268ec1cc2fa2aa98d971a088651e2add18b18a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/large-1.json",
+      "bytes": 2006,
+      "sha256": "c079f96ad568dd5f1973e6ab5ebbe3ed688ab0fac9080c55cc0eec5641465de2"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/large-bootstrap-1.json",
+      "bytes": 8597,
+      "sha256": "14e87f9c89ad84f36ff96a8fcf731248524028c9adf7e7e6ee3d139fc02a6385"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/limit-1.json",
+      "bytes": 2006,
+      "sha256": "ec6192c90c644176c1817e2f5aa35368ed3b0846e1d27ec58866ce4f3c01b6ce"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/normal-1.json",
+      "bytes": 2193,
+      "sha256": "e82e449a08831d1f87c8fe4fd779c98400e674f6c329af099b12382806a04ef8"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/notifications-overflow-1.json",
+      "bytes": 2006,
+      "sha256": "6ed5c2e62084a62e43f79a752fe62244c2d395af7cbac4843546776494118ee6"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/oversize-then-valid-1.json",
+      "bytes": 2006,
+      "sha256": "4cd5377cc9560e1abfb67b138ef6ef392bdd6fc3f1d38e3b7d755323e15f3680"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/pages-exact-1.json",
+      "bytes": 13526,
+      "sha256": "1f822663ba2aacab77ca1ded9f44753503a5658dff7a709c4b058b6bda5abed2"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/pages-plus-one-1.json",
+      "bytes": 13526,
+      "sha256": "4e1ae0cb7fd44299b166cacddb44ea181dded81c408ae26728472b60a12fc88b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/policy-cancel-before-ack-1.json",
+      "bytes": 1390,
+      "sha256": "398a86dc0d3acfea7b2a852ac16bc0669a380b9a8e24c305b09541f31f21c9f3"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/policy-duplicate-owner-1.json",
+      "bytes": 1650,
+      "sha256": "8e2abef006c97cfc02424641975bf8b193b41c3e558ca6654d256091829e6d42"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/policy-missing-ack-1.json",
+      "bytes": 1168,
+      "sha256": "b95b6988659d3696cdf801b986cf43657b595ddb783f42f6613307857ffa01f2"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/policy-wrong-ack-1.json",
+      "bytes": 1167,
+      "sha256": "683a9a8043106a37a88960e50fd9707f93b2b1e36647bf222f7ee3c4bdb6ba99"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/preflight-command-1.json",
+      "bytes": 2193,
+      "sha256": "472c12c8e88672074c4247edb1c9dfa3cac11b0929c6f68f04f69fa52f1e6573"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/preflight-command-2.json",
+      "bytes": 1001,
+      "sha256": "2d0d964fc6f9a042a1e16cd14438fc651ce2e398e83fe76d53313b16fecd8bc8"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/preflight-cwd-1.json",
+      "bytes": 2193,
+      "sha256": "6a769d306bf5ae9dc02457a1c6773793987fcba144bb85e10baf5b963eb470ab"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/preflight-cwd-2.json",
+      "bytes": 1005,
+      "sha256": "45843db766b38b427c525ee2c0d498ce36208e5ed2f7862349381fc1d1eef90a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/preflight-environment-1.json",
+      "bytes": 2193,
+      "sha256": "6500b77edf248a3208bd3cdc1c691954bda02ecf3f278592edf9e1ebaab9e3b6"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/preflight-environment-2.json",
+      "bytes": 993,
+      "sha256": "3b49cbcbd3ed16ee50699242699cbebf7cdc84a4fafb48509cd168d0de064a6b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/preflight-resources-1.json",
+      "bytes": 2193,
+      "sha256": "9b368c16d6257cd2297a72253346a303c317f7f5dd55c9cb49bd6abf2a023fcc"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/preflight-resources-2.json",
+      "bytes": 1007,
+      "sha256": "befe3aee5d528baae06ca0b9d9b8c5a0c05d4f47623a6d4e4f87cfcd83974b8a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/ref-1.json",
+      "bytes": 2006,
+      "sha256": "5e1f9ee65d2421128b75ca56caf290c3a4622b544d1c29371ed8218c7c7911ce"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/reverse-slot-reservations-1.json",
+      "bytes": 223,
+      "sha256": "7e472ed2881a3196c3b985ba30de03916fb4bd28ae2c87f140ee27ee31ea2be2"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/schema-exact-1.json",
+      "bytes": 2006,
+      "sha256": "e25816c8423704cbb619e17f46d18bf92e97cb9feb5fd10c0f4b643b897f378f"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/schema-plus-one-1.json",
+      "bytes": 2006,
+      "sha256": "eede01feb889cc05ff430c700df9e0f0e87a7d19bb16a021f6f5808d16e70633"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/secret-1.json",
+      "bytes": 2035,
+      "sha256": "79ddcd3946f05dc4cbb11c3dcd4453d5efdebbb31fe71febf4e01df9db8895e0"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/slow-pages-1.json",
+      "bytes": 2193,
+      "sha256": "b3e7c386b01fe646d252fbc69eb59a1db4f71ac95b4b9ea1e3603af1ce1fad6d"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/stale-old-nonce-1.json",
+      "bytes": 2193,
+      "sha256": "8b59c0248246f500a70baea5ad7092018a41161b9c07fd994f5c8ee94503fc21"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/stale-old-run-1.json",
+      "bytes": 2193,
+      "sha256": "d712beb23c914d9fa2718d912f9cedd926cdfc4bdaf5dde36f0da6c16a59e26b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/stderr-allowed-1.json",
+      "bytes": 2006,
+      "sha256": "4ad133e664a183a9cd041e9502010fc1dc203d00ad0f960f670d857b5363ed37"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/stderr-overflow-1.json",
+      "bytes": 2006,
+      "sha256": "41ae45e95a9887b70c91ab6d6936f0a823a7c460ede8c8480d2e90e69e4c6693"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/tail-bad-1.json",
+      "bytes": 2006,
+      "sha256": "564722b31334c76186271e261d7ce140566e3a88b427989da029ae305d2228fd"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/tail-incomplete-1.json",
+      "bytes": 2006,
+      "sha256": "5bff4d7013160270dd82d0a95a08ff1845ee943297a8b4ae5bb7b30a974328fd"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/unknown-response-1.json",
+      "bytes": 2006,
+      "sha256": "71099bf5b9712ee957b5b748716669c850043177dffc345fc746a23ebde00f1f"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/unregistered-owner-1.json",
+      "bytes": 795,
+      "sha256": "42cefc4eefdb166484f5c8930e49fbe90ebc5116841c0034f736165c08c73722"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/v3-refusal-1.json",
+      "bytes": 206,
+      "sha256": "3ae83f32bf8da3149590e9a3c2dac42551f6e407731cd04ef1dadbde54f666d2"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-final/wait-init-1.json",
+      "bytes": 1669,
+      "sha256": "0207c461b0d960654e94e9e89b599886f78608f5ce068cbef5465c2b2998bdb6"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-focused/preflight-command-1.json",
+      "bytes": 2193,
+      "sha256": "0e2dffa2523fe1dbd60d2d959fef315439b784327698bb581525bbcb5752febb"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-focused/preflight-command-2.json",
+      "bytes": 1001,
+      "sha256": "07265c0fdd83d3263c4840b781320cfc40aec40f4e8fc7c2ac78274c5dc4f78e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-focused/preflight-cwd-1.json",
+      "bytes": 2193,
+      "sha256": "4d159206a50da3715e46f583a6ca458f856390b41bc31352c1acfb5e77984bae"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-focused/preflight-cwd-2.json",
+      "bytes": 1005,
+      "sha256": "713dc8b141e379fa7a70e25691c308e58e2224466241239679c5b78ff0e2f793"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-focused/preflight-environment-1.json",
+      "bytes": 2193,
+      "sha256": "81bcf293ca27bf9beb2484d16dedd0f11148a0e6cdaa901d26f60109c9b5d5dc"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-focused/preflight-environment-2.json",
+      "bytes": 993,
+      "sha256": "f72ea2606b5d060cb07846797f8898ce2eba2bc2cfd3c500b1045a0d0d773db2"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-focused/preflight-resources-1.json",
+      "bytes": 2193,
+      "sha256": "3d41c3a47fdf9e1dc59e527cfc4651ae761c4408455442eea6c37a8bdf077729"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/processes-focused/preflight-resources-2.json",
+      "bytes": 1007,
+      "sha256": "2cddd87014b5c02be905992ac271556b14cc2b5072184186237e61e534854504"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/01-aggregation-before.json",
+      "bytes": 292,
+      "sha256": "d124c6d480698da1ea1e280dca917a4d39e495511ea7a47a947b3ed53b031127"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/02-aggregation-after.json",
+      "bytes": 1085,
+      "sha256": "043e655107cb8cfac4dbe1d065a7f71f806f40ad3006128847d1d0c86c59a5a3"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/03-host-preflight-focused.log",
+      "bytes": 1029,
+      "sha256": "22f234da962564bab98145fc0c03bcbad7185bc8027e54219f7478c031560943"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/04-native-test-inventory.log",
+      "bytes": 11318,
+      "sha256": "7fc8baeac63afe4f470b725fb25eac2e4cba1cd06d905325df192f22610677de"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/05-method-count-correction.json",
+      "bytes": 489,
+      "sha256": "8d24c0f90bf8da97745c4df62ed063a751722f5b718bcd69144af0d4ee38d02b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/10-p2-aggregate.log",
+      "bytes": 35883,
+      "sha256": "030bcf030a1cd0fab203c1ff2b17d72a88356053d68bfc6441396aa675f9ac62"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/11-s1-domain.log",
+      "bytes": 1681,
+      "sha256": "4888aa0019f4d4e86226f436d3e04406e7742d7c8d86be440fbd222aa162e1d7"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/12-s2-domain.log",
+      "bytes": 2129,
+      "sha256": "f97af915348e74428816bef972277830cf43ecd455c04889ec05b21211a7cb3e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/13-s31-domain.log",
+      "bytes": 888,
+      "sha256": "9ab9b29f32a91b6d96d281abd43b035a74859dc58cdff19278b82f577330ad45"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/14-layout-domain.log",
+      "bytes": 1761,
+      "sha256": "da74fc1e221cd6b1aeed677f6fb8c0125a1cc30415b125a667413335e8ecd7bf"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/15-s32-domain.log",
+      "bytes": 3046,
+      "sha256": "fdaab9e9de17a42dbf582c072d0f2d62a57484d9419ff4655b52f289c2e235a7"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/16-rust-with-one-explicit-skip.log",
+      "bytes": 12322,
+      "sha256": "ec1f65dd3bb670f7820b6c4fb24ba53842989c706a6df3299b4fb0fee3126857"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/17-card-domain.log",
+      "bytes": 692,
+      "sha256": "55fcc065bf279d1fd086910607622a392b2328f27ceceaa7c75269bd70e0282f"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/18-contracts.log",
+      "bytes": 943,
+      "sha256": "742afeb8ec8a3b30b3e374646e6ab929f694fe3b3d62ad3556f7df4b20523fe5"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/19-toolchain.log",
+      "bytes": 438,
+      "sha256": "3bed2f20b0c98cde6c06ab4e9dd3236ac37781e1bf5585ab132400e7d7645dc5"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/20-s2-runtime.log",
+      "bytes": 1379,
+      "sha256": "2a6bb87559aa5cb854796dfb9f86fea421914102e61ca37efc38a0865c0a64ea"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/21-s31-runtime.log",
+      "bytes": 956,
+      "sha256": "659fe5f9bd1c5897b1986c2a24d93486bf5bf0a17a3bb262cfd53a1804d8d492"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/22-layout-runtime.log",
+      "bytes": 992,
+      "sha256": "dfddd9cce39e6e2b62bcd083314d05906b1695ebd3703ea7cd5c4fea7f4ecd8a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/23-s32-runtime.log",
+      "bytes": 1006,
+      "sha256": "5ae89a997fc01245219be302a8c7e5e640b06b826f7747a3e98d93d75bd22132"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/raw/24-final-resource-exclusion.log",
+      "bytes": 847,
+      "sha256": "5c31025aefae3d851d03ccefa37f74a0b10e65c5ade08a949cb488b279cc9fff"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/review-inputs.json",
+      "bytes": 782,
+      "sha256": "77d88aa4e34fbea4eba31fd14fe6ab1ba8c3c07bb86f223c7b3ee0f41ef703e3"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/run-checks.py",
+      "bytes": 2892,
+      "sha256": "264e66cd2e29af80c8503c452ccd2d828d930c58ff698162118160cbef1a00c9"
+    },
+    {
+      "path": "docs/reviews/s33-p2-closure-20261030/summarize-methods.py",
+      "bytes": 1339,
+      "sha256": "5d25d4030580a1a7d5c90f1f9152465dce8cd7911ce34b771fda47d19a046af3"
+    },
+    {
+      "path": "package.json",
+      "bytes": 8118,
+      "sha256": "b2f7a30363106c92ce6444e5cf7497fb59b1646b8907fd74fa00c07e0ca79683"
+    },
+    {
+      "path": "tests/s33-discovery.test.mjs",
+      "bytes": 31396,
+      "sha256": "fa51837c04e8b3358c8208266026a6e8aadace06aa31136379fda11c1a3e5b06"
+    }
+  ]
+}

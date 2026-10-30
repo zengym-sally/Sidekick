@@ -1,0 +1,40 @@
+COMMAND npm run test:s2-runtime
+START_UTC 2026-10-30T14:47:11.487745+00:00
+npm notice run sidekick@0.3.0 test:s2-runtime
+npm notice run npm run probe:bundle && node --test --test-timeout=15000 tests/s2-runtime.test.mjs
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 104ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 89ms
+
+  build/s0-runtime/skills-manager.mjs  346.8kb
+
+⚡ Done in 10ms
+
+  build/s0-runtime/mcp-probe.mjs  34.0kb
+
+⚡ Done in 4ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+✔ bundled Pi calls the API model ID and returns validated dated candidates without leaking credentials (862.029875ms)
+✔ Pi persisted truncated tool output stays inside the private run directory with mode 600 (225.54775ms)
+✔ authentication and malformed model results fail with safe categories (238.729791ms)
+✔ transient failures retry the current model request within the configured bound (637.517125ms)
+✔ in-flight model cancel stops without candidates (119.652459ms)
+✔ in-flight model eof stops without candidates (119.587542ms)
+✔ in-flight model deadline stops without candidates (412.082667ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2665.283583
+
+EXIT_CODE 0

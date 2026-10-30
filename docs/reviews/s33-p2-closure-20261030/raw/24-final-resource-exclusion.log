@@ -1,0 +1,18 @@
+COMMAND npm run test:s33-ui-artifacts
+START_UTC 2026-10-30T14:47:22.812502+00:00
+npm notice run sidekick@0.3.0 test:s33-ui-artifacts
+npm notice run node --test --test-timeout=15000 tests/s33-ui-artifacts.test.mjs
+{"layer":"actual macOS bundles; no GUI or MCP launch","ordinaryResourceEntries":556,"controlledServiceExcluded":true,"signatures":"both deep strict verified"}
+{"layer":"ordinary executable negative entry; no ordinary-root startup","exitCode":2,"stderr":"MCP UI verification is not enabled in this package"}
+✔ special-then-ordinary bundles keep the controlled service out of ordinary resources (248.581916ms)
+✔ ordinary executable refuses the verification flag before opening any work root (8.380792ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 297.050417
+
+EXIT_CODE 0

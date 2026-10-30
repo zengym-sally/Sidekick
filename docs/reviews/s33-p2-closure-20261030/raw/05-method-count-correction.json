@@ -1,0 +1,22 @@
+{
+  "reason": "independent review identified cumulative gate snapshots",
+  "beforeWasSnapshotSum": {
+    "initialize": 44,
+    "notifications/initialized": 42,
+    "tools/list": 178
+  },
+  "afterIndependentLogCounts": {
+    "initialize": 43,
+    "notifications/initialized": 41,
+    "tools/list": 177
+  },
+  "prefixEvidence": [
+    {
+      "snapshot": "gate-1.json",
+      "containedIn": "gate-2.json",
+      "records": 6
+    }
+  ],
+  "noRawRecordModified": true,
+  "noTestsRerun": true
+}

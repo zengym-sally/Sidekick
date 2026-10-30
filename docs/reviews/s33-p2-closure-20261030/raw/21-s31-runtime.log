@@ -1,0 +1,35 @@
+COMMAND npm run test:s31-runtime
+START_UTC 2026-10-30T14:47:15.266682+00:00
+npm notice run sidekick@0.3.0 test:s31-runtime
+npm notice run npm run probe:bundle && node --test --test-timeout=15000 tests/s31-runtime.test.mjs
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 91ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 86ms
+
+  build/s0-runtime/skills-manager.mjs  346.8kb
+
+⚡ Done in 16ms
+
+  build/s0-runtime/mcp-probe.mjs  34.0kb
+
+⚡ Done in 3ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+✔ trial uses the actual role model and preferences with no tools or business sink (865.61475ms)
+✔ an unavailable role cannot impersonate organizer in an isolated trial (100.127417ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1015.925167
+
+EXIT_CODE 0

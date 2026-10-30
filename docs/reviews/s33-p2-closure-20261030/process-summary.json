@@ -1,0 +1,68 @@
+{
+  "layer": "actual controlled Rust host/process tests; verification-only policies identified per record; not native GUI",
+  "recordFiles": 58,
+  "toolsCall": 0,
+  "preflightFailuresWithRealPositiveControls": 4,
+  "preflightCodes": [
+    "MCP_COMMAND_MISSING",
+    "MCP_DIRECTORY_MISSING",
+    "MCP_ENV_MISSING",
+    "MCP_DEPENDENCY_MISSING"
+  ],
+  "priorCatalogAndColdReopenVerified": true,
+  "separateSigkillCases": {
+    "host": {
+      "runtimeExited": true,
+      "ownedGroupsGone": [
+        58909
+      ],
+      "unrelatedControlAliveAtCapture": true
+    },
+    "runtime": {
+      "runtimeExited": true,
+      "ownedGroupsGone": [
+        59616
+      ],
+      "unrelatedControlAliveAtCapture": true
+    },
+    "guardian": {
+      "runtimeExited": true,
+      "ownedGroupsGone": [
+        60282
+      ],
+      "unrelatedControlAliveAtCapture": true
+    },
+    "service": {
+      "runtimeExited": true,
+      "ownedGroupsGone": [
+        61002
+      ],
+      "unrelatedControlAliveAtCapture": true
+    }
+  },
+  "historicalRecordDirectoriesNotIncluded": true,
+  "rawSnapshotMethods": {
+    "initialize": 44,
+    "notifications/initialized": 42,
+    "tools/list": 178
+  },
+  "deduplicatedMethods": {
+    "initialize": 43,
+    "notifications/initialized": 41,
+    "tools/list": 177
+  },
+  "policy": "group by isolatedApp; validate cumulative snapshot prefixes and count the longest snapshot once; retain multiplicity inside each log",
+  "containedSnapshots": [
+    {
+      "snapshot": "gate-1.json",
+      "containedIn": "gate-2.json",
+      "records": 6
+    }
+  ],
+  "methods": {
+    "initialize": 43,
+    "notifications/initialized": 41,
+    "tools/list": 177
+  },
+  "methodStatisticsScope": "independent recorded requests; cumulative snapshots are not additional requests"
+}
