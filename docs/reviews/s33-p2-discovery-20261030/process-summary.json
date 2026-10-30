@@ -1,0 +1,40 @@
+{
+  "processEvidenceFiles": 53,
+  "recordedToolsCallCount": 0,
+  "singleActorKillCases": [
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/kill-service-1.json",
+      "runtimeExited": true,
+      "unrelatedControlAlive": true,
+      "groupsGone": [
+        76115
+      ]
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/kill-runtime-1.json",
+      "runtimeExited": true,
+      "unrelatedControlAlive": true,
+      "groupsGone": [
+        74780
+      ]
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/kill-host-1.json",
+      "runtimeExited": true,
+      "unrelatedControlAlive": true,
+      "groupsGone": [
+        74088
+      ]
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/kill-guardian-1.json",
+      "runtimeExited": true,
+      "unrelatedControlAlive": true,
+      "groupsGone": [
+        75428
+      ]
+    }
+  ],
+  "noLiveOwnedProcessesAfterSuite": true,
+  "notAClaim": "intentional two-proof loss is expected cleanup-unconfirmed and receives fixture-only positive-PID teardown; not production cleanup success"
+}

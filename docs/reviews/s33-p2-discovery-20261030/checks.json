@@ -1,0 +1,308 @@
+[
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/01-catalog-red.log",
+    "command": "node --test tests/s33-catalog.test.mjs",
+    "exitCode": 1,
+    "note": "missing implementation red"
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/02-catalog-green.log",
+    "command": "node --test tests/s33-catalog.test.mjs",
+    "exitCode": 0,
+    "passed": 3
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/03-bundle.log",
+    "command": "npm run probe:bundle",
+    "exitCode": 0
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/04-rust-check.log",
+    "command": "cargo check --manifest-path src-tauri/Cargo.toml",
+    "exitCode": 0,
+    "note": "development cfg warnings before feature declaration"
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/05-feature-check.log",
+    "command": "cargo check --manifest-path src-tauri/Cargo.toml --features s33-mcp-verification --example s33-mcp-host",
+    "exitCode": 101
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/06-feature-build.log",
+    "command": "cargo build --manifest-path src-tauri/Cargo.toml --features s33-mcp-verification --example s33-mcp-host",
+    "exitCode": 0
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/07-first-real-loop.log",
+    "command": "npm run test:s33-discovery",
+    "exitCode": 0,
+    "passed": 4,
+    "note": "real local controlled host; verification-only cases labelled separately"
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/08-real-negative-loop.log",
+    "command": "npm run test:s33-discovery",
+    "exitCode": 1,
+    "passed": 21,
+    "note": "real local controlled host; verification-only cases labelled separately"
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/10-real-loop-corrected.log",
+    "command": "npm run test:s33-discovery",
+    "exitCode": 0,
+    "passed": 23,
+    "note": "real local controlled host; verification-only cases labelled separately"
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/12-budget-ack-loop.log",
+    "command": "npm run test:s33-discovery",
+    "exitCode": 0,
+    "passed": 39,
+    "note": "real local controlled host; verification-only cases labelled separately"
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/13-process-evidence.log",
+    "command": "npm run test:s33-discovery",
+    "exitCode": 0,
+    "passed": 41,
+    "note": "real local controlled host; verification-only cases labelled separately"
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/14-scope-complete.log",
+    "command": "npm run test:s33-discovery",
+    "exitCode": 0,
+    "passed": 44,
+    "note": "real local controlled host; verification-only cases labelled separately"
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/09-catalog-store.log",
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_catalog -- --test-threads=1",
+    "exitCode": 0,
+    "passed": 6
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/11-clippy.log",
+    "command": "cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --features s33-mcp-verification -- -D warnings",
+    "exitCode": 0
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/15-typecheck.log",
+    "command": "npm run typecheck",
+    "exitCode": 0
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/16-config-domain.log",
+    "command": "npm run test:s33-config-domain",
+    "exitCode": 0,
+    "passed": 9
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/17-security-domain.log",
+    "command": "npm run test:s33-security-domain",
+    "exitCode": 0,
+    "passed": 7
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/18-catalog-store-final.log",
+    "command": "npm run test:s33-catalog-store",
+    "exitCode": 0,
+    "passed": 6
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/19-schema-neighbor.log",
+    "command": "npm run test:s33-schema-store",
+    "exitCode": 0,
+    "passed": 20
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/20-config-neighbor.log",
+    "command": "npm run test:s33-config-store",
+    "exitCode": 0,
+    "passed": 6
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/21-security-neighbor.log",
+    "command": "npm run test:s33-security-store",
+    "exitCode": 0,
+    "passed": 19
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/22-local-neighbor.log",
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib local_store::tests -- --test-threads=1",
+    "exitCode": 0,
+    "passed": 25
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/23-ingestion-neighbor.log",
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib ingestion::tests -- --test-threads=1",
+    "exitCode": 0,
+    "passed": 9
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/24-agent-neighbor.log",
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib agent_config::tests::three_agents_save_reset_and_reopen_without_business_writes -- --exact --test-threads=1",
+    "exitCode": 0,
+    "passed": 0,
+    "note": "wrong exact filter; not counted"
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/25-fmt.log",
+    "command": "cargo fmt --manifest-path src-tauri/Cargo.toml --check",
+    "exitCode": 0
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/26-default-clippy.log",
+    "command": "cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings",
+    "exitCode": 0
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/27-feature-clippy.log",
+    "command": "cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --features s33-mcp-verification -- -D warnings",
+    "exitCode": 101
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/28-agent-exact-corrected.log",
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib local_store::agent_config::tests::three_agents_save_reset_and_reopen_without_business_writes -- --exact --test-threads=1",
+    "exitCode": 0,
+    "passed": 1
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/29-feature-clippy-corrected.log",
+    "command": "cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --features s33-mcp-verification -- -D warnings",
+    "exitCode": 0
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/30-runtime-pid-proof.log",
+    "command": "SIDEKICK_DISCOVERY_EVIDENCE=docs/reviews/s33-p2-discovery-20261030/processes node --test --test-concurrency=1 --test-timeout=25000 --test-name-pattern='SIGKILL ' tests/s33-discovery.test.mjs",
+    "exitCode": 0,
+    "passed": 4,
+    "note": "updated runtime PID exit assertions; not additional count"
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/31-review-regressions-red.log",
+    "command": "node --test --test-name-pattern='review regression' tests/s33-discovery.test.mjs",
+    "exitCode": 1,
+    "passed": 0,
+    "note": "test syntax error; not behavioral evidence"
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/32-review-behavior-red.log",
+    "command": "node --test --test-concurrency=1 --test-timeout=25000 --test-name-pattern='review regression' tests/s33-discovery.test.mjs",
+    "exitCode": 1,
+    "passed": 1,
+    "note": "7 tests, 6 reproduced behavioral failures; 1 explicit-cancel positive"
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/33-fix-bundle.log",
+    "command": "npm run probe:bundle",
+    "exitCode": 0
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/34-fix-build.log",
+    "command": "cargo build --manifest-path src-tauri/Cargo.toml --features s33-mcp-verification --example s33-mcp-host",
+    "exitCode": 101
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/36-fix-build-corrected.log",
+    "command": "cargo build --manifest-path src-tauri/Cargo.toml --features s33-mcp-verification --example s33-mcp-host",
+    "exitCode": 0
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/37-review-fix-targeted.log",
+    "command": "node --test --test-concurrency=1 --test-timeout=25000 --test-name-pattern='review regression' tests/s33-discovery.test.mjs",
+    "exitCode": 0,
+    "passed": 7
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/38-affected-discovery-final.log",
+    "command": "npm run test:s33-discovery",
+    "exitCode": 1,
+    "passed": 51,
+    "note": "52 tests; slow-pages timeout misclassified"
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/39-schema-affected.log",
+    "command": "npm run test:s33-schema-store",
+    "exitCode": 0,
+    "passed": 20
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/40-catalog-affected.log",
+    "command": "npm run test:s33-catalog-store",
+    "exitCode": 0,
+    "passed": 6
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/41-config-affected.log",
+    "command": "npm run test:s33-config-store",
+    "exitCode": 0,
+    "passed": 6
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/42-security-affected.log",
+    "command": "npm run test:s33-security-store",
+    "exitCode": 0,
+    "passed": 19
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/43-local-affected.log",
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib local_store::tests -- --test-threads=1",
+    "exitCode": 0,
+    "passed": 25
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/44-ingestion-affected.log",
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib ingestion::tests -- --test-threads=1",
+    "exitCode": 0,
+    "passed": 9
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/45-agent-affected.log",
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib local_store::agent_config::tests::three_agents_save_reset_and_reopen_without_business_writes -- --exact --test-threads=1",
+    "exitCode": 0,
+    "passed": 1
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/46-fmt-final.log",
+    "command": "cargo fmt --manifest-path src-tauri/Cargo.toml --check",
+    "exitCode": 0
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/47-clippy-default-final.log",
+    "command": "cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings",
+    "exitCode": 0
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/48-clippy-feature-final.log",
+    "command": "cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --features s33-mcp-verification -- -D warnings",
+    "exitCode": 0
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/49-timeout-fix-bundle.log",
+    "command": "npm run probe:bundle",
+    "exitCode": 0
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/50-timeout-fix-focused.log",
+    "command": "node --test --test-concurrency=1 --test-timeout=25000 --test-name-pattern='slow-pages|wait-init' tests/s33-discovery.test.mjs",
+    "exitCode": 0,
+    "passed": 2
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/51-final-consolidated.log",
+    "command": "SIDEKICK_DISCOVERY_EVIDENCE=docs/reviews/s33-p2-discovery-20261030/processes npm run test:s33-discovery",
+    "exitCode": 0,
+    "passed": 52,
+    "note": "final consolidated run after both delivery reviews approved; no source changes since reviewed version"
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/52-typecheck-final.log",
+    "command": "npm run typecheck",
+    "exitCode": 0
+  },
+  {
+    "log": "docs/reviews/s33-p2-discovery-20261030/raw/53-fmt-final.log",
+    "command": "cargo fmt --manifest-path src-tauri/Cargo.toml --check",
+    "exitCode": 0
+  }
+]

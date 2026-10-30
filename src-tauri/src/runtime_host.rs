@@ -14,18 +14,28 @@ use std::time::{Duration, Instant};
 use tauri::{Emitter, Manager, State};
 
 type Result<T> = std::result::Result<T, StoreError>;
-type Sink = Arc<dyn Fn(&str, &str) + Send + Sync>;
+pub(crate) type Sink = Arc<dyn Fn(&str, &str) + Send + Sync>;
+#[derive(Clone, Copy, PartialEq)]
+pub(crate) enum JobKind {
+    Business,
+    Trial,
+    Probe,
+}
 #[derive(Clone)]
-struct Job {
-    run_id: String,
-    trial: bool,
-    cancel: Arc<AtomicBool>,
-    pid: Arc<AtomicU32>,
-    workers: Arc<Mutex<BTreeMap<u32, String>>>,
+pub(crate) struct Job {
+    pub(crate) run_id: String,
+    pub(crate) kind: JobKind,
+    pub(crate) nonce: String,
+    pub(crate) server_id: Option<String>,
+    pub(crate) mcp_owner: Arc<Mutex<Option<crate::mcp_host::Owner>>>,
+    pub(crate) mcp_intent: Arc<Mutex<Option<String>>>,
+    pub(crate) cancel: Arc<AtomicBool>,
+    pub(crate) pid: Arc<AtomicU32>,
+    pub(crate) workers: Arc<Mutex<BTreeMap<u32, String>>>,
 }
 #[derive(Clone, Default)]
 pub struct RuntimeState {
-    slot: Arc<Mutex<Option<Job>>>,
+    pub(crate) slot: Arc<Mutex<Option<Job>>>,
 }
 pub enum StartTask {
     Extract {
@@ -104,6 +114,10 @@ impl RuntimeState {
             if let Some(job) = slot.as_ref() {
                 job.cancel.store(true, Ordering::SeqCst);
                 let pid = job.pid.load(Ordering::SeqCst);
+                if job.kind == JobKind::Probe {
+                    crate::mcp_host::shutdown(job, directory);
+                    return;
+                }
                 if owned(pid, &directory.join("organizer.mjs"), &job.run_id, None) {
                     signal_group(pid, "-TERM");
                 }
@@ -147,7 +161,11 @@ impl RuntimeState {
         };
         let job = Job {
             run_id: run.id.clone(),
-            trial: false,
+            kind: JobKind::Business,
+            nonce: crate::mcp_host::nonce(),
+            server_id: None,
+            mcp_owner: Arc::new(Mutex::new(None)),
+            mcp_intent: Arc::new(Mutex::new(None)),
             cancel: Arc::new(AtomicBool::new(false)),
             pid: Arc::new(AtomicU32::new(0)),
             workers: Arc::new(Mutex::new(BTreeMap::new())),
@@ -165,7 +183,7 @@ impl RuntimeState {
         std::thread::spawn(move || {
             let result = execute(&job, &directory, payload, worker_sink.clone());
             let stored = local.access(|store| {
-                if job.trial {
+                if job.kind == JobKind::Trial {
                     if job.cancel.load(Ordering::SeqCst) {
                         store.cancel_agent_trial(&id)?;
                     } else {
@@ -238,16 +256,18 @@ impl RuntimeState {
         });
     }
     pub fn active_trial(&self) -> Option<String> {
-        self.slot
-            .lock()
-            .ok()
-            .and_then(|s| s.as_ref().filter(|j| j.trial).map(|j| j.run_id.clone()))
+        self.slot.lock().ok().and_then(|s| {
+            s.as_ref()
+                .filter(|j| j.kind == JobKind::Trial)
+                .map(|j| j.run_id.clone())
+        })
     }
     pub fn active_business(&self) -> Option<String> {
-        self.slot
-            .lock()
-            .ok()
-            .and_then(|s| s.as_ref().filter(|j| !j.trial).map(|j| j.run_id.clone()))
+        self.slot.lock().ok().and_then(|s| {
+            s.as_ref()
+                .filter(|j| j.kind == JobKind::Business)
+                .map(|j| j.run_id.clone())
+        })
     }
     pub(crate) fn start_trial(
         &self,
@@ -275,7 +295,11 @@ impl RuntimeState {
         };
         let job = Job {
             run_id: run.id.clone(),
-            trial: true,
+            kind: JobKind::Trial,
+            nonce: crate::mcp_host::nonce(),
+            server_id: None,
+            mcp_owner: Arc::new(Mutex::new(None)),
+            mcp_intent: Arc::new(Mutex::new(None)),
             cancel: Arc::new(AtomicBool::new(false)),
             pid: Arc::new(AtomicU32::new(0)),
             workers: Arc::new(Mutex::new(BTreeMap::new())),

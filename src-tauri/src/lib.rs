@@ -1,4 +1,5 @@
 pub mod local_store;
+mod mcp_host;
 mod runtime_host;
 mod skills_host;
 mod storage_probe;
@@ -74,7 +75,7 @@ pub fn run() {
                 .macos_launcher(tauri_plugin_autostart::MacosLauncher::LaunchAgent)
                 .build(),
         )
-        .invoke_handler(tauri::generate_handler![run_s0_probes,store_commands::save_mcp_secrets,store_commands::read_mcp_configuration,store_commands::save_mcp_server,store_commands::remove_mcp_server,skills_host::skills_catalog,skills_host::restore_builtin_skill,skills_host::open_skills_directory,store_commands::read_application_settings,store_commands::save_application_settings,store_commands::workspace_info,store_commands::read_profile,store_commands::save_profile,store_commands::initialize_workspace,store_commands::list_todos,store_commands::todo_history,store_commands::create_todo,store_commands::update_todo,store_commands::set_todo_completed,store_commands::delete_todo,store_commands::open_workspace_directory,runtime_host::organize_text,runtime_host::revise_candidate,runtime_host::test_model,runtime_host::active_model_run,store_commands::read_model_configuration,store_commands::save_model_configuration,store_commands::list_import_batches,store_commands::todo_source_links,store_commands::read_import_batch,store_commands::read_model_run,store_commands::save_candidate,store_commands::discard_candidate,store_commands::apply_candidate_preview,store_commands::sign_candidates,store_commands::cancel_model_run,store_commands::read_agent_configuration,store_commands::save_agent_configuration,store_commands::reset_agent_configuration,store_commands::read_agent_trial,store_commands::latest_agent_trial,store_commands::cancel_agent_trial,runtime_host::start_agent_trial,runtime_host::active_agent_trial])
+        .invoke_handler(tauri::generate_handler![mcp_host::start_mcp_probe,mcp_host::read_mcp_probe,mcp_host::latest_mcp_probe,mcp_host::read_mcp_catalog,mcp_host::active_mcp_probe,mcp_host::cancel_mcp_probe,run_s0_probes,store_commands::save_mcp_secrets,store_commands::read_mcp_configuration,store_commands::save_mcp_server,store_commands::remove_mcp_server,skills_host::skills_catalog,skills_host::restore_builtin_skill,skills_host::open_skills_directory,store_commands::read_application_settings,store_commands::save_application_settings,store_commands::workspace_info,store_commands::read_profile,store_commands::save_profile,store_commands::initialize_workspace,store_commands::list_todos,store_commands::todo_history,store_commands::create_todo,store_commands::update_todo,store_commands::set_todo_completed,store_commands::delete_todo,store_commands::open_workspace_directory,runtime_host::organize_text,runtime_host::revise_candidate,runtime_host::test_model,runtime_host::active_model_run,store_commands::read_model_configuration,store_commands::save_model_configuration,store_commands::list_import_batches,store_commands::todo_source_links,store_commands::read_import_batch,store_commands::read_model_run,store_commands::save_candidate,store_commands::discard_candidate,store_commands::apply_candidate_preview,store_commands::sign_candidates,store_commands::cancel_model_run,store_commands::read_agent_configuration,store_commands::save_agent_configuration,store_commands::reset_agent_configuration,store_commands::read_agent_trial,store_commands::latest_agent_trial,store_commands::cancel_agent_trial,runtime_host::start_agent_trial,runtime_host::active_agent_trial])
         .setup(|app| {
             app.manage(store_commands::LocalState::new(app.path().app_data_dir()?));
             app.manage(runtime_host::RuntimeState::default());
@@ -143,3 +144,6 @@ pub fn run() {
             }
         });
 }
+
+#[cfg(feature = "s33-mcp-verification")]
+pub mod mcp_verification;

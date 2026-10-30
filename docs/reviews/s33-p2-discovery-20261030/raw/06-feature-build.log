@@ -1,0 +1,50 @@
+   Compiling objc2-exception-helper v0.1.1
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+   Compiling libsqlite3-sys v0.37.0
+   Compiling objc2 v0.6.5
+   Compiling rusqlite v0.39.0
+   Compiling block2 v0.6.2
+   Compiling objc2-core-foundation v0.3.2
+   Compiling rusqlite_migration v2.5.0
+   Compiling dispatch2 v0.3.1
+   Compiling objc2-foundation v0.3.2
+   Compiling objc2-core-graphics v0.3.2
+   Compiling objc2-app-kit v0.3.2
+   Compiling mac-notification-sys v0.6.15
+   Compiling notify-rust v4.18.2
+   Compiling objc2-web-kit v0.3.2
+   Compiling muda v0.19.3
+   Compiling tao v0.35.3
+   Compiling window-vibrancy v0.6.0
+   Compiling global-hotkey v0.8.0
+   Compiling rfd v0.16.1
+   Compiling tauri-runtime v2.11.3
+   Compiling wry v0.55.1
+   Compiling tray-icon v0.24.2
+   Compiling tauri-runtime-wry v2.11.4
+   Compiling tauri v2.11.6
+   Compiling tauri-plugin-fs v2.5.2
+   Compiling tauri-plugin-notification v2.4.0
+   Compiling tauri-plugin-global-shortcut v2.3.2
+   Compiling tauri-plugin-autostart v2.5.1
+   Compiling tauri-plugin-dialog v2.6.0
+warning: for loop over an `Option`. This is more readably written as an `if let` statement
+   --> src/mcp_host.rs:433:22
+    |
+433 |         for frame in next {
+    |                      ^^^^
+    |
+    = note: `#[warn(for_loops_over_fallibles)]` on by default
+help: to check pattern in a loop use `while let`
+    |
+433 -         for frame in next {
+433 +         while let Some(frame) = next {
+    |
+help: consider using `if let` to clear intent
+    |
+433 -         for frame in next {
+433 +         if let Some(frame) = next {
+    |
+
+warning: `sidekick` (lib) generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 18.93s

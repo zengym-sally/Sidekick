@@ -12,6 +12,8 @@ pub struct McpProbeTool {
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct McpProbeCatalog {
     pub tools: Vec<McpProbeTool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub catalog_sha256: Option<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -49,6 +51,9 @@ pub enum McpProbeFailure {
     Protocol,
     InvalidCatalog,
     Process,
+    Cleanup,
+    PrivateOutput,
+    Save,
 }
 impl McpProbeFailure {
     fn code(self) -> &'static str {
@@ -62,6 +67,9 @@ impl McpProbeFailure {
             Self::Protocol => "MCP_PROTOCOL",
             Self::InvalidCatalog => "MCP_CATALOG_INVALID",
             Self::Process => "MCP_PROCESS",
+            Self::Cleanup => "MCP_CLEANUP",
+            Self::PrivateOutput => "MCP_PRIVATE_OUTPUT",
+            Self::Save => "MCP_CATALOG_SAVE",
         }
     }
 }
@@ -85,6 +93,14 @@ fn check_catalog(catalog: &McpProbeCatalog) -> Result<()> {
             "MCP_PROBE_LIMIT",
             "诊断回执超过64工具或32KiB，未记录成功。",
         ));
+    }
+    if catalog.catalog_sha256.as_ref().is_some_and(|s| {
+        s.len() != 64
+            || !s
+                .bytes()
+                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    }) {
+        return Err(invalid_probe());
     }
     let mut names = BTreeSet::new();
     for tool in &catalog.tools {
@@ -170,6 +186,9 @@ impl AppStore {
                     | "MCP_PROTOCOL"
                     | "MCP_CATALOG_INVALID"
                     | "MCP_PROCESS"
+                    | "MCP_CLEANUP"
+                    | "MCP_PRIVATE_OUTPUT"
+                    | "MCP_CATALOG_SAVE"
             )
         );
         let state_valid = match row.1.as_str() {
@@ -222,6 +241,7 @@ impl AppStore {
         if n != 1 {
             return Err(stopped());
         }
+        self.mcp_probe_directories.remove(id);
         self.mcp_probe(id)
     }
 }

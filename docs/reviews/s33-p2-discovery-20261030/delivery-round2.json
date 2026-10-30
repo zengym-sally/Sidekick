@@ -1,0 +1,31 @@
+{
+  "round": 2,
+  "A": {
+    "reviewer": "p2_discovery_delivery_a",
+    "verdict": "APPROVE",
+    "closed": [
+      "A1 stale owner/result ignored before state changes; current real frames complete",
+      "A2 explicit blocked-stdin cancel and Runtime exit",
+      "raw original-service tail loss reproduced then fixed with directly inherited pipes"
+    ],
+    "newFindings": []
+  },
+  "B": {
+    "reviewer": "p2_discovery_delivery_b",
+    "verdict": "APPROVE",
+    "closed": [
+      "B1 known precommit failure finite failed; unknown remains barrier",
+      "B2 MCP_CLEANUP precedes cancellation and retains slot",
+      "B3 prepare intent ACK before group creation; confirm identity after Runtime exit"
+    ],
+    "newFindings": [],
+    "unverifiedLimit": "separate single actor kill scope does not promise host death plus cleaner killed between STOP/KILL"
+  },
+  "bothReadOnly": true,
+  "noTestsRerunByReviewers": true,
+  "sourceEntriesVerified": 23,
+  "entriesVerifiedAtReview": 145,
+  "outputHashesVerified": 4,
+  "coreSha256": "5070365453fc603c12d96dc2cb9d1aca9ee06cb4abb3dcc7275ee5c1e1ded7db",
+  "verificationAtReview": "honest 51/52 failed full run, followed by 2/2 timeout fix; final consolidated run was still pending"
+}

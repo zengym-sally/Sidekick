@@ -1,0 +1,18 @@
+{
+  "baseCommit": "c698270a5f45b58e4253735453691883220a8305",
+  "baselineBeforePlan": "clean main, cached origin ahead 3; prior 62 hashes verified without tests",
+  "pinnedPiTree": "e89822b0d7a2baf5cc518d3baf568e8dceb73c68",
+  "initialDraftNormativeCoreSha256": "45301df4ec5663948212ed5a269d5074fa90bd98012b4e70570a5fb9dfb14ee3",
+  "normativeCoreSha256": "5070365453fc603c12d96dc2cb9d1aca9ee06cb4abb3dcc7275ee5c1e1ded7db",
+  "designReviews": {
+    "round1": {
+      "a": "APPROVE_WITH_CHANGES; SDK signal gate and save uncertainty",
+      "b": "APPROVE_WITH_CHANGES; SDK signal gate and irreversible protocol errors"
+    },
+    "round2": {
+      "a": "APPROVE",
+      "b": "APPROVE"
+    },
+    "coreChanges": "custom public transport, drain-before-client-close latch, receipt and storage barrier, single environment map"
+  }
+}

@@ -285,6 +285,7 @@ struct Workspace {
     _lock: File,
     root_directory: File,
     mcp_directory: File,
+    runs_directory: File,
     backups_directory: File,
     database_identity: mcp_schema::DatabaseIdentity,
 }
@@ -308,6 +309,10 @@ pub struct AppStore {
     #[cfg(test)]
     mcp_security_fault: Option<mcp_security::McpSecurityFault>,
     mcp_schema_uncertain: bool,
+    mcp_probe_uncertain: bool,
+    mcp_probe_directories: std::collections::BTreeMap<String, File>,
+    #[cfg(test)]
+    mcp_catalog_fault: Option<mcp_catalog::CatalogFault>,
     #[cfg(test)]
     mcp_migration_fault: Option<mcp_schema::McpMigrationFault>,
 }
@@ -542,6 +547,10 @@ impl AppStore {
             #[cfg(test)]
             mcp_security_fault: None,
             mcp_schema_uncertain: false,
+            mcp_probe_uncertain: false,
+            mcp_probe_directories: std::collections::BTreeMap::new(),
+            #[cfg(test)]
+            mcp_catalog_fault: None,
             #[cfg(test)]
             mcp_migration_fault: None,
         };
@@ -708,7 +717,12 @@ impl AppStore {
         // A ready root must retain its sensitive directories. Recreating one
         // would hide the old configuration or an unresolved credential journal.
         if !initializing {
-            for path in [&root, &root.join("mcp"), &root.join("backups")] {
+            for path in [
+                &root,
+                &root.join("mcp"),
+                &root.join("backups"),
+                &root.join("runs"),
+            ] {
                 let metadata = fs::symlink_metadata(path).map_err(|_| {
                     StoreError::new(
                         "MCP_PATH_CHANGED",
@@ -730,6 +744,7 @@ impl AppStore {
             private_dir(&root.join(name))?;
         }
         let mcp_directory = File::open(root.join("mcp")).map_err(io_error)?;
+        let runs_directory = File::open(root.join("runs")).map_err(io_error)?;
         let backups_directory = File::open(root.join("backups")).map_err(io_error)?;
         self.check_fault(InitPhase::Directories)?;
         let path = root.join("data/sidekick.sqlite");
@@ -794,6 +809,7 @@ impl AppStore {
             _lock: lock,
             root_directory,
             mcp_directory,
+            runs_directory,
             backups_directory,
             database_identity,
         })
@@ -1215,3 +1231,11 @@ pub use mcp_schema::McpSchemaUpgrade;
 #[path = "mcp_probe.rs"]
 mod mcp_probe;
 pub use mcp_probe::*;
+
+#[path = "mcp_catalog.rs"]
+mod mcp_catalog;
+pub use mcp_catalog::{McpDiscoveredCatalog, McpDiscoveredTool, PreparedMcpProbe};
+
+#[cfg(test)]
+#[path = "mcp_catalog_tests.rs"]
+mod mcp_catalog_tests;

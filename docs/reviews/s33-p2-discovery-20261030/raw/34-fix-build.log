@@ -1,0 +1,20 @@
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+error[E0382]: borrow of moved value: `private_tmp`
+   --> src/mcp_verification.rs:107:82
+    |
+81  |     let private_tmp = PathBuf::from("/tmp")
+    |         ----------- move occurs because `private_tmp` has type `std::path::PathBuf`, which does not implement the `Copy` trait
+...
+84  |     if !parent.starts_with(&temporary) && !parent.starts_with(private_tmp) {
+    |                                                               ----------- value moved here
+...
+107 |         || (!app_canonical.starts_with(&temporary) && !app_canonical.starts_with(&private_tmp))
+    |                                                                                  ^^^^^^^^^^^^ value borrowed here after move
+    |
+help: consider borrowing `private_tmp`
+    |
+84  |     if !parent.starts_with(&temporary) && !parent.starts_with(&private_tmp) {
+    |                                                               +
+
+For more information about this error, try `rustc --explain E0382`.
+error: could not compile `sidekick` (lib) due to 1 previous error

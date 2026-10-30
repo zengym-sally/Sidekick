@@ -1,0 +1,39 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-49jGGt/isolated",
+  "policy": "duplicate-owner",
+  "result": {
+    "agentId": null,
+    "createdAtMs": 1793358662818,
+    "errorCode": "MCP_PROTOCOL",
+    "finishedAtMs": 1793358663087,
+    "id": "mcp-probe-79679-1793358662818238000",
+    "input": {
+      "serverId": "mcp-24c53e50f6cd95253c8bd4dd"
+    },
+    "purpose": "mcp_probe",
+    "result": null,
+    "snapshot": {
+      "configurationRevision": "rev-5f14491a5db97187e72e9beea7e760ae10af4b1657a4a7df75ba693d3fb9def6",
+      "connectTimeoutMs": 5000,
+      "serverId": "mcp-24c53e50f6cd95253c8bd4dd"
+    },
+    "status": "failed"
+  },
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793358662961,
+      "pid": 79865,
+      "ppid": 79773,
+      "role": "service"
+    }
+  ],
+  "audits": "{\"actor\":\"rust\",\"at\":1793358662961,\"group\":79773,\"matched\":true,\"nonce\":\"6ad8ce47-55f2-4876-8ced-7067adf44471\",\"proofPid\":79773,\"run\":\"mcp-probe-79679-1793358662818238000\",\"signal\":\"-STOP\"}\n{\"at\":1793358662967,\"actor\":\"cleaner\",\"group\":79773,\"proofPid\":79773,\"run\":\"mcp-probe-79679-1793358662818238000\",\"nonce\":\"6ad8ce47-55f2-4876-8ced-7067adf44471\",\"signal\":\"SIGSTOP\",\"matched\":true}\n{\"at\":1793358662972,\"actor\":\"cleaner\",\"group\":79773,\"proofPid\":79773,\"run\":\"mcp-probe-79679-1793358662818238000\",\"nonce\":\"6ad8ce47-55f2-4876-8ced-7067adf44471\",\"signal\":\"SIGKILL\",\"matched\":true}\n"
+}

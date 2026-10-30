@@ -145,6 +145,7 @@ fn server(s: &AppStore) -> McpServerInput {
 }
 fn catalog() -> McpProbeCatalog {
     McpProbeCatalog {
+        catalog_sha256: None,
         tools: vec![McpProbeTool {
             name: "synthetic_echo".into(),
             schema_sha256: "a".repeat(64),
@@ -475,6 +476,7 @@ fn mcp_schema_probe_validation_rejects_invalid_metadata_without_recording_succes
         "MCP_PROBE_INVALID"
     );
     let too_many = McpProbeCatalog {
+        catalog_sha256: None,
         tools: (0..65)
             .map(|n| McpProbeTool {
                 name: format!("tool{n}"),
@@ -557,6 +559,7 @@ fn mcp_schema_catalog_encoded_budget_32k_has_independent_exact_and_plus_one_cont
         .begin_mcp_probe(&saved.server_id.unwrap(), &saved.configuration.revision)
         .unwrap();
     let mut exact = McpProbeCatalog {
+        catalog_sha256: None,
         tools: (0..64)
             .map(|n| McpProbeTool {
                 name: format!("T{n:02}{}", "x".repeat(253)),

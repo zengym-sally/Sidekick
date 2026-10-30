@@ -41,6 +41,17 @@ const business = await build({
   }, logLevel: 'info', metafile: true,
 });
 const skillsBuild = await build({entryPoints:['runtime/skills-manager.mjs'],outfile:join(directory,'skills-manager.mjs'),bundle:true,platform:'node',target:'node24',format:'esm',banner:{js:"import { createRequire as skillsRequire } from 'node:module'; const require = skillsRequire(import.meta.url);"},nodePaths:[join(resolve(source),'node_modules')],alias:{'@sidekick/pi-skills':join(resolve(source),'packages/coding-agent/dist/core/skills.js')},logLevel:'info',metafile:true});
+const mcpBuild = await build({
+  entryPoints: ['runtime/mcp-probe-entry.mjs'], outfile: join(directory, 'mcp-probe.mjs'),
+  bundle: true, platform: 'node', target: 'node24', format: 'esm',
+  nodePaths: [join(resolve(source), 'node_modules')],
+  alias: {
+    '@sidekick/pi-mcp-client': join(resolve(source), 'packages/mcp/src/client.ts'),
+    '@sidekick/pi-jsonrpc': join(resolve(source), 'packages/mcp/src/protocol/jsonrpc.ts'),
+  }, logLevel: 'info', metafile: true,
+});
+if (Object.keys(mcpBuild.metafile.inputs).some(input => /transports[\/]stdio\.ts$/.test(input))) throw new Error('Discovery must not bundle the SDK StdioTransport signal path.');
+await copyFile('runtime/mcp-guardian.mjs', join(directory, 'mcp-guardian.mjs'));
 const skillManifest=JSON.parse(await readFile('resources/skills/manifest.json','utf8'));
 const {createHash}=await import('node:crypto');
 for(const pack of skillManifest.packages)for(const file of pack.files){const bytes=await readFile(join('resources/skills/packages',pack.id,file.path));if(bytes.length!==file.bytes||createHash('sha256').update(bytes).digest('hex')!==file.sha256)throw new Error('Bundled skill provenance mismatch.');}
@@ -58,7 +69,7 @@ await cp('tests/probes/fixtures/skills', join(directory, 'skills'), { recursive:
 await copyFile(join(source, 'LICENSE'), join(directory, 'PI-LICENSE'));
 await cp(join(source, 'packages/mcp/LICENSES'), join(directory, 'licenses/pi-mcp'), { recursive: true });
 const packages = new Map();
-for (const input of new Set([...Object.keys(result.metafile.inputs), ...Object.keys(business.metafile.inputs), ...Object.keys(skillsBuild.metafile.inputs)])) {
+for (const input of new Set([...Object.keys(result.metafile.inputs), ...Object.keys(business.metafile.inputs), ...Object.keys(skillsBuild.metafile.inputs), ...Object.keys(mcpBuild.metafile.inputs)])) {
   let parent = dirname(resolve(input));
   while (parent !== dirname(parent)) {
     try {
@@ -82,5 +93,5 @@ for (const input of new Set([...Object.keys(result.metafile.inputs), ...Object.k
   }
 }
 await writeFile(join(directory, 'licenses/inventory.json'), JSON.stringify([...packages.values()], null, 2));
-await writeFile(join(directory, 'source.json'), JSON.stringify({ ...metadata, node: process.version, larkCli: '1.0.98', role: 'S0 diagnostics, organizer and Skills Runtime; business state belongs to the Rust host', skills:{source:skillManifest.source,packages:skillManifest.packages.length,files:skillManifest.packages.reduce((sum,p)=>sum+p.files.length,0),supportFiles:(skillManifest.supportReferences||[]).length,license:'builtin-skills/LICENSE'} }, null, 2));
+await writeFile(join(directory, 'source.json'), JSON.stringify({ ...metadata, node: process.version, larkCli: '1.0.98', mcpDiscovery:{client:'@earendil-works/pi-mcp public McpClient',transport:'Sidekick ManagedMcpTransport',sdkStdioBundled:false,inputs:Object.keys(mcpBuild.metafile.inputs)}, role: 'S0 diagnostics, organizer, Skills and MCP discovery Runtime; business state belongs to the Rust host', skills:{source:skillManifest.source,packages:skillManifest.packages.length,files:skillManifest.packages.reduce((sum,p)=>sum+p.files.length,0),supportFiles:(skillManifest.supportReferences||[]).length,license:'builtin-skills/LICENSE'} }, null, 2));
 console.log('Bundled diagnostic Runtime prepared; no model credentials included.');

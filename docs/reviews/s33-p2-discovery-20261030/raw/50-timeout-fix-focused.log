@@ -1,0 +1,12 @@
+{"scenario":"wait-init","status":"failed","code":"MCP_TIMEOUT","modes":"wait-init","processes":3,"methods":["initialize"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process wait-init publishes only after valid discovery and cleanup (2176.282584ms)
+{"scenario":"slow-pages","status":"failed","code":"MCP_TIMEOUT","modes":"slow-pages","processes":3,"methods":["initialize","notifications/initialized","tools/list","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process slow-pages publishes only after valid discovery and cleanup (1434.479375ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3653.110167

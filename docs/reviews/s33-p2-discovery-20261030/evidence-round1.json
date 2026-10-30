@@ -1,0 +1,704 @@
+{
+  "baseCommit": "c698270a5f45b58e4253735453691883220a8305",
+  "scope": "P2 controlled initialize, paginated discovery, owned cleanup, durable full catalog; no tools/call or native acceptance",
+  "status": "implementation and layered tests; independent delivery reviews pending",
+  "countsLatest": {
+    "discoveryNode": 44,
+    "neighborJs": 16,
+    "rust": 86
+  },
+  "normativeCoreSha256": "5070365453fc603c12d96dc2cb9d1aca9ee06cb4abb3dcc7275ee5c1e1ded7db",
+  "entries": [
+    {
+      "path": "DESIGN.md",
+      "kind": "reference",
+      "bytes": 20650,
+      "sha256": "83cc33c9f7f903da89029b1083c58ad6d5d6d53060376604194adb5c170a4e4f"
+    },
+    {
+      "path": "README.md",
+      "kind": "document",
+      "bytes": 16909,
+      "sha256": "69f90e197749e792167783c2ab5cfe44511d5c0dbe5efc2e02012a1de425b172"
+    },
+    {
+      "path": "docs/product/01-产品定义.md",
+      "kind": "document",
+      "bytes": 8783,
+      "sha256": "8efb75642cffb1ac59a8dbe7a35d337d8a67baa5fdf1777558fe3e155ea6135b"
+    },
+    {
+      "path": "docs/product/02-用户流程.md",
+      "kind": "document",
+      "bytes": 10452,
+      "sha256": "5b87cbad68604fb739bb59e1147f4d9edc5f63d36bcb2457fb148d314c5d785d"
+    },
+    {
+      "path": "docs/product/03-智能体与架构.md",
+      "kind": "document",
+      "bytes": 21453,
+      "sha256": "93b11e2ba57442efaffc166d69818b18d0eef8eb2d4d64d6c1d1627ac04ff02b"
+    },
+    {
+      "path": "docs/product/04-分期交付与验收.md",
+      "kind": "document",
+      "bytes": 12784,
+      "sha256": "e5a8de8f54fa85bbb96d270bf2a1e7de86a0cf331b1a0dcd36900cc6dca86ada"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/baseline.json",
+      "kind": "evidence",
+      "bytes": 827,
+      "sha256": "c5e1bf90a6bc58004e1da54306fd9e157131581dee675e2e48a72554325b46b8"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/checks.json",
+      "kind": "evidence",
+      "bytes": 6801,
+      "sha256": "5980443e1a0338e2b41a95fcd1682922ddb64b06d4424990f5cd403b345e92eb"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/invariants.json",
+      "kind": "evidence",
+      "bytes": 537,
+      "sha256": "07900a90c912683b53a599262ef61cb6022d887c853d2b9e0753591e80969713"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/bad-then-valid-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "29cc07d54ed3caad003f3b3ca9b92bf678d9f84f2c0342314e094504bf23f253"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/blocked-writer-1.json",
+      "kind": "evidence",
+      "bytes": 758,
+      "sha256": "3c85a986c2a60b9951e70c73cd44a2b077413987c901aa17171c12de94c7329c"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/cancel-initialize-1.json",
+      "kind": "evidence",
+      "bytes": 1414,
+      "sha256": "62ac34dba69ae11615ff3790fbbba77ec30eca59950f70fec4a713b761670b8f"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/cancel-list-1.json",
+      "kind": "evidence",
+      "bytes": 1996,
+      "sha256": "33ce64b092c827bf31b09133e6f20fe9bd96445bec194ecaffdc908757da7172"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/catalog-exact-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "aeb3d71e5c8428d1f15d7b7400c53c3d1f2c7c0ea787529ab3d9b1d237be231e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/catalog-plus-one-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "6f8867dfcfffed1dc32db88a2df565e518553bc3c9a533772dfcab973a7cfdaa"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/changed-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "8cd56b6d4bc643fed805ae14bf6e411b836113a997d61cb069a534f0c679ca46"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/cycle-1.json",
+      "kind": "evidence",
+      "bytes": 2192,
+      "sha256": "fd9092fad3f971122846a36a4488b4c9de1da468db134ef3d6ded2684cbf2252"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/duplicate-response-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "bedd5e8e1d6b954d7e2146f3836845bbe91891f7db2d4a68ed5167373277190c"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/duplicate-tool-1.json",
+      "kind": "evidence",
+      "bytes": 2193,
+      "sha256": "16ec30504c053c4b260df3517eac828f527084fca8c85011a7fc4fdf02e2e7f3"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/gate-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "5f3e495d30c8c13b654a78fad3b7ae57b500d376a92ce2d05f283dc9bb592517"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/gate-2.json",
+      "kind": "evidence",
+      "bytes": 3574,
+      "sha256": "d4f724c214fe52f2419911db57f00b17ce4bc55df10de63f84ab84b0d0f0fda2"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/intermediate-13-kill-service.json",
+      "kind": "evidence",
+      "bytes": 1945,
+      "sha256": "933c0b0639f63328d9fdff16b405a74d6ac3fbb85ac841e2cc5c7de57dcfffe1"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/invalid-utf8-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "984c4ace28c19efea456c9b0df65ad0f90395f13daed5cc0dc3feb817eaed669"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/kill-guardian-1.json",
+      "kind": "evidence",
+      "bytes": 2128,
+      "sha256": "7be6d127d834e311e1f88b42a35521c8228baa6ac6fe05bdcb238a858b38f7e2"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/kill-host-1.json",
+      "kind": "evidence",
+      "bytes": 2128,
+      "sha256": "d00455eb80c85ffa32428a5e8d5d4cea2050724f929df8ec6574e45d72cf6532"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/kill-runtime-1.json",
+      "kind": "evidence",
+      "bytes": 2392,
+      "sha256": "88e1a430f9a1d6e0a5662b370ebdd400e958d5622fce93e93248f95f7f67ce72"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/kill-service-1.json",
+      "kind": "evidence",
+      "bytes": 2128,
+      "sha256": "d868068924c6ab670a43b05ec71f91209831a204172fa9741ddfb9d91e172111"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/large-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "004322e808368bbbcc1506943b342d2131fddf97ec2f32ea7e6e65c7591a94af"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/limit-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "1b23837609d6a75b905c8eb121da38e06ef8ff6da318bb55c81285d5c85843d6"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/normal-1.json",
+      "kind": "evidence",
+      "bytes": 2193,
+      "sha256": "30a7dbcd6d8e046db6908d077109693a45c4d2fcd210df0bede869534e05a41e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/notifications-overflow-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "88f81ac7364535e0eaf2c3479665b79fb40610c957cc34907efb08454c54a8bb"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/oversize-then-valid-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "6959c11c3df0ed26b719be0a9d45c6a0ca49021f5ba7077cf27b816ef079d7cf"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/pages-exact-1.json",
+      "kind": "evidence",
+      "bytes": 13526,
+      "sha256": "09fb858de4014935d2dd076ddc84da2912e8c41445b41130c62d189121eede99"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/pages-plus-one-1.json",
+      "kind": "evidence",
+      "bytes": 13526,
+      "sha256": "436ebfb946654f446e2c26fc9c2ccc2651eea20ced2cdb6d7a3b7c682e490623"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/policy-cancel-before-ack-1.json",
+      "kind": "evidence",
+      "bytes": 1165,
+      "sha256": "bcc5805d960c07aebd3cc1759ad409c284b57b274e946dcf3ec0cf6e44b1403f"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/policy-duplicate-owner-1.json",
+      "kind": "evidence",
+      "bytes": 1163,
+      "sha256": "668224575e5b9854d3b632cafd8bc4dd531c6480d7c23f287abf0a1f2ef62595"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/policy-missing-ack-1.json",
+      "kind": "evidence",
+      "bytes": 1168,
+      "sha256": "d07472d04849147513e6e8aa90443174620c9968ed41c32fe05aa36bfd160998"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/policy-old-nonce-1.json",
+      "kind": "evidence",
+      "bytes": 1167,
+      "sha256": "7ec5e4180d661e82d590540afc205075cc4772d805105bfcdf3188962a0a202e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/policy-old-run-1.json",
+      "kind": "evidence",
+      "bytes": 1165,
+      "sha256": "14835671bf039f530b9430c569d0b847f4d236a9d3e89f28547f2e5cd8abe521"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/policy-wrong-ack-1.json",
+      "kind": "evidence",
+      "bytes": 1167,
+      "sha256": "c4824cec36e29568624323eb7066fffdf912a1b050cda6367182b2fcb8925463"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/ref-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "60af9534b08ab7354242f62a1e475ace8bc53c79fceee9c20473866c91c6bb61"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/reverse-slot-reservations-1.json",
+      "kind": "evidence",
+      "bytes": 223,
+      "sha256": "d46ab2145aeccf76af2b710880ed47ee1c12a03b6c0b1c3763fb6567d6bdc53b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/schema-exact-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "758297be26605dc6867d6e9c771b2a3ea010ed94a3a26ce1485739a9b4559ddd"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/schema-plus-one-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "53a24f67926ac03cb8b43f16a301cdd7f677ff26d8ba06af365fb2959b92c594"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/secret-1.json",
+      "kind": "evidence",
+      "bytes": 2035,
+      "sha256": "5de224c0416b68ef41b206b37511a2a167856eeac087198842fb8a6f2ed4dc6a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/slow-pages-1.json",
+      "kind": "evidence",
+      "bytes": 2193,
+      "sha256": "0211c2c7d126f03198170165ef9668ea12233332b146838d6fc5fe1912b6502a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/stderr-overflow-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "92ea86239b16063a14a53dc15a093ef1122cad3ccf89e2c0d9224dc93a6d424f"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/tail-bad-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "2ead0baa9e861f833b2ce4200dafaeaecede172820e0d8a2335b016d3cd4486d"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/tail-incomplete-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "2034220591bd3cf4e375a6efb727024d09b3972824825eaa78bad9d82470e10b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/unknown-response-1.json",
+      "kind": "evidence",
+      "bytes": 2006,
+      "sha256": "cca8e6cd3488233f1ab44a435aa002f4dcf05ff3a6c295a5f3190a630833cad8"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/v3-refusal-1.json",
+      "kind": "evidence",
+      "bytes": 206,
+      "sha256": "c6c6cc90aed92162d7dccf58b72818be6815846a3fe5883dbed324479b709ed5"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/processes/wait-init-1.json",
+      "kind": "evidence",
+      "bytes": 1669,
+      "sha256": "c90339752ffa742eaa05dd22e49b5640a138975514d1df3fed876b90e5a96f56"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/01-catalog-red.log",
+      "kind": "evidence",
+      "bytes": 1422,
+      "sha256": "c8cfb2ceb23ec80b17e7ab982e911421ee2856fcfbd30c6b4713010f48e8955d"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/02-catalog-green.log",
+      "kind": "evidence",
+      "bytes": 377,
+      "sha256": "bd709201d66c15954960a200ab02dff0f00ef2769dce356de2872eab50d3939e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/03-bundle.log",
+      "kind": "evidence",
+      "bytes": 419,
+      "sha256": "3f7cdfde15f3ca6b3f027f325f11131fb03d772b04de5d7ea6ae170138dd48be"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/04-rust-check.log",
+      "kind": "evidence",
+      "bytes": 2283,
+      "sha256": "2afc7eb51de0874298a586cba28bff656036ff69645a9b0a53f2b1da7d14e2fa"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/05-feature-check.log",
+      "kind": "evidence",
+      "bytes": 647,
+      "sha256": "32f124bad10ea30e10d6993062b84ab41c33b269f18c59d7395b499c7a8ee36f"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/06-feature-build.log",
+      "kind": "evidence",
+      "bytes": 1751,
+      "sha256": "0de11b2df2048ca3ce5df830b53ccd37bd79aa002cf2bfb05e5657a7b76f9c57"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/07-first-real-loop.log",
+      "kind": "evidence",
+      "bytes": 2102,
+      "sha256": "d24d1484ba14a56a9a9743d9c4c0d46b50cb83fdf3880904b7258002a1e356ca"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/08-real-negative-loop.log",
+      "kind": "evidence",
+      "bytes": 7593,
+      "sha256": "f0758a567acc154a22c7f929b43b9b28542c500919e58093604e9ac633523a7f"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/09-catalog-store.log",
+      "kind": "evidence",
+      "bytes": 1012,
+      "sha256": "0b54ff7727267771230a2f20086ffda6ef723edc42012efd9a4b178e4c831f38"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/10-real-loop-corrected.log",
+      "kind": "evidence",
+      "bytes": 6267,
+      "sha256": "8a0724a71eecc7f7c1f3d0a9dc4091930b6692a0ab8aafd1ee8b75fd1236f672"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/11-clippy.log",
+      "kind": "evidence",
+      "bytes": 158,
+      "sha256": "16fc039636d27ac1275c0395fa112a00a658a0df2acbd721b542f8e5f0b0d164"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/12-budget-ack-loop.log",
+      "kind": "evidence",
+      "bytes": 12397,
+      "sha256": "188e983cd410e5ed17a4e7689657854b3f8bc9ffb10ee374d2b28dc4ac616ad8"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/13-process-evidence.log",
+      "kind": "evidence",
+      "bytes": 12738,
+      "sha256": "dc21927ac00974f3a34fb78ed6d7475acc0c892334db8963387324e598148a0e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/14-scope-complete.log",
+      "kind": "evidence",
+      "bytes": 13102,
+      "sha256": "b61cbe2a32232cdda257c2f95cd94ef4f567af673d134c659ba1370373f3f51d"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/15-typecheck.log",
+      "kind": "evidence",
+      "bytes": 72,
+      "sha256": "efc5b3a47a0d3023241a6990e4253676d9a17ce360e4d9632131e4b22aaea9c0"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/16-config-domain.log",
+      "kind": "evidence",
+      "bytes": 1034,
+      "sha256": "3af1a1da3f6aa4bbcaeaa25b347badd6145307f6f235cf8c7daddc6df282c79c"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/17-security-domain.log",
+      "kind": "evidence",
+      "bytes": 939,
+      "sha256": "5be4543504056bcc0a434ff7adc819df1e0dcc780d084897e6648c80f489b4f8"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/18-catalog-store-final.log",
+      "kind": "evidence",
+      "bytes": 1166,
+      "sha256": "705387ccd35b8a50975409bc61359bfc6c1d492ad2340e401a15d58bd390735f"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/19-schema-neighbor.log",
+      "kind": "evidence",
+      "bytes": 2831,
+      "sha256": "036974886585950e4b050087e52803baf7c9e0adab330c4c922267c3d6082caa"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/20-config-neighbor.log",
+      "kind": "evidence",
+      "bytes": 1073,
+      "sha256": "b7c17815c1dffb13aaf39480937e81a3bdef2fdc30392fa9bde2f032cc7e2ddd"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/21-security-neighbor.log",
+      "kind": "evidence",
+      "bytes": 2811,
+      "sha256": "c0c702409b58ce87e0ff333d9cda15094e57ad711b902dfc17a4fbcf45c83012"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/22-local-neighbor.log",
+      "kind": "evidence",
+      "bytes": 2603,
+      "sha256": "705c0ebce0c7adeae7b9711ad8421d3a629d46d25da1724dc56ecb49ac5eb5c3"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/23-ingestion-neighbor.log",
+      "kind": "evidence",
+      "bytes": 1256,
+      "sha256": "9f3e9aefc086fe85dcb9ab86859fa80ba08c4ea3374b3ecef30fdbe46a701b4a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/24-agent-neighbor.log",
+      "kind": "evidence",
+      "bytes": 282,
+      "sha256": "96985b7050fe3e47eb2c0f49540d9671bd7a4dd896ae3fcc06df7d0464e67e8c"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/25-fmt.log",
+      "kind": "evidence",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/26-default-clippy.log",
+      "kind": "evidence",
+      "bytes": 158,
+      "sha256": "418c7114882628720a3cf55d662895ed2c20f5bb207b79662bb99a0192635ea5"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/27-feature-clippy.log",
+      "kind": "evidence",
+      "bytes": 1512,
+      "sha256": "41b59bffd1926d186a2814a0930a6d940f979e1e60a29044427bb21af0598fdc"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/28-agent-exact-corrected.log",
+      "kind": "evidence",
+      "bytes": 386,
+      "sha256": "5e4b426a11f71ac84a2931d67117bedbf92fd5dcc50dcbff8b9a5c217556ff5a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/29-feature-clippy-corrected.log",
+      "kind": "evidence",
+      "bytes": 158,
+      "sha256": "831284822a7cefe69e302bc78cf022c92dedac3f1625a1f4786838b0d12db9e7"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/raw/30-runtime-pid-proof.log",
+      "kind": "evidence",
+      "bytes": 1109,
+      "sha256": "0a1fdd12b111ab05a639c8be2711a23b372447a4354fdf61faa3ec2d8f49a747"
+    },
+    {
+      "path": "docs/reviews/s33-p2-discovery-20261030/runtime-provenance.json",
+      "kind": "evidence",
+      "bytes": 2321,
+      "sha256": "6857c1b3e4ddeee5b865bd13dfcbf348015bf5281982b80901a2d431996ca4f1"
+    },
+    {
+      "path": "package-lock.json",
+      "kind": "reference",
+      "bytes": 85302,
+      "sha256": "fb837764c57ee664868145e03bdcbc3450cfd20d9d2427bdde3156c3644bc672"
+    },
+    {
+      "path": "package.json",
+      "kind": "source",
+      "bytes": 6329,
+      "sha256": "895d7bb046fcb24afa91c6c131b63742306d6d8e48b23fbd12502ad60a423257"
+    },
+    {
+      "path": "runtime/managed-mcp.mjs",
+      "kind": "source",
+      "bytes": 5855,
+      "sha256": "ad7ba23d150b68265adea690e1acbe96e009c4c97ff445516c1d5f5dd48a1b7c"
+    },
+    {
+      "path": "runtime/mcp-catalog.mjs",
+      "kind": "source",
+      "bytes": 3498,
+      "sha256": "3397f95b9c80989e0590cc4be2c97567062af024c229a763b8b2950f50863918"
+    },
+    {
+      "path": "runtime/mcp-guardian.mjs",
+      "kind": "source",
+      "bytes": 4688,
+      "sha256": "eac681f7350d6d16975a63cabc777b849007d482af5a54255bb31e92626ea5e1"
+    },
+    {
+      "path": "runtime/mcp-probe-entry.mjs",
+      "kind": "source",
+      "bytes": 5096,
+      "sha256": "415d4b4f482a97843bc79c7eef9d3866e24f32ebbbe7fb1ca63d1fa1820c8b3f"
+    },
+    {
+      "path": "scripts/probes/bundle-runtime.mjs",
+      "kind": "source",
+      "bytes": 7796,
+      "sha256": "c401b6e2e5b00de005ea5a7c441a20f111aded533bd98b8539290915a9d8d27e"
+    },
+    {
+      "path": "src-tauri/Cargo.lock",
+      "kind": "reference",
+      "bytes": 135251,
+      "sha256": "4e43f06dddcb3722419bab4c65e0d36f6264350a582e162a0c0aa385aba8dcdd"
+    },
+    {
+      "path": "src-tauri/Cargo.toml",
+      "kind": "source",
+      "bytes": 903,
+      "sha256": "f0915d20519f84c418f2ad99998a58067069a3249874fc3624f490181efdb14e"
+    },
+    {
+      "path": "src-tauri/examples/s33-mcp-host.rs",
+      "kind": "source",
+      "bytes": 57,
+      "sha256": "bdf27baf14b7a2955e72e1d8d33e1e9dcfbe881adef253a1b2f27de46a54f201"
+    },
+    {
+      "path": "src-tauri/migrations/001_todos.sql",
+      "kind": "reference",
+      "bytes": 1558,
+      "sha256": "eae39795f8003e8236b72056bb1b7e2eea82d82c5e2933a493c95fec09657667"
+    },
+    {
+      "path": "src-tauri/migrations/002_ingestion.sql",
+      "kind": "reference",
+      "bytes": 3053,
+      "sha256": "43d9c92a8948a73cf0bc8bc08f1793c0470fee52dd3f459ebbf14d98ce08ba73"
+    },
+    {
+      "path": "src-tauri/migrations/003_agent_runs.sql",
+      "kind": "reference",
+      "bytes": 529,
+      "sha256": "b8f89eab2dc8747cbffd0e59cc7c3816439ace21ebfe977babaf7c1b79b586c9"
+    },
+    {
+      "path": "src-tauri/migrations/004_mcp_runs.sql",
+      "kind": "reference",
+      "bytes": 4344,
+      "sha256": "e8960c4f529717776bba87522cc9becd3adda14544147c40135230404fe56a1b"
+    },
+    {
+      "path": "src-tauri/src/lib.rs",
+      "kind": "source",
+      "bytes": 9478,
+      "sha256": "6815988ad75ab82c012b4a539815e9505c1c415294a95340e2ae46c1cd3f7062"
+    },
+    {
+      "path": "src-tauri/src/local_store.rs",
+      "kind": "source",
+      "bytes": 45410,
+      "sha256": "83d9ed7b7b63628e27b24d3e419a9ce39119f721223541386a6ea0efd193bd3e"
+    },
+    {
+      "path": "src-tauri/src/mcp_catalog.rs",
+      "kind": "source",
+      "bytes": 14893,
+      "sha256": "175d2a95319142a71a153eead2c75270ef5901e8e8ecb1910d79e0ba97a0e8f2"
+    },
+    {
+      "path": "src-tauri/src/mcp_catalog_tests.rs",
+      "kind": "source",
+      "bytes": 5327,
+      "sha256": "f0197f1d1a053e2279795b09d6c904350ba78a31a9d814d4da74496d91a93f92"
+    },
+    {
+      "path": "src-tauri/src/mcp_host.rs",
+      "kind": "source",
+      "bytes": 27687,
+      "sha256": "89b38c6e9247445029c43ff0c768ebc36e875bd702ca34504d718ae8665d1669"
+    },
+    {
+      "path": "src-tauri/src/mcp_probe.rs",
+      "kind": "source",
+      "bytes": 9904,
+      "sha256": "2b2a868a25314a41588568ba25c166a38b3a5820b6622a04656bc1d0a8c823de"
+    },
+    {
+      "path": "src-tauri/src/mcp_schema.rs",
+      "kind": "source",
+      "bytes": 16527,
+      "sha256": "9c318c958a40ebe2c93c7fd7bbc2881d9549b1c7fa8457ea5334ef2681435d9e"
+    },
+    {
+      "path": "src-tauri/src/mcp_schema_tests.rs",
+      "kind": "source",
+      "bytes": 38803,
+      "sha256": "05f7c10ac985aacf0d3178792d204037a74d97e2dbd2b738aafaf8591169b504"
+    },
+    {
+      "path": "src-tauri/src/mcp_security.rs",
+      "kind": "source",
+      "bytes": 35693,
+      "sha256": "4b53716bc8cb7e7f3ae3d99c710093164a533533412894962ae074f866d1d20c"
+    },
+    {
+      "path": "src-tauri/src/mcp_verification.rs",
+      "kind": "source",
+      "bytes": 10536,
+      "sha256": "98692d642c00ef03b73d059aa1530ae4bffead34c663b63fa2f24b071b27c85d"
+    },
+    {
+      "path": "src-tauri/src/runtime_host.rs",
+      "kind": "source",
+      "bytes": 41922,
+      "sha256": "253681615b2c79347a2389646930f139135342a9296de1be2b9502082a185f87"
+    },
+    {
+      "path": "src-tauri/src/store_commands.rs",
+      "kind": "source",
+      "bytes": 12596,
+      "sha256": "096b0d187b81b78e5f329362d3f45011df59fa1668f3b1b917a1f83e2b9b5596"
+    },
+    {
+      "path": "tests/fixtures/s33-discovery/service.mjs",
+      "kind": "source",
+      "bytes": 4785,
+      "sha256": "de5e1df08f7bd8466f29e177ac9e949caf14e922bd863136835e41a0ed771293"
+    },
+    {
+      "path": "tests/probes/pi-source.json",
+      "kind": "reference",
+      "bytes": 366,
+      "sha256": "4b04adff4ec13789d010baf3c584651ebe6f354a9aacf5392ef298d8dbaedea0"
+    },
+    {
+      "path": "tests/s33-catalog.test.mjs",
+      "kind": "source",
+      "bytes": 1505,
+      "sha256": "c6687e73a038f01fde793a06b36a433619732aece4d599628aa05e1b48830a6c"
+    },
+    {
+      "path": "tests/s33-discovery.test.mjs",
+      "kind": "source",
+      "bytes": 18175,
+      "sha256": "8cdb6b897e26157e1d2a5def064b534aafe895e15009542c3b01828bf8abb72b"
+    }
+  ],
+  "documentsReadDirectly": [
+    "docs/product/05-第一阶段实施计划.md",
+    "docs/reviews/s33-p2-discovery-20261030.md"
+  ],
+  "dependencyReachability": "new runtime, example, tests and fixture in source entries; existing vendor/pi and package/Cargo locks unchanged. Existing installed node_modules/esbuild, Cargo cache and macOS ps/kill required; no installs performed. Generated build/target files rebuilt by package script and are not committed.",
+  "notPerformed": [
+    "native GUI and new native package",
+    "ordinary user root migration",
+    "real Keychain or persistent credentials",
+    "real third-party MCP",
+    "model preparation or tools/call",
+    "push or external write"
+  ]
+}

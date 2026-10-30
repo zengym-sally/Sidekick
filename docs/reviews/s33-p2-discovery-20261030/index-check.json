@@ -1,0 +1,9 @@
+{
+  "scope": "staged checkpoint before this evidence-only append",
+  "sourceAndDocumentCheckExitCode": 0,
+  "fullRawLogCheckExitCode": 2,
+  "rawEvidenceWhitespaceFindings": 30,
+  "allFindingsOnlyOriginalRawLogs": true,
+  "rawDiagnosticsSha256": "14bcdd1807e658ce7ad9612866d57a4665b75241eb605a241630905210bfda55",
+  "policy": "retain verbatim execution logs; no normalization or ignore rules added"
+}

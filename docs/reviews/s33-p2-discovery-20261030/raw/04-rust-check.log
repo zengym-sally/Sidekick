@@ -1,0 +1,53 @@
+   Compiling objc2-exception-helper v0.1.1
+   Compiling mac-notification-sys v0.6.15
+   Compiling libsqlite3-sys v0.37.0
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+   Compiling objc2 v0.6.5
+    Checking block2 v0.6.2
+    Checking objc2-core-foundation v0.3.2
+    Checking dispatch2 v0.3.1
+    Checking objc2-foundation v0.3.2
+    Checking objc2-core-graphics v0.3.2
+    Checking rusqlite v0.39.0
+    Checking rusqlite_migration v2.5.0
+    Checking objc2-app-kit v0.3.2
+    Checking notify-rust v4.18.2
+    Checking objc2-web-kit v0.3.2
+    Checking tao v0.35.3
+    Checking muda v0.19.3
+    Checking window-vibrancy v0.6.0
+    Checking global-hotkey v0.8.0
+    Checking rfd v0.16.1
+    Checking tray-icon v0.24.2
+    Checking tauri-runtime v2.11.3
+    Checking wry v0.55.1
+    Checking tauri-runtime-wry v2.11.4
+    Checking tauri v2.11.6
+    Checking tauri-plugin-fs v2.5.2
+    Checking tauri-plugin-autostart v2.5.1
+    Checking tauri-plugin-global-shortcut v2.3.2
+    Checking tauri-plugin-notification v2.4.0
+    Checking tauri-plugin-dialog v2.6.0
+warning: unexpected `cfg` condition value: `s33-mcp-verification`
+  --> src/mcp_host.rs:53:11
+   |
+53 |     #[cfg(feature = "s33-mcp-verification")]
+   |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: remove the condition
+   |
+   = note: no expected values for `feature`
+   = help: consider adding `s33-mcp-verification` as a feature in `Cargo.toml`
+   = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+   = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unexpected `cfg` condition value: `s33-mcp-verification`
+   --> src/mcp_host.rs:118:11
+    |
+118 |     #[cfg(feature = "s33-mcp-verification")]
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `s33-mcp-verification` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+
+warning: `sidekick` (lib) generated 2 warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 14.60s

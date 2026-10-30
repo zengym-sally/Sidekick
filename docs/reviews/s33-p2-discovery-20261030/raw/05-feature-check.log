@@ -1,0 +1,15 @@
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+error[E0599]: no method named `upgrade_mcp_schema` found for mutable reference `&mut local_store::AppStore` in the current scope
+   --> src/mcp_verification.rs:120:15
+    |
+120 |             s.upgrade_mcp_schema()?;
+    |               ^^^^^^^^^^^^^^^^^^
+    |
+help: there is a method `upgrade_mcp_storage` with a similar name
+    |
+120 -             s.upgrade_mcp_schema()?;
+120 +             s.upgrade_mcp_storage()?;
+    |
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `sidekick` (lib) due to 1 previous error

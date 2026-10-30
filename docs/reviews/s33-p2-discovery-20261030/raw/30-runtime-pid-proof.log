@@ -1,0 +1,16 @@
+{"scenario":"kill-host","modes":"wait-list","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ SIGKILL host still cleans owned group with unrelated control alive (633.780792ms)
+{"scenario":"kill-runtime","modes":"wait-list","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["-STOP","SIGSTOP","SIGKILL"]}
+✔ SIGKILL runtime still cleans owned group with unrelated control alive (529.822125ms)
+{"scenario":"kill-guardian","modes":"wait-list","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ SIGKILL guardian still cleans owned group with unrelated control alive (559.537ms)
+{"scenario":"kill-service","modes":"wait-list","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ SIGKILL service still cleans owned group with unrelated control alive (607.20425ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2372.616

@@ -1,0 +1,302 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-rWknSA/isolated",
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "FILL0",
+        "FILL1",
+        "FILL10",
+        "FILL11",
+        "FILL12",
+        "FILL13",
+        "FILL14",
+        "FILL15",
+        "FILL16",
+        "FILL17",
+        "FILL18",
+        "FILL19",
+        "FILL2",
+        "FILL20",
+        "FILL21",
+        "FILL22",
+        "FILL23",
+        "FILL24",
+        "FILL25",
+        "FILL26",
+        "FILL27",
+        "FILL28",
+        "FILL29",
+        "FILL3",
+        "FILL30",
+        "FILL31",
+        "FILL32",
+        "FILL33",
+        "FILL34",
+        "FILL35",
+        "FILL36",
+        "FILL37",
+        "FILL38",
+        "FILL39",
+        "FILL4",
+        "FILL5",
+        "FILL6",
+        "FILL7",
+        "FILL8",
+        "FILL9",
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793358674438,
+      "pid": 92705,
+      "ppid": 92610,
+      "role": "service"
+    },
+    {
+      "event": "synthetic-env-received",
+      "items": {
+        "FILL0": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL1": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL10": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL11": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL12": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL13": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL14": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL15": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL16": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL17": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL18": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL19": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL2": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL20": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL21": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL22": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL23": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL24": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL25": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL26": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL27": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL28": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL29": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL3": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL30": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL31": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL32": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL33": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL34": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL35": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL36": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL37": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL38": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL39": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL4": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL5": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL6": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL7": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL8": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        },
+        "FILL9": {
+          "bytes": 4096,
+          "sha256": "3431383721510cf1c211de027cf958c183e16db5fabb6b230eb284c85e196aa9"
+        }
+      },
+      "at": 1793358674439,
+      "pid": 92705,
+      "ppid": 92610,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793358674442,
+      "pid": 92705,
+      "ppid": 92610,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793358674472,
+      "pid": 92745,
+      "ppid": 92705,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793358674506,
+      "pid": 92782,
+      "ppid": 92745,
+      "role": "grandchild"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793358674523,
+      "pid": 92705,
+      "ppid": 92610,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793358674523,
+      "pid": 92705,
+      "ppid": 92610,
+      "role": "service"
+    }
+  ],
+  "audits": [
+    {
+      "at": 1793358674560,
+      "actor": "cleaner",
+      "group": 92610,
+      "proofPid": 92610,
+      "run": "mcp-probe-92512-1793358674283921000",
+      "nonce": "b478a686-a0b3-4f82-a848-5aa5711a98a0",
+      "signal": "SIGSTOP",
+      "matched": true
+    },
+    {
+      "at": 1793358674565,
+      "actor": "cleaner",
+      "group": 92610,
+      "proofPid": 92610,
+      "run": "mcp-probe-92512-1793358674283921000",
+      "nonce": "b478a686-a0b3-4f82-a848-5aa5711a98a0",
+      "signal": "SIGKILL",
+      "matched": true
+    }
+  ],
+  "groupsGone": [
+    92610
+  ],
+  "proofAt": 1793358674721
+}

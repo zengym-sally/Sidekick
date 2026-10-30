@@ -1,0 +1,16 @@
+{
+  "priorCommittedEvidenceVerified": 62,
+  "unchangedAgainstC698270": [
+    "DESIGN.md",
+    "package-lock.json",
+    "src-tauri/Cargo.lock",
+    "src-tauri/migrations/001_todos.sql",
+    "src-tauri/migrations/002_ingestion.sql",
+    "src-tauri/migrations/003_agent_runs.sql",
+    "src-tauri/migrations/004_mcp_runs.sql"
+  ],
+  "dependenciesUnchanged": true,
+  "normativeCoreSha256": "5070365453fc603c12d96dc2cb9d1aca9ee06cb4abb3dcc7275ee5c1e1ded7db",
+  "piTree": "e89822b0d7a2baf5cc518d3baf568e8dceb73c68",
+  "noSdkStdioInput": true
+}

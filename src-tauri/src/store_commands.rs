@@ -394,10 +394,18 @@ pub async fn save_mcp_server(
 }
 #[tauri::command]
 pub async fn remove_mcp_server(
+    runtime: State<'_, crate::runtime_host::RuntimeState>,
     state: State<'_, LocalState>,
     input: crate::local_store::McpRemoveInput,
 ) -> Result<crate::local_store::McpConfigSave, StoreError> {
-    call(state, move |s| s.remove_mcp_server(input)).await
+    let runtime = runtime.inner().clone();
+    let local = state.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || runtime.remove_mcp_server(&local, input))
+        .await
+        .map_err(|_| StoreError {
+            code: "STORAGE_UNAVAILABLE",
+            message: "本地任务中断，请重试。",
+        })?
 }
 
 #[tauri::command]

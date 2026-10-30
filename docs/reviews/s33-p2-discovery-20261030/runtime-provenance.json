@@ -1,0 +1,64 @@
+{
+  "source": {
+    "repository": "https://github.com/earendil-works/pi.git",
+    "commit": "ad702637fdf6fbd3f965c5dba0b14bae100b74eb",
+    "tree": "e89822b0d7a2baf5cc518d3baf568e8dceb73c68",
+    "archiveUrl": "https://codeload.github.com/earendil-works/pi/tar.gz/ad702637fdf6fbd3f965c5dba0b14bae100b74eb",
+    "sha256": "80748d01c12e1c7652a6ea19d386e52cd24fa655de1a746a9b6dde67b43d19f7",
+    "node": "v24.20.0",
+    "larkCli": "1.0.98",
+    "mcpDiscovery": {
+      "client": "@earendil-works/pi-mcp public McpClient",
+      "transport": "Sidekick ManagedMcpTransport",
+      "sdkStdioBundled": false,
+      "inputs": [
+        "vendor/pi/packages/mcp/src/protocol/jsonrpc.ts",
+        "vendor/pi/packages/mcp/src/protocol/types.ts",
+        "vendor/pi/packages/mcp/src/client.ts",
+        "runtime/managed-mcp.mjs",
+        "runtime/mcp-catalog.mjs",
+        "runtime/mcp-probe-entry.mjs"
+      ]
+    },
+    "role": "S0 diagnostics, organizer, Skills and MCP discovery Runtime; business state belongs to the Rust host",
+    "skills": {
+      "source": {
+        "repository": "https://github.com/larksuite/cli",
+        "ref": "v1.0.98",
+        "commit": "ac81f5056ab88f37d581d25916f3dab85abfca76",
+        "archiveSha256": "c8247b1364b6d56b068709c3ce29aa191fdbfff1ccc11ccc143a34d5df1f4936",
+        "cliVersion": "1.0.98",
+        "license": "MIT",
+        "seeds": [
+          "lark-meeting",
+          "lark-im",
+          "lark-doc",
+          "lark-shared"
+        ]
+      },
+      "packages": 18,
+      "files": 441,
+      "supportFiles": 1,
+      "license": "builtin-skills/LICENSE"
+    }
+  },
+  "outputs": {
+    "build/s0-runtime/node": {
+      "bytes": 121911744,
+      "sha256": "9d050fd455b56426e25d4d603c7c501cbb2630348e836cf221dcce748e90588a"
+    },
+    "build/s0-runtime/mcp-probe.mjs": {
+      "bytes": 34778,
+      "sha256": "e3a6d47da8852e211d3c5d2d8ba9ba26fd0ed415050de9e78db23aa4cc3a6610"
+    },
+    "build/s0-runtime/mcp-guardian.mjs": {
+      "bytes": 4596,
+      "sha256": "ebabdf1622c78f1d0729cc0aefb3b401087b53853d59b9a7d1410db54cec0f1d"
+    },
+    "src-tauri/target/debug/examples/s33-mcp-host": {
+      "bytes": 10229152,
+      "sha256": "c4fb9376a56ce7620df21bc8168040c11d0f2296f7e8b377b54dd6da364e0b4f"
+    }
+  },
+  "note": "final raw/51 52/52 run; fixed Node matches historical P1; no generated binaries committed"
+}

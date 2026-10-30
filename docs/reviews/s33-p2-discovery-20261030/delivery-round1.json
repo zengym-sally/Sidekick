@@ -1,0 +1,66 @@
+{
+  "scope": "independent read-only delivery review, no test reruns",
+  "round": 1,
+  "A": {
+    "reviewer": "p2_discovery_delivery_a",
+    "verdict": "BLOCK",
+    "findings": [
+      {
+        "id": "A1",
+        "severity": "P1",
+        "invariant": "old run/nonce frames do not alter current task",
+        "location": "mcp_host.rs:470",
+        "evidence": "mismatched header sets current MCP_PROTOCOL; old policy changes all frames and reports failure",
+        "action": "inject isolated stale owner/result alongside real current frames; ignore stale header before state changes"
+      },
+      {
+        "id": "A2",
+        "severity": "P2",
+        "invariant": "blocked writer supports explicit cancellation, not just deadline",
+        "location": "tests/s33-discovery.test.mjs:160",
+        "evidence": "no cancel command in blocked stdin test",
+        "action": "add explicit cancel and Runtime exit assertion"
+      }
+    ],
+    "hypothesis": "guardian forwarding buffers may drop raw bad tail on group kill; needs stopped-guardian fence reproduction"
+  },
+  "B": {
+    "reviewer": "p2_discovery_delivery_b",
+    "verdict": "APPROVE_WITH_CHANGES",
+    "findings": [
+      {
+        "id": "B1",
+        "severity": "P2",
+        "invariant": "known precommit failure must not leave unowned running row",
+        "location": "mcp_host.rs:231 / mcp_catalog.rs:340",
+        "action": "finite failed status before DB commit; uncertainty barrier only when unknown"
+      },
+      {
+        "id": "B2",
+        "severity": "P2",
+        "invariant": "cleanup unconfirmed is explicit MCP_CLEANUP and occupied slot even if cancelled",
+        "location": "mcp_host.rs:232",
+        "action": "cleanup failure precedes cancellation"
+      },
+      {
+        "id": "B3",
+        "severity": "P2",
+        "invariant": "no owner receipt does not imply no group started",
+        "location": "mcp_host.rs:642 / managed-mcp.mjs:22",
+        "action": "distinguish never-spawned and potentially spawned, prove exit before release"
+      }
+    ],
+    "hypothesis": "host death combined with external cleaner killed between STOP/KILL can strand stopped group; not reproduced, not a confirmed finding"
+  },
+  "verifiedAtReview": {
+    "manifestEntries": 113,
+    "sourceInputs": 23,
+    "coreSha256": "5070365453fc603c12d96dc2cb9d1aca9ee06cb4abb3dcc7275ee5c1e1ded7db",
+    "counts": [
+      44,
+      16,
+      86
+    ],
+    "sourceAndLogsOnly": true
+  }
+}

@@ -1,0 +1,19 @@
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 105ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 86ms
+
+  build/s0-runtime/skills-manager.mjs  346.8kb
+
+⚡ Done in 11ms
+
+  build/s0-runtime/mcp-probe.mjs  34.0kb
+
+⚡ Done in 3ms
+Bundled diagnostic Runtime prepared; no model credentials included.

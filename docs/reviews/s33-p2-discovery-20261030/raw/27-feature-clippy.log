@@ -1,0 +1,30 @@
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+error: this boolean expression can be simplified
+   --> src/mcp_verification.rs:140:16
+    |
+140 |             if !args.get(4).is_some_and(|s| s == "--v3") {
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `args.get(4).is_none_or(|s| s != "--v3")`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#nonminimal_bool
+    = note: `-D clippy::nonminimal-bool` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::nonminimal_bool)]`
+
+error: this boolean expression can be simplified
+   --> src/mcp_verification.rs:202:24
+    |
+202 |                       if !slot
+    |  ________________________^
+203 | |                         .as_ref()
+204 | |                         .is_some_and(|j| j.run_id == "verification-only-slot-reservation")
+    | |__________________________________________________________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#nonminimal_bool
+help: try
+    |
+202 ~                     if slot
+203 +                         .as_ref().is_none_or(|j| j.run_id != "verification-only-slot-reservation")
+    |
+
+error: could not compile `sidekick` (lib) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `sidekick` (lib test) due to 2 previous errors

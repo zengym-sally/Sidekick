@@ -1,0 +1,132 @@
+✖ review regression one stale owner and result (old-run) cannot change current task (1181.211583ms)
+✖ review regression one stale owner and result (old-nonce) cannot change current task (364.531458ms)
+✖ review regression known publication collision finishes failed without overwriting (482.088792ms)
+✔ review regression blocked stdin explicitly cancels and releases only after Runtime exit (324.759834ms)
+✖ review regression cancellation cannot hide unconfirmed cleanup (897.638291ms)
+✖ review regression missing owner registration cannot release slot with live stopped helpers (256.079292ms)
+✖ review regression raw service tail written behind stopped guardian is still validated (5372.619666ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 1
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8923.917833
+
+✖ failing tests:
+
+test at tests/s33-discovery.test.mjs:225:48
+✖ review regression one stale owner and result (old-run) cannot change current task (1181.211583ms)
+  AssertionError [ERR_ASSERTION]: {"agentId":null,"createdAtMs":1793357812576,"errorCode":"MCP_PROTOCOL","finishedAtMs":1793357813539,"id":"mcp-probe-74379-1793357812576934000","input":{"serverId":"mcp-96b37c06afda344e817d23ba"},"purpose":"mcp_probe","result":null,"snapshot":{"configurationRevision":"rev-2d419f4912cf2ebe68529adc5a27de6bfa1c06b64c78161a825f8982abe966bc","connectTimeoutMs":5000,"serverId":"mcp-96b37c06afda344e817d23ba"},"status":"failed"}
+  + actual - expected
+  
+  + 'failed'
+  - 'succeeded'
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-discovery.test.mjs:230:50)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'failed',
+    expected: 'succeeded',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/s33-discovery.test.mjs:225:48
+✖ review regression one stale owner and result (old-nonce) cannot change current task (364.531458ms)
+  AssertionError [ERR_ASSERTION]: {"agentId":null,"createdAtMs":1793357813645,"errorCode":"MCP_PROTOCOL","finishedAtMs":1793357813904,"id":"mcp-probe-75709-1793357813645644000","input":{"serverId":"mcp-97645a74cef627e5c70dbf27"},"purpose":"mcp_probe","result":null,"snapshot":{"configurationRevision":"rev-afde38026b74b924fc08d8cfbfd67631c7569ad3f077b12ee6c4a876a6cf2e1c","connectTimeoutMs":5000,"serverId":"mcp-97645a74cef627e5c70dbf27"},"status":"failed"}
+  + actual - expected
+  
+  + 'failed'
+  - 'succeeded'
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-discovery.test.mjs:230:50)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'failed',
+    expected: 'succeeded',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/s33-discovery.test.mjs:234:1
+✖ review regression known publication collision finishes failed without overwriting (482.088792ms)
+  AssertionError [ERR_ASSERTION]: {"agentId":null,"createdAtMs":1793357814013,"errorCode":null,"finishedAtMs":null,"id":"mcp-probe-76093-1793357814013332000","input":{"serverId":"mcp-27f5771f82f73b8dd6f08718"},"purpose":"mcp_probe","result":null,"snapshot":{"configurationRevision":"rev-9afb151739ffa39ecd5941c715344ac6c4b16d524d9cf6c5085bdfb05aea8603","connectTimeoutMs":5000,"serverId":"mcp-27f5771f82f73b8dd6f08718"},"status":"running"}
+  + actual - expected
+  
+  + 'running'
+  - 'failed'
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-discovery.test.mjs:239:77)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'running',
+    expected: 'failed',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/s33-discovery.test.mjs:254:1
+✖ review regression cancellation cannot hide unconfirmed cleanup (897.638291ms)
+  AssertionError [ERR_ASSERTION]: {"agentId":null,"createdAtMs":1793357814807,"errorCode":"CANCELLED","finishedAtMs":1793357815571,"id":"mcp-probe-77058-1793357814807241000","input":{"serverId":"mcp-2ae55d1a8301c9ab64240049"},"purpose":"mcp_probe","result":null,"snapshot":{"configurationRevision":"rev-8b86c54664765e6f32495f0451e0f6b532b11710106fa2af5a497a1415a8c05a","connectTimeoutMs":5000,"serverId":"mcp-2ae55d1a8301c9ab64240049"},"status":"cancelled"}
+  + actual - expected
+  
+  + 'cancelled'
+  - 'failed'
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-discovery.test.mjs:262:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'cancelled',
+    expected: 'failed',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/s33-discovery.test.mjs:269:1
+✖ review regression missing owner registration cannot release slot with live stopped helpers (256.079292ms)
+  AssertionError [ERR_ASSERTION]: {"active":null,"done":{"agentId":null,"createdAtMs":1793357815718,"errorCode":"MCP_PROCESS","finishedAtMs":1793357815835,"id":"mcp-probe-78204-1793357815718241000","input":{"serverId":"mcp-c26e50c0cc0591ec4ae3bc84"},"purpose":"mcp_probe","result":null,"snapshot":{"configurationRevision":"rev-284fac6998d9d8ed1aac361f0e12f3319ed1cd00baf2eb89703f5497a2f0ba2a","connectTimeoutMs":5000,"serverId":"mcp-c26e50c0cc0591ec4ae3bc84"},"status":"failed"},"gone":false}
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-discovery.test.mjs:278:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/s33-discovery.test.mjs:286:1
+✖ review regression raw service tail written behind stopped guardian is still validated (5372.619666ms)
+  AssertionError [ERR_ASSERTION]: {"agentId":null,"createdAtMs":1793357815971,"errorCode":null,"finishedAtMs":1793357821249,"id":"mcp-probe-78453-1793357815971874000","input":{"serverId":"mcp-7ba8eba369875fa9b3f75aba"},"purpose":"mcp_probe","result":{"catalogSha256":"9c198ad705c495708324d42af9fb7bcf0730301c7d9843e4c98650bab11e3527","tools":[{"name":"lookup","schemaSha256":"1dc63095e8672403bbe40fa26719d175e695c0167f6daad6b9655f6506491f01"}]},"snapshot":{"configurationRevision":"rev-f678cedec6a63a237958f62d68d5e82002acec85f07e1cd764f43813d342734b","connectTimeoutMs":5000,"serverId":"mcp-7ba8eba369875fa9b3f75aba"},"status":"succeeded"}
+  + actual - expected
+  
+  + 'succeeded'
+  - 'failed'
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-discovery.test.mjs:293:98)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'succeeded',
+    expected: 'failed',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

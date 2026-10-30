@@ -1,0 +1,55 @@
+npm notice run sidekick@0.3.0 test:s33-discovery
+npm notice run npm run probe:bundle && cargo build --manifest-path src-tauri/Cargo.toml --features s33-mcp-verification --example s33-mcp-host && node --test --test-concurrency=1 --test-timeout=25000 tests/s33-catalog.test.mjs tests/s33-discovery.test.mjs
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 132ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 88ms
+
+  build/s0-runtime/skills-manager.mjs  346.8kb
+
+⚡ Done in 10ms
+
+  build/s0-runtime/mcp-probe.mjs  32.9kb
+
+⚡ Done in 3ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+warning: for loop over an `Option`. This is more readably written as an `if let` statement
+   --> src/mcp_host.rs:433:22
+    |
+433 |         for frame in next {
+    |                      ^^^^
+    |
+    = note: `#[warn(for_loops_over_fallibles)]` on by default
+help: to check pattern in a loop use `while let`
+    |
+433 -         for frame in next {
+433 +         while let Some(frame) = next {
+    |
+help: consider using `if let` to clear intent
+    |
+433 -         for frame in next {
+433 +         if let Some(frame) = next {
+    |
+
+warning: `sidekick` (lib) generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.02s
+✔ catalog keeps schema, rejects unsupported references and duplicate names (1.005542ms)
+✔ known referenced values in any key or string reject the entire catalog (0.105875ms)
+✔ budgets accept large legal catalogs and reject exact limit plus one (2.489834ms)
+{"scenario":"normal","modes":"normal","processes":2,"methods":["initialize","notifications/initialized","tools/list","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real Rust host discovers pages, cleans owned group and reopens full catalog (1550.244625ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1633.42625

@@ -455,6 +455,9 @@ impl AppStore {
         result
     }
     pub(super) fn require_mcp_schema(&self) -> Result<()> {
+        if self.mcp_probe_uncertain {
+            return Err(super::mcp_catalog::uncertain());
+        }
         if self.mcp_schema_uncertain {
             return Err(uncertain());
         }

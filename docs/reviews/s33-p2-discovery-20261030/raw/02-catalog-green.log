@@ -1,0 +1,11 @@
+✔ catalog keeps schema, rejects unsupported references and duplicate names (0.941166ms)
+✔ known referenced values in any key or string reject the entire catalog (0.096125ms)
+✔ budgets accept large legal catalogs and reject exact limit plus one (3.361709ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 47.722166

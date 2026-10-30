@@ -191,6 +191,9 @@ fn contains_value(value: &serde_json::Value, secret: &str) -> bool {
 
 impl AppStore {
     pub(super) fn verify_mcp_paths(&self) -> Result<()> {
+        if self.mcp_probe_uncertain {
+            return Err(super::mcp_catalog::uncertain());
+        }
         if self.mcp_schema_uncertain {
             return Err(super::mcp_schema::uncertain());
         }
@@ -899,6 +902,29 @@ impl AppStore {
         backend: &dyn McpCredentialBackend,
         environment: &dyn McpEnvironmentSource,
     ) -> Result<PreparedMcpEnvironment> {
+        self.prepare_mcp_environment_mode(id, expected_revision, backend, environment, false)
+    }
+    pub(super) fn prepare_probe_environment(
+        &self,
+        id: &str,
+        revision: &str,
+    ) -> Result<PreparedMcpEnvironment> {
+        self.prepare_mcp_environment_mode(
+            id,
+            revision,
+            &UnavailableCredentials,
+            &ProcessEnvironment,
+            true,
+        )
+    }
+    fn prepare_mcp_environment_mode(
+        &self,
+        id: &str,
+        expected_revision: &str,
+        backend: &dyn McpCredentialBackend,
+        environment: &dyn McpEnvironmentSource,
+        diagnostic: bool,
+    ) -> Result<PreparedMcpEnvironment> {
         self.reconcile_mcp_journal()?;
         let document = self.read_mcp_document()?;
         if document.revision != expected_revision {
@@ -907,7 +933,7 @@ impl AppStore {
         let server = document
             .servers
             .iter()
-            .find(|s| s.id == id && s.settings.enabled)
+            .find(|s| s.id == id && (diagnostic || s.settings.enabled))
             .ok_or_else(|| StoreError::new("MCP_NOT_FOUND", "服务不存在或已禁用，请核对配置。"))?;
         let scope = self.mcp_scope()?;
         let mut values = BTreeMap::new();

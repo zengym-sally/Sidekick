@@ -24,3 +24,10 @@ rusqlite_migration = "=2.5.0"
 keyring-core = "=1.0.1"
 apple-native-keyring-store = { version = "=1.0.2", features = ["keychain"] }
 sha2 = "=0.10.9"
+
+[features]
+s33-mcp-verification = []
+
+[[example]]
+name = "s33-mcp-host"
+required-features = ["s33-mcp-verification"]

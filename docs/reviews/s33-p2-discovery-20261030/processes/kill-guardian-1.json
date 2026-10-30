@@ -1,0 +1,101 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-cN2r0d/isolated",
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793358659042,
+      "pid": 75519,
+      "ppid": 75428,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793358659045,
+      "pid": 75519,
+      "ppid": 75428,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793358659076,
+      "pid": 75557,
+      "ppid": 75519,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793358659108,
+      "pid": 75597,
+      "ppid": 75557,
+      "role": "grandchild"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793358659125,
+      "pid": 75519,
+      "ppid": 75428,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793358659125,
+      "pid": 75519,
+      "ppid": 75428,
+      "role": "service"
+    }
+  ],
+  "audits": [
+    {
+      "at": 1793358659186,
+      "actor": "cleaner",
+      "group": 75428,
+      "proofPid": 75465,
+      "run": "mcp-probe-75331-1793358658898560000",
+      "nonce": "7931c7ee-c5b7-496d-b25f-20a190b04ea3",
+      "signal": "SIGSTOP",
+      "matched": true
+    },
+    {
+      "at": 1793358659193,
+      "actor": "cleaner",
+      "group": 75428,
+      "proofPid": 75465,
+      "run": "mcp-probe-75331-1793358658898560000",
+      "nonce": "7931c7ee-c5b7-496d-b25f-20a190b04ea3",
+      "signal": "SIGKILL",
+      "matched": true
+    }
+  ],
+  "groupsGone": [
+    75428
+  ],
+  "proofAt": 1793358659299,
+  "runtime": {
+    "pid": 75387,
+    "exited": true
+  },
+  "unrelatedControl": {
+    "pid": 75382,
+    "alive": true
+  }
+}

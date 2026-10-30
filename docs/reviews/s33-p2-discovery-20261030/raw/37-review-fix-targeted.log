@@ -1,0 +1,15 @@
+✔ review regression one stale owner and result (old-run) cannot change current task (1800.974792ms)
+✔ review regression one stale owner and result (old-nonce) cannot change current task (630.673667ms)
+✔ review regression known publication collision finishes failed without overwriting (610.031167ms)
+✔ review regression blocked stdin explicitly cancels and releases only after Runtime exit (345.519916ms)
+✔ review regression cancellation cannot hide unconfirmed cleanup (946.571417ms)
+✔ review regression missing owner registration cannot release slot with live stopped helpers (380.966209ms)
+✔ review regression raw service tail written behind stopped guardian is still validated (5500.202583ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10257.944042
