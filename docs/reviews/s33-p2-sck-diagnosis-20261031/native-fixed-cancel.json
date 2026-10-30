@@ -1,0 +1,22 @@
+{
+  "run": {
+    "id": "mcp-probe-52234-1793397199151295000",
+    "agent_id": null,
+    "purpose": "mcp_probe",
+    "status": "cancelled",
+    "snapshot_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\",\"configurationRevision\":\"rev-b15eaaf1e1fd0c40813147e163ec24dfc18727b29f7107d4187db5d341d8b188\",\"connectTimeoutMs\":10000}",
+    "input_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\"}",
+    "result_json": null,
+    "error_code": "CANCELLED",
+    "created_at_ms": 1793397199151,
+    "finished_at_ms": 1793397204209
+  },
+  "ordinaryServiceProcessesLive": [],
+  "priorCatalogRetained": true,
+  "methods": {
+    "initialize": 7,
+    "notifications/initialized": 7,
+    "tools/list": 11,
+    "tools/call": 0
+  }
+}

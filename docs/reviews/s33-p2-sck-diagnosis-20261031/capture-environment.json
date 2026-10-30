@@ -1,0 +1,12 @@
+{
+  "scope": "read-only installed capture environment metadata, not settings changes",
+  "desktopAppVersion": "26.1027.30824",
+  "desktopAppBuild": "22943",
+  "captureServiceVersion": "26.1022.1001641",
+  "captureServiceBuild": "1001641",
+  "cuaJsVersion": "0.2.6",
+  "cuaReplVersion": "0.1.2",
+  "skyJsVersion": "0.7.13",
+  "versionsSource": "Installed Info.plist and package.json read earlier this run",
+  "role": "getAXState and screenshot both use same get_app_state; only public wrapper APIs invoked"
+}

@@ -1,0 +1,13 @@
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.52s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-824aff346fd63c9c)
+
+running 5 tests
+test mcp_host::audit_environment_tests::runtime_command_clears_untrusted_parent_marker ... ok
+test mcp_verification::audit_capability_tests::audit_failure_is_consumed_by_actual_reap_gate ... ok
+test mcp_verification::audit_capability_tests::audit_lock_failure_cannot_downgrade_inheritance_or_signal ... ok
+test mcp_verification::audit_capability_tests::explicit_audit_writes_or_refuses_before_signal ... ok
+test mcp_verification::audit_capability_tests::only_registered_audit_adds_the_private_marker ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 129 filtered out; finished in 0.17s
+

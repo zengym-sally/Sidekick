@@ -1,0 +1,190 @@
+{
+  "utc": "2026-10-30T22:05:36.339615+00:00",
+  "sameRootGuiReopenConfirmed": true,
+  "reopenPid": 1935,
+  "dataAndCatalogsUnchangedOnReopen": true,
+  "noAutoReconnect": true,
+  "runCount": 9,
+  "runStatuses": [
+    {
+      "id": "mcp-probe-29752-1793394011079698000",
+      "status": "failed",
+      "error_code": "MCP_CLEANUP"
+    },
+    {
+      "id": "mcp-probe-29752-1793394346436313000",
+      "status": "failed",
+      "error_code": "MCP_CLEANUP"
+    },
+    {
+      "id": "mcp-probe-29752-1793394459360202000",
+      "status": "failed",
+      "error_code": "MCP_CLEANUP"
+    },
+    {
+      "id": "mcp-probe-29752-1793394614031296000",
+      "status": "cancelled",
+      "error_code": "CANCELLED"
+    },
+    {
+      "id": "mcp-probe-29752-1793394821500622000",
+      "status": "cancelled",
+      "error_code": "CANCELLED"
+    },
+    {
+      "id": "mcp-probe-52234-1793397038215577000",
+      "status": "succeeded",
+      "error_code": null
+    },
+    {
+      "id": "mcp-probe-52234-1793397156288548000",
+      "status": "failed",
+      "error_code": "MCP_COMMAND_MISSING"
+    },
+    {
+      "id": "mcp-probe-52234-1793397199151295000",
+      "status": "cancelled",
+      "error_code": "CANCELLED"
+    },
+    {
+      "id": "mcp-probe-52234-1793397574092313000",
+      "status": "succeeded",
+      "error_code": null
+    }
+  ],
+  "nativeMethodCounts": {
+    "initialize": 8,
+    "notifications/initialized": 8,
+    "tools/list": 13,
+    "tools/call": 0
+  },
+  "businessCounts": {
+    "sources": 0,
+    "candidates": 0,
+    "todos": 0,
+    "todo_events": 0,
+    "tool_calls": 0
+  },
+  "schema": 4,
+  "quickCheck": "ok",
+  "foreignKeyViolations": 0,
+  "nativeGuiExits": {
+    "6": 0,
+    "7": 0,
+    "8": 0
+  },
+  "ownNativeOrRuntimeProcessesRemaining": [],
+  "images": [
+    {
+      "file": "01-service-saved-no-diagnosis.jpg",
+      "pixelDimensions": [
+        1280,
+        1774
+      ],
+      "sha256": "a1615d5fd4aaf8af3aa070a7b4c1e86822a6625efed2a55ad590beb128b57094",
+      "bytes": 234435,
+      "includesTitlebar": true,
+      "unaltered": true
+    },
+    {
+      "file": "02-native-before-fix.jpg",
+      "pixelDimensions": [
+        1280,
+        1774
+      ],
+      "sha256": "89d25bd5a8d884ee321a0c3dc305aaecb518a7710cc385da0135410b80de5085",
+      "bytes": 251629,
+      "includesTitlebar": true,
+      "unaltered": true
+    },
+    {
+      "file": "03-cold-config-before-diagnosis.jpg",
+      "pixelDimensions": [
+        1280,
+        1774
+      ],
+      "sha256": "f68b8780118fac405ffd7747637bb76fb879fb8f0ea4e69036aab6ee4af1af1a",
+      "bytes": 224861,
+      "includesTitlebar": true,
+      "unaltered": true
+    },
+    {
+      "file": "04-native-normal-success-schema.jpg",
+      "pixelDimensions": [
+        1280,
+        1774
+      ],
+      "sha256": "bd82f8f49cdcbb95e4d8e16298d2da0ccea166768c6aca98338215c003a2ab59",
+      "bytes": 173997,
+      "includesTitlebar": true,
+      "unaltered": true
+    },
+    {
+      "file": "05-native-missing-command.jpg",
+      "pixelDimensions": [
+        1280,
+        1774
+      ],
+      "sha256": "139f9bd79a3bdcd92a2a6ba31e1c0780f39cc95a0a3ec388181a2981fa69b90e",
+      "bytes": 225164,
+      "includesTitlebar": true,
+      "unaltered": true
+    },
+    {
+      "file": "06-native-cancelled.jpg",
+      "pixelDimensions": [
+        1280,
+        1774
+      ],
+      "sha256": "78d2ead584c6122c5e0b87046ba5b178d4f8b0771165f6988517ce3255052308",
+      "bytes": 239391,
+      "includesTitlebar": true,
+      "unaltered": true
+    },
+    {
+      "file": "07-native-recovered-success.jpg",
+      "pixelDimensions": [
+        1280,
+        1774
+      ],
+      "sha256": "21d8cf9d2b7cf08af3a57e9a14179baaac1e13bc67388b7e813211c1f6922fae",
+      "bytes": 189880,
+      "includesTitlebar": true,
+      "unaltered": true
+    },
+    {
+      "file": "08-native-wide-cold-reopen.jpg",
+      "pixelDimensions": [
+        2880,
+        1774
+      ],
+      "sha256": "ae1e23edd80d7e9572d4e2d85088047cf7ae66d9eb6bf75ff955e0d1aff59093",
+      "bytes": 390972,
+      "includesTitlebar": true,
+      "unaltered": true
+    }
+  ],
+  "preexistingSixRecordsUnchanged": true,
+  "historicalNativeItemsClosed": false,
+  "requestedViewportSizesSignedOff": false,
+  "p3p4Started": false,
+  "productionCredentialsEnabled": false,
+  "backup": {
+    "path": "/private/tmp/sidekick-s33-authorized-f889amz_/app/workspace/backups/before-schema-4-24222-1793388991511614000.sqlite",
+    "schema": 3,
+    "quickCheck": "ok",
+    "sha256": "ed3cc8facde36955b045a0cb40d399001a8632e74e22cbe00e730d24a834674e"
+  },
+  "publishedCatalogVerification": [
+    {
+      "id": "mcp-probe-52234-1793397038215577000",
+      "catalogSha256": "a4116bcef3c0167eb50cceb6cb3d211345c657a5342dd4dd23f210fb3a8d9a7d",
+      "bindingAndSchemaHashesValid": true
+    },
+    {
+      "id": "mcp-probe-52234-1793397574092313000",
+      "catalogSha256": "6ad570ad769dbb2789273f167cb29ee9d63b67a675bb0f2b070b4063ccfc7da6",
+      "bindingAndSchemaHashesValid": true
+    }
+  ]
+}

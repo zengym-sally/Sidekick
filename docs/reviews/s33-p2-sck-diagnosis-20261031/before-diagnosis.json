@@ -1,0 +1,27 @@
+{
+  "serversFileSha256": "9ac08c2dc5e63daed78556ce8c202f852610c1efe48fb67d55ad83141c4e20f3",
+  "configuration": {
+    "version": 1,
+    "revision": "rev-0546382ec292ddc95edf01fc401ffeced6482f13e3d1c00b37c9cac53dc051a2",
+    "servers": [
+      {
+        "id": "mcp-40b330cfb6db29bb9aa36481",
+        "name": "原生隔离验收",
+        "transport": "stdio",
+        "enabled": true,
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node",
+        "args": [
+          "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs",
+          "/private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl",
+          "normal"
+        ],
+        "cwd": null,
+        "env": [],
+        "connectTimeoutMs": 10000,
+        "toolTimeoutMs": 30000
+      }
+    ]
+  },
+  "agentRuns": 0,
+  "serviceLogExists": false
+}

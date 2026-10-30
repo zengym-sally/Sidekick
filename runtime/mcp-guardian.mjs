@@ -7,8 +7,10 @@ const mode = arg('--mode'), run = arg('--run'), nonce = arg('--nonce');
 const group = mode === 'guardian' ? process.pid : Number(arg('--group'));
 const guardian = mode === 'guardian' ? process.pid : Number(arg('--guardian'));
 const lifetime = Math.min(120000, Math.max(1, Number(arg('--lifetime')) || 120000));
-const controlEnv = { PATH: '/usr/bin:/bin', TMPDIR: '/tmp' };
-let audit = false; try { audit = fstatSync(3).isFile(); } catch {}
+const auditFlag = process.env.SIDEKICK_MCP_AUDIT_FD;
+if (auditFlag !== undefined && auditFlag !== '3') process.exit(2);
+let audit = false; if (auditFlag === '3') { try { audit = fstatSync(3).isFile(); } catch {} if (!audit) process.exit(2); }
+const controlEnv = { PATH: '/usr/bin:/bin', TMPDIR: '/tmp', ...(audit ? { SIDEKICK_MCP_AUDIT_FD: '3' } : {}) };
 const stdio = streams => [...streams, ...(audit ? [3] : [])];
 const proof = pid => {
   if (!Number.isSafeInteger(pid) || pid <= 1) return false;

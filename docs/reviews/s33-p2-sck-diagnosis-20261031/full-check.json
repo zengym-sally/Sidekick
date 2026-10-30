@@ -1,0 +1,17 @@
+{
+  "command": "npm run check",
+  "startedUtc": "2026-10-30T21:45:34.955552+00:00",
+  "baseCommit": "ceceaa0a4ffc961957cbe9fdcac521c25ffd7c2a",
+  "inputs": {
+    "runtime/managed-mcp.mjs": "cd7fe9042921801e6d64fdcb801d0873066deb350dc978e3119307c963edcb35",
+    "runtime/mcp-guardian.mjs": "80f6effc0297f77dcf9a63ba12d1be810f704618647b425e7522cea697f03aa7",
+    "src-tauri/src/mcp_host.rs": "2105009050b446b6cb4d12b518e82024354333c73b810d3170392b36a32bd980",
+    "src-tauri/src/mcp_verification.rs": "132e45a2f1d8b06ab473ebf2854add0a5a762b7d42b99bfebbc6181b01b6d7dc",
+    "tests/s33-native-fd.test.mjs": "c077d33158d264c2627e063986f3ffef836434c017d68e3783bfcc52e96c1dc3",
+    "package.json": "9f4e0a98cb0250f048e36de1c6bceca2120f821583a9db44fd7d04b16a65ca21"
+  },
+  "authorization": "Existing explicit permission: controlled local tool/lifecycle tests and dedicated S0 synthetic login Keychain item only; real-model tests remain ignored",
+  "finishedUtc": "2026-10-30T21:49:06.799018+00:00",
+  "exitCode": 0,
+  "inputsUnchanged": true
+}

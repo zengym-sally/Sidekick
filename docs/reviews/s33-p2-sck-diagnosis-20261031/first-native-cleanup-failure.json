@@ -1,0 +1,88 @@
+{
+  "probe": {
+    "id": "mcp-probe-29752-1793394011079698000",
+    "agent_id": null,
+    "purpose": "mcp_probe",
+    "status": "failed",
+    "snapshot_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\",\"configurationRevision\":\"rev-0546382ec292ddc95edf01fc401ffeced6482f13e3d1c00b37c9cac53dc051a2\",\"connectTimeoutMs\":10000}",
+    "input_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\"}",
+    "result_json": null,
+    "error_code": "MCP_CLEANUP",
+    "created_at_ms": 1793394011079,
+    "finished_at_ms": 1793394016446
+  },
+  "serviceEvents": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793394011238,
+      "pid": 8303,
+      "ppid": 8219,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793394011242,
+      "pid": 8303,
+      "ppid": 8219,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793394011273,
+      "pid": 8341,
+      "ppid": 8303,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793394011307,
+      "pid": 8377,
+      "ppid": 8341,
+      "role": "grandchild"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793394011323,
+      "pid": 8303,
+      "ppid": 8219,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793394011324,
+      "pid": 8303,
+      "ppid": 8219,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "page-2",
+      "at": 1793394011324,
+      "pid": 8303,
+      "ppid": 8219,
+      "role": "service"
+    }
+  ],
+  "serviceLogSha256": "7f83fe5d34d1d593ca47e89b159e057749b0f67da8747c4ee7b2b84233591c03",
+  "note": "GUI start; true initialize and paginated list observed; terminal MCP_CLEANUP, no published catalog. No bypass or manual DB writes."
+}

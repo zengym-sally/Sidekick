@@ -17,23 +17,37 @@ pub(crate) fn take_policy() -> String {
         .unwrap_or_default()
 }
 static AUDIT: OnceLock<Mutex<File>> = OnceLock::new();
-pub(crate) fn audit_signal(owner: &crate::mcp_host::Owner, pid: u32, signal: &str) {
-    if let Some(file) = AUDIT.get() {
-        if let Ok(mut file) = file.lock() {
-            let _ = writeln!(
+fn audit_signal_to(
+    target: Option<&Mutex<File>>,
+    owner: &crate::mcp_host::Owner,
+    pid: u32,
+    signal: &str,
+) -> bool {
+    match target {
+        None => true,
+        Some(file) => match file.lock() {
+            Ok(mut file) => writeln!(
                 file,
                 "{}",
                 json!({"at":std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_millis(),"actor":"rust","group":owner.guardian,"proofPid":pid,"run":owner.run,"nonce":owner.nonce,"signal":signal,"matched":true})
-            );
-        }
+            ).is_ok(),
+            Err(_) => false,
+        },
     }
 }
-pub(crate) fn inherit_audit(command: &mut std::process::Command) {
-    if let Some(file) = AUDIT
-        .get()
-        .and_then(|f| f.lock().ok())
-        .and_then(|f| f.try_clone().ok())
-    {
+pub(crate) fn audit_signal(owner: &crate::mcp_host::Owner, pid: u32, signal: &str) -> bool {
+    audit_signal_to(AUDIT.get(), owner, pid, signal)
+}
+fn inherit_audit_from(
+    command: &mut std::process::Command,
+    target: Option<&Mutex<File>>,
+) -> std::io::Result<()> {
+    if let Some(target) = target {
+        let file = target
+            .lock()
+            .map_err(|_| std::io::Error::other("Audit lock unavailable"))?
+            .try_clone()?;
+        command.env("SIDEKICK_MCP_AUDIT_FD", "3");
         // The verification-only descriptor never reaches the untrusted service.
         unsafe {
             command.pre_exec(move || {
@@ -47,7 +61,12 @@ pub(crate) fn inherit_audit(command: &mut std::process::Command) {
             });
         }
     }
+    Ok(())
 }
+pub(crate) fn inherit_audit(command: &mut std::process::Command) -> std::io::Result<()> {
+    inherit_audit_from(command, AUDIT.get())
+}
+
 fn invalid() -> StoreError {
     StoreError {
         code: "VERIFY_INPUT",
@@ -220,4 +239,199 @@ fn serve() -> Result<(), StoreError> {
     }
     runtime.shutdown(&directory);
     Ok(())
+}
+
+#[cfg(test)]
+mod audit_capability_tests {
+    use super::*;
+    use std::os::unix::fs::DirBuilderExt;
+    fn fixture() -> (PathBuf, PathBuf) {
+        let root =
+            std::env::temp_dir().join(format!("sidekick-audit-cap-{}", crate::mcp_host::nonce()));
+        std::fs::DirBuilder::new()
+            .mode(0o700)
+            .create(&root)
+            .unwrap();
+        let path = root.join("audit.jsonl");
+        OpenOptions::new()
+            .create_new(true)
+            .write(true)
+            .mode(0o600)
+            .open(&path)
+            .unwrap();
+        (root, path)
+    }
+    fn owner() -> crate::mcp_host::Owner {
+        crate::mcp_host::Owner {
+            guardian: 123,
+            keeper: 124,
+            run: "synthetic-run".into(),
+            nonce: "synthetic-audit-nonce".into(),
+        }
+    }
+    struct OwnedGroup {
+        child: std::process::Child,
+        root: PathBuf,
+        owner: crate::mcp_host::Owner,
+    }
+    impl Drop for OwnedGroup {
+        fn drop(&mut self) {
+            let command = std::process::Command::new("/bin/ps")
+                .args(["-p", &self.child.id().to_string(), "-o", "pgid=,command="])
+                .output()
+                .unwrap();
+            let text = String::from_utf8_lossy(&command.stdout);
+            if text
+                .split_whitespace()
+                .next()
+                .and_then(|v| v.parse::<u32>().ok())
+                == Some(self.owner.guardian)
+                && text.contains(
+                    self.root
+                        .join("mcp-guardian.mjs")
+                        .to_string_lossy()
+                        .as_ref(),
+                )
+                && text.contains(&format!("--run {} ", self.owner.run))
+                && text.contains(&format!("--nonce {} ", self.owner.nonce))
+            {
+                let _ = std::process::Command::new("/bin/kill")
+                    .args(["-KILL", &format!("-{}", self.owner.guardian)])
+                    .status();
+            }
+            let _ = self.child.wait();
+            let _ = std::fs::remove_dir_all(&self.root);
+        }
+    }
+    fn owned_group() -> OwnedGroup {
+        let (root, _) = fixture();
+        let script = root.join("mcp-guardian.mjs");
+        std::fs::write(&script, "while :; do /bin/sleep 1; done\n").unwrap();
+        let token = crate::mcp_host::nonce();
+        let child = std::process::Command::new("/bin/sh")
+            .arg(script)
+            .args([
+                "--mode",
+                "guardian",
+                "--run",
+                "synthetic-signal",
+                "--nonce",
+                &token,
+                "--lifetime",
+                "20000",
+            ])
+            .process_group(0)
+            .spawn()
+            .unwrap();
+        let owner = crate::mcp_host::Owner {
+            guardian: child.id(),
+            keeper: 0,
+            run: "synthetic-signal".into(),
+            nonce: token,
+        };
+        OwnedGroup { child, root, owner }
+    }
+    #[test]
+    fn audit_failure_is_consumed_by_actual_reap_gate() {
+        for kind in ["readonly", "poisoned", "writable"] {
+            let mut group = owned_group();
+            let path = group.root.join("audit.jsonl");
+            let file = if kind == "readonly" {
+                File::open(&path).unwrap()
+            } else {
+                OpenOptions::new().append(true).open(&path).unwrap()
+            };
+            let target = Arc::new(Mutex::new(file));
+            if kind == "poisoned" {
+                let copy = target.clone();
+                let _ = std::thread::spawn(move || {
+                    let _held = copy.lock().unwrap();
+                    panic!("intentional audit lock poison");
+                })
+                .join();
+            }
+            let calls = std::cell::Cell::new(0);
+            let cleaned = crate::mcp_host::reap_with_audit(
+                &group.owner,
+                &group.root,
+                |owner, pid, signal| {
+                    calls.set(calls.get() + 1);
+                    audit_signal_to(Some(&target), owner, pid, signal)
+                },
+            );
+            assert!(
+                calls.get() > 0,
+                "real identity proof reaches the audit gate"
+            );
+            if kind == "writable" {
+                assert!(cleaned);
+                assert!(!group.child.wait().unwrap().success());
+            } else {
+                assert!(!cleaned);
+                assert_eq!(calls.get(), 1);
+                assert!(group.child.try_wait().unwrap().is_none());
+                let state = std::process::Command::new("/bin/ps")
+                    .args(["-p", &group.child.id().to_string(), "-o", "stat="])
+                    .output()
+                    .unwrap();
+                assert!(
+                    !String::from_utf8_lossy(&state.stdout)
+                        .trim()
+                        .starts_with('T'),
+                    "failed audit cannot send STOP"
+                );
+                assert!(std::fs::read(path).unwrap().is_empty());
+            }
+        }
+    }
+    #[test]
+    fn explicit_audit_writes_or_refuses_before_signal() {
+        let (root, path) = fixture();
+        assert!(audit_signal_to(None, &owner(), 123, "-STOP"));
+        assert_eq!(std::fs::read(&path).unwrap(), b"");
+        let writable = Mutex::new(OpenOptions::new().append(true).open(&path).unwrap());
+        assert!(audit_signal_to(Some(&writable), &owner(), 123, "-STOP"));
+        let before = std::fs::read(&path).unwrap();
+        let readonly = Mutex::new(File::open(&path).unwrap());
+        assert!(!audit_signal_to(Some(&readonly), &owner(), 123, "-KILL"));
+        assert_eq!(std::fs::read(&path).unwrap(), before);
+        std::fs::remove_dir_all(root).unwrap();
+    }
+    #[test]
+    fn audit_lock_failure_cannot_downgrade_inheritance_or_signal() {
+        let (root, path) = fixture();
+        let target = Arc::new(Mutex::new(
+            OpenOptions::new().append(true).open(&path).unwrap(),
+        ));
+        let copy = target.clone();
+        let _ = std::thread::spawn(move || {
+            let _held = copy.lock().unwrap();
+            panic!("intentional audit lock poison");
+        })
+        .join();
+        let mut command = std::process::Command::new("/usr/bin/true");
+        assert!(inherit_audit_from(&mut command, Some(&target)).is_err());
+        assert!(!command
+            .get_envs()
+            .any(|(key, _)| key == "SIDEKICK_MCP_AUDIT_FD"));
+        assert!(!audit_signal_to(Some(&target), &owner(), 123, "-KILL"));
+        assert_eq!(std::fs::read(&path).unwrap(), b"");
+        std::fs::remove_dir_all(root).unwrap();
+    }
+    #[test]
+    fn only_registered_audit_adds_the_private_marker() {
+        let (root, path) = fixture();
+        let mut command = std::process::Command::new("/usr/bin/true");
+        inherit_audit_from(&mut command, None).unwrap();
+        assert!(!command
+            .get_envs()
+            .any(|(key, _)| key == "SIDEKICK_MCP_AUDIT_FD"));
+        let target = Mutex::new(OpenOptions::new().append(true).open(&path).unwrap());
+        inherit_audit_from(&mut command, Some(&target)).unwrap();
+        assert!(command
+            .get_envs()
+            .any(|(key, value)| key == "SIDEKICK_MCP_AUDIT_FD"
+                && value == Some(std::ffi::OsStr::new("3"))));
+        std::fs::remove_dir_all(root).unwrap();
+    }
 }

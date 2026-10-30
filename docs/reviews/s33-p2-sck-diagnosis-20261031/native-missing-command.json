@@ -1,0 +1,21 @@
+{
+  "failureRun": {
+    "id": "mcp-probe-52234-1793397156288548000",
+    "agent_id": null,
+    "purpose": "mcp_probe",
+    "status": "failed",
+    "snapshot_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\",\"configurationRevision\":\"rev-33948a8db9a8e3bce4102809fb0f764fb4f096117efd03cc2774793c2c0401f6\",\"connectTimeoutMs\":10000}",
+    "input_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\"}",
+    "result_json": null,
+    "error_code": "MCP_COMMAND_MISSING",
+    "created_at_ms": 1793397156288,
+    "finished_at_ms": 1793397156293
+  },
+  "oldCatalogShaUnchanged": true,
+  "methods": {
+    "initialize": 6,
+    "notifications/initialized": 6,
+    "tools/list": 10,
+    "tools/call": 0
+  }
+}

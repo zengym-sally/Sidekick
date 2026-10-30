@@ -1,0 +1,173 @@
+{
+  "nativePid": 52234,
+  "configuration": {
+    "version": 1,
+    "revision": "rev-7845a1a60027624e30a25ae5308453508ba40bb71a1f359090e37da8da2a7957",
+    "servers": [
+      {
+        "id": "mcp-40b330cfb6db29bb9aa36481",
+        "name": "原生隔离验收",
+        "transport": "stdio",
+        "enabled": true,
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node",
+        "args": [
+          "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs",
+          "/private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl",
+          "normal"
+        ],
+        "cwd": null,
+        "env": [],
+        "connectTimeoutMs": 10000,
+        "toolTimeoutMs": 30000
+      }
+    ]
+  },
+  "runs": [
+    {
+      "id": "mcp-probe-29752-1793394011079698000",
+      "agent_id": null,
+      "purpose": "mcp_probe",
+      "status": "failed",
+      "snapshot_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\",\"configurationRevision\":\"rev-0546382ec292ddc95edf01fc401ffeced6482f13e3d1c00b37c9cac53dc051a2\",\"connectTimeoutMs\":10000}",
+      "input_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\"}",
+      "result_json": null,
+      "error_code": "MCP_CLEANUP",
+      "created_at_ms": 1793394011079,
+      "finished_at_ms": 1793394016446
+    },
+    {
+      "id": "mcp-probe-29752-1793394346436313000",
+      "agent_id": null,
+      "purpose": "mcp_probe",
+      "status": "failed",
+      "snapshot_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\",\"configurationRevision\":\"rev-0546382ec292ddc95edf01fc401ffeced6482f13e3d1c00b37c9cac53dc051a2\",\"connectTimeoutMs\":10000}",
+      "input_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\"}",
+      "result_json": null,
+      "error_code": "MCP_CLEANUP",
+      "created_at_ms": 1793394346436,
+      "finished_at_ms": 1793394351814
+    },
+    {
+      "id": "mcp-probe-29752-1793394459360202000",
+      "agent_id": null,
+      "purpose": "mcp_probe",
+      "status": "failed",
+      "snapshot_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\",\"configurationRevision\":\"rev-0546382ec292ddc95edf01fc401ffeced6482f13e3d1c00b37c9cac53dc051a2\",\"connectTimeoutMs\":10000}",
+      "input_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\"}",
+      "result_json": null,
+      "error_code": "MCP_CLEANUP",
+      "created_at_ms": 1793394459360,
+      "finished_at_ms": 1793394464732
+    },
+    {
+      "id": "mcp-probe-29752-1793394614031296000",
+      "agent_id": null,
+      "purpose": "mcp_probe",
+      "status": "cancelled",
+      "snapshot_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\",\"configurationRevision\":\"rev-ccd6ecdc3f2b87c3566f53dcf7f3c691236b4fc7bb149a6afcfd7daddfb8f074\",\"connectTimeoutMs\":10000}",
+      "input_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\"}",
+      "result_json": null,
+      "error_code": "CANCELLED",
+      "created_at_ms": 1793394614031,
+      "finished_at_ms": 1793394623421
+    },
+    {
+      "id": "mcp-probe-29752-1793394821500622000",
+      "agent_id": null,
+      "purpose": "mcp_probe",
+      "status": "cancelled",
+      "snapshot_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\",\"configurationRevision\":\"rev-ccd6ecdc3f2b87c3566f53dcf7f3c691236b4fc7bb149a6afcfd7daddfb8f074\",\"connectTimeoutMs\":10000}",
+      "input_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\"}",
+      "result_json": null,
+      "error_code": "CANCELLED",
+      "created_at_ms": 1793394821500,
+      "finished_at_ms": 1793394831552
+    },
+    {
+      "id": "mcp-probe-52234-1793397038215577000",
+      "agent_id": null,
+      "purpose": "mcp_probe",
+      "status": "succeeded",
+      "snapshot_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\",\"configurationRevision\":\"rev-0a329e92f44142dfc2279478ad7c4fa609834a275bf3bb02d4997ca9c236b09c\",\"connectTimeoutMs\":10000}",
+      "input_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\"}",
+      "result_json": "{\"tools\":[{\"name\":\"lookup\",\"schemaSha256\":\"1dc63095e8672403bbe40fa26719d175e695c0167f6daad6b9655f6506491f01\"},{\"name\":\"second\",\"schemaSha256\":\"a2c799262a3ce3c19ef5cdd983bf3d12b43ab3c426227091b909dcb7054738c0\"}],\"catalogSha256\":\"a4116bcef3c0167eb50cceb6cb3d211345c657a5342dd4dd23f210fb3a8d9a7d\"}",
+      "error_code": null,
+      "created_at_ms": 1793397038215,
+      "finished_at_ms": 1793397038533
+    },
+    {
+      "id": "mcp-probe-52234-1793397156288548000",
+      "agent_id": null,
+      "purpose": "mcp_probe",
+      "status": "failed",
+      "snapshot_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\",\"configurationRevision\":\"rev-33948a8db9a8e3bce4102809fb0f764fb4f096117efd03cc2774793c2c0401f6\",\"connectTimeoutMs\":10000}",
+      "input_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\"}",
+      "result_json": null,
+      "error_code": "MCP_COMMAND_MISSING",
+      "created_at_ms": 1793397156288,
+      "finished_at_ms": 1793397156293
+    },
+    {
+      "id": "mcp-probe-52234-1793397199151295000",
+      "agent_id": null,
+      "purpose": "mcp_probe",
+      "status": "cancelled",
+      "snapshot_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\",\"configurationRevision\":\"rev-b15eaaf1e1fd0c40813147e163ec24dfc18727b29f7107d4187db5d341d8b188\",\"connectTimeoutMs\":10000}",
+      "input_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\"}",
+      "result_json": null,
+      "error_code": "CANCELLED",
+      "created_at_ms": 1793397199151,
+      "finished_at_ms": 1793397204209
+    },
+    {
+      "id": "mcp-probe-52234-1793397574092313000",
+      "agent_id": null,
+      "purpose": "mcp_probe",
+      "status": "succeeded",
+      "snapshot_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\",\"configurationRevision\":\"rev-7845a1a60027624e30a25ae5308453508ba40bb71a1f359090e37da8da2a7957\",\"connectTimeoutMs\":10000}",
+      "input_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\"}",
+      "result_json": "{\"tools\":[{\"name\":\"lookup\",\"schemaSha256\":\"1dc63095e8672403bbe40fa26719d175e695c0167f6daad6b9655f6506491f01\"},{\"name\":\"second\",\"schemaSha256\":\"a2c799262a3ce3c19ef5cdd983bf3d12b43ab3c426227091b909dcb7054738c0\"}],\"catalogSha256\":\"6ad570ad769dbb2789273f167cb29ee9d63b67a675bb0f2b070b4063ccfc7da6\"}",
+      "error_code": null,
+      "created_at_ms": 1793397574092,
+      "finished_at_ms": 1793397574416
+    }
+  ],
+  "latestCatalog": {
+    "version": 1,
+    "probeId": "mcp-probe-52234-1793397574092313000",
+    "serverId": "mcp-40b330cfb6db29bb9aa36481",
+    "configurationRevision": "rev-7845a1a60027624e30a25ae5308453508ba40bb71a1f359090e37da8da2a7957",
+    "catalog": {
+      "tools": [
+        {
+          "name": "lookup",
+          "inputSchema": {
+            "properties": {
+              "query": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "query"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "second",
+          "inputSchema": {
+            "type": "object"
+          }
+        }
+      ]
+    }
+  },
+  "latestCatalogSha256": "6ad570ad769dbb2789273f167cb29ee9d63b67a675bb0f2b070b4063ccfc7da6",
+  "methods": {
+    "initialize": 8,
+    "notifications/initialized": 8,
+    "tools/list": 13,
+    "tools/call": 0
+  },
+  "serviceLogSha256": "86ca2c0ed9d32946121d08e89ae08955d252a80a44d3af25d5d7ed31e142d206"
+}

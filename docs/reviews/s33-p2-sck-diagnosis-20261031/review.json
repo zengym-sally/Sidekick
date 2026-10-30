@@ -1,0 +1,53 @@
+{
+  "scope": "P2 audit fix and this-run evidence only; not full P2 exit or a control-tool source fix",
+  "plan": {
+    "round1": {
+      "A": "BLOCK: audit failure chain, negative teardown, boundary combinations",
+      "B": "APPROVE_WITH_CHANGES: same three categories"
+    },
+    "round2": {
+      "A": "APPROVE",
+      "B": "APPROVE"
+    },
+    "reviewedSectionSha256": "ccd9f2ea328627f17e931c5fbcc23efabd94d6ea18319de8cb73a1e3cb7884ab"
+  },
+  "code": {
+    "round1": {
+      "A": "APPROVE_WITH_CHANGES: 3 P2 test-proof gaps",
+      "B": "APPROVE_WITH_CHANGES: audit consumer proof gap"
+    },
+    "round2": {
+      "A": "APPROVE",
+      "B": "APPROVE"
+    },
+    "findingsClosed": [
+      "actual Rust reap gate with failure and writable controls plus mutation",
+      "zero end ACK and live/non-stopped group before independent negative teardown",
+      "keeper-only cleanup with run/nonce/proofPid audit"
+    ]
+  },
+  "finalEvidence": {
+    "A": "APPROVE",
+    "B": "APPROVE",
+    "reviewers": [
+      "p2_fd_fix_plan_a",
+      "p2_fd_fix_plan_b"
+    ],
+    "reportSha256BeforeReviewNote": "0e937ca890dcba733589c9995bbbe01f1be05bf287299d60be30383202253763",
+    "sourceAndFullCheckSnapshotMatch": true,
+    "rawCuaCallsCompared": 62,
+    "nativeImagesCompared": 8,
+    "oldSixRecordsCompared": true,
+    "historicalRootSetsExist": [
+      53,
+      53
+    ]
+  },
+  "limits": [
+    "Two requested native viewport heights remain unsigned",
+    "Historical native gaps unchanged",
+    "Production credentials hard-disabled, ordinary root untouched",
+    "P3/P4 not started",
+    "Raise is supported mitigation; capture tool source unchanged"
+  ]
+}

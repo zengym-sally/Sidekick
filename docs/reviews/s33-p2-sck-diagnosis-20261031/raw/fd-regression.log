@@ -1,0 +1,49 @@
+npm notice run sidekick@0.3.0 test:s33-native-fd
+npm notice run npm run probe:bundle && node --test --test-concurrency=1 --test-timeout=25000 tests/s33-native-fd.test.mjs
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 97ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 87ms
+
+  build/s0-runtime/skills-manager.mjs  346.8kb
+
+⚡ Done in 11ms
+
+  build/s0-runtime/mcp-probe.mjs  34.2kb
+
+⚡ Done in 3ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+✔ native descriptor regression: none (1171.91375ms)
+ℹ {"scenario":"none","terminal":"result","toolsCall":0,"fixtureCleanup":false,"failedGroupWasAlive":false,"descriptorSha256":"a2d1914a2431b8762afa83dcaabcb4e2a43f13d9a1c13ec3084661a18eb00367","isolatedRoot":"/tmp/sidekick-s33-native-fd-VIcyyi"}
+✔ native descriptor regression: unrelated-readonly (453.385209ms)
+ℹ {"scenario":"unrelated-readonly","terminal":"result","toolsCall":0,"fixtureCleanup":false,"failedGroupWasAlive":false,"descriptorSha256":"a2d1914a2431b8762afa83dcaabcb4e2a43f13d9a1c13ec3084661a18eb00367","isolatedRoot":"/tmp/sidekick-s33-native-fd-hlH03S"}
+✔ native descriptor regression: unrelated-writable (449.454166ms)
+ℹ {"scenario":"unrelated-writable","terminal":"result","toolsCall":0,"fixtureCleanup":false,"failedGroupWasAlive":false,"descriptorSha256":"a2d1914a2431b8762afa83dcaabcb4e2a43f13d9a1c13ec3084661a18eb00367","isolatedRoot":"/tmp/sidekick-s33-native-fd-kZXQyp"}
+✔ native descriptor regression: explicit-writable (452.403958ms)
+ℹ {"scenario":"explicit-writable","terminal":"result","toolsCall":0,"fixtureCleanup":false,"failedGroupWasAlive":false,"descriptorSha256":"a847d64ea88789b7840fcdd7ee960d8a1eb9cfcc8adf0685cb86a5019a2f3e4d","isolatedRoot":"/tmp/sidekick-s33-native-fd-McPQD2"}
+✔ native descriptor regression: explicit-readonly (5468.73825ms)
+ℹ {"scenario":"explicit-readonly","terminal":"error","code":"MCP_CLEANUP","toolsCall":0,"fixtureCleanup":true,"failedGroupWasAlive":true,"descriptorSha256":"a2d1914a2431b8762afa83dcaabcb4e2a43f13d9a1c13ec3084661a18eb00367","isolatedRoot":"/tmp/sidekick-s33-native-fd-qUK0eE"}
+✔ native descriptor regression: explicit-no-file (46.497208ms)
+ℹ {"scenario":"explicit-no-file","terminal":"error","code":"MCP_PROTOCOL","toolsCall":0,"fixtureCleanup":false,"failedGroupWasAlive":false,"descriptorSha256":"a2d1914a2431b8762afa83dcaabcb4e2a43f13d9a1c13ec3084661a18eb00367","isolatedRoot":"/tmp/sidekick-s33-native-fd-vzsJV6"}
+✔ native descriptor regression: explicit-pipe (46.66575ms)
+ℹ {"scenario":"explicit-pipe","terminal":"error","code":"MCP_PROTOCOL","toolsCall":0,"fixtureCleanup":false,"failedGroupWasAlive":false,"descriptorSha256":"a2d1914a2431b8762afa83dcaabcb4e2a43f13d9a1c13ec3084661a18eb00367","isolatedRoot":"/tmp/sidekick-s33-native-fd-qahGry"}
+✔ native descriptor regression: unknown-marker (46.261334ms)
+ℹ {"scenario":"unknown-marker","terminal":"error","code":"MCP_PROTOCOL","toolsCall":0,"fixtureCleanup":false,"failedGroupWasAlive":false,"descriptorSha256":"a2d1914a2431b8762afa83dcaabcb4e2a43f13d9a1c13ec3084661a18eb00367","isolatedRoot":"/tmp/sidekick-s33-native-fd-cfnhgg"}
+✔ native descriptor regression: service-only-marker (448.16875ms)
+ℹ {"scenario":"service-only-marker","terminal":"result","toolsCall":0,"fixtureCleanup":false,"failedGroupWasAlive":false,"descriptorSha256":"a2d1914a2431b8762afa83dcaabcb4e2a43f13d9a1c13ec3084661a18eb00367","isolatedRoot":"/tmp/sidekick-s33-native-fd-Rcglvu"}
+✔ native descriptor regression: keeper-recovery (478.982625ms)
+ℹ {"scenario":"keeper-recovery","terminal":"error","code":"MCP_PROTOCOL","toolsCall":0,"fixtureCleanup":false,"failedGroupWasAlive":false,"descriptorSha256":"3910445cedfb2855433fed4cfa5c85cf26e02469d7c7c3e1b888669ed13f11fe","isolatedRoot":"/tmp/sidekick-s33-native-fd-C6X676"}
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11063.690791

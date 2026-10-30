@@ -1,0 +1,30 @@
+{
+  "utc": "2026-10-30T20:57:40.939754+00:00",
+  "baseCommit": "ceceaa0a4ffc961957cbe9fdcac521c25ffd7c2a",
+  "hypotheses": [
+    {
+      "id": "H1",
+      "statement": "capture source rectangle is outside display after window moves/scales",
+      "prediction": "raise same target into visible area permits capture without permission changes",
+      "status": "framework rectangle containment violation confirmed in fault-time logs; public window Raise followed by sustained AX/screenshots and form operations; underlying control-tool source not modified"
+    },
+    {
+      "id": "H2",
+      "statement": "stale window/stream identity",
+      "prediction": "fresh binding with same stable visible geometry differs from retained binding",
+      "status": "not yet established"
+    },
+    {
+      "id": "H3",
+      "statement": "tool/system compatibility defect independent of geometry",
+      "prediction": "visible stable window still fails capture with valid bounds",
+      "status": "not yet established"
+    }
+  ],
+  "sdkError": "SCStreamErrorInvalidParameter=-3812",
+  "sdkHeader": "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/ScreenCaptureKit.framework/Headers/SCError.h:26",
+  "toolBinding": "getAXState and getScreenshot both invoke get_app_state; emit:false only changes presentation",
+  "observedViolation": "contentRect does not contain sourceRect",
+  "diagnosisLimit": "offscreen-thumbnail geometry is observed; exact OS action that moved it is not attributed; no unsupported API or permission changes",
+  "newP2Defect": "unrequested read-only REG FD3 misclassified as audit; reproduced by pre-fix Runtime regression and fixed by explicit trusted host marker plus audit error propagation"
+}

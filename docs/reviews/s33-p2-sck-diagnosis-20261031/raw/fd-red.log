@@ -1,0 +1,153 @@
+npm notice run sidekick@0.3.0 test:s33-native-fd
+npm notice run npm run probe:bundle && node --test --test-concurrency=1 --test-timeout=25000 tests/s33-native-fd.test.mjs
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 109ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 81ms
+
+  build/s0-runtime/skills-manager.mjs  346.8kb
+
+⚡ Done in 9ms
+
+  build/s0-runtime/mcp-probe.mjs  34.0kb
+
+⚡ Done in 6ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+✔ native descriptor regression: none (1190.247167ms)
+ℹ {"scenario":"none","terminal":"result","toolsCall":0,"fixtureCleanup":false,"failedGroupWasAlive":false,"descriptorSha256":"a2d1914a2431b8762afa83dcaabcb4e2a43f13d9a1c13ec3084661a18eb00367","isolatedRoot":"/tmp/sidekick-s33-native-fd-4XBGLZ"}
+✖ native descriptor regression: unrelated-readonly (5417.694333ms)
+✖ native descriptor regression: unrelated-writable (439.903917ms)
+✔ native descriptor regression: explicit-writable (440.785167ms)
+ℹ {"scenario":"explicit-writable","terminal":"result","toolsCall":0,"fixtureCleanup":false,"failedGroupWasAlive":false,"descriptorSha256":"0751c5e9b8d8d9ddf8fa4e6e6da2de61ee432574f345c0fba2e1b2259df88597","isolatedRoot":"/tmp/sidekick-s33-native-fd-PUkQaP"}
+✔ native descriptor regression: explicit-readonly (5427.568ms)
+ℹ {"scenario":"explicit-readonly","terminal":"error","code":"MCP_CLEANUP","toolsCall":0,"fixtureCleanup":true,"failedGroupWasAlive":true,"descriptorSha256":"a2d1914a2431b8762afa83dcaabcb4e2a43f13d9a1c13ec3084661a18eb00367","isolatedRoot":"/tmp/sidekick-s33-native-fd-1BaSCx"}
+✖ native descriptor regression: explicit-no-file (413.462208ms)
+✖ native descriptor regression: explicit-pipe (425.141792ms)
+✖ native descriptor regression: unknown-marker (419.041375ms)
+✖ native descriptor regression: service-only-marker (455.609125ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 3
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16617.654875
+
+✖ failing tests:
+
+test at tests/s33-native-fd.test.mjs:27:27
+✖ native descriptor regression: unrelated-readonly (5417.694333ms)
+  AssertionError [ERR_ASSERTION]: {"type":"error","code":"MCP_CLEANUP"}
+  
+  'error' !== 'result'
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-native-fd.test.mjs:82:12)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'error',
+    expected: 'result',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/s33-native-fd.test.mjs:27:27
+✖ native descriptor regression: unrelated-writable (439.903917ms)
+  AssertionError [ERR_ASSERTION]: unrelated or readonly file must retain its exact bytes
+  + actual - expected
+  
+  + 'unrelated-file-preserve\n' +
+  +   '{"at":1793395762279,"actor":"cleaner","group":9988,"proofPid":9988,"run":"fd-322c2321-7123-486c-bfd1-65d5d343f57a","nonce":"4e14d96c-12e0-44de-8283-e0c1a7190bf5","signal":"SIGSTOP","matched":true}\n' +
+  +   '{"at":1793395762284,"actor":"cleaner","group":9988,"proofPid":9988,"run":"fd-322c2321-7123-486c-bfd1-65d5d343f57a","nonce":"4e14d96c-12e0-44de-8283-e0c1a7190bf5","signal":"SIGKILL","matched":true}\n'
+  - 'unrelated-file-preserve\n'
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-native-fd.test.mjs:89:46)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'unrelated-file-preserve\n{"at":1793395762279,"actor":"cleaner","group":9988,"proofPid":9988,"run":"fd-322c2321-7123-486c-bfd1-65d5d343f57a","nonce":"4e14d96c-12e0-44de-8283-e0c1a7190bf5","signal":"SIGSTOP","matched":true}\n{"at":1793395762284,"actor":"cleaner","group":9988,"proofPid":9988,"run":"fd-322c2321-7123-486c-bfd1-65d5d343f57a","nonce":"4e14d96c-12e0-44de-8283-e0c1a7190bf5","signal":"SIGKILL","matched":true}\n',
+    expected: 'unrelated-file-preserve\n',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/s33-native-fd.test.mjs:27:27
+✖ native descriptor regression: explicit-no-file (413.462208ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'result' !== 'error'
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-native-fd.test.mjs:79:12)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'result',
+    expected: 'error',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/s33-native-fd.test.mjs:27:27
+✖ native descriptor regression: explicit-pipe (425.141792ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'result' !== 'error'
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-native-fd.test.mjs:79:12)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'result',
+    expected: 'error',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/s33-native-fd.test.mjs:27:27
+✖ native descriptor regression: unknown-marker (419.041375ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'result' !== 'error'
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-native-fd.test.mjs:79:12)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'result',
+    expected: 'error',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/s33-native-fd.test.mjs:27:27
+✖ native descriptor regression: service-only-marker (455.609125ms)
+  AssertionError [ERR_ASSERTION]: unrelated or readonly file must retain its exact bytes
+  + actual - expected
+  
+  + 'unrelated-file-preserve\n' +
+  +   '{"at":1793395769857,"actor":"cleaner","group":19279,"proofPid":19279,"run":"fd-82a3d5b9-bcb2-498f-bc75-8da927dfbe0d","nonce":"0133fcc2-24ff-401d-8559-13ee6376acc8","signal":"SIGSTOP","matched":true}\n' +
+  +   '{"at":1793395769862,"actor":"cleaner","group":19279,"proofPid":19279,"run":"fd-82a3d5b9-bcb2-498f-bc75-8da927dfbe0d","nonce":"0133fcc2-24ff-401d-8559-13ee6376acc8","signal":"SIGKILL","matched":true}\n'
+  - 'unrelated-file-preserve\n'
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-native-fd.test.mjs:89:46)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'unrelated-file-preserve\n{"at":1793395769857,"actor":"cleaner","group":19279,"proofPid":19279,"run":"fd-82a3d5b9-bcb2-498f-bc75-8da927dfbe0d","nonce":"0133fcc2-24ff-401d-8559-13ee6376acc8","signal":"SIGSTOP","matched":true}\n{"at":1793395769862,"actor":"cleaner","group":19279,"proofPid":19279,"run":"fd-82a3d5b9-bcb2-498f-bc75-8da927dfbe0d","nonce":"0133fcc2-24ff-401d-8559-13ee6376acc8","signal":"SIGKILL","matched":true}\n',
+    expected: 'unrelated-file-preserve\n',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

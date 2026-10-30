@@ -1,0 +1,9 @@
+{
+  "nativePid": 52234,
+  "countsUnchangedAfterGuiReopenAndMcpPage": {
+    "initialize": 5,
+    "notifications/initialized": 5,
+    "tools/list": 8,
+    "tools/call": 0
+  }
+}

@@ -1,0 +1,554 @@
+[
+  {
+    "atMs": 1793394338046,
+    "processes": []
+  },
+  {
+    "atMs": 1793394338245,
+    "processes": []
+  },
+  {
+    "atMs": 1793394338450,
+    "processes": []
+  },
+  {
+    "atMs": 1793394338655,
+    "processes": []
+  },
+  {
+    "atMs": 1793394338871,
+    "processes": []
+  },
+  {
+    "atMs": 1793394339076,
+    "processes": []
+  },
+  {
+    "atMs": 1793394339280,
+    "processes": []
+  },
+  {
+    "atMs": 1793394339492,
+    "processes": []
+  },
+  {
+    "atMs": 1793394339699,
+    "processes": []
+  },
+  {
+    "atMs": 1793394339907,
+    "processes": []
+  },
+  {
+    "atMs": 1793394340117,
+    "processes": []
+  },
+  {
+    "atMs": 1793394340320,
+    "processes": []
+  },
+  {
+    "atMs": 1793394340532,
+    "processes": []
+  },
+  {
+    "atMs": 1793394340743,
+    "processes": []
+  },
+  {
+    "atMs": 1793394340949,
+    "processes": []
+  },
+  {
+    "atMs": 1793394341157,
+    "processes": []
+  },
+  {
+    "atMs": 1793394341372,
+    "processes": []
+  },
+  {
+    "atMs": 1793394341586,
+    "processes": []
+  },
+  {
+    "atMs": 1793394341794,
+    "processes": []
+  },
+  {
+    "atMs": 1793394342000,
+    "processes": []
+  },
+  {
+    "atMs": 1793394342207,
+    "processes": []
+  },
+  {
+    "atMs": 1793394342428,
+    "processes": []
+  },
+  {
+    "atMs": 1793394342636,
+    "processes": []
+  },
+  {
+    "atMs": 1793394342837,
+    "processes": []
+  },
+  {
+    "atMs": 1793394343043,
+    "processes": []
+  },
+  {
+    "atMs": 1793394343243,
+    "processes": []
+  },
+  {
+    "atMs": 1793394343449,
+    "processes": []
+  },
+  {
+    "atMs": 1793394343652,
+    "processes": []
+  },
+  {
+    "atMs": 1793394343857,
+    "processes": []
+  },
+  {
+    "atMs": 1793394344063,
+    "processes": []
+  },
+  {
+    "atMs": 1793394344264,
+    "processes": []
+  },
+  {
+    "atMs": 1793394344470,
+    "processes": []
+  },
+  {
+    "atMs": 1793394344682,
+    "processes": []
+  },
+  {
+    "atMs": 1793394344887,
+    "processes": []
+  },
+  {
+    "atMs": 1793394345093,
+    "processes": []
+  },
+  {
+    "atMs": 1793394345300,
+    "processes": []
+  },
+  {
+    "atMs": 1793394345505,
+    "processes": []
+  },
+  {
+    "atMs": 1793394345714,
+    "processes": []
+  },
+  {
+    "atMs": 1793394345918,
+    "processes": []
+  },
+  {
+    "atMs": 1793394346122,
+    "processes": []
+  },
+  {
+    "atMs": 1793394346329,
+    "processes": []
+  },
+  {
+    "atMs": 1793394346532,
+    "processes": [
+      {
+        "pid": 6741,
+        "parent": 29752,
+        "group": 6741,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-probe.mjs --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED]"
+      }
+    ]
+  },
+  {
+    "atMs": 1793394346737,
+    "processes": [
+      {
+        "pid": 6741,
+        "parent": 29752,
+        "group": 6741,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-probe.mjs --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED]"
+      },
+      {
+        "pid": 6873,
+        "parent": 6741,
+        "group": 6873,
+        "status": "Ss",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-guardian.mjs --mode guardian --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED] --lifetime 9999"
+      },
+      {
+        "pid": 6906,
+        "parent": 6873,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-guardian.mjs --mode keeper --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED] --group 6873 --guardian 6873 --lifetime 9999"
+      },
+      {
+        "pid": 6960,
+        "parent": 6873,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal"
+      },
+      {
+        "pid": 6998,
+        "parent": 6960,
+        "group": 6873,
+        "status": "R",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal child"
+      },
+      {
+        "pid": 7004,
+        "parent": 6873,
+        "group": 7004,
+        "status": "Ss",
+        "command": "(node)"
+      }
+    ]
+  },
+  {
+    "atMs": 1793394346938,
+    "processes": [
+      {
+        "pid": 6741,
+        "parent": 29752,
+        "group": 6741,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-probe.mjs --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED]"
+      },
+      {
+        "pid": 6873,
+        "parent": 6741,
+        "group": 6873,
+        "status": "Ss",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-guardian.mjs --mode guardian --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED] --lifetime 9999"
+      },
+      {
+        "pid": 6906,
+        "parent": 6873,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-guardian.mjs --mode keeper --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED] --group 6873 --guardian 6873 --lifetime 9999"
+      },
+      {
+        "pid": 6960,
+        "parent": 6873,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal"
+      },
+      {
+        "pid": 6998,
+        "parent": 6960,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal child"
+      },
+      {
+        "pid": 7035,
+        "parent": 6998,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal grandchild"
+      }
+    ]
+  },
+  {
+    "atMs": 1793394347145,
+    "processes": [
+      {
+        "pid": 6741,
+        "parent": 29752,
+        "group": 6741,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-probe.mjs --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED]"
+      },
+      {
+        "pid": 6873,
+        "parent": 6741,
+        "group": 6873,
+        "status": "Ss",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-guardian.mjs --mode guardian --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED] --lifetime 9999"
+      },
+      {
+        "pid": 6906,
+        "parent": 6873,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-guardian.mjs --mode keeper --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED] --group 6873 --guardian 6873 --lifetime 9999"
+      },
+      {
+        "pid": 6960,
+        "parent": 6873,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal"
+      },
+      {
+        "pid": 6998,
+        "parent": 6960,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal child"
+      },
+      {
+        "pid": 7035,
+        "parent": 6998,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal grandchild"
+      }
+    ]
+  },
+  {
+    "atMs": 1793394347347,
+    "processes": [
+      {
+        "pid": 6741,
+        "parent": 29752,
+        "group": 6741,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-probe.mjs --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED]"
+      },
+      {
+        "pid": 6873,
+        "parent": 6741,
+        "group": 6873,
+        "status": "Ss",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-guardian.mjs --mode guardian --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED] --lifetime 9999"
+      },
+      {
+        "pid": 6906,
+        "parent": 6873,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-guardian.mjs --mode keeper --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED] --group 6873 --guardian 6873 --lifetime 9999"
+      },
+      {
+        "pid": 6960,
+        "parent": 6873,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal"
+      },
+      {
+        "pid": 6998,
+        "parent": 6960,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal child"
+      },
+      {
+        "pid": 7035,
+        "parent": 6998,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal grandchild"
+      }
+    ]
+  },
+  {
+    "atMs": 1793394347551,
+    "processes": [
+      {
+        "pid": 6741,
+        "parent": 29752,
+        "group": 6741,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-probe.mjs --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED]"
+      },
+      {
+        "pid": 6873,
+        "parent": 6741,
+        "group": 6873,
+        "status": "Ss",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-guardian.mjs --mode guardian --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED] --lifetime 9999"
+      },
+      {
+        "pid": 6906,
+        "parent": 6873,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-guardian.mjs --mode keeper --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED] --group 6873 --guardian 6873 --lifetime 9999"
+      },
+      {
+        "pid": 6960,
+        "parent": 6873,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal"
+      },
+      {
+        "pid": 6998,
+        "parent": 6960,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal child"
+      },
+      {
+        "pid": 7035,
+        "parent": 6998,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal grandchild"
+      }
+    ]
+  },
+  {
+    "atMs": 1793394347758,
+    "processes": [
+      {
+        "pid": 6741,
+        "parent": 29752,
+        "group": 6741,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-probe.mjs --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED]"
+      },
+      {
+        "pid": 6873,
+        "parent": 6741,
+        "group": 6873,
+        "status": "Ss",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-guardian.mjs --mode guardian --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED] --lifetime 9999"
+      },
+      {
+        "pid": 6906,
+        "parent": 6873,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-guardian.mjs --mode keeper --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED] --group 6873 --guardian 6873 --lifetime 9999"
+      },
+      {
+        "pid": 6960,
+        "parent": 6873,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal"
+      },
+      {
+        "pid": 6998,
+        "parent": 6960,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal child"
+      },
+      {
+        "pid": 7035,
+        "parent": 6998,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal grandchild"
+      }
+    ]
+  },
+  {
+    "atMs": 1793394347960,
+    "processes": [
+      {
+        "pid": 6741,
+        "parent": 29752,
+        "group": 6741,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-probe.mjs --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED]"
+      },
+      {
+        "pid": 6873,
+        "parent": 6741,
+        "group": 6873,
+        "status": "Ss",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-guardian.mjs --mode guardian --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED] --lifetime 9999"
+      },
+      {
+        "pid": 6906,
+        "parent": 6873,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-guardian.mjs --mode keeper --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED] --group 6873 --guardian 6873 --lifetime 9999"
+      },
+      {
+        "pid": 6960,
+        "parent": 6873,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal"
+      },
+      {
+        "pid": 6998,
+        "parent": 6960,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal child"
+      },
+      {
+        "pid": 7035,
+        "parent": 6998,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal grandchild"
+      }
+    ]
+  },
+  {
+    "atMs": 1793394348166,
+    "processes": [
+      {
+        "pid": 6741,
+        "parent": 29752,
+        "group": 6741,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-probe.mjs --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED]"
+      },
+      {
+        "pid": 6873,
+        "parent": 6741,
+        "group": 6873,
+        "status": "Ss",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-guardian.mjs --mode guardian --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED] --lifetime 9999"
+      },
+      {
+        "pid": 6906,
+        "parent": 6873,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/mcp-guardian.mjs --mode keeper --run mcp-probe-29752-1793394346436313000 --nonce [REDACTED] --group 6873 --guardian 6873 --lifetime 9999"
+      },
+      {
+        "pid": 6960,
+        "parent": 6873,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal"
+      },
+      {
+        "pid": 6998,
+        "parent": 6960,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal child"
+      },
+      {
+        "pid": 7035,
+        "parent": 6998,
+        "group": 6873,
+        "status": "S",
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl normal grandchild"
+      }
+    ]
+  }
+]

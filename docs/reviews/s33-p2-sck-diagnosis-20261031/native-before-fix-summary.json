@@ -1,0 +1,104 @@
+{
+  "runs": [
+    {
+      "id": "mcp-probe-29752-1793394011079698000",
+      "status": "failed",
+      "error_code": "MCP_CLEANUP",
+      "created_at_ms": 1793394011079,
+      "finished_at_ms": 1793394016446
+    },
+    {
+      "id": "mcp-probe-29752-1793394346436313000",
+      "status": "failed",
+      "error_code": "MCP_CLEANUP",
+      "created_at_ms": 1793394346436,
+      "finished_at_ms": 1793394351814
+    },
+    {
+      "id": "mcp-probe-29752-1793394459360202000",
+      "status": "failed",
+      "error_code": "MCP_CLEANUP",
+      "created_at_ms": 1793394459360,
+      "finished_at_ms": 1793394464732
+    },
+    {
+      "id": "mcp-probe-29752-1793394614031296000",
+      "status": "cancelled",
+      "error_code": "CANCELLED",
+      "created_at_ms": 1793394614031,
+      "finished_at_ms": 1793394623421
+    },
+    {
+      "id": "mcp-probe-29752-1793394821500622000",
+      "status": "cancelled",
+      "error_code": "CANCELLED",
+      "created_at_ms": 1793394821500,
+      "finished_at_ms": 1793394831552
+    }
+  ],
+  "methods": {
+    "initialize": 5,
+    "notifications/initialized": 5,
+    "tools/list": 8,
+    "tools/call": 0
+  },
+  "serviceProcesses": [
+    6960,
+    6998,
+    7035,
+    8303,
+    8341,
+    8377,
+    27646,
+    27687,
+    27725,
+    41654,
+    41692,
+    41727,
+    74414,
+    74456,
+    74495
+  ],
+  "exit": {
+    "utc": "2026-10-30T20:57:41.078674+00:00",
+    "pid": 29752,
+    "sessionFile": "/tmp/sidekick-s33-authorized-f889amz_/session.json",
+    "app": "/tmp/sidekick-s33-authorized-f889amz_/app",
+    "bundle": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app",
+    "log": "/tmp/sidekick-s33-authorized-f889amz_/native-reopen-06.log",
+    "scope": "controlled-upgrade-no-credentials",
+    "requestedLogicalSize": {
+      "width": 640,
+      "height": 900
+    },
+    "reopen": true,
+    "environmentKeys": [
+      "PATH",
+      "TMPDIR"
+    ],
+    "exitCode": 0,
+    "finishedUtc": "2026-10-30T21:18:30.684939+00:00"
+  },
+  "configuration": {
+    "version": 1,
+    "revision": "rev-0a329e92f44142dfc2279478ad7c4fa609834a275bf3bb02d4997ca9c236b09c",
+    "servers": [
+      {
+        "id": "mcp-40b330cfb6db29bb9aa36481",
+        "name": "原生隔离验收",
+        "transport": "stdio",
+        "enabled": true,
+        "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node",
+        "args": [
+          "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs",
+          "/private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl",
+          "normal"
+        ],
+        "cwd": null,
+        "env": [],
+        "connectTimeoutMs": 10000,
+        "toolTimeoutMs": 30000
+      }
+    ]
+  }
+}

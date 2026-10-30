@@ -1,0 +1,46 @@
+{
+  "run": {
+    "id": "mcp-probe-52234-1793397038215577000",
+    "agent_id": null,
+    "purpose": "mcp_probe",
+    "status": "succeeded",
+    "snapshot_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\",\"configurationRevision\":\"rev-0a329e92f44142dfc2279478ad7c4fa609834a275bf3bb02d4997ca9c236b09c\",\"connectTimeoutMs\":10000}",
+    "input_json": "{\"serverId\":\"mcp-40b330cfb6db29bb9aa36481\"}",
+    "result_json": "{\"tools\":[{\"name\":\"lookup\",\"schemaSha256\":\"1dc63095e8672403bbe40fa26719d175e695c0167f6daad6b9655f6506491f01\"},{\"name\":\"second\",\"schemaSha256\":\"a2c799262a3ce3c19ef5cdd983bf3d12b43ab3c426227091b909dcb7054738c0\"}],\"catalogSha256\":\"a4116bcef3c0167eb50cceb6cb3d211345c657a5342dd4dd23f210fb3a8d9a7d\"}",
+    "error_code": null,
+    "created_at_ms": 1793397038215,
+    "finished_at_ms": 1793397038533
+  },
+  "catalog": {
+    "version": 1,
+    "probeId": "mcp-probe-52234-1793397038215577000",
+    "serverId": "mcp-40b330cfb6db29bb9aa36481",
+    "configurationRevision": "rev-0a329e92f44142dfc2279478ad7c4fa609834a275bf3bb02d4997ca9c236b09c",
+    "catalog": {
+      "tools": [
+        {
+          "name": "lookup",
+          "inputSchema": {
+            "properties": {
+              "query": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "query"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "second",
+          "inputSchema": {
+            "type": "object"
+          }
+        }
+      ]
+    }
+  },
+  "catalogPath": "/private/tmp/sidekick-s33-authorized-f889amz_/app/workspace/runs/mcp-probe-52234-1793397038215577000/mcp-catalog.json",
+  "catalogSha256": "a4116bcef3c0167eb50cceb6cb3d211345c657a5342dd4dd23f210fb3a8d9a7d"
+}

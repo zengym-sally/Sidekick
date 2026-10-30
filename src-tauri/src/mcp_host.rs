@@ -100,6 +100,13 @@ fn group_gone(group: u32) -> bool {
         })
 }
 fn reap(owner: &Owner, directory: &Path) -> bool {
+    reap_with_audit(owner, directory, audit_signal)
+}
+pub(crate) fn reap_with_audit(
+    owner: &Owner,
+    directory: &Path,
+    audit_check: impl Fn(&Owner, u32, &str) -> bool,
+) -> bool {
     for signal in ["-STOP", "-KILL"] {
         if group_gone(owner.guardian) {
             return true;
@@ -107,7 +114,9 @@ fn reap(owner: &Owner, directory: &Path) -> bool {
         let Some(_pid) = proof(owner, directory) else {
             return false;
         };
-        audit_signal(owner, _pid, signal);
+        if !audit_check(owner, _pid, signal) {
+            return false;
+        }
         let _ = Command::new("/bin/kill")
             .args([signal, &format!("-{}", owner.guardian)])
             .stdout(Stdio::null())
@@ -123,9 +132,15 @@ fn reap(owner: &Owner, directory: &Path) -> bool {
     }
     false
 }
-fn audit_signal(_owner: &Owner, _pid: u32, _signal: &str) {
+fn audit_signal(_owner: &Owner, _pid: u32, _signal: &str) -> bool {
     #[cfg(feature = "s33-mcp-verification")]
-    crate::mcp_verification::audit_signal(_owner, _pid, _signal);
+    {
+        crate::mcp_verification::audit_signal(_owner, _pid, _signal)
+    }
+    #[cfg(not(feature = "s33-mcp-verification"))]
+    {
+        true
+    }
 }
 fn valid_nonce(n: &str) -> bool {
     n.len() == 36
@@ -415,6 +430,18 @@ pub(crate) struct Frame {
     #[serde(flatten)]
     pub(crate) body: Value,
 }
+fn configure_probe_command(command: &mut Command, directory: &Path, run: &str, nonce: &str) {
+    command
+        .arg(directory.join("mcp-probe.mjs"))
+        .args(["--run", run, "--nonce", nonce])
+        .env_clear()
+        .env("PATH", "/usr/bin:/bin")
+        .env("TMPDIR", "/tmp")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .process_group(0);
+}
 fn execute(
     job: &Job,
     state: &RuntimeState,
@@ -441,18 +468,11 @@ fn execute(
         return (Err("MCP_TIMEOUT"), true);
     }
     let mut command = Command::new(directory.join("node"));
-    command
-        .arg(directory.join("mcp-probe.mjs"))
-        .args(["--run", &job.run_id, "--nonce", &job.nonce])
-        .env_clear()
-        .env("PATH", "/usr/bin:/bin")
-        .env("TMPDIR", "/tmp")
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .process_group(0);
+    configure_probe_command(&mut command, directory, &job.run_id, &job.nonce);
     #[cfg(feature = "s33-mcp-verification")]
-    crate::mcp_verification::inherit_audit(&mut command);
+    if crate::mcp_verification::inherit_audit(&mut command).is_err() {
+        return (Err("MCP_PROCESS"), true);
+    }
     let Ok(mut child) = command.spawn() else {
         return (Err("MCP_PROCESS"), true);
     };
@@ -876,4 +896,30 @@ pub async fn cancel_mcp_probe(runtime: State<'_, RuntimeState>, id: String) -> R
         j.cancel.store(true, Ordering::SeqCst);
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod audit_environment_tests {
+    use super::*;
+    use std::os::unix::fs::DirBuilderExt;
+    #[test]
+    fn runtime_command_clears_untrusted_parent_marker() {
+        let root = std::env::temp_dir().join(format!("sidekick-audit-env-{}", nonce()));
+        std::fs::DirBuilder::new()
+            .mode(0o700)
+            .create(&root)
+            .unwrap();
+        std::fs::write(
+            root.join("mcp-probe.mjs"),
+            "printf '%s' \"${SIDEKICK_MCP_AUDIT_FD-unset}\"\n",
+        )
+        .unwrap();
+        let mut command = Command::new("/bin/sh");
+        command.env("SIDEKICK_MCP_AUDIT_FD", "untrusted-parent-value");
+        configure_probe_command(&mut command, &root, "synthetic-run", "synthetic-nonce");
+        let output = command.output().unwrap();
+        assert!(output.status.success());
+        assert_eq!(output.stdout, b"unset");
+        std::fs::remove_dir_all(root).unwrap();
+    }
 }

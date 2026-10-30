@@ -1,0 +1,22 @@
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.87s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-824aff346fd63c9c)
+
+running 1 test
+test mcp_verification::audit_capability_tests::audit_failure_is_consumed_by_actual_reap_gate ... FAILED
+
+failures:
+
+---- mcp_verification::audit_capability_tests::audit_failure_is_consumed_by_actual_reap_gate stdout ----
+
+thread 'mcp_verification::audit_capability_tests::audit_failure_is_consumed_by_actual_reap_gate' panicked at src/mcp_verification.rs:363:17:
+assertion failed: !cleaned
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    mcp_verification::audit_capability_tests::audit_failure_is_consumed_by_actual_reap_gate
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 133 filtered out; finished in 0.09s
+
+error: test failed, to rerun pass `--lib`

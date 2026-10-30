@@ -19,8 +19,10 @@ export class ManagedMcpTransport {
     if (this.child || this.closing) throw new Error('MCP_PROTOCOL');
     await this.control.prepare({ guardian: 0, keeper: 0, run: this.config.runId, nonce: this.nonce });
     if (this.closing || this.fatal) throw new Error('MCP_PROTOCOL');
-    let audit = false; try { audit = fstatSync(3).isFile(); } catch {}
-    const env = { PATH: '/usr/bin:/bin', TMPDIR: '/tmp' };
+    const auditFlag = process.env.SIDEKICK_MCP_AUDIT_FD;
+    if (auditFlag !== undefined && auditFlag !== '3') throw new Error('MCP_PROTOCOL');
+    let audit = false; if (auditFlag === '3') { try { audit = fstatSync(3).isFile(); } catch {} if (!audit) throw new Error('MCP_PROTOCOL'); }
+    const env = { PATH: '/usr/bin:/bin', TMPDIR: '/tmp', ...(audit ? { SIDEKICK_MCP_AUDIT_FD: '3' } : {}) };
     this.child = spawn(process.execPath, [join(this.config.directory, 'mcp-guardian.mjs'), '--mode', 'guardian', '--run', this.config.runId, '--nonce', this.nonce, '--lifetime', String(Math.max(1, this.config.deadline - Date.now()))], { detached: true, env, stdio: ['pipe', 'pipe', 'pipe', audit ? 3 : 'ignore', 'pipe'] });
     const child = this.child;
     this.closed = new Promise(resolve => child.once('close', code => {
