@@ -1,0 +1,49 @@
+COMMAND ['node', '--test', '--test-name-pattern=in-flight status', 'tests/s33-ui-state.test.mjs']
+✖ an in-flight status success cannot erase a newer start refusal (1.4875ms)
+✖ an in-flight status failure cannot erase a newer start refusal (0.228333ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 118.980167
+
+✖ failing tests:
+
+test at tests/s33-ui-state.test.mjs:29:38
+✖ an in-flight status success cannot erase a newer start refusal (1.4875ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /尚未开放诊断存储/. Input:
+  
+  ''
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-ui-state.test.mjs:29:927)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: /尚未开放诊断存储/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests/s33-ui-state.test.mjs:29:38
+✖ an in-flight status failure cannot erase a newer start refusal (0.228333ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /尚未开放诊断存储/. Input:
+  
+  '诊断进程意外结束，请重新核对状态。'
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-ui-state.test.mjs:29:927)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '诊断进程意外结束，请重新核对状态。',
+    expected: /尚未开放诊断存储/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+EXIT_CODE 1

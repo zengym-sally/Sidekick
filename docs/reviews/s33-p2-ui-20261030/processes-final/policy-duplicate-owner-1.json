@@ -1,0 +1,39 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-DeO4GM/isolated",
+  "policy": "duplicate-owner",
+  "result": {
+    "agentId": null,
+    "createdAtMs": 1793369423820,
+    "errorCode": "MCP_PROTOCOL",
+    "finishedAtMs": 1793369424089,
+    "id": "mcp-probe-35493-1793369423820297000",
+    "input": {
+      "serverId": "mcp-e2e745d01c3594992bc6ed79"
+    },
+    "purpose": "mcp_probe",
+    "result": null,
+    "snapshot": {
+      "configurationRevision": "rev-0a190115dabb296d9694631e3c8896b08f67a55990c3ecebe5ac44511d83b71e",
+      "connectTimeoutMs": 5000,
+      "serverId": "mcp-e2e745d01c3594992bc6ed79"
+    },
+    "status": "failed"
+  },
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793369423964,
+      "pid": 35694,
+      "ppid": 35601,
+      "role": "service"
+    }
+  ],
+  "audits": "{\"actor\":\"rust\",\"at\":1793369423963,\"group\":35601,\"matched\":true,\"nonce\":\"9cef38d4-a2d4-4181-ac74-201ec498aa00\",\"proofPid\":35601,\"run\":\"mcp-probe-35493-1793369423820297000\",\"signal\":\"-STOP\"}\n{\"at\":1793369423970,\"actor\":\"cleaner\",\"group\":35601,\"proofPid\":35601,\"run\":\"mcp-probe-35493-1793369423820297000\",\"nonce\":\"9cef38d4-a2d4-4181-ac74-201ec498aa00\",\"signal\":\"SIGSTOP\",\"matched\":true}\n{\"at\":1793369423975,\"actor\":\"cleaner\",\"group\":35601,\"proofPid\":35601,\"run\":\"mcp-probe-35493-1793369423820297000\",\"nonce\":\"9cef38d4-a2d4-4181-ac74-201ec498aa00\",\"signal\":\"SIGKILL\",\"matched\":true}\n"
+}

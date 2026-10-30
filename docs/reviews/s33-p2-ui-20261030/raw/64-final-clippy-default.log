@@ -1,0 +1,35 @@
+COMMAND cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings
+START_UTC 2026-10-30T14:09:38.847549+00:00
+    Checking objc2-exception-helper v0.1.1
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Checking libsqlite3-sys v0.37.0
+    Checking objc2 v0.6.5
+    Checking rusqlite v0.39.0
+    Checking rusqlite_migration v2.5.0
+    Checking objc2-core-foundation v0.3.2
+    Checking block2 v0.6.2
+    Checking dispatch2 v0.3.1
+    Checking objc2-foundation v0.3.2
+    Checking objc2-core-graphics v0.3.2
+    Checking objc2-app-kit v0.3.2
+    Checking mac-notification-sys v0.6.15
+    Checking notify-rust v4.18.2
+    Checking objc2-web-kit v0.3.2
+    Checking muda v0.19.3
+    Checking tao v0.35.3
+    Checking window-vibrancy v0.6.0
+    Checking rfd v0.16.1
+    Checking global-hotkey v0.8.0
+    Checking tray-icon v0.24.2
+    Checking wry v0.55.1
+    Checking tauri-runtime v2.11.3
+    Checking tauri-runtime-wry v2.11.4
+    Checking tauri v2.11.6
+    Checking tauri-plugin-fs v2.5.2
+    Checking tauri-plugin-autostart v2.5.1
+    Checking tauri-plugin-global-shortcut v2.3.2
+    Checking tauri-plugin-notification v2.4.0
+    Checking tauri-plugin-dialog v2.6.0
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 12.78s
+
+EXIT_CODE 0

@@ -1,0 +1,26 @@
+{
+  "layer": "Chrome synthetic IPC fixture; no real MCP service",
+  "desktop": {
+    "viewport": [
+      1440,
+      1000
+    ],
+    "tools": 64,
+    "overflow": false,
+    "descriptionImages": 0
+  },
+  "narrow": {
+    "clientHeight": 232,
+    "focusLabel": "controlled_lookup 输入格式",
+    "focusTag": "PRE",
+    "overflow": false,
+    "saveButtonBottom": 888,
+    "scrollHeight": 2558,
+    "scrollTop": 424,
+    "tools": 64,
+    "viewport": [
+      640,
+      900
+    ]
+  }
+}

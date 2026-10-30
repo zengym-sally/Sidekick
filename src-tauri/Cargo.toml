@@ -27,6 +27,7 @@ sha2 = "=0.10.9"
 
 [features]
 s33-mcp-verification = []
+s33-mcp-ui-verification = []
 
 [[example]]
 name = "s33-mcp-host"

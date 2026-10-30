@@ -1,0 +1,14 @@
+✔ diagnosis uses saved identity, waits for verified catalog, cancels only the owned run (1.639334ms)
+✔ each read has an independent sequence: same-run running cannot replace terminal (0.142834ms)
+✔ late catalog from A cannot replace B or a newer A run (0.163583ms)
+✔ unknown start is global and cannot adopt a prior active run or unlock on empty reads (0.348666ms)
+✔ unknown fast-completed start reconciles only a new matching history record (0.19575ms)
+✔ cleanup failure remains occupied, and old receipt metadata is not a full success (0.146458ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 116.911916

@@ -1,0 +1,25 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-QNIJbW/isolated",
+  "kind": "delayed owner frame with real stopped guardian/keeper and killed Runtime",
+  "result": {
+    "agentId": null,
+    "createdAtMs": 1793365712085,
+    "errorCode": "MCP_PROCESS",
+    "finishedAtMs": 1793365712371,
+    "id": "mcp-probe-33759-1793365712085483000",
+    "input": {
+      "serverId": "mcp-53b13f947d8012a425474587"
+    },
+    "purpose": "mcp_probe",
+    "result": null,
+    "snapshot": {
+      "configurationRevision": "rev-49c4dc102da6fab4ee547da5b2e475814b3bdb713835b368bb99d0879cb2dcb1",
+      "connectTimeoutMs": 5000,
+      "serverId": "mcp-53b13f947d8012a425474587"
+    },
+    "status": "failed"
+  },
+  "helpersGone": true,
+  "active": null
+}

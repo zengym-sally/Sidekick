@@ -1,0 +1,91 @@
+COMMAND npm run probe:app
+npm notice run sidekick@0.3.0 probe:app
+npm notice run npm run probe:bundle && node scripts/probes/build-app.mjs
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 111ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 94ms
+
+  build/s0-runtime/skills-manager.mjs  346.8kb
+
+⚡ Done in 14ms
+
+  build/s0-runtime/mcp-probe.mjs  34.0kb
+
+⚡ Done in 5ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+Applying the S0 host proc-macro workaround; target application deployment settings remain intact.
+        Info Looking up installed tauri packages to check mismatched versions...
+     Running beforeBuildCommand `npm run build`
+npm notice run sidekick@0.3.0 build
+npm notice run npm run typecheck && vite build
+npm notice run sidekick@0.3.0 typecheck
+npm notice run vue-tsc --noEmit
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 4300 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                          0.36 kB │ gzip:   0.28 kB
+dist/assets/SpaceGrotesk-Dcw4Q7AU.ttf  136.67 kB
+dist/assets/index-CPbmPbnq.css         156.71 kB │ gzip:  21.10 kB
+dist/assets/index-ma4-XM3D.js          642.50 kB │ gzip: 207.42 kB
+
+✓ built in 466ms
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+   Compiling objc2-exception-helper v0.1.1
+   Compiling mac-notification-sys v0.6.15
+   Compiling libsqlite3-sys v0.37.0
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+   Compiling objc2 v0.6.5
+   Compiling block2 v0.6.2
+   Compiling objc2-core-foundation v0.3.2
+   Compiling dispatch2 v0.3.1
+   Compiling objc2-foundation v0.3.2
+   Compiling objc2-core-graphics v0.3.2
+   Compiling objc2-app-kit v0.3.2
+   Compiling notify-rust v4.18.2
+   Compiling objc2-web-kit v0.3.2
+   Compiling muda v0.19.3
+   Compiling tao v0.35.3
+   Compiling window-vibrancy v0.6.0
+   Compiling rfd v0.16.1
+   Compiling global-hotkey v0.8.0
+   Compiling wry v0.55.1
+   Compiling tauri-runtime v2.11.3
+   Compiling tray-icon v0.24.2
+   Compiling tauri-runtime-wry v2.11.4
+   Compiling tauri v2.11.6
+   Compiling rusqlite v0.39.0
+   Compiling rusqlite_migration v2.5.0
+   Compiling tauri-plugin-fs v2.5.2
+   Compiling tauri-plugin-autostart v2.5.1
+   Compiling tauri-plugin-global-shortcut v2.3.2
+   Compiling tauri-plugin-notification v2.4.0
+   Compiling tauri-plugin-dialog v2.6.0
+    Finished `release` profile [optimized] target(s) in 31.57s
+       Built application at: /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/sidekick
+    Bundling Sidekick.app (/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick.app)
+     Signing with identity "-"
+Signing with identity "-"
+Signing /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick.app/Contents/MacOS/sidekick
+/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick.app/Contents/MacOS/sidekick: replacing existing signature
+Signing with identity "-"
+Signing /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick.app
+/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick.app: replacing existing signature
+        Warn skipping app notarization, no APPLE_ID & APPLE_PASSWORD & APPLE_TEAM_ID or APPLE_API_KEY & APPLE_API_ISSUER & APPLE_API_KEY_PATH environment variables found
+    Finished 1 bundle at:
+        /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick.app
+
+
+EXIT_CODE 0

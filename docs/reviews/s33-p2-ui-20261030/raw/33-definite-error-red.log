@@ -1,0 +1,32 @@
+Browser observed loading released but error erased by idle polling after first fix.
+COMMAND ['node', '--test', '--test-name-pattern=invalidated history', 'tests/s33-ui-state.test.mjs']
+✖ invalidated history read releases loading after a definite start refusal (1.573541ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 122.273416
+
+✖ failing tests:
+
+test at tests/s33-ui-state.test.mjs:27:1
+✖ invalidated history read releases loading after a definite start refusal (1.573541ms)
+  AssertionError [ERR_ASSERTION]: definite refusal keeps the confirmed empty slot; idle polling must not erase its error
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-ui-state.test.mjs:27:584)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+EXIT_CODE 1

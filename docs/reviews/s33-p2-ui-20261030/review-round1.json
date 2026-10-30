@@ -1,0 +1,29 @@
+{
+  "type": "independent read-only delivery reviews; no test reruns",
+  "A": {
+    "reviewer": "p2_ui_delivery_a",
+    "verdict": "BLOCK",
+    "findings": [
+      {
+        "id": "A1",
+        "severity": "P1",
+        "location": "src/stores/mcpDiagnostics.ts start receipt",
+        "finding": "late running start receipt can replace already observed terminal or newer task"
+      },
+      {
+        "id": "A2",
+        "severity": "P2",
+        "location": "src/stores/mcpDiagnostics.ts invalidated history read",
+        "finding": "invalidated read can retain loading and lock manual reconcile after definite refusal"
+      }
+    ]
+  },
+  "B": {
+    "reviewer": "p2_ui_delivery_b",
+    "verdict": "APPROVE",
+    "scope": "static security and evidence consistency only",
+    "findings": [],
+    "remaining": "final gates and native acceptance not approved",
+    "threatBoundary": "controlled verifier is not an OS sandbox against malicious same-UID services"
+  }
+}

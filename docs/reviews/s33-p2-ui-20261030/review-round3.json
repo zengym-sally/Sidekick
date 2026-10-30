@@ -1,0 +1,41 @@
+{
+  "type": "independent read-only targeted delivery review; no test reruns",
+  "A": {
+    "reviewer": "p2_ui_delivery_a3",
+    "verdict": "APPROVE_WITH_CHANGES",
+    "closed": [
+      "A1",
+      "A2",
+      "A3"
+    ],
+    "productFindings": [],
+    "evidenceFinding": "runner compared 51 while discovery step was 66"
+  },
+  "B": {
+    "reviewer": "p2_ui_delivery_b2",
+    "verdict": "APPROVE_WITH_CHANGES",
+    "productFindings": [],
+    "evidenceFinding": "same runner evidence switch mismatch"
+  },
+  "resolution": {
+    "sourceChange": "runner condition 51 to 66 only",
+    "objectiveBeforeAfter": "raw/40-runner-switch.json",
+    "actualFinalExports": "processes-final/",
+    "finalProcessRecordCount": 50,
+    "noReviewedProductSourceChanged": true
+  },
+  "nativeAcceptanceStillOpen": true,
+  "closure": {
+    "A": {
+      "reviewer": "p2_ui_delivery_a3",
+      "verdict": "APPROVE"
+    },
+    "B": {
+      "reviewer": "p2_ui_delivery_b2",
+      "verdict": "APPROVE"
+    },
+    "remainingFindings": [],
+    "readOnlyChecks": "20 logs and serial timestamps, 16 source digests, 50 actual final process records independently verified; no reruns",
+    "nativeAndHistoricalGapsRemainOpen": true
+  }
+}

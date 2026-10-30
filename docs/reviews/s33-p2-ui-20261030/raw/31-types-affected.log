@@ -1,0 +1,4 @@
+npm notice run sidekick@0.3.0 typecheck
+npm notice run vue-tsc --noEmit
+
+EXIT_CODE 0

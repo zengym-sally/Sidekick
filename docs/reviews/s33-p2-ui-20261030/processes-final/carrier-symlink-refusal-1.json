@@ -1,0 +1,6 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-whd3jc/isolated",
+  "kind": "verification-only carrier boundary",
+  "refused": true
+}

@@ -16,6 +16,11 @@ use tauri_plugin_notification::NotificationExt;
 
 #[tauri::command]
 async fn run_s0_probes(app: tauri::AppHandle) -> Result<Value, String> {
+    if cfg!(feature = "s33-mcp-ui-verification") {
+        return Err(
+            "Credential and model probes are disabled in the MCP UI verification package".into(),
+        );
+    }
     let result = tauri::async_runtime::spawn_blocking(move || {
         let nonce = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_err(|_| "clock unavailable")?.as_nanos();
         let root = std::env::temp_dir().join(format!("sidekick-native-{nonce}"));
@@ -66,6 +71,10 @@ async fn run_s0_probes(app: tauri::AppHandle) -> Result<Value, String> {
 }
 
 pub fn run() {
+    if !cfg!(feature = "s33-mcp-ui-verification") && std::env::args().any(|a| a == "--s33-mcp-ui") {
+        eprintln!("MCP UI verification is not enabled in this package");
+        std::process::exit(2);
+    }
     tauri::Builder::default()
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_notification::init())
@@ -77,6 +86,9 @@ pub fn run() {
         )
         .invoke_handler(tauri::generate_handler![mcp_host::start_mcp_probe,mcp_host::read_mcp_probe,mcp_host::latest_mcp_probe,mcp_host::read_mcp_catalog,mcp_host::active_mcp_probe,mcp_host::cancel_mcp_probe,run_s0_probes,store_commands::save_mcp_secrets,store_commands::read_mcp_configuration,store_commands::save_mcp_server,store_commands::remove_mcp_server,skills_host::skills_catalog,skills_host::restore_builtin_skill,skills_host::open_skills_directory,store_commands::read_application_settings,store_commands::save_application_settings,store_commands::workspace_info,store_commands::read_profile,store_commands::save_profile,store_commands::initialize_workspace,store_commands::list_todos,store_commands::todo_history,store_commands::create_todo,store_commands::update_todo,store_commands::set_todo_completed,store_commands::delete_todo,store_commands::open_workspace_directory,runtime_host::organize_text,runtime_host::revise_candidate,runtime_host::test_model,runtime_host::active_model_run,store_commands::read_model_configuration,store_commands::save_model_configuration,store_commands::list_import_batches,store_commands::todo_source_links,store_commands::read_import_batch,store_commands::read_model_run,store_commands::save_candidate,store_commands::discard_candidate,store_commands::apply_candidate_preview,store_commands::sign_candidates,store_commands::cancel_model_run,store_commands::read_agent_configuration,store_commands::save_agent_configuration,store_commands::reset_agent_configuration,store_commands::read_agent_trial,store_commands::latest_agent_trial,store_commands::cancel_agent_trial,runtime_host::start_agent_trial,runtime_host::active_agent_trial])
         .setup(|app| {
+            #[cfg(feature = "s33-mcp-ui-verification")]
+            app.manage(mcp_ui_verification::prepare(app)?);
+            #[cfg(not(feature = "s33-mcp-ui-verification"))]
             app.manage(store_commands::LocalState::new(app.path().app_data_dir()?));
             app.manage(runtime_host::RuntimeState::default());
             WebviewWindowBuilder::new(app, "pet", WebviewUrl::App("index.html?pet=1".into()))
@@ -147,3 +159,9 @@ pub fn run() {
 
 #[cfg(feature = "s33-mcp-verification")]
 pub mod mcp_verification;
+
+#[cfg(any(feature = "s33-mcp-verification", feature = "s33-mcp-ui-verification"))]
+mod verification_root;
+
+#[cfg(feature = "s33-mcp-ui-verification")]
+mod mcp_ui_verification;

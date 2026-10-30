@@ -1,0 +1,14 @@
+npm notice run sidekick@0.3.0 dev:profile-ui
+npm notice run vite --config tests/fixtures/profile-ui/vite.config.ts --port 1482
+
+  VITE v8.3.5  ready in 240 ms
+
+  ➜  Local:   http://127.0.0.1:1482/
+9:07:39 PM [vite] (client) page reload build/s0-runtime/builtin-skills/packages/lark-apps/creative-design/assets/index.html
+9:07:41 PM [vite] (client) page reload src-tauri/target/debug/s0-runtime/builtin-skills/packages/lark-apps/creative-design/assets/index.html
+9:08:36 PM [vite] (client) page reload build/s0-runtime/builtin-skills/packages/lark-apps/creative-design/assets/index.html
+9:08:44 PM [vite] (client) page reload src-tauri/target/release/s0-runtime/builtin-skills/packages/lark-apps/creative-design/assets/index.html
+9:08:58 PM [vite] (client) page reload src-tauri/target/release/build/sidekick-0c46ff5659c80226/out/tauri-codegen-assets/287d70f15d0f35c9f64df952e48960901d2e397583d7ac4161325b00efb848e8.html
+9:09:13 PM [vite] (client) page reload src-tauri/target/release/bundle/macos/Sidekick.app/Contents/Resources/s0-runtime/builtin-skills/packages/lark-apps/creative-design/assets/index.html
+9:09:14 PM [vite] (client) page reload src-tauri/target/release/bundle/macos/Sidekick.app/Contents/Resources/s0-runtime/builtin-skills/packages/lark-apps/creative-design/assets/index.html
+9:09:45 PM [vite] (client) hmr update /src/style.css, /src/components/McpSettingsPanel.vue

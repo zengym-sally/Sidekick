@@ -1,0 +1,19 @@
+VERIFY_INPUT
+{"scenario":"synthetic redirected bootstrap","result":{"ok":false,"status":2,"error":"VERIFY_INPUT\n"},"sentinel":"[('running',)]"}
+✔ verification reopen rejects a valid outer marker whose bootstrap redirects to another synthetic root (337.864083ms)
+VERIFY_INPUT
+✔ verification rejects pending before target data access (113.995209ms)
+VERIFY_INPUT
+✔ verification rejects journal before target data access (111.724917ms)
+VERIFY_INPUT
+✔ verification rejects models before target data access (112.720459ms)
+VERIFY_INPUT
+✔ verification rejects workspace-link before target data access (110.10275ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 833.819292

@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "typecheck": "vue-tsc --noEmit",
-    "check": "npm run probe:bundle && npm run typecheck && npm run test:s1-domain && npm run test:s2-domain && npm run test:s31-domain && npm run test:layout-domain && npm run test:s32-domain && npm run test:s33-config-domain && npm run test:s33-security-domain && npm run check:rust && npm run probe:runtime && npm run probe:card && npm run probe:contracts && npm run probe:native && npm run probe:toolchain && npm run test:s2-runtime && node --test --test-timeout=15000 tests/s31-runtime.test.mjs && node --test --test-timeout=20000 tests/layout-runtime.test.mjs && node --test --test-timeout=20000 tests/s32-runtime.test.mjs && npm run probe:bundle-smoke",
+    "check": "npm run probe:bundle && npm run typecheck && npm run test:s1-domain && npm run test:s2-domain && npm run test:s31-domain && npm run test:layout-domain && npm run test:s32-domain && npm run test:s33-config-domain && npm run test:s33-security-domain && npm run test:s33-ui-domain && npm run check:rust && npm run probe:runtime && npm run probe:card && npm run probe:contracts && npm run probe:native && npm run probe:toolchain && npm run test:s2-runtime && node --test --test-timeout=15000 tests/s31-runtime.test.mjs && node --test --test-timeout=20000 tests/layout-runtime.test.mjs && node --test --test-timeout=20000 tests/s32-runtime.test.mjs && npm run probe:bundle-smoke",
     "build": "npm run typecheck && vite build",
     "tauri": "tauri",
     "probe:runtime": "npm --prefix tests/probes run test:runtime",
@@ -57,7 +57,10 @@
     "test:s33-security-store": "cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_security -- --test-threads=1",
     "test:s33-schema-store": "cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_schema -- --test-threads=1",
     "test:s33-discovery": "npm run probe:bundle && cargo build --manifest-path src-tauri/Cargo.toml --features s33-mcp-verification --example s33-mcp-host && node --test --test-concurrency=1 --test-timeout=25000 tests/s33-catalog.test.mjs tests/s33-discovery.test.mjs",
-    "test:s33-catalog-store": "cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_catalog -- --test-threads=1"
+    "test:s33-catalog-store": "cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_catalog -- --test-threads=1",
+    "test:s33-ui-domain": "node --test --test-timeout=15000 tests/s33-ui-state.test.mjs",
+    "test:s33-ui-safety": "cargo build --manifest-path src-tauri/Cargo.toml --features s33-mcp-verification --example s33-mcp-host && node --test --test-timeout=15000 tests/s33-ui-safety.test.mjs",
+    "build:s33-ui-verify": "npm run probe:bundle && node scripts/probes/build-app.mjs tests/fixtures/s33-ui-verify.config.json"
   },
   "dependencies": {
     "@larksuite/cli": "1.0.98",

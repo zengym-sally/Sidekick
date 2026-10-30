@@ -1,0 +1,42 @@
+{
+  "layer": "Chrome with synthetic IPC only; no real MCP service or SQLite",
+  "journeys": {
+    "initialSaveThenDiagnose": {
+      "tools": 64,
+      "descriptionImageElements": 0
+    },
+    "dirtyConfiguration": {
+      "startDisabled": true,
+      "oldDirectoryRetainedWithDraftHint": true
+    },
+    "savedNewRevision": {
+      "oldRevisionLabel": "旧配置结果：来自先前保存的修订，请重新诊断当前配置。"
+    },
+    "lostSaveResponse": {
+      "startDisabled": true,
+      "explicitReadbackSucceeded": true
+    },
+    "missingCommand": {
+      "error": "启动程序不可用，请检查命令和程序路径。",
+      "tools": 0
+    },
+    "cancel": {
+      "message": "本次诊断已取消，未发布新目录。",
+      "tools": 0,
+      "startAvailableAfterReconcile": true
+    },
+    "coldReload": {
+      "initialAttempt": "visible stuck-loading reproduced; fixed reactive row creation",
+      "afterFixTools": 64,
+      "manualRefreshRequired": false,
+      "descriptionImageElements": 0
+    },
+    "lostStartResponse": {
+      "unknownVisible": true,
+      "startDisabled": true,
+      "cancelButtons": 0,
+      "afterExplicitReconcile": "已读回本次诊断记录，未重复启动。",
+      "tools": 64
+    }
+  }
+}

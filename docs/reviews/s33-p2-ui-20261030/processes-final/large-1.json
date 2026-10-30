@@ -1,0 +1,93 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-1CNTxS/isolated",
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793369400251,
+      "pid": 9255,
+      "ppid": 9164,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793369400254,
+      "pid": 9255,
+      "ppid": 9164,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793369400284,
+      "pid": 9294,
+      "ppid": 9255,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793369400314,
+      "pid": 9332,
+      "ppid": 9294,
+      "role": "grandchild"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793369400334,
+      "pid": 9255,
+      "ppid": 9164,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793369400334,
+      "pid": 9255,
+      "ppid": 9164,
+      "role": "service"
+    }
+  ],
+  "audits": [
+    {
+      "at": 1793369400372,
+      "actor": "cleaner",
+      "group": 9164,
+      "proofPid": 9164,
+      "run": "mcp-probe-9055-1793369400107404000",
+      "nonce": "ccb3010c-e682-4acb-98ec-bdae1b040c61",
+      "signal": "SIGSTOP",
+      "matched": true
+    },
+    {
+      "at": 1793369400377,
+      "actor": "cleaner",
+      "group": 9164,
+      "proofPid": 9164,
+      "run": "mcp-probe-9055-1793369400107404000",
+      "nonce": "ccb3010c-e682-4acb-98ec-bdae1b040c61",
+      "signal": "SIGKILL",
+      "matched": true
+    }
+  ],
+  "groupsGone": [
+    9164
+  ],
+  "proofAt": 1793369400647
+}

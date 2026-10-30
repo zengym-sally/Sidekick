@@ -1,0 +1,25 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-beJM6E/isolated",
+  "policy": "cancel-before-ack",
+  "result": {
+    "agentId": null,
+    "createdAtMs": 1793369423418,
+    "errorCode": "CANCELLED",
+    "finishedAtMs": 1793369423691,
+    "id": "mcp-probe-35084-1793369423418470000",
+    "input": {
+      "serverId": "mcp-b2ed8bf1ef86046829bbe149"
+    },
+    "purpose": "mcp_probe",
+    "result": null,
+    "snapshot": {
+      "configurationRevision": "rev-cb8fe4ff47d30fb21d4f86b9c9e97c1635cbc97d935b334035effc8ea05e0e14",
+      "connectTimeoutMs": 5000,
+      "serverId": "mcp-b2ed8bf1ef86046829bbe149"
+    },
+    "status": "cancelled"
+  },
+  "records": [],
+  "audits": "{\"actor\":\"rust\",\"at\":1793369423566,\"group\":35193,\"matched\":true,\"nonce\":\"2cbd0c21-bce6-4f1c-af11-a3e08156a298\",\"proofPid\":35193,\"run\":\"mcp-probe-35084-1793369423418470000\",\"signal\":\"-STOP\"}\n{\"at\":1793369423575,\"actor\":\"cleaner\",\"group\":35193,\"proofPid\":35193,\"run\":\"mcp-probe-35084-1793369423418470000\",\"nonce\":\"2cbd0c21-bce6-4f1c-af11-a3e08156a298\",\"signal\":\"SIGSTOP\",\"matched\":true}\n{\"at\":1793369423580,\"actor\":\"cleaner\",\"group\":35193,\"proofPid\":35193,\"run\":\"mcp-probe-35084-1793369423418470000\",\"nonce\":\"2cbd0c21-bce6-4f1c-af11-a3e08156a298\",\"signal\":\"SIGKILL\",\"matched\":true}\n"
+}

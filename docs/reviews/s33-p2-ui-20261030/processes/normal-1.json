@@ -1,0 +1,102 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-JbPILT/isolated",
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365680985,
+      "pid": 1700,
+      "ppid": 1613,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793365680988,
+      "pid": 1700,
+      "ppid": 1613,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365681019,
+      "pid": 1735,
+      "ppid": 1700,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365681052,
+      "pid": 1769,
+      "ppid": 1735,
+      "role": "grandchild"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793365681068,
+      "pid": 1700,
+      "ppid": 1613,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793365681069,
+      "pid": 1700,
+      "ppid": 1613,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "page-2",
+      "at": 1793365681069,
+      "pid": 1700,
+      "ppid": 1613,
+      "role": "service"
+    }
+  ],
+  "audits": [
+    {
+      "at": 1793365681108,
+      "actor": "cleaner",
+      "group": 1613,
+      "proofPid": 1613,
+      "run": "mcp-probe-99942-1793365679966566000",
+      "nonce": "5029a4bf-0730-4239-9a2e-728f06ff833b",
+      "signal": "SIGSTOP",
+      "matched": true
+    },
+    {
+      "at": 1793365681113,
+      "actor": "cleaner",
+      "group": 1613,
+      "proofPid": 1613,
+      "run": "mcp-probe-99942-1793365679966566000",
+      "nonce": "5029a4bf-0730-4239-9a2e-728f06ff833b",
+      "signal": "SIGKILL",
+      "matched": true
+    }
+  ],
+  "groupsGone": [
+    1613
+  ],
+  "proofAt": 1793365681292
+}

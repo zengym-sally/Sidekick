@@ -1,0 +1,5 @@
+Action: cua.getApp("com.sidekick.s33.ui.verify")
+Target: Sidekick MCP Verify.app, native isolated verification package
+Result: Computer Use server error -10005: Error Domain=com.apple.ScreenCaptureKit.SCStreamErrorDomain Code=-3811 "音频/视频捕捉失败，无法开始流播放" UserInfo={NSLocalizedDescription=音频/视频捕捉失败，无法开始流播放}
+No usable native AX state or screenshot returned; no native clicks or typing performed.
+Parent reported pending approval card manager:16d87a5325974cf38bd209adf4d0fff7:1; the local tool result does not expose that card ID, so the mapping cannot be independently verified. Native UI actions paused, no retry or fallback UI control.

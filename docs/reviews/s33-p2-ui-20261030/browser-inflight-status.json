@@ -1,0 +1,23 @@
+{
+  "layer": "Chrome synthetic IPC only; start refusal at 1500ms; status query during start delayed 2500ms; no real service",
+  "firstVisible": {
+    "alerts": [
+      "此工作根尚未开放诊断存储，未启动服务。普通工作根升级需另行安排。"
+    ],
+    "refreshDisabled": false
+  },
+  "afterInFlightStatus": {
+    "alerts": [
+      "此工作根尚未开放诊断存储，未启动服务。普通工作根升级需另行安排。"
+    ],
+    "diagnoseDisabled": false,
+    "refreshDisabled": false
+  },
+  "afterManualReconcile": {
+    "alerts": [
+      "此工作根尚未开放诊断存储，未启动服务。普通工作根升级需另行安排。"
+    ],
+    "loading": false,
+    "tools": 64
+  }
+}

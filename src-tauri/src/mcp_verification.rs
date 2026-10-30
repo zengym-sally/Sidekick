@@ -1,11 +1,10 @@
 use crate::local_store::{McpRemoveInput, McpServerInput, StoreError};
 use crate::runtime_host::{Job, JobKind, RuntimeState, StartTask};
-use crate::store_commands::LocalState;
 use serde_json::{json, Value};
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, Write};
 use std::os::fd::AsRawFd;
-use std::os::unix::fs::{DirBuilderExt, MetadataExt, OpenOptionsExt};
+use std::os::unix::fs::{MetadataExt, OpenOptionsExt};
 use std::os::unix::process::CommandExt;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex, OnceLock};
@@ -72,51 +71,14 @@ fn serve() -> Result<(), StoreError> {
     if nonce.len() != 48 || !nonce.bytes().all(|b| b.is_ascii_hexdigit()) {
         return Err(invalid());
     }
-    let parent = app
-        .parent()
-        .ok_or_else(invalid)?
-        .canonicalize()
-        .map_err(|_| invalid())?;
-    let temporary = std::env::temp_dir().canonicalize().map_err(|_| invalid())?;
-    let private_tmp = PathBuf::from("/tmp")
-        .canonicalize()
-        .map_err(|_| invalid())?;
-    if !parent.starts_with(&temporary) && !parent.starts_with(&private_tmp) {
-        return Err(invalid());
-    }
-    let marker = app.join(".s33-discovery-verification");
     let reopening = args.get(4).is_some_and(|s| s == "--reopen");
-    if !reopening {
-        std::fs::DirBuilder::new()
-            .mode(0o700)
-            .create(&app)
-            .map_err(|_| invalid())?;
-        let mut f = OpenOptions::new()
-            .create_new(true)
-            .write(true)
-            .mode(0o600)
-            .open(&marker)
-            .map_err(|_| invalid())?;
-        f.write_all(nonce.as_bytes()).map_err(|_| invalid())?;
-    }
-    let app_meta = std::fs::symlink_metadata(&app).map_err(|_| invalid())?;
-    let app_canonical = app.canonicalize().map_err(|_| invalid())?;
-    if !app_meta.is_dir()
-        || app_meta.file_type().is_symlink()
-        || app_meta.mode() & 0o7777 != 0o700
-        || (!app_canonical.starts_with(&temporary) && !app_canonical.starts_with(&private_tmp))
-    {
-        return Err(invalid());
-    }
-    let m = std::fs::symlink_metadata(&marker).map_err(|_| invalid())?;
-    if !m.is_file()
-        || m.file_type().is_symlink()
-        || m.nlink() != 1
-        || m.mode() & 0o7777 != 0o600
-        || std::fs::read_to_string(&marker).map_err(|_| invalid())? != *nonce
-    {
-        return Err(invalid());
-    }
+    let local = crate::verification_root::open_local(
+        &app,
+        nonce,
+        ".s33-discovery-verification",
+        reopening,
+        args.get(4).is_none_or(|s| s != "--v3"),
+    )?;
     let audit_path = app.join("signal-audit.jsonl");
     let audit = OpenOptions::new()
         .append(true)
@@ -129,17 +91,7 @@ fn serve() -> Result<(), StoreError> {
         return Err(invalid());
     }
     AUDIT.set(Mutex::new(audit)).map_err(|_| invalid())?;
-    let local = LocalState::new(app.join("application"));
     let runtime = RuntimeState::default();
-    if !reopening {
-        local.access(|s| {
-            s.initialize(Some(app.join("workspace")), "UTC")?;
-            if args.get(4).is_none_or(|s| s != "--v3") {
-                s.upgrade_mcp_storage()?;
-            }
-            Ok(())
-        })?;
-    }
     let sink = Arc::new(|_: &str, _: &str| {});
     println!(
         "{}",

@@ -1,0 +1,13 @@
+COMMAND ['node', '--test', '--test-concurrency=1', '--test-timeout=25000', '--test-name-pattern=large escaped|nonempty bounded', 'tests/s33-discovery.test.mjs']
+✔ large escaped private bootstrap passes without copying P1 startup limit (815.612ms)
+✔ nonempty bounded raw stderr is discarded while private control stream remains separate (666.352916ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1526.914042
+
+EXIT_CODE 0

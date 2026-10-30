@@ -1,0 +1,6 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-nMtGQu/isolated",
+  "kind": "verification-only slot fixtures; no business model execution",
+  "serviceStarts": 0
+}

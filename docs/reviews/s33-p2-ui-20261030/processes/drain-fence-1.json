@@ -1,0 +1,100 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-OREyIV/isolated",
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365712672,
+      "pid": 34376,
+      "ppid": 34287,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793365712675,
+      "pid": 34376,
+      "ppid": 34287,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365712705,
+      "pid": 34416,
+      "ppid": 34376,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365712739,
+      "pid": 34454,
+      "ppid": 34416,
+      "role": "grandchild"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793365712757,
+      "pid": 34376,
+      "ppid": 34287,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793365712757,
+      "pid": 34376,
+      "ppid": 34287,
+      "role": "service"
+    },
+    {
+      "event": "tail-written",
+      "at": 1793365712768,
+      "pid": 34376,
+      "ppid": 34287,
+      "role": "service"
+    }
+  ],
+  "audits": [
+    {
+      "actor": "rust",
+      "at": 1793365717828,
+      "group": 34287,
+      "matched": true,
+      "nonce": "225840f5-6d6e-4962-8802-7490fb87c8e7",
+      "proofPid": 34287,
+      "run": "mcp-probe-34183-1793365712519887000",
+      "signal": "-STOP"
+    },
+    {
+      "actor": "rust",
+      "at": 1793365717858,
+      "group": 34287,
+      "matched": true,
+      "nonce": "225840f5-6d6e-4962-8802-7490fb87c8e7",
+      "proofPid": 34287,
+      "run": "mcp-probe-34183-1793365712519887000",
+      "signal": "-KILL"
+    }
+  ],
+  "groupsGone": [
+    34287
+  ],
+  "proofAt": 1793365717974
+}

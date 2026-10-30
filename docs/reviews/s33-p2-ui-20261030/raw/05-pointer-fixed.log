@@ -1,0 +1,29 @@
+{"scenario":"synthetic redirected bootstrap","result":{"ok":true,"output":"{\"pid\":86317,\"ready\":true,\"root\":\"/tmp/sidekick-s33-pointer-6j99wf/a/workspace\"}\n{\"ok\":{\"credentialStatus\":{},\"revision\":\"\",\"secureStorageAvailable\":false,\"servers\":[],\"version\":1,\"warning\":null}}\n"},"sentinel":"[('interrupted',)]"}
+✖ verification reopen rejects a valid outer marker whose bootstrap redirects to another synthetic root (637.02275ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 677.778708
+
+✖ failing tests:
+
+test at tests/s33-ui-safety.test.mjs:11:1
+✖ verification reopen rejects a valid outer marker whose bootstrap redirects to another synthetic root (637.02275ms)
+  AssertionError [ERR_ASSERTION]: must refuse before any target AppStore open
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-ui-safety.test.mjs:11:1058)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

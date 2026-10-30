@@ -1,0 +1,24 @@
+{
+  "type": "independent read-only targeted delivery review; no test reruns",
+  "A": {
+    "reviewer": "p2_ui_delivery_a2",
+    "verdict": "APPROVE_WITH_CHANGES",
+    "closed": [
+      "A1",
+      "A2"
+    ],
+    "findings": [
+      {
+        "id": "A3",
+        "severity": "P2",
+        "finding": "in-flight status query can erase newer start refusal"
+      }
+    ]
+  },
+  "B": {
+    "reviewer": "p2_ui_delivery_b2",
+    "verdict": "APPROVE",
+    "findings": []
+  },
+  "finalChecksAndNativeNotPreapproved": true
+}

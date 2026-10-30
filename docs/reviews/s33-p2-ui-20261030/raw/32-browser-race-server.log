@@ -1,0 +1,8 @@
+npm notice run sidekick@0.3.0 dev:profile-ui
+npm notice run vite --config tests/fixtures/profile-ui/vite.config.ts --port 1482
+
+  VITE v8.3.5  ready in 253 ms
+
+  ➜  Local:   http://127.0.0.1:1482/
+9:50:53 PM [vite] (client) hmr update /src/style.css, /src/components/McpSettingsPanel.vue
+9:52:48 PM [vite] (client) hmr update /src/components/ProbePanel.vue, /src/components/Workbench.vue, /src/components/TextIntake.vue, /src/components/InboxView.vue, /src/components/ModelSettingsPanel.vue, /src/components/CandidateCard.vue, /src/components/AgentSettingsPanel.vue, /src/components/SettingsPanel.vue, /src/components/SkillsSettingsPanel.vue, /src/components/McpSettingsPanel.vue

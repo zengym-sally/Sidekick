@@ -1,0 +1,93 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-hm5s3Z/isolated",
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365683188,
+      "pid": 3903,
+      "ppid": 3812,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793365683191,
+      "pid": 3903,
+      "ppid": 3812,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365683223,
+      "pid": 3940,
+      "ppid": 3903,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365683256,
+      "pid": 3977,
+      "ppid": 3940,
+      "role": "grandchild"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793365683269,
+      "pid": 3903,
+      "ppid": 3812,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793365683270,
+      "pid": 3903,
+      "ppid": 3812,
+      "role": "service"
+    }
+  ],
+  "audits": [
+    {
+      "at": 1793365683306,
+      "actor": "cleaner",
+      "group": 3812,
+      "proofPid": 3812,
+      "run": "mcp-probe-3705-1793365683037707000",
+      "nonce": "6db046c1-4daa-4903-8a1f-d90042bcfff6",
+      "signal": "SIGSTOP",
+      "matched": true
+    },
+    {
+      "at": 1793365683312,
+      "actor": "cleaner",
+      "group": 3812,
+      "proofPid": 3812,
+      "run": "mcp-probe-3705-1793365683037707000",
+      "nonce": "6db046c1-4daa-4903-8a1f-d90042bcfff6",
+      "signal": "SIGKILL",
+      "matched": true
+    }
+  ],
+  "groupsGone": [
+    3812
+  ],
+  "proofAt": 1793365683490
+}

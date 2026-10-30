@@ -1,0 +1,102 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-ihJI0k/isolated",
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793369415432,
+      "pid": 25931,
+      "ppid": 25841,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793369415434,
+      "pid": 25931,
+      "ppid": 25841,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793369415463,
+      "pid": 25969,
+      "ppid": 25931,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793369415494,
+      "pid": 26007,
+      "ppid": 25969,
+      "role": "grandchild"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793369415514,
+      "pid": 25931,
+      "ppid": 25841,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793369415514,
+      "pid": 25931,
+      "ppid": 25841,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "page-2",
+      "at": 1793369416116,
+      "pid": 25931,
+      "ppid": 25841,
+      "role": "service"
+    }
+  ],
+  "audits": [
+    {
+      "at": 1793369416369,
+      "actor": "cleaner",
+      "group": 25841,
+      "proofPid": 25841,
+      "run": "mcp-probe-25727-1793369415288447000",
+      "nonce": "9c953a47-c003-4374-abfd-f71574afe0e2",
+      "signal": "SIGSTOP",
+      "matched": true
+    },
+    {
+      "at": 1793369416374,
+      "actor": "cleaner",
+      "group": 25841,
+      "proofPid": 25841,
+      "run": "mcp-probe-25727-1793369415288447000",
+      "nonce": "9c953a47-c003-4374-abfd-f71574afe0e2",
+      "signal": "SIGKILL",
+      "matched": true
+    }
+  ],
+  "groupsGone": [
+    25841
+  ],
+  "proofAt": 1793369416538
+}

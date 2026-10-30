@@ -11,13 +11,25 @@ use tauri::{Emitter, State};
 pub struct LocalState {
     app_dir: PathBuf,
     store: Arc<Mutex<Option<AppStore>>>,
+    #[cfg(any(feature = "s33-mcp-verification", feature = "s33-mcp-ui-verification"))]
+    verification: Option<Arc<crate::verification_root::VerificationRoot>>,
 }
 impl LocalState {
     pub fn new(app_dir: PathBuf) -> Self {
         Self {
             app_dir,
             store: Arc::new(Mutex::new(None)),
+            #[cfg(any(feature = "s33-mcp-verification", feature = "s33-mcp-ui-verification"))]
+            verification: None,
         }
+    }
+    #[cfg(any(feature = "s33-mcp-verification", feature = "s33-mcp-ui-verification"))]
+    pub(crate) fn with_verification_guard(
+        mut self,
+        guard: Arc<crate::verification_root::VerificationRoot>,
+    ) -> Self {
+        self.verification = Some(guard);
+        self
     }
     pub(crate) fn access<T>(
         &self,
@@ -27,6 +39,10 @@ impl LocalState {
             code: "STORAGE_UNAVAILABLE",
             message: "本地存储暂不可用，请重启应用。",
         })?;
+        #[cfg(any(feature = "s33-mcp-verification", feature = "s33-mcp-ui-verification"))]
+        if let Some(verification) = &self.verification {
+            verification.validate()?;
+        }
         if guard.is_none() {
             *guard = Some(AppStore::open(self.app_dir.clone())?);
         }
@@ -75,6 +91,12 @@ pub async fn initialize_workspace(
     path: Option<String>,
     time_zone: String,
 ) -> Result<WorkspaceInfo, StoreError> {
+    if cfg!(feature = "s33-mcp-ui-verification") {
+        return Err(StoreError {
+            code: "VERIFY_INPUT",
+            message: "隔离验收包不允许更换工作根。",
+        });
+    }
     call(state, move |s| {
         s.initialize(path.map(PathBuf::from), &time_zone)
     })

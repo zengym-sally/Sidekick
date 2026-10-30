@@ -1,0 +1,30 @@
+{
+  "layer": "Chrome synthetic IPC only; delayed promises, no real MCP service",
+  "delayedStart": {
+    "diagnoseDisabled": false,
+    "phase": "after delayed receipt",
+    "record": "诊断记录 · 10/30 21:48",
+    "status": [
+      "最近一次诊断完成，进程已清理。发现 64 项工具。"
+    ],
+    "tools": 64
+  },
+  "pendingHistory": {
+    "diagnoseDisabled": false,
+    "loading": true,
+    "refreshDisabled": true
+  },
+  "definiteRefusal": {
+    "alerts": [
+      "此工作根尚未开放诊断存储，未启动服务。普通工作根升级需另行安排。"
+    ],
+    "loading": false,
+    "refreshDisabled": false
+  },
+  "manualRecovery": {
+    "loading": false,
+    "refreshDisabled": false,
+    "tools": 64
+  },
+  "fixtureTimingNote": "Initial attempt delayed two reads, including the start baseline, and exceeded the selector deadline; final fixture delays only the old history read."
+}

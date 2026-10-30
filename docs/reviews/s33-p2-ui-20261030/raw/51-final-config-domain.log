@@ -1,0 +1,23 @@
+COMMAND npm run test:s33-config-domain
+START_UTC 2026-10-30T14:09:07.299400+00:00
+npm notice run sidekick@0.3.0 test:s33-config-domain
+npm notice run node --test --test-timeout=15000 tests/s33-config.test.mjs
+✔ MCP configuration creates, renames, disables, removes and reopens without execution (4.736459ms)
+✔ MCP drafts survive switching services, reread and saving another service (0.480959ms)
+✔ MCP late reads do not replace newer reads or edits made while reading (0.150125ms)
+✔ MCP unknown save and conflict keep drafts and block writes until reread (0.511333ms)
+✔ MCP response loss is reconciled by reread without duplicating a new server (0.255375ms)
+✔ MCP readback after an uncertain edit preserves a newer draft (0.281125ms)
+✔ MCP removal response loss rereads history state without removing another service (0.1935ms)
+✔ MCP failed read cannot fabricate an empty ready configuration (0.108542ms)
+✔ MCP discarding an uncertain draft does not skip the required reread (0.28675ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 113.221584
+
+EXIT_CODE 0

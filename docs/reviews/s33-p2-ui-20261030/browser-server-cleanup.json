@@ -1,0 +1,8 @@
+{
+  "pid": 7344,
+  "matchedCommand": "node /Users/zengym/workspace/projects/ai/sidekick/node_modules/.bin/vite --config tests/fixtures/profile-ui/vite.config.ts --port 1482",
+  "signal": "SIGTERM",
+  "exited": true,
+  "browserTabClosed": true,
+  "userTabsUntouched": true
+}

@@ -1,0 +1,28 @@
+COMMAND ['npm', 'run', 'test:s33-ui-domain']
+npm notice run sidekick@0.3.0 test:s33-ui-domain
+npm notice run node --test --test-timeout=15000 tests/s33-ui-state.test.mjs
+✔ diagnosis uses saved identity, waits for verified catalog, cancels only the owned run (2.070625ms)
+✔ each read has an independent sequence: same-run running cannot replace terminal (0.173625ms)
+✔ late catalog from A cannot replace B or a newer A run (0.216333ms)
+✔ unknown start is global and cannot adopt a prior active run or unlock on empty reads (0.392875ms)
+✔ unknown fast-completed start reconciles only a new matching history record (0.246834ms)
+✔ cleanup failure remains occupied, and old receipt metadata is not a full success (0.160833ms)
+✔ active query sequence prevents a delayed running slot from resurrecting after cleanup (0.074958ms)
+✔ late cancel response never replaces a newly observed task (0.137417ms)
+✔ a failed catalog read cannot reuse an old full-directory success (0.138292ms)
+✔ observer disposes a subscription that resolves after unmount and coalesces duplicate events (0.232167ms)
+✔ unconfirmed configuration prevents every diagnostic backend action (0.080208ms)
+✔ first cold read publishes completion through Vue reactivity without another refresh (0.6265ms)
+✔ a delayed start receipt cannot replace an observed succeeded (0.182417ms)
+✔ a delayed start receipt cannot replace an observed new-task (0.097375ms)
+✔ invalidated history read releases loading after a definite start refusal (0.204667ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 118.01725
+
+EXIT_CODE 0

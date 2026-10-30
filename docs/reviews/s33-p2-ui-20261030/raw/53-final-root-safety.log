@@ -1,0 +1,27 @@
+COMMAND npm run test:s33-ui-safety
+START_UTC 2026-10-30T14:09:07.812449+00:00
+npm notice run sidekick@0.3.0 test:s33-ui-safety
+npm notice run cargo build --manifest-path src-tauri/Cargo.toml --features s33-mcp-verification --example s33-mcp-host && node --test --test-timeout=15000 tests/s33-ui-safety.test.mjs
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.58s
+VERIFY_INPUT
+{"scenario":"synthetic redirected bootstrap","result":{"ok":false,"status":2,"error":"VERIFY_INPUT\n"},"sentinel":"[('running',)]"}
+✔ verification reopen rejects a valid outer marker whose bootstrap redirects to another synthetic root (806.42825ms)
+VERIFY_INPUT
+✔ verification rejects pending before target data access (113.964542ms)
+VERIFY_INPUT
+✔ verification rejects journal before target data access (113.408625ms)
+VERIFY_INPUT
+✔ verification rejects models before target data access (116.964ms)
+VERIFY_INPUT
+✔ verification rejects workspace-link before target data access (107.576459ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1300.29575
+
+EXIT_CODE 0

@@ -1,0 +1,660 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-aXI4fP/isolated",
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365693510,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793365693514,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365693545,
+      "pid": 14636,
+      "ppid": 14596,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365693578,
+      "pid": 14675,
+      "ppid": 14636,
+      "role": "grandchild"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793365693593,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793365693593,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "1",
+      "at": 1793365693594,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "2",
+      "at": 1793365693594,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "3",
+      "at": 1793365693594,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "4",
+      "at": 1793365693594,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "5",
+      "at": 1793365693595,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "6",
+      "at": 1793365693595,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "7",
+      "at": 1793365693595,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "8",
+      "at": 1793365693596,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "9",
+      "at": 1793365693596,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "10",
+      "at": 1793365693596,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "11",
+      "at": 1793365693596,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "12",
+      "at": 1793365693596,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "13",
+      "at": 1793365693597,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "14",
+      "at": 1793365693597,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "15",
+      "at": 1793365693597,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "16",
+      "at": 1793365693597,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "17",
+      "at": 1793365693597,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "18",
+      "at": 1793365693598,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "19",
+      "at": 1793365693598,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "20",
+      "at": 1793365693598,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "21",
+      "at": 1793365693599,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "22",
+      "at": 1793365693599,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "23",
+      "at": 1793365693599,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "24",
+      "at": 1793365693599,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "25",
+      "at": 1793365693599,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "26",
+      "at": 1793365693599,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "27",
+      "at": 1793365693599,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "28",
+      "at": 1793365693600,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "29",
+      "at": 1793365693600,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "30",
+      "at": 1793365693600,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "31",
+      "at": 1793365693601,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "32",
+      "at": 1793365693601,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "33",
+      "at": 1793365693601,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "34",
+      "at": 1793365693601,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "35",
+      "at": 1793365693601,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "36",
+      "at": 1793365693602,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "37",
+      "at": 1793365693602,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "38",
+      "at": 1793365693602,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "39",
+      "at": 1793365693602,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "40",
+      "at": 1793365693602,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "41",
+      "at": 1793365693602,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "42",
+      "at": 1793365693603,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "43",
+      "at": 1793365693603,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "44",
+      "at": 1793365693603,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "45",
+      "at": 1793365693603,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "46",
+      "at": 1793365693603,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "47",
+      "at": 1793365693603,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "48",
+      "at": 1793365693603,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "49",
+      "at": 1793365693604,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "50",
+      "at": 1793365693604,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "51",
+      "at": 1793365693604,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "52",
+      "at": 1793365693604,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "53",
+      "at": 1793365693605,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "54",
+      "at": 1793365693605,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "55",
+      "at": 1793365693605,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "56",
+      "at": 1793365693605,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "57",
+      "at": 1793365693605,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "58",
+      "at": 1793365693605,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "59",
+      "at": 1793365693606,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "60",
+      "at": 1793365693606,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "61",
+      "at": 1793365693606,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "62",
+      "at": 1793365693606,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "cursor": "63",
+      "at": 1793365693606,
+      "pid": 14596,
+      "ppid": 14503,
+      "role": "service"
+    }
+  ],
+  "audits": [
+    {
+      "at": 1793365693646,
+      "actor": "cleaner",
+      "group": 14503,
+      "proofPid": 14503,
+      "run": "mcp-probe-14381-1793365693348689000",
+      "nonce": "313ca505-6fc6-4d5e-9d23-52cd38cbb260",
+      "signal": "SIGSTOP",
+      "matched": true
+    },
+    {
+      "at": 1793365693652,
+      "actor": "cleaner",
+      "group": 14503,
+      "proofPid": 14503,
+      "run": "mcp-probe-14381-1793365693348689000",
+      "nonce": "313ca505-6fc6-4d5e-9d23-52cd38cbb260",
+      "signal": "SIGKILL",
+      "matched": true
+    }
+  ],
+  "groupsGone": [
+    14503
+  ],
+  "proofAt": 1793365693826
+}

@@ -1,0 +1,9 @@
+{
+  "action": "cleanup only; no GUI interaction or approval bypass",
+  "pid": 68335,
+  "commandIdentityMatched": true,
+  "signal": "SIGTERM",
+  "exited": true,
+  "noServiceLog": true,
+  "nativeUiStillUnverified": true
+}

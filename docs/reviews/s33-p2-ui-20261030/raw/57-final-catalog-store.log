@@ -1,0 +1,17 @@
+COMMAND cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_catalog -- --test-threads=1
+START_UTC 2026-10-30T14:09:28.065318+00:00
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.29s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 6 tests
+test local_store::mcp_catalog_tests::mcp_catalog_database_committed_unknown_blocks_handle_until_cold_receipt_check ... ok
+test local_store::mcp_catalog_tests::mcp_catalog_file_synced_before_database_is_interrupted_not_replayed ... ok
+test local_store::mcp_catalog_tests::mcp_catalog_host_rechecks_schema_budget_and_sensitive_values ... ok
+test local_store::mcp_catalog_tests::mcp_catalog_prepared_directory_replacement_rejects_publish ... ok
+test local_store::mcp_catalog_tests::mcp_catalog_preserves_full_schema_and_cold_reopen_receipt ... ok
+test local_store::mcp_catalog_tests::mcp_catalog_rejects_links_tampering_and_replaced_parent ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 101 filtered out; finished in 0.95s
+
+
+EXIT_CODE 0

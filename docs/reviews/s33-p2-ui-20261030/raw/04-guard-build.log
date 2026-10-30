@@ -1,0 +1,20 @@
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+warning: method `with_verification_guard` is never used
+  --> src/store_commands.rs:27:19
+   |
+17 | impl LocalState {
+   | --------------- method in this implementation
+...
+27 |     pub(crate) fn with_verification_guard(
+   |                   ^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: function `open_local` is never used
+   --> src/verification_root.rs:124:15
+    |
+124 | pub(crate) fn open_local(
+    |               ^^^^^^^^^^
+
+warning: `sidekick` (lib) generated 2 warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.87s

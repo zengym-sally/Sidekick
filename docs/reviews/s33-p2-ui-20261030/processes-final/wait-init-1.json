@@ -1,0 +1,77 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-Nn3JPO/isolated",
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793369407398,
+      "pid": 17009,
+      "ppid": 16920,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793369407400,
+      "pid": 17009,
+      "ppid": 16920,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793369407429,
+      "pid": 17045,
+      "ppid": 17009,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793369407460,
+      "pid": 17079,
+      "ppid": 17045,
+      "role": "grandchild"
+    }
+  ],
+  "audits": [
+    {
+      "at": 1793369408341,
+      "actor": "cleaner",
+      "group": 16920,
+      "proofPid": 16920,
+      "run": "mcp-probe-16820-1793369407258241000",
+      "nonce": "4ebf9251-5dd3-4813-b394-b6e34ad0f338",
+      "signal": "SIGSTOP",
+      "matched": true
+    },
+    {
+      "at": 1793369408345,
+      "actor": "cleaner",
+      "group": 16920,
+      "proofPid": 16920,
+      "run": "mcp-probe-16820-1793369407258241000",
+      "nonce": "4ebf9251-5dd3-4813-b394-b6e34ad0f338",
+      "signal": "SIGKILL",
+      "matched": true
+    }
+  ],
+  "groupsGone": [
+    16920
+  ],
+  "proofAt": 1793369408494
+}

@@ -1,0 +1,119 @@
+COMMAND npm run test:s33-discovery
+START_UTC 2026-10-30T14:09:54.070553+00:00
+npm notice run sidekick@0.3.0 test:s33-discovery
+npm notice run npm run probe:bundle && cargo build --manifest-path src-tauri/Cargo.toml --features s33-mcp-verification --example s33-mcp-host && node --test --test-concurrency=1 --test-timeout=25000 tests/s33-catalog.test.mjs tests/s33-discovery.test.mjs
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 107ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 92ms
+
+  build/s0-runtime/skills-manager.mjs  346.8kb
+
+⚡ Done in 11ms
+
+  build/s0-runtime/mcp-probe.mjs  34.0kb
+
+⚡ Done in 3ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.83s
+✔ catalog keeps schema, rejects unsupported references and duplicate names (0.951041ms)
+✔ known referenced values in any key or string reject the entire catalog (0.103792ms)
+✔ budgets accept large legal catalogs and reject exact limit plus one (2.560167ms)
+{"scenario":"normal","modes":"normal","processes":3,"methods":["initialize","notifications/initialized","tools/list","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real Rust host discovers pages, cleans owned group and reopens full catalog (1780.837125ms)
+{"scenario":"large","status":"succeeded","code":null,"modes":"large","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process large publishes only after valid discovery and cleanup (757.527125ms)
+{"scenario":"limit","status":"failed","code":"MCP_CATALOG_INVALID","modes":"limit","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process limit publishes only after valid discovery and cleanup (641.605208ms)
+{"scenario":"ref","status":"failed","code":"MCP_CATALOG_INVALID","modes":"ref","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process ref publishes only after valid discovery and cleanup (638.128166ms)
+{"scenario":"cycle","status":"failed","code":"MCP_CATALOG_INVALID","modes":"cycle","processes":3,"methods":["initialize","notifications/initialized","tools/list","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process cycle publishes only after valid discovery and cleanup (637.134583ms)
+{"scenario":"bad-then-valid","status":"failed","code":"MCP_PROTOCOL","modes":"bad-then-valid","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process bad-then-valid publishes only after valid discovery and cleanup (635.456292ms)
+{"scenario":"oversize-then-valid","status":"failed","code":"MCP_PROTOCOL","modes":"oversize-then-valid","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process oversize-then-valid publishes only after valid discovery and cleanup (640.092666ms)
+{"scenario":"unknown-response","status":"failed","code":"MCP_PROTOCOL","modes":"unknown-response","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process unknown-response publishes only after valid discovery and cleanup (651.156ms)
+{"scenario":"duplicate-response","status":"failed","code":"MCP_PROTOCOL","modes":"duplicate-response","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process duplicate-response publishes only after valid discovery and cleanup (635.050417ms)
+{"scenario":"tail-bad","status":"failed","code":"MCP_PROTOCOL","modes":"tail-bad","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process tail-bad publishes only after valid discovery and cleanup (642.438167ms)
+{"scenario":"tail-incomplete","status":"failed","code":"MCP_PROTOCOL","modes":"tail-incomplete","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process tail-incomplete publishes only after valid discovery and cleanup (658.537542ms)
+{"scenario":"changed","status":"failed","code":"MCP_PROTOCOL","modes":"changed","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process changed publishes only after valid discovery and cleanup (623.666417ms)
+{"scenario":"wait-init","status":"failed","code":"MCP_TIMEOUT","modes":"wait-init","processes":3,"methods":["initialize"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process wait-init publishes only after valid discovery and cleanup (1444.522833ms)
+{"scenario":"catalog-exact","status":"succeeded","code":null,"modes":"catalog-exact","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process catalog-exact publishes only after valid discovery and cleanup (786.2825ms)
+{"scenario":"catalog-plus-one","status":"failed","code":"MCP_CATALOG_INVALID","modes":"catalog-plus-one","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process catalog-plus-one publishes only after valid discovery and cleanup (639.686166ms)
+{"scenario":"schema-exact","status":"succeeded","code":null,"modes":"schema-exact","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process schema-exact publishes only after valid discovery and cleanup (650.686666ms)
+{"scenario":"schema-plus-one","status":"failed","code":"MCP_CATALOG_INVALID","modes":"schema-plus-one","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process schema-plus-one publishes only after valid discovery and cleanup (628.484208ms)
+{"scenario":"pages-exact","status":"succeeded","code":null,"modes":"pages-exact","processes":3,"methods":["initialize","notifications/initialized","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process pages-exact publishes only after valid discovery and cleanup (664.262667ms)
+{"scenario":"pages-plus-one","status":"failed","code":"MCP_CATALOG_INVALID","modes":"pages-plus-one","processes":3,"methods":["initialize","notifications/initialized","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process pages-plus-one publishes only after valid discovery and cleanup (657.215833ms)
+{"scenario":"duplicate-tool","status":"failed","code":"MCP_CATALOG_INVALID","modes":"duplicate-tool","processes":3,"methods":["initialize","notifications/initialized","tools/list","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process duplicate-tool publishes only after valid discovery and cleanup (636.472292ms)
+{"scenario":"invalid-utf8","status":"failed","code":"MCP_PROTOCOL","modes":"invalid-utf8","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process invalid-utf8 publishes only after valid discovery and cleanup (632.478917ms)
+{"scenario":"stderr-overflow","status":"failed","code":"MCP_PROTOCOL","modes":"stderr-overflow","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process stderr-overflow publishes only after valid discovery and cleanup (637.737958ms)
+{"scenario":"notifications-overflow","status":"failed","code":"MCP_PROTOCOL","modes":"notifications-overflow","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process notifications-overflow publishes only after valid discovery and cleanup (641.362292ms)
+{"scenario":"slow-pages","status":"failed","code":"MCP_TIMEOUT","modes":"slow-pages","processes":3,"methods":["initialize","notifications/initialized","tools/list","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ real process slow-pages publishes only after valid discovery and cleanup (1468.496167ms)
+✔ shared slot, cancellation, active deletion and frozen edits use actual host (1162.218375ms)
+✔ cancel during initialize cleans descendants and frees slot (684.925667ms)
+{"scenario":"kill-host","modes":"wait-list","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ SIGKILL host still cleans owned group with unrelated control alive (642.213541ms)
+{"scenario":"kill-runtime","modes":"wait-list","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["-STOP","SIGSTOP","SIGKILL"]}
+✔ SIGKILL runtime still cleans owned group with unrelated control alive (578.489125ms)
+{"scenario":"kill-guardian","modes":"wait-list","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ SIGKILL guardian still cleans owned group with unrelated control alive (607.804125ms)
+{"scenario":"kill-service","modes":"wait-list","processes":3,"methods":["initialize","notifications/initialized","tools/list"],"signals":["SIGSTOP","SIGKILL"]}
+✔ SIGKILL service still cleans owned group with unrelated control alive (609.374583ms)
+✔ explicit environment only; referenced secret output is never published (637.035542ms)
+{"scenario":"host-policy-missing-ack","kind":"verification-instrumented host with real guardian","status":"failed","serviceStarts":0}
+✔ verification-only host policy missing-ack cannot publish; bootstrap requires matching ACK (1346.831208ms)
+{"scenario":"host-policy-wrong-ack","kind":"verification-instrumented host with real guardian","status":"failed","serviceStarts":0}
+✔ verification-only host policy wrong-ack cannot publish; bootstrap requires matching ACK (396.071125ms)
+{"scenario":"host-policy-cancel-before-ack","kind":"verification-instrumented host with real guardian","status":"cancelled","serviceStarts":0}
+✔ verification-only host policy cancel-before-ack cannot publish; bootstrap requires matching ACK (397.550334ms)
+{"scenario":"host-policy-duplicate-owner","kind":"verification-instrumented host with real guardian","status":"failed","serviceStarts":1}
+✔ verification-only host policy duplicate-owner cannot publish; bootstrap requires matching ACK (395.127ms)
+✔ verification-only blocked stdin cannot block host cancellation or deadline supervisor (1184.996167ms)
+✔ explicit cancellation while initialize has no response (575.719959ms)
+✔ isolated ordinary v3 refuses production start without auto migration (91.582792ms)
+✔ business and trial slot fixtures reject probe before preparation without model access (118.882125ms)
+✔ review regression one stale owner and result (old-run) cannot change current task (645.962959ms)
+✔ review regression one stale owner and result (old-nonce) cannot change current task (643.830708ms)
+✔ review regression known publication collision finishes failed without overwriting (655.964209ms)
+✔ review regression blocked stdin explicitly cancels and releases only after Runtime exit (395.228542ms)
+✔ review regression cancellation cannot hide unconfirmed cleanup (988.065542ms)
+✔ review regression missing owner registration cannot release slot with live stopped helpers (389.1525ms)
+✔ review regression raw service tail written behind stopped guardian is still validated (5524.0595ms)
+✔ large escaped private bootstrap passes without copying P1 startup limit (669.177375ms)
+✔ nonempty bounded raw stderr is discarded while private control stream remains separate (651.5815ms)
+✔ verification carrier rejects a symlink app even with copied valid marker (123.299ms)
+ℹ tests 52
+ℹ suites 0
+ℹ pass 52
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 38631.570833
+
+EXIT_CODE 0

@@ -1,0 +1,112 @@
+{
+  "baseCommit": "c6aae8b6b8957b8a90d431bf718a96b570775334",
+  "normativeCoreSha256": "fa1f67f6ccec4124c878e099339637860cbf7abed673c7a1d9d26f3a6146141a",
+  "changedSinceRound1": [
+    "src/stores/mcpDiagnostics.ts",
+    "tests/fixtures/profile-ui/mcp.ts",
+    "tests/s33-ui-state.test.mjs"
+  ],
+  "sourceInputs": [
+    {
+      "path": "package.json",
+      "bytes": 6776,
+      "sha256": "7f35dce868eb9a368582907f5772d82a755df1269ae4922c538c5054d1b5caa5",
+      "ignored": false
+    },
+    {
+      "path": "src-tauri/Cargo.toml",
+      "bytes": 932,
+      "sha256": "47c78638217a6ebe27ed49113d9b01b30d2451f509175ca62db63e6d5353877f",
+      "ignored": false
+    },
+    {
+      "path": "src-tauri/src/lib.rs",
+      "bytes": 10229,
+      "sha256": "e650fd8a63223e4e54cbf0811d5f1fe6c73f3bb87f6d1eef2fbe043121c27fb5",
+      "ignored": false
+    },
+    {
+      "path": "src-tauri/src/mcp_verification.rs",
+      "bytes": 9000,
+      "sha256": "dfd45ba841fc4ac7cc588322e8bd79720b6f2e57be2de01d945dbb05e1b4f3be",
+      "ignored": false
+    },
+    {
+      "path": "src-tauri/src/model_config.rs",
+      "bytes": 25018,
+      "sha256": "ec42a4e89dfbf0f7a977db47d3c3f3dafabf848ecf32073bd5d8a41163459270",
+      "ignored": false
+    },
+    {
+      "path": "src-tauri/src/store_commands.rs",
+      "bytes": 13571,
+      "sha256": "19e18994e6de620ca26216047444985e13f662f89212312fc6e2ecce0d9f63fe",
+      "ignored": false
+    },
+    {
+      "path": "src-tauri/src/verification_root.rs",
+      "bytes": 8689,
+      "sha256": "175de0893bd67ef7b90e49f550a780e3613e509cb114ba41aa4b6694dfa57b5e",
+      "ignored": false
+    },
+    {
+      "path": "src-tauri/src/mcp_ui_verification.rs",
+      "bytes": 2633,
+      "sha256": "d451040078297aef60494aae2009fc7d6b3ccfb609fa9816b36d9f9215b7bc3e",
+      "ignored": false
+    },
+    {
+      "path": "src/stores/mcpDiagnostics.ts",
+      "bytes": 10144,
+      "sha256": "f1b7880112cff00ce16f6ff7d59e6b686d4db51f12fb6866e03e744b5bf59366",
+      "ignored": false
+    },
+    {
+      "path": "src/components/McpSettingsPanel.vue",
+      "bytes": 15134,
+      "sha256": "72f6b92e9d0caed2cbeeaf0c47bb0d41d672a9f28f308f5360f297b2d20ddd67",
+      "ignored": false
+    },
+    {
+      "path": "src/styles/settings.css",
+      "bytes": 17127,
+      "sha256": "6273de2009016bf6fb8a75f8e7ac116ea0cfc71226542943c319d4442d10f19c",
+      "ignored": false
+    },
+    {
+      "path": "tests/fixtures/profile-ui/mcp.ts",
+      "bytes": 6829,
+      "sha256": "63eebdedfe42a3e72222e84725d9d02dc2eb40555c7ee59e92669d912aece210",
+      "ignored": false
+    },
+    {
+      "path": "tests/fixtures/s33-ui-verify.config.json",
+      "bytes": 423,
+      "sha256": "445bf6e0f578568b798bef031a54841047a8fb075201660fdccb237508296ad5",
+      "ignored": false
+    },
+    {
+      "path": "tests/s33-ui-state.test.mjs",
+      "bytes": 11403,
+      "sha256": "d2247408a822568fa847d930ec13bc7044b9ee782fa41e08d8a2bc9562dc2688",
+      "ignored": false
+    },
+    {
+      "path": "tests/s33-ui-safety.test.mjs",
+      "bytes": 3100,
+      "sha256": "8e507782289eabafa483863bb9ef8f593e0523ac3c08dcea6b732051c11b0bef",
+      "ignored": false
+    },
+    {
+      "path": "tests/s33-ui-artifacts.test.mjs",
+      "bytes": 2205,
+      "sha256": "c546bc37ce302190c10235cab743ddb9b3856185130c6f00e1de0e67afb34c51",
+      "ignored": false
+    }
+  ],
+  "changedSinceRound2": [
+    "src/stores/mcpDiagnostics.ts",
+    "tests/fixtures/profile-ui/mcp.ts",
+    "tests/s33-ui-state.test.mjs"
+  ]
+}

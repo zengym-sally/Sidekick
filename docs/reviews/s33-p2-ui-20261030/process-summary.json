@@ -1,0 +1,45 @@
+{
+  "layer": "final serial Rust host / controlled processes; verification-only fault fixtures identified in individual records",
+  "files": 50,
+  "serviceAndDescendantStartRecords": 119,
+  "methods": {
+    "initialize": 40,
+    "notifications/initialized": 38,
+    "tools/list": 170
+  },
+  "toolsCall": 0,
+  "matchedAuditEntriesInStructuredProofs": 83,
+  "separateSigkillCases": {
+    "host": {
+      "runtimeExited": true,
+      "unrelatedControlAliveAtCapture": true,
+      "ownedGroupsGone": [
+        29580
+      ]
+    },
+    "runtime": {
+      "runtimeExited": true,
+      "unrelatedControlAliveAtCapture": true,
+      "ownedGroupsGone": [
+        30351
+      ]
+    },
+    "guardian": {
+      "runtimeExited": true,
+      "unrelatedControlAliveAtCapture": true,
+      "ownedGroupsGone": [
+        31086
+      ]
+    },
+    "service": {
+      "runtimeExited": true,
+      "unrelatedControlAliveAtCapture": true,
+      "ownedGroupsGone": [
+        31874
+      ]
+    }
+  },
+  "ordinaryRootMigrated": false,
+  "nativeGuiAcceptance": false,
+  "previousProcessRecordsAreIntermediate": true
+}

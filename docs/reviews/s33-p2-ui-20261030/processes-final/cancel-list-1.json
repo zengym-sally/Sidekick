@@ -1,0 +1,103 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-jFhu3C/isolated",
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793369418062,
+      "pid": 28924,
+      "ppid": 28835,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793369418064,
+      "pid": 28924,
+      "ppid": 28835,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793369418093,
+      "pid": 28961,
+      "ppid": 28924,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793369418124,
+      "pid": 28996,
+      "ppid": 28961,
+      "role": "grandchild"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793369418144,
+      "pid": 28924,
+      "ppid": 28835,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793369418145,
+      "pid": 28924,
+      "ppid": 28835,
+      "role": "service"
+    }
+  ],
+  "audits": [
+    {
+      "actor": "rust",
+      "at": 1793369418208,
+      "group": 28835,
+      "matched": true,
+      "nonce": "2efdd090-7e3a-4362-9c80-a2c82c21e462",
+      "proofPid": 28835,
+      "run": "mcp-probe-28709-1793369417916874000",
+      "signal": "-STOP"
+    },
+    {
+      "at": 1793369418216,
+      "actor": "cleaner",
+      "group": 28835,
+      "proofPid": 28835,
+      "run": "mcp-probe-28709-1793369417916874000",
+      "nonce": "2efdd090-7e3a-4362-9c80-a2c82c21e462",
+      "signal": "SIGSTOP",
+      "matched": true
+    },
+    {
+      "at": 1793369418221,
+      "actor": "cleaner",
+      "group": 28835,
+      "proofPid": 28835,
+      "run": "mcp-probe-28709-1793369417916874000",
+      "nonce": "2efdd090-7e3a-4362-9c80-a2c82c21e462",
+      "signal": "SIGKILL",
+      "matched": true
+    }
+  ],
+  "groupsGone": [
+    28835
+  ],
+  "proofAt": 1793369418386
+}

@@ -1,0 +1,164 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-1DSWfy/isolated",
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365699051,
+      "pid": 20300,
+      "ppid": 20209,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793365699054,
+      "pid": 20300,
+      "ppid": 20209,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365699085,
+      "pid": 20341,
+      "ppid": 20300,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365699119,
+      "pid": 20377,
+      "ppid": 20341,
+      "role": "grandchild"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793365699133,
+      "pid": 20300,
+      "ppid": 20209,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793365699134,
+      "pid": 20300,
+      "ppid": 20209,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "TOOL_NAME",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365699636,
+      "pid": 20937,
+      "ppid": 20852,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793365699639,
+      "pid": 20937,
+      "ppid": 20852,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793365699640,
+      "pid": 20937,
+      "ppid": 20852,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793365699640,
+      "pid": 20937,
+      "ppid": 20852,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365699669,
+      "pid": 20974,
+      "ppid": 20937,
+      "role": "child"
+    }
+  ],
+  "audits": [
+    {
+      "at": 1793365699217,
+      "actor": "cleaner",
+      "group": 20209,
+      "proofPid": 20209,
+      "run": "mcp-probe-20095-1793365698894433000",
+      "nonce": "c0604ab7-a5b7-4292-8e0f-8a5a05a11d52",
+      "signal": "SIGSTOP",
+      "matched": true
+    },
+    {
+      "at": 1793365699224,
+      "actor": "cleaner",
+      "group": 20209,
+      "proofPid": 20209,
+      "run": "mcp-probe-20095-1793365698894433000",
+      "nonce": "c0604ab7-a5b7-4292-8e0f-8a5a05a11d52",
+      "signal": "SIGKILL",
+      "matched": true
+    },
+    {
+      "at": 1793365699676,
+      "actor": "cleaner",
+      "group": 20852,
+      "proofPid": 20852,
+      "run": "mcp-probe-20095-1793365699484109000",
+      "nonce": "257ef929-1a67-4b0c-943c-30582e8215c5",
+      "signal": "SIGSTOP",
+      "matched": true
+    },
+    {
+      "at": 1793365699681,
+      "actor": "cleaner",
+      "group": 20852,
+      "proofPid": 20852,
+      "run": "mcp-probe-20095-1793365699484109000",
+      "nonce": "257ef929-1a67-4b0c-943c-30582e8215c5",
+      "signal": "SIGKILL",
+      "matched": true
+    }
+  ],
+  "groupsGone": [
+    20209,
+    20852
+  ],
+  "proofAt": 1793365699850
+}

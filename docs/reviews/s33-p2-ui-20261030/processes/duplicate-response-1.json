@@ -1,0 +1,93 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-746HjL/isolated",
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365686535,
+      "pid": 7367,
+      "ppid": 7270,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793365686538,
+      "pid": 7367,
+      "ppid": 7270,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365686571,
+      "pid": 7407,
+      "ppid": 7367,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793365686606,
+      "pid": 7448,
+      "ppid": 7407,
+      "role": "grandchild"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793365686618,
+      "pid": 7367,
+      "ppid": 7270,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793365686618,
+      "pid": 7367,
+      "ppid": 7270,
+      "role": "service"
+    }
+  ],
+  "audits": [
+    {
+      "at": 1793365686659,
+      "actor": "cleaner",
+      "group": 7270,
+      "proofPid": 7270,
+      "run": "mcp-probe-7161-1793365686378006000",
+      "nonce": "21a82c70-a62a-44eb-b7f8-a0984ea7e6a9",
+      "signal": "SIGSTOP",
+      "matched": true
+    },
+    {
+      "at": 1793365686664,
+      "actor": "cleaner",
+      "group": 7270,
+      "proofPid": 7270,
+      "run": "mcp-probe-7161-1793365686378006000",
+      "nonce": "21a82c70-a62a-44eb-b7f8-a0984ea7e6a9",
+      "signal": "SIGKILL",
+      "matched": true
+    }
+  ],
+  "groupsGone": [
+    7270
+  ],
+  "proofAt": 1793365686826
+}

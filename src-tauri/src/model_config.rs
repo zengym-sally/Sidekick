@@ -335,6 +335,12 @@ impl AppStore {
         ))
     }
     fn credential_read(&self, reference: &str) -> Result<String> {
+        if cfg!(feature = "s33-mcp-ui-verification") {
+            return Err(StoreError::new(
+                "VERIFY_MODELS_DISABLED",
+                "MCP隔离验收包禁止真实凭据访问。",
+            ));
+        }
         let store = Store::new().map_err(|_| keychain_error())?;
         let entry = store
             .build(&self.credential_service()?, reference, None)
@@ -349,6 +355,12 @@ impl AppStore {
         }
     }
     fn credential_write(&self, reference: &str, key: &str) -> Result<()> {
+        if cfg!(feature = "s33-mcp-ui-verification") {
+            return Err(StoreError::new(
+                "VERIFY_MODELS_DISABLED",
+                "MCP隔离验收包禁止真实凭据访问。",
+            ));
+        }
         if key.is_empty() || key.len() > 4096 || key.chars().any(char::is_control) {
             return Err(StoreError::new(
                 "INVALID_CREDENTIAL",
@@ -445,6 +457,12 @@ impl AppStore {
         }))
     }
     pub fn save_models(&self, mut input: ModelConfigInput) -> Result<ModelConfigSave> {
+        if cfg!(feature = "s33-mcp-ui-verification") {
+            return Err(StoreError::new(
+                "VERIFY_MODELS_DISABLED",
+                "MCP隔离验收包禁止模型保存。",
+            ));
+        }
         let current = self.read_models()?;
         if input.expected_revision.as_ref().is_some_and(|expected| {
             current.as_ref().map(|c| c.revision.as_str()).unwrap_or("") != expected
@@ -643,3 +661,22 @@ fn new_model_reference() -> String {
 #[cfg(test)]
 #[path = "model_config_tests.rs"]
 mod tests;
+
+#[cfg(all(test, feature = "s33-mcp-ui-verification"))]
+mod verification_tests {
+    #[test]
+    fn ui_verification_refuses_credential_access_before_any_root_or_backend() {
+        let f = crate::local_store::tests::Fixture::new();
+        let s = f.store();
+        assert_eq!(
+            s.credential_read("synthetic-reference").unwrap_err().code,
+            "VERIFY_MODELS_DISABLED"
+        );
+        assert_eq!(
+            s.credential_write("synthetic-reference", "synthetic-not-a-secret")
+                .unwrap_err()
+                .code,
+            "VERIFY_MODELS_DISABLED"
+        );
+    }
+}

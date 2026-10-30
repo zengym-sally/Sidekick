@@ -1,11 +1,24 @@
 <script setup lang="ts">
-import {computed,nextTick,onMounted,ref} from 'vue';
+import {computed,nextTick,onMounted,onUnmounted,ref,watch} from 'vue';
+import {listen} from '@tauri-apps/api/event';
+import {displayTime} from '../domain/todos';
+import {useMcpDiagnostics,observeMcpDiagnostics,probeMessage} from '../stores/mcpDiagnostics';
 import {useMcpSettings} from '../stores/mcp';
 import type {McpEnvironment} from '../domain/mcp';
 import Icon from './Icon.vue';
 import SkField from './ui/SkField.vue';import SkInput from './ui/SkInput.vue';import SkSelect from './ui/SkSelect.vue';import SkFieldset from './ui/SkFieldset.vue';import SkButton from './ui/SkButton.vue';import SkSwitch from './ui/SkSwitch.vue';import SkNumberInput from './ui/SkNumberInput.vue';import SkSaveBar from './ui/SkSaveBar.vue';
 import SkSecretInput from './ui/SkSecretInput.vue';
 const mcp=useMcpSettings(),draft=computed(()=>mcp.current),blocked=computed(()=>!mcp.ready||mcp.loading||mcp.saving),form=ref<HTMLFormElement>(),confirmation=ref<HTMLDialogElement>(),deletion=ref(''),attempted=ref(false);
+const diagnostics=useMcpDiagnostics();
+const outcome=computed(()=>diagnostics.rows[mcp.selected]);
+const probe=computed(()=>outcome.value?.run);
+const canDiagnose=computed(()=>!blocked.value&&!mcp.dirty&&!!saved.value&&diagnostics.known&&!diagnostics.occupied);
+const oldRevision=computed(()=>!!probe.value&&probe.value.snapshot.configurationRevision!==mcp.configuration?.revision);
+async function reconcile(){await diagnostics.reconcile(saved.value?.id);}
+async function diagnose(){try{await diagnostics.start();await reconcile();}catch{}}
+async function cancelProbe(){await diagnostics.cancel();await reconcile();}
+let stopObserving:(()=>void)|undefined;
+watch(()=>mcp.selected,()=>{if(saved.value)void diagnostics.readLatest(saved.value.id);});
 const saved=computed(()=>mcp.find(mcp.selected));
 const secureAvailable=computed(()=>mcp.configuration?.secureStorageAvailable===true);
 function credentialState(name:string){return mcp.configuration?.credentialStatus?.[mcp.selected]?.[name]||'missing';}
@@ -21,7 +34,8 @@ function select(id:string){mcp.select(id);attempted.value=false;}
 function add(){mcp.add();attempted.value=false;}
 function askRemove(){deletion.value=mcp.selected;confirmation.value?.showModal();}
 async function remove(){if(mcp.selected!==deletion.value){confirmation.value?.close();return;}try{await mcp.remove();confirmation.value?.close();}catch{confirmation.value?.close();}}
-onMounted(()=>{if(!mcp.configuration&&!mcp.loading)void load();});
+onMounted(()=>{if(!mcp.configuration&&!mcp.loading)void load();stopObserving=observeMcpDiagnostics(reconcile,async fn=>listen('mcp-probe-changed',fn),undefined,()=>diagnostics.occupied||!diagnostics.known);});
+onUnmounted(()=>stopObserving?.());
 </script>
 <template>
  <div class="mcp-page">
@@ -31,13 +45,13 @@ onMounted(()=>{if(!mcp.configuration&&!mcp.loading)void load();});
   <div class="catalog-layout">
    <nav class="catalog-rail" aria-label="MCP 服务列表">
     <div class="catalog-rail-title"><span>本机服务</span><span>{{mcp.configuration?.servers.length||0}} / 20</span></div>
-    <button v-for="item in mcp.entries" :key="item.id" class="catalog-provider" :class="{active:item.id===mcp.selected}" :aria-pressed="item.id===mcp.selected" :disabled="mcp.saving" @click="select(item.id)"><span><strong>{{item.name}}</strong><small>{{item.unsaved?'有未保存的修改':item.enabled?'启用 · 未测试连接':'已禁用'}}</small></span></button>
+    <button v-for="item in mcp.entries" :key="item.id" class="catalog-provider" :class="{active:item.id===mcp.selected}" :aria-pressed="item.id===mcp.selected" :disabled="mcp.saving" @click="select(item.id)"><span><strong>{{item.name}}</strong><small>{{item.unsaved?'有未保存的修改':item.enabled?'已启用':'已禁用'}}</small></span></button>
     <SkButton kind="entry" :disabled="blocked||(mcp.configuration?.servers.length||0)>=20" @click="add"><Icon name="plus"/>新增 MCP 服务</SkButton>
    </nav>
    <section class="catalog-editor" aria-label="MCP 服务配置">
-    <div v-if="!draft" class="catalog-empty"><h2>添加本机工具服务</h2><p>填写一项 stdio 服务的启动方式。保存只记录配置，连接诊断与工具发现将在后续步骤开放。</p></div>
+    <div v-if="!draft" class="catalog-empty"><h2>添加本机工具服务</h2><p>填写一项 stdio 服务的启动方式。保存配置后可手动诊断，查看本次发现的工具；不会自动调用工具。</p></div>
     <template v-else>
-     <header class="catalog-object-heading"><div><h2>{{saved?draft.name||saved.name:'新增 MCP 服务'}}</h2><p>配置保存后供后续新任务使用；当前尚未测试连接。</p></div><SkButton v-if="saved" kind="quiet" :disabled="blocked||mcp.dirty" @click="askRemove"><Icon name="trash"/>移除配置</SkButton></header>
+     <header class="catalog-object-heading"><div><h2>{{saved?draft.name||saved.name:'新增 MCP 服务'}}</h2><p>保存不会启动程序；请手动诊断并查看本次工具目录。</p></div><SkButton v-if="saved" kind="quiet" :disabled="blocked||mcp.dirty||diagnostics.occupant?.input.serverId===saved.id||diagnostics.starting||!!diagnostics.uncertain" @click="askRemove"><Icon name="trash"/>移除配置</SkButton></header>
      <SkFieldset :disabled="blocked"><form ref="form" @submit.prevent="save">
       <div class="form-grid">
        <SkField label="服务名称" required :error="nameError"><SkInput v-model="draft.name" required maxlength="100" placeholder="例如：本机文档工具"/></SkField>
@@ -45,7 +59,7 @@ onMounted(()=>{if(!mcp.configuration&&!mcp.loading)void load();});
        <SkField class="full" label="启动命令" required :error="commandError" help="填写程序路径或命令名；参数请逐项填写，认证信息不要放在命令或参数中。"><SkInput v-model="draft.command" required maxlength="4096" autocomplete="off" spellcheck="false" placeholder="程序路径或命令名"/></SkField>
       </div>
       <section class="mcp-arguments" aria-label="命令参数"><div class="catalog-section-heading"><h3>命令参数</h3><SkButton kind="quiet" :disabled="draft.args.length>=128" @click="draft.args.push('')"><Icon name="plus"/>添加参数</SkButton></div><p v-if="!draft.args.length" class="muted">没有参数。每一项会原样作为一个参数，空格不会拆分。</p><div v-for="(_arg,index) in draft.args" :key="index" class="catalog-header-row"><SkInput v-model="draft.args[index]" :aria-label="`参数 ${index+1}`" maxlength="4096" autocomplete="off" spellcheck="false" placeholder="一个完整参数，也可以留空"/><button class="icon-button" type="button" :aria-label="`移除参数 ${index+1}`" @click="draft.args.splice(index,1)"><Icon name="close"/></button></div></section>
-      <div class="catalog-switch-row"><span><strong>启用服务</strong><small>保存配置不会启动程序。禁用只影响后续新任务。</small></span><SkSwitch v-model="draft.enabled" label="启用 MCP 服务"/></div>
+      <div class="catalog-switch-row"><span><strong>启用服务</strong><small>保存不会启动程序；禁用的服务仍可手动诊断。</small></span><SkSwitch v-model="draft.enabled" label="启用 MCP 服务"/></div>
       <details class="catalog-advanced"><summary>工作目录与超时</summary><div class="form-grid"><SkField class="full" label="工作目录（可选）" help="留空使用本次任务目录；填写时使用绝对路径。"><SkInput :model-value="draft.cwd||''" maxlength="4096" autocomplete="off" placeholder="留空使用本次任务目录" @update:model-value="draft.cwd=$event||null"/></SkField><SkField label="连接超时（秒）"><SkNumberInput :model-value="draft.connectTimeoutMs/1000" :min="1" :max="30" @update:model-value="draft.connectTimeoutMs=Number($event)*1000"/></SkField><SkField label="工具超时（秒）"><SkNumberInput :model-value="draft.toolTimeoutMs/1000" :min="1" :max="60" @update:model-value="draft.toolTimeoutMs=Number($event)*1000"/></SkField></div><p class="muted">准备与工具执行共同受单次任务120秒总期限约束。</p></details>
       <details class="catalog-advanced"><summary>环境项 <span v-if="draft.env.length">· {{draft.env.length}} 项</span></summary><p class="muted">普通值会写入配置，请勿填写密钥。宿主变量只按所填名称解析；已有安全值只显示设置状态，不回读明文。</p><p v-if="!secureAvailable" class="muted">安全存储尚未启用，当前不能新增或替换安全值；可先使用宿主环境变量引用。</p>
        <div v-for="(item,index) in draft.env" :key="index" class="mcp-env-row">
@@ -56,6 +70,25 @@ onMounted(()=>{if(!mcp.configuration&&!mcp.loading)void load();});
         <button class="icon-button" type="button" :aria-label="`移除环境项 ${index+1}`" @click="removeEnvironment(index)"><Icon name="close"/></button>
        </div><SkButton kind="quiet" :disabled="draft.env.length>=64" @click="draft.env.push({name:'',source:'environment',value:''})"><Icon name="plus"/>添加环境项</SkButton></details>
      </form></SkFieldset>
+     <section class="mcp-diagnostics" aria-labelledby="mcp-diagnostic-heading">
+      <div class="catalog-section-heading"><h3 id="mcp-diagnostic-heading">连接诊断与工具</h3><SkButton kind="entry" :disabled="!canDiagnose" :loading="diagnostics.starting" @click="diagnose">连接诊断</SkButton></div>
+      <p class="muted">只初始化并发现工具，不调用工具；本次完成后关闭服务进程。</p>
+      <p v-if="!saved||mcp.dirty||!mcp.ready" class="muted">请先保存并确认这项服务配置，再开始诊断。</p>
+      <div v-if="diagnostics.uncertain" class="form-error" role="alert">开始请求结果未确认，暂不重复启动；请重新核对诊断状态。</div>
+      <p v-if="diagnostics.occupant" role="status">{{diagnostics.occupant.errorCode==='MCP_CLEANUP'?'进程清理未确认，活动槽仍保留。':'诊断正在准备、发现工具或清理进程…'}}<span v-if="diagnostics.occupant.input.serverId!==saved?.id">（另一项服务）</span></p>
+      <div class="mcp-diagnostic-actions"><SkButton v-if="diagnostics.active&&!diagnostics.uncertain" kind="quiet" :loading="!!diagnostics.cancelling" @click="cancelProbe">取消诊断</SkButton><SkButton kind="quiet" :disabled="diagnostics.starting||outcome?.loading" @click="reconcile">重新核对诊断状态</SkButton></div>
+      <p v-if="diagnostics.error" class="form-error" role="alert">{{diagnostics.error}}</p><p v-if="diagnostics.notice" role="status" class="muted">{{diagnostics.notice}}</p>
+      <p v-if="outcome?.loading" role="status" class="muted">正在核对诊断记录与目录…</p><p v-if="outcome?.error" role="alert" class="form-error">{{outcome.error}}</p>
+      <template v-if="probe">
+       <p v-if="diagnostics.passed(mcp.selected)" role="status" class="mcp-probe-success">最近一次诊断完成，进程已清理。发现 {{outcome?.catalog?.tools.length||0}} 项工具。</p>
+       <p v-else-if="probe.status==='succeeded'&&!outcome?.error" role="status" class="muted">历史记录仅有摘要，尚无已核验的完整工具目录。</p>
+       <p v-else-if="['failed','cancelled','interrupted'].includes(probe.status)" role="alert" class="form-error">{{probeMessage(probe.errorCode)}}</p>
+       <p v-if="oldRevision" class="mcp-history-note">旧配置结果：来自先前保存的修订，请重新诊断当前配置。</p><p v-if="mcp.dirty" class="muted">当前草稿尚未保存，已有结果不会随草稿改变。</p>
+       <p class="muted">诊断记录 · {{displayTime(probe.createdAtMs)}}</p>
+       <p v-if="diagnostics.passed(mcp.selected)&&!outcome?.catalog?.tools.length" class="muted">服务初始化成功，但未提供工具。</p>
+       <ul v-if="outcome?.catalog" class="mcp-tool-list"><li v-for="tool in outcome.catalog.tools" :key="tool.name"><strong>{{tool.name}}</strong><p v-if="tool.description">{{tool.description}}</p><details><summary>输入格式（只读）</summary><pre tabindex="0" :aria-label="`${tool.name} 输入格式`">{{JSON.stringify(tool.inputSchema,null,2)}}</pre></details></li></ul>
+      </template><p v-else-if="saved&&!outcome?.loading&&!outcome?.error" class="muted">还没有这项服务的诊断记录。</p>
+     </section>
      <details v-if="saved" class="catalog-advanced"><summary>服务标识</summary><p class="muted">{{saved.id}} · 重命名后保持不变。</p></details>
     </template>
    </section>

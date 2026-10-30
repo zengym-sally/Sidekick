@@ -1,0 +1,21 @@
+[
+  {
+    "phase": "before fix",
+    "actualCondition": "51-final-discovery",
+    "discoveryStep": [
+      "66-final-discovery"
+    ],
+    "conditionMatchesStep": false,
+    "runnerNotExecuted": true
+  },
+  {
+    "phase": "after fix",
+    "actualCondition": "66-final-discovery",
+    "discoveryStep": [
+      "66-final-discovery"
+    ],
+    "conditionMatchesStep": true,
+    "syntaxValid": true,
+    "finalOutputAbsentBeforeRun": true
+  }
+]
