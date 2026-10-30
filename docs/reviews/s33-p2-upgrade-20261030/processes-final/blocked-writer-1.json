@@ -1,0 +1,24 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-xtHRpP/isolated",
+  "kind": "verification-only blocked Runtime stdin; no MCP process",
+  "result": {
+    "agentId": null,
+    "createdAtMs": 1793376894683,
+    "errorCode": "MCP_TIMEOUT",
+    "finishedAtMs": 1793376895688,
+    "id": "mcp-probe-44739-1793376894683874000",
+    "input": {
+      "serverId": "mcp-d84bf96a7ba1b8f6f6bf7ef4"
+    },
+    "purpose": "mcp_probe",
+    "result": null,
+    "snapshot": {
+      "configurationRevision": "rev-9ef6e433cfc047d5b0e9da3ddd0a5676d9891911b000de6c98ab631481944e11",
+      "connectTimeoutMs": 5000,
+      "serverId": "mcp-d84bf96a7ba1b8f6f6bf7ef4"
+    },
+    "status": "failed"
+  },
+  "elapsedMs": 1024
+}

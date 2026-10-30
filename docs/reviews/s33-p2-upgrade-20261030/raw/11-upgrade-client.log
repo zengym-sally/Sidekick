@@ -1,0 +1,22 @@
+COMMAND npm run test:s33-upgrade-domain
+START_UTC 2026-10-30T15:56:39.154234+00:00
+npm notice run sidekick@0.3.0 test:s33-upgrade-domain
+npm notice run node --test --test-timeout=15000 tests/s33-upgrade.test.mjs
+✔ loading and cancelling confirmation issue no upgrade; explicit consent enables once (1.482ms)
+✔ busy and backup pre-DDL failures require reread and fresh consent (0.306542ms)
+✔ lost response only resolves after same-workspace validated v4 read (0.152333ms)
+✔ v3 or foreign workspace cannot release a lost-response barrier (0.797125ms)
+✔ explicit migration unknown remains blocked even if a fake later read claims v4 (0.162792ms)
+✔ new read beats old read and a late pre-upgrade read cannot restore v3 (0.133959ms)
+✔ pending confirmation blocks duplicate and read requests without cancelling it (0.1215ms)
+✔ malformed success or read cannot be presented as ready (0.139917ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 104.930417
+
+EXIT_CODE 0

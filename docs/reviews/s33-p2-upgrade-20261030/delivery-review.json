@@ -1,0 +1,21 @@
+{
+  "scope": "source and focused evidence; before final permitted checks",
+  "A": {
+    "reviewer": "p2_upgrade_delivery_a",
+    "verdict": "APPROVE",
+    "findings": []
+  },
+  "B": {
+    "reviewer": "p2_upgrade_delivery_b",
+    "verdict": "APPROVE",
+    "findings": []
+  },
+  "independence": "separate fork_turns=none read-only contexts, no other face verdict supplied",
+  "verifiedInputs": 17,
+  "notYetApproved": [
+    "final aggregate",
+    "final default library",
+    "final packages",
+    "native GUI or ordinary user-root upgrade"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-08FRIv/isolated",
+  "kind": "blocked Runtime stdin fixture; actual explicit cancel",
+  "runtimePid": 49090,
+  "exited": true
+}

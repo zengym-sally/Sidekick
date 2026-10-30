@@ -1,0 +1,218 @@
+[
+  {
+    "label": "01-red-entry",
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "src-tauri/Cargo.toml",
+      "--lib",
+      "mcp_upgrade",
+      "--",
+      "--test-threads=1"
+    ],
+    "startedUtc": "2026-10-30T15:52:06.297445+00:00",
+    "finishedUtc": "2026-10-30T15:52:08.254339+00:00",
+    "exitCode": 101,
+    "log": "docs/reviews/s33-p2-upgrade-20261030/raw/01-red-entry.log"
+  },
+  {
+    "label": "02-entry-focused",
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "src-tauri/Cargo.toml",
+      "--lib",
+      "mcp_upgrade",
+      "--",
+      "--test-threads=1"
+    ],
+    "startedUtc": "2026-10-30T15:52:57.038131+00:00",
+    "finishedUtc": "2026-10-30T15:53:02.412125+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-upgrade-20261030/raw/02-entry-focused.log"
+  },
+  {
+    "label": "03-red-client",
+    "command": [
+      "node",
+      "--test",
+      "tests/s33-upgrade.test.mjs"
+    ],
+    "startedUtc": "2026-10-30T15:54:16.552337+00:00",
+    "finishedUtc": "2026-10-30T15:54:16.626366+00:00",
+    "exitCode": 1,
+    "log": "docs/reviews/s33-p2-upgrade-20261030/raw/03-red-client.log"
+  },
+  {
+    "label": "04-client-focused",
+    "command": [
+      "node",
+      "--test",
+      "tests/s33-upgrade.test.mjs"
+    ],
+    "startedUtc": "2026-10-30T15:54:46.981756+00:00",
+    "finishedUtc": "2026-10-30T15:54:47.130323+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-upgrade-20261030/raw/04-client-focused.log"
+  },
+  {
+    "label": "10-entry-store",
+    "command": [
+      "npm",
+      "run",
+      "test:s33-upgrade-store"
+    ],
+    "startedUtc": "2026-10-30T15:56:37.617397+00:00",
+    "finishedUtc": "2026-10-30T15:56:39.108516+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-upgrade-20261030/raw/10-entry-store.log"
+  },
+  {
+    "label": "11-upgrade-client",
+    "command": [
+      "npm",
+      "run",
+      "test:s33-upgrade-domain"
+    ],
+    "startedUtc": "2026-10-30T15:56:39.154234+00:00",
+    "finishedUtc": "2026-10-30T15:56:39.391696+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-upgrade-20261030/raw/11-upgrade-client.log"
+  },
+  {
+    "label": "12-schema-neighbor",
+    "command": [
+      "npm",
+      "run",
+      "test:s33-schema-store"
+    ],
+    "startedUtc": "2026-10-30T15:56:39.431623+00:00",
+    "finishedUtc": "2026-10-30T15:56:44.205986+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-upgrade-20261030/raw/12-schema-neighbor.log"
+  },
+  {
+    "label": "13-mcp-client-neighbor",
+    "command": [
+      "npm",
+      "run",
+      "test:s33-ui-domain"
+    ],
+    "startedUtc": "2026-10-30T15:56:44.249443+00:00",
+    "finishedUtc": "2026-10-30T15:56:44.493366+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-upgrade-20261030/raw/13-mcp-client-neighbor.log"
+  },
+  {
+    "label": "14-typecheck",
+    "command": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "startedUtc": "2026-10-30T15:56:44.534250+00:00",
+    "finishedUtc": "2026-10-30T15:56:47.455837+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-upgrade-20261030/raw/14-typecheck.log"
+  },
+  {
+    "label": "15-static",
+    "command": [
+      "npm",
+      "run",
+      "check:rust"
+    ],
+    "startedUtc": "2026-10-30T15:56:47.498769+00:00",
+    "finishedUtc": "2026-10-30T15:56:51.829609+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-upgrade-20261030/raw/15-static.log"
+  },
+  {
+    "label": "16-feature-guards",
+    "command": [
+      "npm",
+      "run",
+      "test:s33-verification-guards"
+    ],
+    "startedUtc": "2026-10-30T15:56:51.869916+00:00",
+    "finishedUtc": "2026-10-30T15:56:57.133412+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-upgrade-20261030/raw/16-feature-guards.log"
+  },
+  {
+    "label": "17-feature-static",
+    "command": [
+      "npm",
+      "run",
+      "check:s33-verification"
+    ],
+    "startedUtc": "2026-10-30T15:56:57.176153+00:00",
+    "finishedUtc": "2026-10-30T15:57:00.859430+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-upgrade-20261030/raw/17-feature-static.log"
+  },
+  {
+    "label": "18-final-scope-guards",
+    "command": [
+      "npm",
+      "run",
+      "test:s33-verification-guards"
+    ],
+    "startedUtc": "2026-10-30T16:06:31.415914+00:00",
+    "finishedUtc": "2026-10-30T16:06:35.245313+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-upgrade-20261030/raw/18-final-scope-guards.log"
+  },
+  {
+    "label": "19-final-scope-static",
+    "command": [
+      "npm",
+      "run",
+      "check:s33-verification"
+    ],
+    "startedUtc": "2026-10-30T16:06:35.287679+00:00",
+    "finishedUtc": "2026-10-30T16:06:37.477390+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-upgrade-20261030/raw/19-final-scope-static.log"
+  },
+  {
+    "label": "20-ui-detector",
+    "command": [
+      "/Users/zengym/.codex/plugins/cache/openai-curated-remote/impeccable/4.3.1/skills/impeccable/scripts/impeccable",
+      "detect",
+      "--json",
+      "src/components/McpStoragePanel.vue",
+      "src/components/McpSettingsPanel.vue"
+    ],
+    "startedUtc": "2026-10-30T16:08:05.023569+00:00",
+    "finishedUtc": "2026-10-30T16:08:05.063692+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-upgrade-20261030/raw/20-ui-detector.log"
+  },
+  {
+    "label": "90-final-p2",
+    "command": [
+      "npm",
+      "run",
+      "check:s33-p2"
+    ],
+    "startedUtc": "2026-10-30T16:13:54.228725+00:00",
+    "finishedUtc": "2026-10-30T16:16:06.139518+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-upgrade-20261030/raw/90-final-p2.log"
+  },
+  {
+    "label": "91-final-rust-no-keychain",
+    "command": [
+      "npm",
+      "run",
+      "test:rust-no-keychain"
+    ],
+    "startedUtc": "2026-10-30T16:16:06.185240+00:00",
+    "finishedUtc": "2026-10-30T16:16:39.303052+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-upgrade-20261030/raw/91-final-rust-no-keychain.log"
+  }
+]

@@ -2,6 +2,22 @@ import type {McpProbe,McpCatalog} from '../../../src/stores/mcpDiagnostics';
 import type {McpConfiguration,McpServerDraft} from '../../../src/domain/mcp';
 const key='sidekick-mcp-ui-fixture';
 const parameters=new URLSearchParams(location.search);
+const upgradeKey='sidekick-mcp-upgrade-ui-'+(parameters.get('mcpUpgrade')||'default');
+let storageVersion=Number(localStorage.getItem(upgradeKey)||(parameters.has('mcpUpgrade')||parameters.has('mcpSchemaRequired')?'3':'4')),upgradeFault=true;
+function storageStatus(){return {root:'/fixture/sidekick/仅为浏览器合成工作目录/长路径用于验证确认内容与换行',workspaceId:'a'.repeat(64),version:storageVersion,targetVersion:4,confirmationToken:storageVersion===3?'b'.repeat(64):null};}
+function upgradeFixture(command:string,args?:Record<string,unknown>):unknown{
+ if(command==='read_mcp_storage_status')return storageStatus();
+ if(command!=='confirm_mcp_storage_upgrade')return undefined;
+ const input=args?.input as {confirmed:boolean;confirmationToken:string};
+ if(!input.confirmed)throw {code:'MCP_UPGRADE_CONFIRMATION'};
+ if(storageVersion!==3||input.confirmationToken!=='b'.repeat(64))throw {code:'MCP_UPGRADE_STALE'};
+ if(active)throw {code:'RUNTIME_BUSY'};
+ const fault=upgradeFault?parameters.get('mcpUpgradeFailure'):null;upgradeFault=false;
+ if(fault==='backup')throw {code:'MCP_BACKUP_FAILED'};
+ if(fault==='lost3')throw Error('Synthetic response loss before publication');
+ const finish=()=>{storageVersion=4;localStorage.setItem(upgradeKey,'4');if(fault==='unknown')throw {code:'MCP_MIGRATION_UNCERTAIN'};if(fault==='lost4')throw Error('Synthetic response loss after publication');return {fromVersion:3,toVersion:4,backup:'backups/before-schema-4-1-2.sqlite'};};
+ return parameters.has('mcpUpgradeDelay')?new Promise((resolve,reject)=>setTimeout(()=>{try{resolve(finish());}catch(e){reject(e);}},2500)):finish();
+}
 const clone=<T>(value:T):T=>JSON.parse(JSON.stringify(value));
 let configuration:McpConfiguration=JSON.parse(localStorage.getItem(key)||'null')||{version:1,revision:'',servers:[]};
 let uncertain=parameters.has('mcpUncertain'),conflict=parameters.has('mcpConflict');
@@ -21,7 +37,7 @@ function diagnosticFixture(command:string,args?:Record<string,unknown>):unknown{
  if(command==='cancel_mcp_probe'){const id=String(args?.id);if(id===active){probes[id]={...probes[id]!,status:'cancelled',errorCode:'CANCELLED',finishedAtMs:Date.now()};active=null;persistProbes();}return null;}
  if(command!=='start_mcp_probe')return undefined;
  if(parameters.has('mcpRaceDefiniteRefusal')){refusalPending=true;return new Promise((_resolve,reject)=>setTimeout(()=>{refusalPending=false;reject({code:'MCP_SCHEMA_REQUIRED'});},1500));}
- if(parameters.has('mcpSchemaRequired'))throw {code:'MCP_SCHEMA_REQUIRED'};
+ if(storageVersion<4)throw {code:'MCP_SCHEMA_REQUIRED'};
  if(active)throw {code:'RUNTIME_BUSY'};
  const service=configuration.servers.find(s=>s.id===serverId);if(!service||args?.expectedRevision!==configuration.revision)throw {code:'MCP_VERSION_CONFLICT'};
  const id='probe-'+crypto.randomUUID();const failed=service.command.includes('missing');const p:McpProbe={id,agentId:null,purpose:'mcp_probe',status:failed?'failed':'running',snapshot:{serverId,configurationRevision:configuration.revision,connectTimeoutMs:service.connectTimeoutMs},input:{serverId},result:null,errorCode:failed?'MCP_COMMAND_MISSING':null,createdAtMs:Date.now(),finishedAtMs:failed?Date.now():null};probes[id]=p;active=failed?null:id;persistProbes();
@@ -30,6 +46,7 @@ function diagnosticFixture(command:string,args?:Record<string,unknown>):unknown{
 }
 function view(){const result=clone(configuration);result.secureStorageAvailable=secureAvailable;result.credentialStatus={};for(const service of result.servers){for(const item of service.env){if(item.source==='keychain'){(result.credentialStatus[service.id]||=Object.create(null))[item.name]=secureAvailable?(secureValues.has(service.id+'/'+item.name)?'stored':'missing'):'unavailable';item.value='';}}}return result;}
 export function mcpFixture(command:string,args?:Record<string,unknown>){
+ const upgrade=upgradeFixture(command,args);if(upgrade!==undefined)return upgrade;
  const diagnostic=diagnosticFixture(command,args);if(diagnostic!==undefined)return diagnostic;
  if(command==='read_mcp_configuration'){
   if(parameters.has('mcpReadError'))throw {code:'MCP_CONFIG_INVALID',message:'合成场景：配置无法读取，原文件未覆盖。'};

@@ -1,0 +1,86 @@
+{
+  "action": "correct suffix from .png to .jpg to match actual JPEG container; no image conversion or pixel editing",
+  "mappedFiles": [
+    {
+      "originalPath": "docs/reviews/s33-p2-upgrade-20261030/screenshots/1440-confirm.png",
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/1440-confirm.jpg",
+      "mime": "image/jpeg",
+      "bytes": 60346,
+      "sha256": "8245b1f97242a09651322c3202d50bd1d2885ea7448db6f62fbc9724587e02fa",
+      "pixelBytesUnchanged": true
+    },
+    {
+      "originalPath": "docs/reviews/s33-p2-upgrade-20261030/screenshots/1440-required.png",
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/1440-required.jpg",
+      "mime": "image/jpeg",
+      "bytes": 46741,
+      "sha256": "b4c2df27c6c4739e286140b39da3a4f8ce3f57444e22678c8e4dc6dead76fb3c",
+      "pixelBytesUnchanged": true
+    },
+    {
+      "originalPath": "docs/reviews/s33-p2-upgrade-20261030/screenshots/1440-success-draft.png",
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/1440-success-draft.jpg",
+      "mime": "image/jpeg",
+      "bytes": 72541,
+      "sha256": "6e75434736a1cf1791c1f5913325f1159609c25b8a4f00e537257adab270f4eb",
+      "pixelBytesUnchanged": true
+    },
+    {
+      "originalPath": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-backup-failure.png",
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-backup-failure.jpg",
+      "mime": "image/jpeg",
+      "bytes": 47761,
+      "sha256": "b95259170d2f68f23e0c59bfae0afb2143b2961370d1eb2396a03a4e336fda5b",
+      "pixelBytesUnchanged": true
+    },
+    {
+      "originalPath": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-confirm.png",
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-confirm.jpg",
+      "mime": "image/jpeg",
+      "bytes": 52148,
+      "sha256": "08222ac6ef04992ae6f85a50ac10eb916bde17d32cd1115e02c6d78e561b20fd",
+      "pixelBytesUnchanged": true
+    },
+    {
+      "originalPath": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-hard-unknown.png",
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-hard-unknown.jpg",
+      "mime": "image/jpeg",
+      "bytes": 46916,
+      "sha256": "2c79c996c5fbf01c6987949756843fd43f6fc734d67ba122fdffa46e99893226",
+      "pixelBytesUnchanged": true
+    },
+    {
+      "originalPath": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-keyboard-scroll.png",
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-keyboard-scroll.jpg",
+      "mime": "image/jpeg",
+      "bytes": 45734,
+      "sha256": "0ca9ef11dd6051e1e365117c3550eb60c948d5224415b5c19a9d2b94a2a4512e",
+      "pixelBytesUnchanged": true
+    },
+    {
+      "originalPath": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-reread-v4.png",
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-reread-v4.jpg",
+      "mime": "image/jpeg",
+      "bytes": 48113,
+      "sha256": "7b4c2099ccf1797af10f1a56c1cbc5d58d08b8a42f4ce9d4a1b07528d53a2889",
+      "pixelBytesUnchanged": true
+    },
+    {
+      "originalPath": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-success-draft.png",
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-success-draft.jpg",
+      "mime": "image/jpeg",
+      "bytes": 49125,
+      "sha256": "df42e4fd678e17744058725723b0641c6d3c39807c32b21fac750d7d90ce8981",
+      "pixelBytesUnchanged": true
+    },
+    {
+      "originalPath": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-unknown-v3.png",
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-unknown-v3.jpg",
+      "mime": "image/jpeg",
+      "bytes": 46916,
+      "sha256": "2c79c996c5fbf01c6987949756843fd43f6fc734d67ba122fdffa46e99893226",
+      "pixelBytesUnchanged": true
+    }
+  ],
+  "originalReviewedManifestSha256": "83dbda3d09a06daf7760a8426bc49a37e92c0e1b5e93a6fe4d00efdb0dfd1ae1"
+}

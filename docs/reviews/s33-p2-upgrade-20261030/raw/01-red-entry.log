@@ -1,0 +1,421 @@
+COMMAND cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_upgrade -- --test-threads=1
+START_UTC 2026-10-30T15:52:06.297445+00:00
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+error[E0412]: cannot find type `McpUpgradeInput` in this scope
+  --> src/mcp_upgrade_tests.rs:15:37
+   |
+15 | fn confirmed(local: &LocalState) -> McpUpgradeInput {
+   |                                     ^^^^^^^^^^^^^^^ help: a struct with a similar name exists: `McpProbeInput`
+   |
+  ::: src/mcp_probe.rs:27:1
+   |
+27 | pub struct McpProbeInput {
+   | ------------------------ similarly named struct `McpProbeInput` defined here
+
+error[E0422]: cannot find struct, variant or union type `McpUpgradeInput` in this scope
+  --> src/mcp_upgrade_tests.rs:17:5
+   |
+17 |     McpUpgradeInput { confirmed: true, confirmation_token: status.confirmation_token.unwrap() }
+   |     ^^^^^^^^^^^^^^^ help: a struct with a similar name exists: `McpProbeInput`
+   |
+  ::: src/mcp_probe.rs:27:1
+   |
+27 | pub struct McpProbeInput {
+   | ------------------------ similarly named struct `McpProbeInput` defined here
+
+error[E0412]: cannot find type `McpUpgradeInput` in this scope
+  --> src/mcp_upgrade_tests.rs:36:38
+   |
+36 |     assert!(serde_json::from_value::<McpUpgradeInput>(json!({"confirmed":true,"confirmationToken":"a".repeat(64),"root":"/not-allowed"}))...
+   |                                      ^^^^^^^^^^^^^^^
+   |
+  ::: src/mcp_probe.rs:27:1
+   |
+27 | pub struct McpProbeInput {
+   | ------------------------ similarly named struct `McpProbeInput` defined here
+   |
+help: a struct with a similar name exists
+   |
+36 -     assert!(serde_json::from_value::<McpUpgradeInput>(json!({"confirmed":true,"confirmationToken":"a".repeat(64),"root":"/not-allowed"})).is_err());
+36 +     assert!(serde_json::from_value::<McpProbeInput>(json!({"confirmed":true,"confirmationToken":"a".repeat(64),"root":"/not-allowed"})).is_err());
+   |
+help: you might be missing a type parameter
+   |
+26 | fn mcp_upgrade_status_does_not_upgrade_and_requires_explicit_bound_confirmation<McpUpgradeInput>() {
+   |                                                                                +++++++++++++++++
+
+error[E0599]: no method named `mcp_storage_status` found for mutable reference `&mut local_store::AppStore` in the current scope
+    --> src/mcp_upgrade_tests.rs:16:37
+     |
+16   |     let status = local.access(|s| s.mcp_storage_status()).unwrap();
+     |                                     ^^^^^^^^^^^^^^^^^^
+     |
+help: there is a method `change_status` with a similar name, but with different arguments
+    --> src/local_store.rs:1028:5
+     |
+1028 | /     fn change_status(
+1029 | |         &mut self,
+1030 | |         id: &str,
+1031 | |         version: i64,
+...    |
+1034 | |         operation_id: &str,
+1035 | |     ) -> Result<Todo> {
+     | |_____________________^
+
+error[E0599]: no method named `mcp_storage_status` found for mutable reference `&mut local_store::AppStore` in the current scope
+    --> src/mcp_upgrade_tests.rs:28:33
+     |
+28   |     let first=local.access(|s|s.mcp_storage_status()).unwrap();
+     |                                 ^^^^^^^^^^^^^^^^^^
+     |
+help: there is a method `change_status` with a similar name, but with different arguments
+    --> src/local_store.rs:1028:5
+     |
+1028 | /     fn change_status(
+1029 | |         &mut self,
+1030 | |         id: &str,
+1031 | |         version: i64,
+...    |
+1034 | |         operation_id: &str,
+1035 | |     ) -> Result<Todo> {
+     | |_____________________^
+
+error[E0599]: no method named `confirm_mcp_storage` found for struct `runtime_host::RuntimeState` in the current scope
+  --> src/mcp_upgrade_tests.rs:32:24
+   |
+32 |     assert_eq!(runtime.confirm_mcp_storage(&local,input).unwrap_err().code,"MCP_UPGRADE_CONFIRMATION");
+   |                        ^^^^^^^^^^^^^^^^^^^ method not found in `runtime_host::RuntimeState`
+   |
+  ::: src/runtime_host.rs:37:1
+   |
+37 | pub struct RuntimeState {
+   | ----------------------- method `confirm_mcp_storage` not found for this struct
+
+error[E0599]: no method named `confirm_mcp_storage` found for struct `runtime_host::RuntimeState` in the current scope
+  --> src/mcp_upgrade_tests.rs:34:24
+   |
+34 |     assert_eq!(runtime.confirm_mcp_storage(&local,input).unwrap_err().code,"MCP_UPGRADE_STALE");
+   |                        ^^^^^^^^^^^^^^^^^^^ method not found in `runtime_host::RuntimeState`
+   |
+  ::: src/runtime_host.rs:37:1
+   |
+37 | pub struct RuntimeState {
+   | ----------------------- method `confirm_mcp_storage` not found for this struct
+
+error[E0599]: no method named `mcp_storage_status` found for mutable reference `&mut local_store::AppStore` in the current scope
+    --> src/mcp_upgrade_tests.rs:35:34
+     |
+35   |     assert_eq!(local.access(|s|s.mcp_storage_status()).unwrap().version,3);assert!(backups(&f).is_empty());
+     |                                  ^^^^^^^^^^^^^^^^^^
+     |
+help: there is a method `change_status` with a similar name, but with different arguments
+    --> src/local_store.rs:1028:5
+     |
+1028 | /     fn change_status(
+1029 | |         &mut self,
+1030 | |         id: &str,
+1031 | |         version: i64,
+...    |
+1034 | |         operation_id: &str,
+1035 | |     ) -> Result<Todo> {
+     | |_____________________^
+
+error[E0599]: no method named `confirm_mcp_storage` found for struct `runtime_host::RuntimeState` in the current scope
+  --> src/mcp_upgrade_tests.rs:43:24
+   |
+43 |     let result=runtime.confirm_mcp_storage(&local,request).unwrap();
+   |                        ^^^^^^^^^^^^^^^^^^^ method not found in `runtime_host::RuntimeState`
+   |
+  ::: src/runtime_host.rs:37:1
+   |
+37 | pub struct RuntimeState {
+   | ----------------------- method `confirm_mcp_storage` not found for this struct
+
+error[E0599]: no method named `confirm_mcp_storage` found for struct `runtime_host::RuntimeState` in the current scope
+  --> src/mcp_upgrade_tests.rs:49:24
+   |
+49 |     assert_eq!(runtime.confirm_mcp_storage(&local,stale).unwrap_err().code,"MCP_UPGRADE_STALE");
+   |                        ^^^^^^^^^^^^^^^^^^^ method not found in `runtime_host::RuntimeState`
+   |
+  ::: src/runtime_host.rs:37:1
+   |
+37 | pub struct RuntimeState {
+   | ----------------------- method `confirm_mcp_storage` not found for this struct
+
+error[E0599]: no method named `mcp_storage_status` found for mutable reference `&mut local_store::AppStore` in the current scope
+    --> src/mcp_upgrade_tests.rs:52:89
+     |
+52   |     drop(local);let local=LocalState::new(f.0.join("app"));let status=local.access(|s|s.mcp_storage_status()).unwrap();
+     |                                                                                         ^^^^^^^^^^^^^^^^^^
+     |
+help: there is a method `change_status` with a similar name, but with different arguments
+    --> src/local_store.rs:1028:5
+     |
+1028 | /     fn change_status(
+1029 | |         &mut self,
+1030 | |         id: &str,
+1031 | |         version: i64,
+...    |
+1034 | |         operation_id: &str,
+1035 | |     ) -> Result<Todo> {
+     | |_____________________^
+
+error[E0599]: no method named `confirm_mcp_storage` found for struct `runtime_host::RuntimeState` in the current scope
+  --> src/mcp_upgrade_tests.rs:58:24
+   |
+58 |     assert_eq!(runtime.confirm_mcp_storage(&local,confirmed(&other)).unwrap_err().code,"MCP_UPGRADE_STALE");
+   |                        ^^^^^^^^^^^^^^^^^^^ method not found in `runtime_host::RuntimeState`
+   |
+  ::: src/runtime_host.rs:37:1
+   |
+37 | pub struct RuntimeState {
+   | ----------------------- method `confirm_mcp_storage` not found for this struct
+
+error[E0599]: no method named `confirm_mcp_storage` found for struct `runtime_host::RuntimeState` in the current scope
+  --> src/mcp_upgrade_tests.rs:61:24
+   |
+61 |     assert_eq!(runtime.confirm_mcp_storage(&local,before).unwrap_err().code,"MCP_UPGRADE_STALE");
+   |                        ^^^^^^^^^^^^^^^^^^^ method not found in `runtime_host::RuntimeState`
+   |
+  ::: src/runtime_host.rs:37:1
+   |
+37 | pub struct RuntimeState {
+   | ----------------------- method `confirm_mcp_storage` not found for this struct
+
+error[E0599]: no method named `mcp_storage_status` found for mutable reference `&mut local_store::AppStore` in the current scope
+    --> src/mcp_upgrade_tests.rs:62:66
+     |
+62   |     assert!(backups(&f).is_empty());assert_eq!(local.access(|s|s.mcp_storage_status()).unwrap().version,3);
+     |                                                                  ^^^^^^^^^^^^^^^^^^
+     |
+help: there is a method `change_status` with a similar name, but with different arguments
+    --> src/local_store.rs:1028:5
+     |
+1028 | /     fn change_status(
+1029 | |         &mut self,
+1030 | |         id: &str,
+1031 | |         version: i64,
+...    |
+1034 | |         operation_id: &str,
+1035 | |     ) -> Result<Todo> {
+     | |_____________________^
+
+error[E0599]: no method named `confirm_mcp_storage` found for struct `runtime_host::RuntimeState` in the current scope
+  --> src/mcp_upgrade_tests.rs:69:28
+   |
+69 |         assert_eq!(runtime.confirm_mcp_storage(&local,confirmed(&local)).unwrap_err().code,"RUNTIME_BUSY");
+   |                            ^^^^^^^^^^^^^^^^^^^ method not found in `runtime_host::RuntimeState`
+   |
+  ::: src/runtime_host.rs:37:1
+   |
+37 | pub struct RuntimeState {
+   | ----------------------- method `confirm_mcp_storage` not found for this struct
+
+error[E0599]: no method named `mcp_storage_status` found for mutable reference `&mut local_store::AppStore` in the current scope
+    --> src/mcp_upgrade_tests.rs:73:34
+     |
+73   |     assert_eq!(local.access(|s|s.mcp_storage_status()).unwrap().version,3);
+     |                                  ^^^^^^^^^^^^^^^^^^
+     |
+help: there is a method `change_status` with a similar name, but with different arguments
+    --> src/local_store.rs:1028:5
+     |
+1028 | /     fn change_status(
+1029 | |         &mut self,
+1030 | |         id: &str,
+1031 | |         version: i64,
+...    |
+1034 | |         operation_id: &str,
+1035 | |     ) -> Result<Todo> {
+     | |_____________________^
+
+error[E0599]: no method named `confirm_mcp_storage` found for struct `runtime_host::RuntimeState` in the current scope
+  --> src/mcp_upgrade_tests.rs:78:96
+   |
+78 |     let left=local.clone();let state=runtime.clone();let thread=std::thread::spawn(move||state.confirm_mcp_storage(&left,a));
+   |                                                                                                ^^^^^^^^^^^^^^^^^^^ method not found in `runtime_host::RuntimeState`
+   |
+  ::: src/runtime_host.rs:37:1
+   |
+37 | pub struct RuntimeState {
+   | ----------------------- method `confirm_mcp_storage` not found for this struct
+
+error[E0599]: no method named `confirm_mcp_storage` found for struct `runtime_host::RuntimeState` in the current scope
+  --> src/mcp_upgrade_tests.rs:79:23
+   |
+79 |     let right=runtime.confirm_mcp_storage(&local,b);let left=thread.join().unwrap();
+   |                       ^^^^^^^^^^^^^^^^^^^ method not found in `runtime_host::RuntimeState`
+   |
+  ::: src/runtime_host.rs:37:1
+   |
+37 | pub struct RuntimeState {
+   | ----------------------- method `confirm_mcp_storage` not found for this struct
+
+error[E0599]: no method named `mcp_storage_status` found for mutable reference `&mut local_store::AppStore` in the current scope
+    --> src/mcp_upgrade_tests.rs:82:66
+     |
+82   |     assert_eq!(backups(&f).len(),1);assert_eq!(local.access(|s|s.mcp_storage_status()).unwrap().version,4);
+     |                                                                  ^^^^^^^^^^^^^^^^^^
+     |
+help: there is a method `change_status` with a similar name, but with different arguments
+    --> src/local_store.rs:1028:5
+     |
+1028 | /     fn change_status(
+1029 | |         &mut self,
+1030 | |         id: &str,
+1031 | |         version: i64,
+...    |
+1034 | |         operation_id: &str,
+1035 | |     ) -> Result<Todo> {
+     | |_____________________^
+
+error[E0599]: no method named `confirm_mcp_storage` found for struct `runtime_host::RuntimeState` in the current scope
+  --> src/mcp_upgrade_tests.rs:89:27
+   |
+89 |         let error=runtime.confirm_mcp_storage(&local,request).unwrap_err();
+   |                           ^^^^^^^^^^^^^^^^^^^ method not found in `runtime_host::RuntimeState`
+   |
+  ::: src/runtime_host.rs:37:1
+   |
+37 | pub struct RuntimeState {
+   | ----------------------- method `confirm_mcp_storage` not found for this struct
+
+error[E0599]: no method named `mcp_storage_status` found for mutable reference `&mut local_store::AppStore` in the current scope
+    --> src/mcp_upgrade_tests.rs:92:50
+     |
+92   |         if unknown {assert_eq!(local.access(|s|s.mcp_storage_status()).unwrap_err().code,"MCP_MIGRATION_UNCERTAIN");}
+     |                                                  ^^^^^^^^^^^^^^^^^^
+     |
+help: there is a method `change_status` with a similar name, but with different arguments
+    --> src/local_store.rs:1028:5
+     |
+1028 | /     fn change_status(
+1029 | |         &mut self,
+1030 | |         id: &str,
+1031 | |         version: i64,
+...    |
+1034 | |         operation_id: &str,
+1035 | |     ) -> Result<Todo> {
+     | |_____________________^
+
+error[E0599]: no method named `mcp_storage_status` found for mutable reference `&mut local_store::AppStore` in the current scope
+    --> src/mcp_upgrade_tests.rs:93:44
+     |
+93   |         else {assert_eq!(local.access(|s|s.mcp_storage_status()).unwrap().version,3);}
+     |                                            ^^^^^^^^^^^^^^^^^^
+     |
+help: there is a method `change_status` with a similar name, but with different arguments
+    --> src/local_store.rs:1028:5
+     |
+1028 | /     fn change_status(
+1029 | |         &mut self,
+1030 | |         id: &str,
+1031 | |         version: i64,
+...    |
+1034 | |         operation_id: &str,
+1035 | |     ) -> Result<Todo> {
+     | |_____________________^
+
+error[E0599]: no method named `mcp_storage_status` found for mutable reference `&mut local_store::AppStore` in the current scope
+    --> src/mcp_upgrade_tests.rs:96:38
+     |
+96   |         assert_eq!(local.access(|s|s.mcp_storage_status()).unwrap().version,3);
+     |                                      ^^^^^^^^^^^^^^^^^^
+     |
+help: there is a method `change_status` with a similar name, but with different arguments
+    --> src/local_store.rs:1028:5
+     |
+1028 | /     fn change_status(
+1029 | |         &mut self,
+1030 | |         id: &str,
+1031 | |         version: i64,
+...    |
+1034 | |         operation_id: &str,
+1035 | |     ) -> Result<Todo> {
+     | |_____________________^
+
+error[E0599]: no method named `confirm_mcp_storage` found for struct `runtime_host::RuntimeState` in the current scope
+  --> src/mcp_upgrade_tests.rs:97:17
+   |
+97 |         runtime.confirm_mcp_storage(&local,confirmed(&local)).unwrap();
+   |                 ^^^^^^^^^^^^^^^^^^^ method not found in `runtime_host::RuntimeState`
+   |
+  ::: src/runtime_host.rs:37:1
+   |
+37 | pub struct RuntimeState {
+   | ----------------------- method `confirm_mcp_storage` not found for this struct
+
+error[E0599]: no method named `mcp_storage_status` found for mutable reference `&mut local_store::AppStore` in the current scope
+    --> src/mcp_upgrade_tests.rs:98:38
+     |
+98   |         assert_eq!(local.access(|s|s.mcp_storage_status()).unwrap().version,4);
+     |                                      ^^^^^^^^^^^^^^^^^^
+     |
+help: there is a method `change_status` with a similar name, but with different arguments
+    --> src/local_store.rs:1028:5
+     |
+1028 | /     fn change_status(
+1029 | |         &mut self,
+1030 | |         id: &str,
+1031 | |         version: i64,
+...    |
+1034 | |         operation_id: &str,
+1035 | |     ) -> Result<Todo> {
+     | |_____________________^
+
+error[E0599]: no method named `confirm_mcp_storage` found for struct `runtime_host::RuntimeState` in the current scope
+   --> src/mcp_upgrade_tests.rs:105:24
+    |
+105 |     assert_eq!(runtime.confirm_mcp_storage(&local,request).unwrap_err().code,"MCP_MIGRATION_UNCERTAIN");
+    |                        ^^^^^^^^^^^^^^^^^^^ method not found in `runtime_host::RuntimeState`
+    |
+   ::: src/runtime_host.rs:37:1
+    |
+37  | pub struct RuntimeState {
+    | ----------------------- method `confirm_mcp_storage` not found for this struct
+
+error[E0599]: no method named `confirm_mcp_storage` found for struct `runtime_host::RuntimeState` in the current scope
+   --> src/mcp_upgrade_tests.rs:107:24
+    |
+107 |     assert_eq!(runtime.confirm_mcp_storage(&local,repeat).unwrap_err().code,"MCP_MIGRATION_UNCERTAIN");
+    |                        ^^^^^^^^^^^^^^^^^^^ method not found in `runtime_host::RuntimeState`
+    |
+   ::: src/runtime_host.rs:37:1
+    |
+37  | pub struct RuntimeState {
+    | ----------------------- method `confirm_mcp_storage` not found for this struct
+
+error[E0599]: no method named `mcp_storage_status` found for mutable reference `&mut local_store::AppStore` in the current scope
+    --> src/mcp_upgrade_tests.rs:109:77
+     |
+109  |     let local=LocalState::new(f.0.join("app"));assert_eq!(local.access(|s|s.mcp_storage_status()).unwrap().version,4);
+     |                                                                             ^^^^^^^^^^^^^^^^^^
+     |
+help: there is a method `change_status` with a similar name, but with different arguments
+    --> src/local_store.rs:1028:5
+     |
+1028 | /     fn change_status(
+1029 | |         &mut self,
+1030 | |         id: &str,
+1031 | |         version: i64,
+...    |
+1034 | |         operation_id: &str,
+1035 | |     ) -> Result<Todo> {
+     | |_____________________^
+
+error[E0599]: no method named `confirm_mcp_storage` found for struct `runtime_host::RuntimeState` in the current scope
+   --> src/mcp_upgrade_tests.rs:116:60
+    |
+116 |     let original=fs::read(&db).unwrap();assert_eq!(runtime.confirm_mcp_storage(&local,request).unwrap_err().code,"MCP_DATABASE_CHANGED");
+    |                                                            ^^^^^^^^^^^^^^^^^^^ method not found in `runtime_host::RuntimeState`
+    |
+   ::: src/runtime_host.rs:37:1
+    |
+37  | pub struct RuntimeState {
+    | ----------------------- method `confirm_mcp_storage` not found for this struct
+
+Some errors have detailed explanations: E0412, E0422, E0599.
+For more information about an error, try `rustc --explain E0412`.
+error: could not compile `sidekick` (lib test) due to 29 previous errors
+
+EXIT_CODE 101

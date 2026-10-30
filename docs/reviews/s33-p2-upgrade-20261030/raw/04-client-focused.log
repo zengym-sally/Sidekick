@@ -1,0 +1,20 @@
+COMMAND node --test tests/s33-upgrade.test.mjs
+START_UTC 2026-10-30T15:54:46.981756+00:00
+✔ loading and cancelling confirmation issue no upgrade; explicit consent enables once (1.389791ms)
+✔ busy and backup pre-DDL failures require reread and fresh consent (0.3ms)
+✔ lost response only resolves after same-workspace validated v4 read (0.134792ms)
+✔ v3 or foreign workspace cannot release a lost-response barrier (0.601458ms)
+✔ explicit migration unknown remains blocked even if a fake later read claims v4 (0.091167ms)
+✔ new read beats old read and a late pre-upgrade read cannot restore v3 (0.092417ms)
+✔ pending confirmation blocks duplicate and read requests without cancelling it (0.099625ms)
+✔ malformed success or read cannot be presented as ready (0.109542ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 114.443292
+
+EXIT_CODE 0

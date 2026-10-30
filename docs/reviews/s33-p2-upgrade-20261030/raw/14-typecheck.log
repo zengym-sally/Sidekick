@@ -1,0 +1,6 @@
+COMMAND npm run typecheck
+START_UTC 2026-10-30T15:56:44.534250+00:00
+npm notice run sidekick@0.3.0 typecheck
+npm notice run vue-tsc --noEmit
+
+EXIT_CODE 0

@@ -1,0 +1,20 @@
+COMMAND cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_upgrade -- --test-threads=1
+START_UTC 2026-10-30T15:52:57.038131+00:00
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.31s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 8 tests
+test local_store::mcp_upgrade_tests::mcp_upgrade_backup_failures_allow_recheck_but_ddl_and_copy_unknown_require_reopen ... ok
+test local_store::mcp_upgrade_tests::mcp_upgrade_busy_business_trial_probe_and_cleanup_slots_never_start_backup ... ok
+test local_store::mcp_upgrade_tests::mcp_upgrade_commit_unknown_blocks_mcp_until_cold_schema_validation ... ok
+test local_store::mcp_upgrade_tests::mcp_upgrade_concurrent_confirmation_produces_one_upgrade_and_backup ... ok
+test local_store::mcp_upgrade_tests::mcp_upgrade_confirmed_entry_preserves_data_backs_up_once_and_cold_reopens_ready ... ok
+test local_store::mcp_upgrade_tests::mcp_upgrade_foreign_root_and_changed_schema_tokens_fail_before_backup ... ok
+test local_store::mcp_upgrade_tests::mcp_upgrade_replaced_database_is_rejected_without_repair_or_backup ... ok
+test local_store::mcp_upgrade_tests::mcp_upgrade_status_does_not_upgrade_and_requires_explicit_bound_confirmation ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 119 filtered out; finished in 1.07s
+
+
+EXIT_CODE 0

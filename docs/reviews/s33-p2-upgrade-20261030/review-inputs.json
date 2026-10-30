@@ -1,0 +1,103 @@
+{
+  "baseCommit": "2a4b6a39277f8dc389aaebdbe0f5d7f6dc55e3de",
+  "changedInputs": [
+    {
+      "path": "README.md",
+      "bytes": 18878,
+      "sha256": "502623e61338bb02cba1bf417fae479bc988e5c2b34f274bb4ce896a96f2e58a"
+    },
+    {
+      "path": "docs/product/05-第一阶段实施计划.md",
+      "bytes": 195501,
+      "sha256": "616d4e65e54b95f25a5339cda9e070949a50fdf2c26df07922e3784d09f4db0d"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/run-check.py",
+      "bytes": 1514,
+      "sha256": "22f04b33df4b23bf374eede5ec79627e6e0f05c2bd23d6374b28fe9f910ebb2b"
+    },
+    {
+      "path": "package.json",
+      "bytes": 8595,
+      "sha256": "b17a6fc950b76fd914e469a23df42382a0196e1f9d8ffef312347bf93dfe5cf7"
+    },
+    {
+      "path": "src-tauri/src/lib.rs",
+      "bytes": 10324,
+      "sha256": "56653237dd0dec757afbba82b64d6af9f1f8aef6e0210e536f4834ada087a4f7"
+    },
+    {
+      "path": "src-tauri/src/local_store.rs",
+      "bytes": 45564,
+      "sha256": "681fd9ead4052db5b34958829dab7c606153900a0a1f315edc1f4e7898c0911f"
+    },
+    {
+      "path": "src-tauri/src/mcp_schema.rs",
+      "bytes": 20134,
+      "sha256": "45d63dfe908dd3e4950a78a8465eaa04e945db2152f53997d1a0183651394331"
+    },
+    {
+      "path": "src-tauri/src/mcp_ui_verification.rs",
+      "bytes": 4154,
+      "sha256": "cd6a11ceb4357e04355590f06204604471aa0587664921e7f4fc8e668ad5b8ba"
+    },
+    {
+      "path": "src-tauri/src/mcp_upgrade.rs",
+      "bytes": 1913,
+      "sha256": "116e9dc877e748369a84e2b86c690bec0187b090ea7f07e642636116632a1db9"
+    },
+    {
+      "path": "src-tauri/src/mcp_upgrade_tests.rs",
+      "bytes": 9868,
+      "sha256": "1371684cbe4701369086f626a944d60581d56e688bea32db1ab28a40d191c292"
+    },
+    {
+      "path": "src-tauri/src/verification_root.rs",
+      "bytes": 10117,
+      "sha256": "743af6e14928bf76817d0d604ce5bf145f40a7b6636dbdacbe3c2e79e514c2ee"
+    },
+    {
+      "path": "src/components/McpSettingsPanel.vue",
+      "bytes": 15511,
+      "sha256": "bb814ff25427c3b2c8b15c1bb72456e62004d3df299e5af37707619a6c8ca3f8"
+    },
+    {
+      "path": "src/components/McpStoragePanel.vue",
+      "bytes": 3607,
+      "sha256": "e2443e77e72e7d0f651529924a6e79666811647a78cfb450a438f40d7d8b2632"
+    },
+    {
+      "path": "src/stores/mcpDiagnostics.ts",
+      "bytes": 10159,
+      "sha256": "15e5c05a2a46b6727e705ebafca692f57dd412b7ff97ef224d9136c0ea15b4a5"
+    },
+    {
+      "path": "src/stores/mcpUpgrade.ts",
+      "bytes": 4336,
+      "sha256": "d9f4569844463446ab4cfbe948358cd07b0f006474558e73c2a196dce3d56e62"
+    },
+    {
+      "path": "tests/fixtures/profile-ui/mcp.ts",
+      "bytes": 8540,
+      "sha256": "a80ba8ad39113a2a41437975f4b55336c0aa3b8b14d88832325e0320646f4775"
+    },
+    {
+      "path": "tests/s33-upgrade.test.mjs",
+      "bytes": 4902,
+      "sha256": "cfee69107bd957230014b03fd588cf111c76c44c39eed7c4c726ba705d7da465"
+    }
+  ],
+  "ignoredDependencies": [],
+  "newUntrackedInputs": [
+    "src-tauri/src/mcp_upgrade.rs",
+    "src-tauri/src/mcp_upgrade_tests.rs",
+    "src/components/McpStoragePanel.vue",
+    "src/stores/mcpUpgrade.ts",
+    "tests/s33-upgrade.test.mjs",
+    "docs/reviews/s33-p2-upgrade-20261030/run-check.py"
+  ],
+  "fullCheckExecuted": false,
+  "realKeychainCalled": false,
+  "nativeUiExecuted": false,
+  "ordinaryUserRootUpgraded": false
+}

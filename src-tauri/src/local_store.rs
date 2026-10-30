@@ -1227,9 +1227,13 @@ mod mcp_keychain;
 #[path = "mcp_schema_tests.rs"]
 mod mcp_schema_tests;
 
+#[cfg(test)]
+#[path = "mcp_upgrade_tests.rs"]
+mod mcp_upgrade_tests;
+
 #[path = "mcp_schema.rs"]
 mod mcp_schema;
-pub use mcp_schema::McpSchemaUpgrade;
+pub use mcp_schema::{McpSchemaUpgrade, McpStorageStatus, McpUpgradeInput};
 
 #[path = "mcp_probe.rs"]
 mod mcp_probe;

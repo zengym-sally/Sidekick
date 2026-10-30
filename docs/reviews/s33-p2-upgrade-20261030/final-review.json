@@ -1,0 +1,56 @@
+{
+  "scope": "two-face final artifact gate on 119 files and 6 generated artifacts; screenshot bytes preserved by suffix correction",
+  "reviewedManifestSha256": "83dbda3d09a06daf7760a8426bc49a37e92c0e1b5e93a6fe4d00efdb0dfd1ae1",
+  "A": {
+    "reviewer": "p2_upgrade_delivery_a",
+    "verdict": "APPROVE",
+    "findings": []
+  },
+  "B": {
+    "reviewer": "p2_upgrade_delivery_b",
+    "verdict": "APPROVE",
+    "findings": []
+  },
+  "verifiedFiles": 119,
+  "verifiedGeneratedArtifacts": 6,
+  "checks": 17,
+  "exit0": 15,
+  "redFailures": 2,
+  "defaultRustResult": [
+    124,
+    2,
+    1
+  ],
+  "processSnapshots": 58,
+  "isolatedApps": 53,
+  "rawMethods": [
+    44,
+    42,
+    178
+  ],
+  "independentMethods": [
+    43,
+    41,
+    177
+  ],
+  "toolsCall": 0,
+  "sourceAndNormativeCoreUnchanged": true,
+  "screenshotSuffixCorrection": "A and B APPROVE; exact image bytes preserved; final reference audit completed",
+  "testsIndependentlyReexecuted": false,
+  "doesNotAccept": [
+    "real user-root upgrade",
+    "OS Keychain access",
+    "native GUI",
+    "full npm check",
+    "P2 completion"
+  ],
+  "referenceAuditManifestSha256": "38a0ed7baa7552ae0fa8d345411f6c2ac846060956bde73f2b0116162d74ae65",
+  "referenceAudit": {
+    "A": "APPROVE",
+    "B": "APPROVE",
+    "files": 122,
+    "generatedArtifacts": 6,
+    "findings": [],
+    "finalizationPermission": "both reviewers explicitly allow closing awaiting and refreshing associated hashes without rerunning tests"
+  }
+}

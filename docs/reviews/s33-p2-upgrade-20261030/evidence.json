@@ -1,0 +1,702 @@
+{
+  "version": 1,
+  "baseCommit": "2a4b6a39277f8dc389aaebdbe0f5d7f6dc55e3de",
+  "planCoreSha256": "b5d5d49368217718218a3ec2d444eb95854b7cfc2e62ca5e9e66557b7b9123ba",
+  "planReview": "plan-review.json",
+  "deliveryReview": "delivery-review.json",
+  "uiReview": "ui-review.json",
+  "designSystemReview": "design-system-review.json",
+  "executedChecks": "checks.json",
+  "reviewSnapshot": "review-inputs.json",
+  "finalChecksPreservedAll17ReviewedInputs": true,
+  "currentPlanChangesAfterChecks": "only implementation-status index wording and append-only execution evidence; normative core unchanged",
+  "productTestFixtureAndRunnerSourcesUnchangedAfterReview": true,
+  "finalP2AggregatePassed": true,
+  "defaultRustLibrary": {
+    "passed": 124,
+    "originalIgnored": 2,
+    "explicitFiltered": 1,
+    "filteredTest": "storage_probe::tests::keychain_synthetic_roundtrip",
+    "completeProbeNativePassed": false
+  },
+  "upgradeEntryTests": 8,
+  "upgradeClientTests": 8,
+  "verificationGuardTests": 4,
+  "topLevelCommands": {
+    "total": 17,
+    "exit0": 15,
+    "missingImplementationRedFailures": 2
+  },
+  "browser": {
+    "layer": "Chrome synthetic IPC only",
+    "screenshots": 10,
+    "observations": 11,
+    "nativeUiExecuted": false
+  },
+  "processSummary": "process-summary.json",
+  "finalProcessRecordFiles": 58,
+  "toolsCall": 0,
+  "ordinaryRootProductEntryImplemented": true,
+  "ordinaryUserRootUpgraded": false,
+  "adapterActivation": "hard-coded disabled",
+  "realKeychainCalled": false,
+  "fullNpmCheckExecuted": false,
+  "nativeGuiAccepted": false,
+  "historicalNativeGapsRemainOpen": true,
+  "p2Complete": false,
+  "migrationsDependenciesLocksAdapterModelsBrandUnchanged": true,
+  "generatedArtifacts": [
+    {
+      "path": "src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/MacOS/sidekick",
+      "bytes": 16756976,
+      "sha256": "55155737b1e24f90f00aab450fa24a55e7e6da8e0ec6bbbdcc7048b464061383",
+      "generatedNotCommitted": true
+    },
+    {
+      "path": "src-tauri/target/release/bundle/macos/Sidekick.app/Contents/MacOS/sidekick",
+      "bytes": 16815664,
+      "sha256": "1fb78ffd267d86541037cb10894cb4e3f71b77fd8fe85245698d88d267e7094c",
+      "generatedNotCommitted": true
+    },
+    {
+      "path": "src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs",
+      "bytes": 5616,
+      "sha256": "db198566a9e0671ab68794ea22a7ad4f9772e6754e9e138f7fb1c64749c9fa68",
+      "generatedNotCommitted": true
+    },
+    {
+      "path": "build/s0-runtime/mcp-probe.mjs",
+      "bytes": 34778,
+      "sha256": "e3a6d47da8852e211d3c5d2d8ba9ba26fd0ed415050de9e78db23aa4cc3a6610",
+      "generatedNotCommitted": true
+    },
+    {
+      "path": "build/s0-runtime/mcp-guardian.mjs",
+      "bytes": 4596,
+      "sha256": "ebabdf1622c78f1d0729cc0aefb3b401087b53853d59b9a7d1410db54cec0f1d",
+      "generatedNotCommitted": true
+    },
+    {
+      "path": "build/s0-runtime/node",
+      "bytes": 121911744,
+      "sha256": "9d050fd455b56426e25d4d603c7c501cbb2630348e836cf221dcce748e90588a",
+      "generatedNotCommitted": true
+    }
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 18878,
+      "sha256": "502623e61338bb02cba1bf417fae479bc988e5c2b34f274bb4ce896a96f2e58a"
+    },
+    {
+      "path": "docs/product/05-第一阶段实施计划.md",
+      "bytes": 196481,
+      "sha256": "48268829517aafda36ddbbf646d65edf3b8c775d83e19d0d2e42d6b2a660d08f"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030.md",
+      "bytes": 7949,
+      "sha256": "334245a06e2fba21635cb5e94111ad9c5bcf941479e3c8c8412a4957b704d3c8"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/browser-evidence.json",
+      "bytes": 14781,
+      "sha256": "2c06300f05e78dd6480b455d2c360700600b150edade56fa370fba27397eb3b0"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/checks.json",
+      "bytes": 5926,
+      "sha256": "86bc5dc22bf858123c78979cadbbd6aaae10b7a01106f11da69f7c8cf9de1d52"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/delivery-review.json",
+      "bytes": 545,
+      "sha256": "63c6a39f1d442b85c4995dfc1ac2388ff7d6ac953553f5c6ed5314d81956a9de"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/design-system-review.json",
+      "bytes": 923,
+      "sha256": "6e62b38171c71f93b290152072882b60fd73726b507af80f190ec978c809ebb7"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/final-review.json",
+      "bytes": 1473,
+      "sha256": "044ae943e3e26401eed24b4673321092ca34e30027b1fabcbc6633631cc4ef77"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/final-state.json",
+      "bytes": 700,
+      "sha256": "71da05f1b23d1ad32210d9cdf95bc3ea910aad01266edddd7344e0816ec70d25"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/gate-audit.json",
+      "bytes": 332,
+      "sha256": "f4f8c18b994aa96784b9e00a1ff0a6b3f22763c0f93ebad67f2fc6213ec25f5b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/plan-review.json",
+      "bytes": 719,
+      "sha256": "ad0068567a695812f2f54d52d012ff9b590631247192964675904e2bb3f905d1"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/process-summary.json",
+      "bytes": 1265,
+      "sha256": "3b1d182cb09787231da7298e0d125c0b5347d421ad12f42abad96f4670942cc7"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/artifact-collision-1.json",
+      "bytes": 2006,
+      "sha256": "a3ec2da6e11606bad135b9e81bc5e236ee5c0daca1e924c7092c06bd92251fae"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/bad-then-valid-1.json",
+      "bytes": 2006,
+      "sha256": "f5342085582de1eebcfb9fb202fb54c325d4547b8f3aeae22e0d117861d3cf97"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/blocked-cancel-1.json",
+      "bytes": 235,
+      "sha256": "7d78443ad02767634bd9c395ad117d1f61af8b1a3e5690affafecb7bcd3c0001"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/blocked-writer-1.json",
+      "bytes": 758,
+      "sha256": "d788aadcab6b5bb63bff4cfe96336dc148d16751ee12d3d25034606bbca44daf"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/cancel-initialize-1.json",
+      "bytes": 1933,
+      "sha256": "b377061e48e3ec5155554f27afb143916918198af2edce7378223476de4acdc6"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/cancel-list-1.json",
+      "bytes": 2270,
+      "sha256": "533a663318920494cecd7301d365055539ba882c50500f219ff58b1d78822a94"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/cancel-unconfirmed-1.json",
+      "bytes": 840,
+      "sha256": "7e2dbbfec3963c38051453488e209a2523e59ba10800b1060027751e7fd73b1d"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/carrier-symlink-refusal-1.json",
+      "bytes": 194,
+      "sha256": "bb6800f4ca431570198e1734457e9bf46bb65c8238ea1da13fd8ab8a9fa08d50"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/catalog-exact-1.json",
+      "bytes": 2006,
+      "sha256": "6e815fb864eecbaed38914a6504ef1adc110832391e98b35e9606fea3b1bf496"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/catalog-plus-one-1.json",
+      "bytes": 2006,
+      "sha256": "95eca9e7d9f74eb9b879093f42ab83fca8a6a9cf7423a82a1d64eed093c33da6"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/changed-1.json",
+      "bytes": 2006,
+      "sha256": "0ec4ea1f5f60b92b0bba6bfbfab16acd79275d20d9b4e48152d43a13fd19a3f9"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/cycle-1.json",
+      "bytes": 2192,
+      "sha256": "f81112366653b6946393278451c4b7bdeaa134790a79303ae4850c72d80c694e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/drain-fence-1.json",
+      "bytes": 2142,
+      "sha256": "c22ddc5917de0e83b47e4edd030e9ec6f7e8dcd7f83e5b7ad0c3b96c18902ed5"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/duplicate-response-1.json",
+      "bytes": 2006,
+      "sha256": "a1ae574f61f97949055962730e238b746a55106b7e503fef811a73ea202aab87"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/duplicate-tool-1.json",
+      "bytes": 2193,
+      "sha256": "6120ae81e03c5323b5e58b897b5588ea780ee483e9acee5252d928f293753ee7"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/gate-1.json",
+      "bytes": 2006,
+      "sha256": "bd40011bb6875beddac276b90c8da0a3a424350b5a3117ba4bd10b407e724ac9"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/gate-2.json",
+      "bytes": 3574,
+      "sha256": "d6c790209fab8279f8303481783259773cde57359dc420decd330882b687d491"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/invalid-utf8-1.json",
+      "bytes": 2006,
+      "sha256": "3103d9296a129cb7878afa1e3240c15f72be085a2aff10ce932b51905003a2e3"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/kill-guardian-1.json",
+      "bytes": 2128,
+      "sha256": "28baca321eb232f3d0a81fc52ba568f953408a101148419715208df7c11b7ff1"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/kill-host-1.json",
+      "bytes": 2128,
+      "sha256": "7ef24024c4df9d776f7b4f8b571f02818e3b667b5d15d595018fc6864ce1fae4"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/kill-runtime-1.json",
+      "bytes": 2392,
+      "sha256": "7b2cfd322fbf158d36c649cdd369edffe002da7fcba9b8856d0c57fc63f77e98"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/kill-service-1.json",
+      "bytes": 2128,
+      "sha256": "0025850f55a1d6a5d564fff97cc142858b8147cfdfa102c01dfbbac10d021f0b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/large-1.json",
+      "bytes": 2006,
+      "sha256": "0a4890b20898f6606c2a019fe56a77ae5b7328dad7d3e78980d49576300ef81e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/large-bootstrap-1.json",
+      "bytes": 8597,
+      "sha256": "caf0a3cda3e69608f71457fbb146c172462dfe6ea2f2e56d434f57d49d4dfc7c"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/limit-1.json",
+      "bytes": 2006,
+      "sha256": "276faf33916af909d9db5e9cc8ae41a93b199636c0e27ee29afbfc9db1b5f946"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/normal-1.json",
+      "bytes": 2193,
+      "sha256": "2f540157d34767b7721f5649be79f0a43d3e3b53bfcb538195cf6f9b7fad0a27"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/notifications-overflow-1.json",
+      "bytes": 2006,
+      "sha256": "cbfce76c75206c97f9c0f5502246f40e99a7c3ef8b62c4e7ca0e8c239274b771"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/oversize-then-valid-1.json",
+      "bytes": 2006,
+      "sha256": "54114a1b4d00b4b96fccec0760a036482a91e9e1689acfc0df0435a92946d30c"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/pages-exact-1.json",
+      "bytes": 13526,
+      "sha256": "f3cb4becc5d72e974f3f9c8db2f8b720640da901603d1c12aec46742922adfc3"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/pages-plus-one-1.json",
+      "bytes": 13526,
+      "sha256": "646ace99c40f489df3747d96788922fa42d8c0d5ff28fdb271df9b35613d47dc"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/policy-cancel-before-ack-1.json",
+      "bytes": 1390,
+      "sha256": "3367bad61bc44ba93e6be3540b37ddfb2a2ed1fdeb093e069f73d53ddbbc34d8"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/policy-duplicate-owner-1.json",
+      "bytes": 1650,
+      "sha256": "737411350807663232be83a1fb8c9f46c6acca38d4f8bb5d1aa8a71013f9768e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/policy-missing-ack-1.json",
+      "bytes": 1168,
+      "sha256": "613d1bfcdfed9b130c98895eda34effa8ddcd144acc41e0e13592ee6ccc2db05"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/policy-wrong-ack-1.json",
+      "bytes": 1167,
+      "sha256": "4cd32649b4909d9e82698c3e2f11b9f78527a8f878b4549c8fb83ce1bef0f50a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/preflight-command-1.json",
+      "bytes": 2193,
+      "sha256": "7fb425bb06e00b9a3847b8160fb086dbf37a813f450e49490be5fa77909913fc"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/preflight-command-2.json",
+      "bytes": 1001,
+      "sha256": "2ff1f887066ce35afb508413ee907e46de4c2d1713468d9ad3aa06c42438c226"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/preflight-cwd-1.json",
+      "bytes": 2193,
+      "sha256": "c1d9b0921dc8957b7beeda3d269e165c5bb4282afaac495c5a70c0122c277ee0"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/preflight-cwd-2.json",
+      "bytes": 1005,
+      "sha256": "fc78cefc2f8a691b3e8b2de30227511dcb677dd0cc9b80c484cf1f3568a198d6"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/preflight-environment-1.json",
+      "bytes": 2193,
+      "sha256": "bb9162d8d53e5a1af486bd00e8a49f994fd75d47c55a35bc9278e0cc9004d93e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/preflight-environment-2.json",
+      "bytes": 993,
+      "sha256": "514842a455cf53128005cfa5df37cbe549c9f8d5f379fb3c974462ba374872f2"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/preflight-resources-1.json",
+      "bytes": 2193,
+      "sha256": "ac37d1f42af91f243f99b34978957a1599ba45ae21d132eb118c34fc2d32126d"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/preflight-resources-2.json",
+      "bytes": 1007,
+      "sha256": "321adeab028853bcf0468035087b0c00a5eeae9e14580fbb4cb35363ef32d105"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/ref-1.json",
+      "bytes": 2006,
+      "sha256": "b2f6c594af7c4e6cd2d6511ab62ff284b02c8ee052feb50f6b1b429570c2f595"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/reverse-slot-reservations-1.json",
+      "bytes": 223,
+      "sha256": "0554e1712a9e6d117cc24d82a3e8b204cd5c345e0ca657ef3877cd8ca109a363"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/schema-exact-1.json",
+      "bytes": 2006,
+      "sha256": "939c99a50486c2863e69ac7182a9ab8277cbd68e6cf7414439604ca2e0892eef"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/schema-plus-one-1.json",
+      "bytes": 2006,
+      "sha256": "374293ce758335f247e818456847cefbd64b1d8f99ab17e93dab44661179920a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/secret-1.json",
+      "bytes": 2035,
+      "sha256": "852e97bbdf98ba0cded8d7167eff6510798595adf5e421e1615e9095648d99b7"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/slow-pages-1.json",
+      "bytes": 2193,
+      "sha256": "02f449ad4451b6e03ecc58f96da48a6d6cd601fa0b029935adac7c3b888950ba"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/stale-old-nonce-1.json",
+      "bytes": 2193,
+      "sha256": "b4f7689380c87197dd21e7b278cbd6a1c5baab60d0b491635db78bb3a2a6d96b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/stale-old-run-1.json",
+      "bytes": 2193,
+      "sha256": "6d4390d6b24cf12e863c37a47d83fbe5572842ea5bc97819d6e91284542d5009"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/stderr-allowed-1.json",
+      "bytes": 2006,
+      "sha256": "8f34db337e11893cb4f94e18969a4600801c255d8017db2fa466619018710806"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/stderr-overflow-1.json",
+      "bytes": 2006,
+      "sha256": "14decddb23f6593c989df7cd1a5dfe9b776e2de1d111738595a569e5f66ffffa"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/tail-bad-1.json",
+      "bytes": 2006,
+      "sha256": "671f9e30d854dc51b258b27a50a911bc5c89e2ae4eca0177c99f64bc3abba9f8"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/tail-incomplete-1.json",
+      "bytes": 2006,
+      "sha256": "65c771e618024b1a6242ee991184a8ce556989f5e3f7b05f9e190b8057ad92d0"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/unknown-response-1.json",
+      "bytes": 2006,
+      "sha256": "3543a0ba3894110e0cb02ff1631ee74197f915e72ac0af454269f6cfeaf29212"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/unregistered-owner-1.json",
+      "bytes": 795,
+      "sha256": "21d22940317ea9bc2403378be8a13a98f615308e06235f76f1706d57d6a2cb3f"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/v3-refusal-1.json",
+      "bytes": 206,
+      "sha256": "c86eb3b5c50e03f4dc82cca105be6e077fb5353056260a83c64e50cbaac949cc"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/processes-final/wait-init-1.json",
+      "bytes": 1669,
+      "sha256": "3591f7d4e940a300579b17d39dced58dc8a93a8f62f08ff5f91592a3722b3761"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/raw/01-red-entry.log",
+      "bytes": 18444,
+      "sha256": "210ff71b74c3dac3d0993413391b5b90a43858d351e35037e970ce58949fa86a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/raw/02-entry-focused.log",
+      "bytes": 1456,
+      "sha256": "920fa19e1f55688c7319f1a9e2a234c3d6edaf1ab220ba1de339c26f091b6a33"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/raw/03-red-client.log",
+      "bytes": 1527,
+      "sha256": "83d88db6cd0f15d2fd1ae2a42eade4714a28bdb93bafdd977fe45d953ed496b2"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/raw/04-client-focused.log",
+      "bytes": 911,
+      "sha256": "bfb4d21d4d3d840466a9bb2d08331b659e9b2e944ee5f4b0f68ac89f8015e744"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/raw/10-entry-store.log",
+      "bytes": 1469,
+      "sha256": "236d835d7635a480c55bcc54f0bb32a1b011889a1dba6dd14897ed011b906712"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/raw/11-upgrade-client.log",
+      "bytes": 1033,
+      "sha256": "b15cdd9d6815a86dcb5d0768d05f5bbf42611d930d642a62860e1ef7c580772c"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/raw/12-schema-neighbor.log",
+      "bytes": 2926,
+      "sha256": "d30e974a55c35398c755a24a70aa26f807d1dadf07129bf382e9deba791ff6c6"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/raw/13-mcp-client-neighbor.log",
+      "bytes": 1937,
+      "sha256": "e74282ee235c47106768167c5a734063c57ec6cc7ff3205ad7630e92e24f0f0f"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/raw/14-typecheck.log",
+      "bytes": 154,
+      "sha256": "8e0150f4a5a96c99b646b1bc97cf9e65ad39f552773ec042f22b876102e3971a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/raw/15-static.log",
+      "bytes": 434,
+      "sha256": "54284a4db287df99a88db5108485055c1642012ceca25caa358625c2cacfe104"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/raw/16-feature-guards.log",
+      "bytes": 1022,
+      "sha256": "2135a25d7eb499624d25f4756d5ff81b8c8b2f1e2bcd221462f6b29c0ffe11e7"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/raw/17-feature-static.log",
+      "bytes": 456,
+      "sha256": "ba17145270d8e111272a93e034eecd0d439afba21e89e7696fe1f9e03887f36a"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/raw/18-final-scope-guards.log",
+      "bytes": 1128,
+      "sha256": "99554d6ccaf25920bcdbdd709c4e87afbda62f0d024a08da903dd65f5632921f"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/raw/19-final-scope-static.log",
+      "bytes": 456,
+      "sha256": "14bedf7d8a68eb1978e65db987ece5dc55da9e24b7b742670d53f6be1245fc55"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/raw/20-ui-detector.log",
+      "bytes": 263,
+      "sha256": "e9779e6608f6e7fd4c534600781b5f0b9ddc0f70b3f32d65a413afb2f3c03c43"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/raw/90-final-p2.log",
+      "bytes": 40424,
+      "sha256": "5a0beefc9d890da0213383f73d8fd97032248ee4b24cc75fcf2f10ec08e42d53"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/raw/91-final-rust-no-keychain.log",
+      "bytes": 14634,
+      "sha256": "87b5053455d1f09e22a42badb245e445ea8344f3ce84d02c4bb78d863c36fd1e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/review-inputs.json",
+      "bytes": 3320,
+      "sha256": "5a8da317bddc9192f8cff7407e1445cbacab032cd80e25419f02d6f9fcd09351"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/reviewed-evidence-before-format.json",
+      "bytes": 26694,
+      "sha256": "83dbda3d09a06daf7760a8426bc49a37e92c0e1b5e93a6fe4d00efdb0dfd1ae1"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/run-check.py",
+      "bytes": 1514,
+      "sha256": "22f04b33df4b23bf374eede5ec79627e6e0f05c2bd23d6374b28fe9f910ebb2b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshot-format.json",
+      "bytes": 3859,
+      "sha256": "5d192759664bef3b47247f7d10aec15a8dea3593fc272b34967e42932e5af259"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/1440-confirm.jpg",
+      "bytes": 60346,
+      "sha256": "8245b1f97242a09651322c3202d50bd1d2885ea7448db6f62fbc9724587e02fa"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/1440-required.jpg",
+      "bytes": 46741,
+      "sha256": "b4c2df27c6c4739e286140b39da3a4f8ce3f57444e22678c8e4dc6dead76fb3c"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/1440-success-draft.jpg",
+      "bytes": 72541,
+      "sha256": "6e75434736a1cf1791c1f5913325f1159609c25b8a4f00e537257adab270f4eb"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-backup-failure.jpg",
+      "bytes": 47761,
+      "sha256": "b95259170d2f68f23e0c59bfae0afb2143b2961370d1eb2396a03a4e336fda5b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-backup-failure.txt",
+      "bytes": 4412,
+      "sha256": "701917ca0167572a3540bae7acaa2248119755f3b04920d2a523d9fd80e39182"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-confirm.jpg",
+      "bytes": 52148,
+      "sha256": "08222ac6ef04992ae6f85a50ac10eb916bde17d32cd1115e02c6d78e561b20fd"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-confirm.txt",
+      "bytes": 1270,
+      "sha256": "1d6371026b223142b688b0ba2bc245cb77b292a083b47608dafc38dc8bfbce69"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-hard-unknown.jpg",
+      "bytes": 46916,
+      "sha256": "2c79c996c5fbf01c6987949756843fd43f6fc734d67ba122fdffa46e99893226"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-hard-unknown.txt",
+      "bytes": 4689,
+      "sha256": "5777e5fe1eebbb222ef4178221983ee2b6b6f4792bf10e3ba66861bf925a4e85"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-keyboard-scroll.jpg",
+      "bytes": 45734,
+      "sha256": "0ca9ef11dd6051e1e365117c3550eb60c948d5224415b5c19a9d2b94a2a4512e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-keyboard-scroll.txt",
+      "bytes": 4561,
+      "sha256": "36d17f28aee5481e52f196431b65e8cfbfbd558cb71b3d96b4e13c486b75be97"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-reread-v4.jpg",
+      "bytes": 48113,
+      "sha256": "7b4c2099ccf1797af10f1a56c1cbc5d58d08b8a42f4ce9d4a1b07528d53a2889"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-reread-v4.txt",
+      "bytes": 4596,
+      "sha256": "1fc5ea34d841f11685241cb6a561d6fa75ef9c4f7caecd558e8831165913e645"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-success-draft.jpg",
+      "bytes": 49125,
+      "sha256": "df42e4fd678e17744058725723b0641c6d3c39807c32b21fac750d7d90ce8981"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-unknown-v3.jpg",
+      "bytes": 46916,
+      "sha256": "2c79c996c5fbf01c6987949756843fd43f6fc734d67ba122fdffa46e99893226"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/screenshots/640-unknown-v3.txt",
+      "bytes": 4686,
+      "sha256": "f48099810d54cf8710b706a9b5ba0d3b2b5d3e6d6a8eb9521c952572f232819c"
+    },
+    {
+      "path": "docs/reviews/s33-p2-upgrade-20261030/ui-review.json",
+      "bytes": 837,
+      "sha256": "a90ccf783f95fcf8bcf1800c29ab7d6b6fdc5129f3cdae995d8e92347978585c"
+    },
+    {
+      "path": "package.json",
+      "bytes": 8595,
+      "sha256": "b17a6fc950b76fd914e469a23df42382a0196e1f9d8ffef312347bf93dfe5cf7"
+    },
+    {
+      "path": "src-tauri/src/lib.rs",
+      "bytes": 10324,
+      "sha256": "56653237dd0dec757afbba82b64d6af9f1f8aef6e0210e536f4834ada087a4f7"
+    },
+    {
+      "path": "src-tauri/src/local_store.rs",
+      "bytes": 45564,
+      "sha256": "681fd9ead4052db5b34958829dab7c606153900a0a1f315edc1f4e7898c0911f"
+    },
+    {
+      "path": "src-tauri/src/mcp_schema.rs",
+      "bytes": 20134,
+      "sha256": "45d63dfe908dd3e4950a78a8465eaa04e945db2152f53997d1a0183651394331"
+    },
+    {
+      "path": "src-tauri/src/mcp_ui_verification.rs",
+      "bytes": 4154,
+      "sha256": "cd6a11ceb4357e04355590f06204604471aa0587664921e7f4fc8e668ad5b8ba"
+    },
+    {
+      "path": "src-tauri/src/mcp_upgrade.rs",
+      "bytes": 1913,
+      "sha256": "116e9dc877e748369a84e2b86c690bec0187b090ea7f07e642636116632a1db9"
+    },
+    {
+      "path": "src-tauri/src/mcp_upgrade_tests.rs",
+      "bytes": 9868,
+      "sha256": "1371684cbe4701369086f626a944d60581d56e688bea32db1ab28a40d191c292"
+    },
+    {
+      "path": "src-tauri/src/verification_root.rs",
+      "bytes": 10117,
+      "sha256": "743af6e14928bf76817d0d604ce5bf145f40a7b6636dbdacbe3c2e79e514c2ee"
+    },
+    {
+      "path": "src/components/McpSettingsPanel.vue",
+      "bytes": 15511,
+      "sha256": "bb814ff25427c3b2c8b15c1bb72456e62004d3df299e5af37707619a6c8ca3f8"
+    },
+    {
+      "path": "src/components/McpStoragePanel.vue",
+      "bytes": 3607,
+      "sha256": "e2443e77e72e7d0f651529924a6e79666811647a78cfb450a438f40d7d8b2632"
+    },
+    {
+      "path": "src/stores/mcpDiagnostics.ts",
+      "bytes": 10159,
+      "sha256": "15e5c05a2a46b6727e705ebafca692f57dd412b7ff97ef224d9136c0ea15b4a5"
+    },
+    {
+      "path": "src/stores/mcpUpgrade.ts",
+      "bytes": 4336,
+      "sha256": "d9f4569844463446ab4cfbe948358cd07b0f006474558e73c2a196dce3d56e62"
+    },
+    {
+      "path": "tests/fixtures/profile-ui/mcp.ts",
+      "bytes": 8540,
+      "sha256": "a80ba8ad39113a2a41437975f4b55336c0aa3b8b14d88832325e0320646f4775"
+    },
+    {
+      "path": "tests/s33-upgrade.test.mjs",
+      "bytes": 4902,
+      "sha256": "cfee69107bd957230014b03fd588cf111c76c44c39eed7c4c726ba705d7da465"
+    }
+  ],
+  "reviewedSnapshot": "reviewed-evidence-before-format.json",
+  "screenshotSuffixCorrection": "screenshot-format.json",
+  "finalEvidenceReview": "final-review.json",
+  "finalEvidenceReviewsApproved": true
+}

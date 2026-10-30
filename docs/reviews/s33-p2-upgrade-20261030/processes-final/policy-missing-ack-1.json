@@ -1,0 +1,25 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-HuYpbn/isolated",
+  "policy": "missing-ack",
+  "result": {
+    "agentId": null,
+    "createdAtMs": 1793376892107,
+    "errorCode": "MCP_TIMEOUT",
+    "finishedAtMs": 1793376893311,
+    "id": "mcp-probe-41947-1793376892107007000",
+    "input": {
+      "serverId": "mcp-3632099d2e1b83e4dc37044c"
+    },
+    "purpose": "mcp_probe",
+    "result": null,
+    "snapshot": {
+      "configurationRevision": "rev-474fcffcd716321b6bb1e524c313ec35190bd90c7b75052e719c262d00b9bac3",
+      "connectTimeoutMs": 1000,
+      "serverId": "mcp-3632099d2e1b83e4dc37044c"
+    },
+    "status": "failed"
+  },
+  "records": [],
+  "audits": "{\"at\":1793376893191,\"actor\":\"cleaner\",\"group\":42061,\"proofPid\":42061,\"run\":\"mcp-probe-41947-1793376892107007000\",\"nonce\":\"e50bf609-1c62-413a-96e0-00e6429a3957\",\"signal\":\"SIGSTOP\",\"matched\":true}\n{\"at\":1793376893196,\"actor\":\"cleaner\",\"group\":42061,\"proofPid\":42061,\"run\":\"mcp-probe-41947-1793376892107007000\",\"nonce\":\"e50bf609-1c62-413a-96e0-00e6429a3957\",\"signal\":\"SIGKILL\",\"matched\":true}\n"
+}

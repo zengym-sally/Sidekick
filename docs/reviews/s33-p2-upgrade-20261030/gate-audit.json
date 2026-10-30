@@ -1,0 +1,9 @@
+{
+  "completeCheckPreservedWithOnlyNewDomainEntry": true,
+  "rustNoKeychainSingleSkipUnchanged": true,
+  "fullLibraryIncludesNewUpgradeTests": true,
+  "p2AggregateIncludesUpgradeDomainAndStore": true,
+  "migrationsDependenciesLocksAdapterModelsBrandUnchanged": true,
+  "ordinaryUserRootOpened": false,
+  "nativeUiExecuted": false
+}

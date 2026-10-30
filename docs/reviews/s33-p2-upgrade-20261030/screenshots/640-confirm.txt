@@ -1,0 +1,16 @@
+Browser tab: 1623253464, Title: "Sidekick 界面验收 · 合成资料", URL: "http://127.0.0.1:1475/?mcpUpgrade=upgrade-backup-20261030&mcpUpgradeFailure=backup".
+1 AXWebArea Sidekick 界面验收 · 合成资料, URL: 127.0.0.1:1475/?mcpUpgrade=upgrade-backup-20261030&mcpUpgradeFailure=backup
+	2 container 备份并开启诊断存储？
+		3 heading 备份并开启诊断存储？, Value: 2, ID: mcp-storage-confirm-heading
+			4 text 备份并开启诊断存储？
+		5 text /fixture/sidekick/仅为浏览器合成工作目录/长路径用于验证确认内容与换行
+		6 text 先在此工作目录的 backups 中创建并核验数据库备份，再升级。升级后，旧版本应用将无法打开此工作目录。
+		7 text 不会自动降级或还原。失败时保留当前文件；遗留文件不一定是有效备份。若需恢复，请先关闭应用、核实已确认备份后另行安排，不要直接覆盖当前库。
+		8 container
+			9 checkbox (settable, integer) Description: 我已核对工作目录，并理解旧版本不能继续打开。, Value: 0
+			10 text 我已核对工作目录，并理解旧版本不能继续打开。
+		11 container
+			12 button 取消
+			13 button (disabled) 备份并开启
+
+The focused UI element is 12 button 取消

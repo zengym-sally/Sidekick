@@ -229,6 +229,39 @@ pub(crate) fn open_local(
 mod tests {
     use super::*;
     #[test]
+    fn verification_v3_upgrade_scope_uses_the_confirmed_entry_and_reopens_v4() {
+        let nonce = crate::mcp_host::nonce();
+        let base = std::env::temp_dir().join(format!("sidekick-s33-upgrade-guard-{nonce}"));
+        fs::DirBuilder::new().mode(0o700).create(&base).unwrap();
+        let app = base.join("app");
+        let local = open_local(&app, &nonce, ".s33-ui-verification", false, false).unwrap();
+        let status = local.access(|s| s.mcp_storage_status()).unwrap();
+        assert_eq!(status.version, 3);
+        let runtime = crate::runtime_host::RuntimeState::default();
+        runtime
+            .confirm_mcp_storage(
+                &local,
+                crate::local_store::McpUpgradeInput {
+                    confirmed: true,
+                    confirmation_token: status.confirmation_token.unwrap(),
+                },
+            )
+            .unwrap();
+        drop(local);
+        assert!(open_local(&app, "not-the-nonce", ".s33-ui-verification", true, false).is_err());
+        let reopened = open_local(&app, &nonce, ".s33-ui-verification", true, false).unwrap();
+        assert_eq!(
+            reopened.access(|s| s.mcp_storage_status()).unwrap().version,
+            4
+        );
+        assert_eq!(
+            fs::read_dir(app.join("workspace/backups")).unwrap().count(),
+            1
+        );
+        drop(reopened);
+        fs::remove_dir_all(base).unwrap();
+    }
+    #[test]
     fn verification_guard_rechecks_model_journal_before_every_action() {
         let nonce = crate::mcp_host::nonce();
         let base = std::env::temp_dir().join(format!("sidekick-s33-guard-{nonce}"));

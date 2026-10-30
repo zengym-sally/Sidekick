@@ -4,21 +4,25 @@ import {listen} from '@tauri-apps/api/event';
 import {displayTime} from '../domain/todos';
 import {useMcpDiagnostics,observeMcpDiagnostics,probeMessage} from '../stores/mcpDiagnostics';
 import {useMcpSettings} from '../stores/mcp';
+import {useMcpUpgrade} from '../stores/mcpUpgrade';
+import McpStoragePanel from './McpStoragePanel.vue';
 import type {McpEnvironment} from '../domain/mcp';
 import Icon from './Icon.vue';
 import SkField from './ui/SkField.vue';import SkInput from './ui/SkInput.vue';import SkSelect from './ui/SkSelect.vue';import SkFieldset from './ui/SkFieldset.vue';import SkButton from './ui/SkButton.vue';import SkSwitch from './ui/SkSwitch.vue';import SkNumberInput from './ui/SkNumberInput.vue';import SkSaveBar from './ui/SkSaveBar.vue';
 import SkSecretInput from './ui/SkSecretInput.vue';
-const mcp=useMcpSettings(),draft=computed(()=>mcp.current),blocked=computed(()=>!mcp.ready||mcp.loading||mcp.saving),form=ref<HTMLFormElement>(),confirmation=ref<HTMLDialogElement>(),deletion=ref(''),attempted=ref(false);
+const storage=useMcpUpgrade();
+const mcp=useMcpSettings(),draft=computed(()=>mcp.current),blocked=computed(()=>!mcp.ready||mcp.loading||mcp.saving||storage.busy||storage.unknown),form=ref<HTMLFormElement>(),confirmation=ref<HTMLDialogElement>(),deletion=ref(''),attempted=ref(false);
 const diagnostics=useMcpDiagnostics();
 const outcome=computed(()=>diagnostics.rows[mcp.selected]);
 const probe=computed(()=>outcome.value?.run);
-const canDiagnose=computed(()=>!blocked.value&&!mcp.dirty&&!!saved.value&&diagnostics.known&&!diagnostics.occupied);
+const canDiagnose=computed(()=>storage.enabled&&!blocked.value&&!mcp.dirty&&!!saved.value&&diagnostics.known&&!diagnostics.occupied);
 const oldRevision=computed(()=>!!probe.value&&probe.value.snapshot.configurationRevision!==mcp.configuration?.revision);
-async function reconcile(){await diagnostics.reconcile(saved.value?.id);}
+async function reconcile(){if(!storage.enabled)return;await diagnostics.reconcile(saved.value?.id);}
 async function diagnose(){try{await diagnostics.start();await reconcile();}catch{}}
 async function cancelProbe(){await diagnostics.cancel();await reconcile();}
 let stopObserving:(()=>void)|undefined;
-watch(()=>mcp.selected,()=>{if(saved.value)void diagnostics.readLatest(saved.value.id);});
+watch(()=>mcp.selected,()=>{if(saved.value&&storage.enabled)void diagnostics.readLatest(saved.value.id);});
+watch(()=>storage.enabled,value=>{if(value)void reconcile();});
 const saved=computed(()=>mcp.find(mcp.selected));
 const secureAvailable=computed(()=>mcp.configuration?.secureStorageAvailable===true);
 function credentialState(name:string){return mcp.configuration?.credentialStatus?.[mcp.selected]?.[name]||'missing';}
@@ -34,11 +38,12 @@ function select(id:string){mcp.select(id);attempted.value=false;}
 function add(){mcp.add();attempted.value=false;}
 function askRemove(){deletion.value=mcp.selected;confirmation.value?.showModal();}
 async function remove(){if(mcp.selected!==deletion.value){confirmation.value?.close();return;}try{await mcp.remove();confirmation.value?.close();}catch{confirmation.value?.close();}}
-onMounted(()=>{if(!mcp.configuration&&!mcp.loading)void load();stopObserving=observeMcpDiagnostics(reconcile,async fn=>listen('mcp-probe-changed',fn),undefined,()=>diagnostics.occupied||!diagnostics.known);});
+onMounted(()=>{if(!mcp.configuration&&!mcp.loading)void load();stopObserving=observeMcpDiagnostics(reconcile,async fn=>listen('mcp-probe-changed',fn),undefined,()=>storage.enabled&&(diagnostics.occupied||!diagnostics.known));});
 onUnmounted(()=>stopObserving?.());
 </script>
 <template>
  <div class="mcp-page">
+  <McpStoragePanel/>
   <p v-if="mcp.loading" role="status" class="muted">正在读取 MCP 服务配置…</p>
   <div v-if="!mcp.ready&&!mcp.loading" class="profile-alert" role="alert"><p>{{mcp.error||'服务配置尚未确认，请重新读取后核对。'}}</p><SkButton kind="entry" @click="load">重新读取，保留草稿</SkButton></div>
   <div v-else-if="mcp.error" class="form-error" role="alert">{{mcp.error}}</div>
@@ -93,7 +98,7 @@ onUnmounted(()=>stopObserving?.());
     </template>
    </section>
   </div>
-  <SkSaveBar v-if="draft" target="#settings-save-slot" :dirty="mcp.dirty" :busy="mcp.saving" :disabled="!mcp.ready||mcp.loading" :error="mcp.error" :notice="mcp.notice" label="保存服务配置" @save="save" @discard="mcp.discard();attempted=false"/>
+  <SkSaveBar v-if="draft" target="#settings-save-slot" :dirty="mcp.dirty" :busy="mcp.saving||storage.busy" :disabled="!mcp.ready||mcp.loading||storage.busy||storage.unknown" :error="mcp.error" :notice="mcp.notice" label="保存服务配置" @save="save" @discard="mcp.discard();attempted=false"/>
   <dialog ref="confirmation" class="dialog confirm-dialog" aria-labelledby="mcp-remove-heading" @cancel.prevent="!mcp.saving&&confirmation?.close()"><header class="dialog-header"><h2 id="mcp-remove-heading">移除这项服务配置？</h2></header><div class="dialog-body"><p>{{saved?.name}}</p><p class="muted">只移除配置，保留历史记录，不删除服务程序和运行产物。</p></div><footer class="dialog-footer"><SkButton :disabled="mcp.saving" @click="confirmation?.close()">取消</SkButton><SkButton kind="danger" :loading="mcp.saving" @click="remove">确认移除配置</SkButton></footer></dialog>
  </div>
 </template>

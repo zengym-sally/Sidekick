@@ -1,0 +1,28 @@
+{
+  "reviewer": "impeccable_finish_reviewer",
+  "roleLoading": "manually read plugin agents/impeccable_finish_reviewer.toml in independent context; task-name interface does not auto-load role",
+  "disposition": "ship",
+  "persistence": "pass",
+  "fidelity": {
+    "TYPE": "match",
+    "MATERIAL": "match",
+    "GROUND": "match",
+    "entry": "match",
+    "confirmation": "match",
+    "errorsAndUnknown": "match",
+    "draftAndReceipt": "match",
+    "narrowAndKeyboard": "match"
+  },
+  "ceiling": "reached for incumbent Operate extension only",
+  "material_fixes": [],
+  "keep": [
+    "compact storage area",
+    "explicit consent",
+    "amber submit",
+    "unknown barrier",
+    "draft preservation",
+    "evidence layer boundaries"
+  ],
+  "validScreenshots": 10,
+  "layer": "Chrome synthetic IPC only; no native or SQLite acceptance"
+}

@@ -1,6 +1,8 @@
 use super::*;
 use rusqlite::backup::{Backup, StepResult};
+use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
+use std::os::unix::ffi::OsStrExt;
 use std::time::{Duration, Instant};
 
 pub(super) const SQL: &str = include_str!("../migrations/004_mcp_runs.sql");
@@ -29,6 +31,21 @@ pub struct McpSchemaUpgrade {
     pub from_version: i64,
     pub to_version: i64,
     pub backup: Option<String>,
+}
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct McpStorageStatus {
+    pub root: String,
+    pub workspace_id: String,
+    pub version: i64,
+    pub target_version: i64,
+    pub confirmation_token: Option<String>,
+}
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct McpUpgradeInput {
+    pub confirmed: bool,
+    pub confirmation_token: String,
 }
 fn changed() -> StoreError {
     StoreError::new(
@@ -430,6 +447,86 @@ pub(super) fn upgrade_database(
     })
 }
 impl AppStore {
+    pub fn mcp_storage_status(&mut self) -> Result<McpStorageStatus> {
+        self.verify_mcp_paths()?;
+        let workspace = self.workspace.as_mut().ok_or_else(changed)?;
+        workspace.database_identity.verify(true)?;
+        same_directory(
+            &workspace.root.join("backups"),
+            &workspace.backups_directory,
+            true,
+        )?;
+        let db = &workspace.db;
+        let version = db
+            .pragma_query_value(None, "user_version", |r| r.get::<_, i64>(0))
+            .map_err(db_error)?;
+        let app = db
+            .pragma_query_value(None, "application_id", |r| r.get::<_, i64>(0))
+            .map_err(db_error)?;
+        if version > 4 {
+            return Err(StoreError::new(
+                "SCHEMA_TOO_NEW",
+                "数据由较新版本创建，未执行升级。",
+            ));
+        }
+        if app != APPLICATION_ID || !(1..=4).contains(&version) {
+            return Err(unsupported());
+        }
+        if version == 4 {
+            validate_v4(db)?;
+        } else {
+            preflight(db, version)?;
+        }
+        let metadata = workspace
+            .database_identity
+            .database
+            .metadata()
+            .map_err(|_| changed())?;
+        let mut scope = self.app_dir.as_os_str().as_bytes().to_vec();
+        scope.push(0);
+        scope.extend(workspace.root.as_os_str().as_bytes());
+        scope.extend(metadata.dev().to_be_bytes());
+        scope.extend(metadata.ino().to_be_bytes());
+        let workspace_id = format!("{:x}", Sha256::digest(&scope));
+        let confirmation_token = if version < 4 {
+            let mut bytes = workspace_id.as_bytes().to_vec();
+            bytes.extend(version.to_be_bytes());
+            let schema = objects(db)?.into_iter().collect::<Vec<_>>();
+            bytes.extend(serde_json::to_vec(&schema).map_err(|_| unsupported())?);
+            Some(format!("{:x}", Sha256::digest(&bytes)))
+        } else {
+            None
+        };
+        Ok(McpStorageStatus {
+            root: workspace.root.to_string_lossy().into(),
+            workspace_id,
+            version,
+            target_version: 4,
+            confirmation_token,
+        })
+    }
+    pub fn confirm_mcp_upgrade(&mut self, input: McpUpgradeInput) -> Result<McpSchemaUpgrade> {
+        if !input.confirmed
+            || input.confirmation_token.len() != 64
+            || !input
+                .confirmation_token
+                .bytes()
+                .all(|b| b.is_ascii_hexdigit())
+        {
+            return Err(StoreError::new(
+                "MCP_UPGRADE_CONFIRMATION",
+                "请核对当前工作目录与备份说明，再明确确认开启诊断存储。",
+            ));
+        }
+        let status = self.mcp_storage_status()?;
+        if status.confirmation_token.as_deref() != Some(input.confirmation_token.as_str()) {
+            return Err(StoreError::new(
+                "MCP_UPGRADE_STALE",
+                "工作目录、数据库或版本已有变化，未执行升级；请重新读取后确认。",
+            ));
+        }
+        self.upgrade_mcp_storage()
+    }
     pub fn upgrade_mcp_storage(&mut self) -> Result<McpSchemaUpgrade> {
         if self.mcp_schema_uncertain {
             return Err(uncertain());

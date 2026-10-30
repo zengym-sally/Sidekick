@@ -1,0 +1,34 @@
+{
+  "reviewer": "impeccable_documenter",
+  "roleLoading": "manually read plugin agents/impeccable_documenter.toml in fresh context",
+  "outcome": "No changes",
+  "filesWritten": [],
+  "checked": [
+    "PRODUCT.md",
+    "DESIGN.md",
+    ".impeccable/design.json",
+    "settings surface brief",
+    "brand tokens",
+    "shared forms/settings CSS",
+    "SkButton",
+    "SkCheckbox",
+    "SkSaveBar",
+    "two MCP panels",
+    "mcpUpgrade.ts",
+    "10 screenshots"
+  ],
+  "newTokensOrAnimationRules": false,
+  "scope": "ordinary Operate surface extension; preserve incumbent design files",
+  "preexistingDriftNotRepaired": [
+    {
+      "path": "DESIGN.md:58",
+      "recorded": "control radius 7px",
+      "currentSharedComponent": "8px"
+    },
+    {
+      "path": ".impeccable/design.json:304",
+      "recorded": "old 36px/7px buttons and ink primary",
+      "currentSharedComponent": "38px/8px and amber commit"
+    }
+  ]
+}

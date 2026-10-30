@@ -1,0 +1,23 @@
+{
+  "coreSha256": "b5d5d49368217718218a3ec2d444eb95854b7cfc2e62ca5e9e66557b7b9123ba",
+  "independence": "two fork_turns=none read-only contexts",
+  "A": {
+    "reviewer": "p2_upgrade_plan_a",
+    "round1": "APPROVE",
+    "round2": "APPROVE",
+    "findings": []
+  },
+  "B": {
+    "reviewer": "p2_upgrade_plan_b",
+    "round1": "APPROVE_WITH_CHANGES",
+    "round2": "APPROVE",
+    "closed": [
+      "DDL-before rejection whitelist; DDL/copy unknown cannot be retried in current handle",
+      "two-face final artifact verification after actual final checks"
+    ]
+  },
+  "alsoReviewed": [
+    "existing v1/v2 open-to-v3 behavior",
+    "new bounded credential-free v3 native verification scope; no native execution"
+  ]
+}

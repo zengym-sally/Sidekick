@@ -1,0 +1,87 @@
+Browser tab: 1623253464, Title: "Sidekick 界面验收 · 合成资料", URL: "http://127.0.0.1:1475/?mcpUpgrade=upgrade-busy-20261030&mcpUpgradeDelay=1".
+1 AXWebArea Sidekick 界面验收 · 合成资料, URL: 127.0.0.1:1475/?mcpUpgrade=upgrade-busy-20261030&mcpUpgradeDelay=1
+	2 container app
+		3 container 主导航
+			4 button 跟班 Sidekick，打开今日工作台
+			5 container
+				6 button 今日, Help: 今日工作台
+					7 text 今日
+				8 button 确认, Help: 待确认
+					9 text 确认
+				10 button 事项 0, Help: 全部事项
+					11 text 事项
+					12 text 0
+			13 button Description: 个人信息与设置，小明同学, Help: 个人信息与设置
+		14 container
+			15 text 设置
+			16 button 刷新清单
+			17 button 快速录入, ID: quick-entry
+			18 container
+				19 container
+					20 heading 工具, Value: 1
+						21 text 工具
+					22 text 管理完整技能与本机 MCP 服务配置。
+				23 tab group 设置分类
+					24 tab (selectable, settable, boolean) 个人信息, Value: 0, ID: settings-tab-profile
+					25 tab (selectable, settable, boolean) 通用, Value: 0, ID: settings-tab-general
+					26 tab (selectable, settable, boolean) 模型服务, Value: 0, ID: settings-tab-models
+					27 tab (selectable, settable, boolean) 智能体, Value: 0, ID: settings-tab-agents
+					28 tab (selected, settable, boolean) 工具, Value: 1, ID: settings-tab-tools
+					29 tab (selectable, settable, boolean) 关于, Value: 0, ID: settings-tab-about
+				30 container Description: 工具, ID: settings-panel-tools
+					31 tab group 工具分类
+						32 tab (selectable, settable, boolean) Skills, Value: 0, ID: tools-tab-skills
+						33 tab (selected, settable, boolean) MCP 服务, Value: 1, ID: tools-tab-mcp
+					34 container Description: MCP 服务, ID: tools-panel-mcp
+						35 container 诊断存储
+							36 heading 诊断存储, Value: 3, ID: mcp-storage-heading
+								37 text 诊断存储
+							38 text 诊断存储已开启。可以保存诊断记录，不会自动连接服务。
+							39 text 当前工作目录：/fixture/sidekick/仅为浏览器合成工作目录/长路径用于验证确认内容与换行
+							40 text 本次已确认备份：backups/before-schema-4-1-2.sqlite
+							41 button 重新核对存储状态
+						42 container MCP 服务列表
+							43 checkbox 升级前保留的服务草稿 已启用, Value: 1
+								44 text 升级前保留的服务草稿
+								45 text 已启用
+							46 button 新增 MCP 服务
+						47 container MCP 服务配置
+							48 container
+								49 heading 升级前保留的服务草稿, Value: 2
+									50 text 升级前保留的服务草稿
+								51 text 保存不会启动程序；请手动诊断并查看本次工具目录。
+								52 button 移除配置
+							53 container
+								54 text 服务名称
+								55 text field (settable) 服务名称, Value: 升级前保留的服务草稿, ID: field-v-13
+								56 text 连接方式
+								57 text field 连接方式, Value: stdio · 本机进程, ID: field-v-14
+								58 text 启动命令
+								59 text field (settable) 启动命令, Value: /synthetic/not-executed, ID: field-v-15
+								60 text 填写程序路径或命令名；参数请逐项填写，认证信息不要放在命令或参数中。
+								61 container 命令参数
+									62 heading 命令参数, Value: 3
+										63 text 命令参数
+									64 button 添加参数
+									65 text 没有参数。每一项会原样作为一个参数，空格不会拆分。
+								66 text 启用服务 保存不会启动程序；禁用的服务仍可手动诊断。
+								67 switch Description: 启用 MCP 服务, Value: 1
+								68 button (collapsed) 工作目录与超时, Secondary Actions: Expand
+									69 text 工作目录与超时
+								70 button (collapsed) 环境项, Secondary Actions: Expand
+									71 text 环境项
+							72 container 连接诊断与工具
+								73 heading 连接诊断与工具, Value: 3, ID: mcp-diagnostic-heading
+									74 text 连接诊断与工具
+								75 button 连接诊断
+								76 text 只初始化并发现工具，不调用工具；本次完成后关闭服务进程。
+								77 button 重新核对诊断状态
+								78 text 还没有这项服务的诊断记录。
+							79 button (collapsed) 服务标识, Secondary Actions: Expand
+								80 text 服务标识
+				81 container
+					82 text 没有未保存的修改
+					83 button (disabled) 放弃修改
+					84 button (disabled) 保存服务配置
+
+The focused UI element is 77 button 重新核对诊断状态

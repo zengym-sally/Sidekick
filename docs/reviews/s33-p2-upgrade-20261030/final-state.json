@@ -1,0 +1,28 @@
+{
+  "atUtc": "2026-10-30T16:17:27.277822+00:00",
+  "processCheck": [
+    "ps",
+    "-axo",
+    "pid,ppid,stat,etime,command"
+  ],
+  "excludedCurrentAncestors": true,
+  "patterns": [
+    "target/debug/examples/s33-mcp-host",
+    "mcp-probe.mjs",
+    "mcp-guardian.mjs",
+    "node --test",
+    "cargo test",
+    "cargo build",
+    "cargo clippy",
+    "vite --config tests/fixtures/profile-ui",
+    "Sidekick MCP Verify.app/Contents/MacOS/sidekick"
+  ],
+  "matchingProcesses": [],
+  "browserTabClosed": true,
+  "browserViewportReset": true,
+  "fixtureServerStopped": true,
+  "realKeychainCalled": false,
+  "ordinaryUserRootUpgraded": false,
+  "nativeUiRetried": false,
+  "fullNpmCheckExecuted": false
+}

@@ -1,0 +1,25 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-UWDnwO/isolated",
+  "kind": "both ownership proofs deliberately removed; production must not guess group",
+  "result": {
+    "agentId": null,
+    "createdAtMs": 1793376898986,
+    "errorCode": "MCP_CLEANUP",
+    "finishedAtMs": 1793376899770,
+    "id": "mcp-probe-49272-1793376898986363000",
+    "input": {
+      "serverId": "mcp-485ed5697d697bffcce9814d"
+    },
+    "purpose": "mcp_probe",
+    "result": null,
+    "snapshot": {
+      "configurationRevision": "rev-b69a73b5b6afcc73d2f1a05619bae70b81d6763bdc2c4f525ea858bd955d50c3",
+      "connectTimeoutMs": 5000,
+      "serverId": "mcp-485ed5697d697bffcce9814d"
+    },
+    "status": "failed"
+  },
+  "active": "mcp-probe-49272-1793376898986363000",
+  "testTeardownRequired": true
+}
