@@ -1,0 +1,19 @@
+The following is a diff from the previous accessibility tree for Window: "跟班 Sidekick · MCP 隔离验收" with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 73-76, 78, 81, 83-109
+~					62 tab (selected) 工具
+~						68 tab (selectable) Skills
+~						69 tab (selected) MCP 服务, Value: on
+~					70 container MCP 服务
+~						71 container 诊断存储
+~							72 heading 诊断存储, Value: 3
++								73 text 诊断存储
++							74 text 诊断存储已开启。可以保存诊断记录，不会自动连接服务。
++							75 text 当前工作目录：/private/tmp/sidekick-s33-authorized-f889amz_/app/workspace
++							76 button 重新核对存储状态
+~						77 container MCP 服务列表
++							78 button 新增 MCP 服务
+~						79 container MCP 服务配置
+~							80 heading 添加本机工具服务, Value: 2
++								81 text 添加本机工具服务
+~							82 text 填写一项 stdio 服务的启动方式。保存配置后可手动诊断，查看本次发现的工具；不会自动调用工具。
+The focused UI element is 69 tab (selected) MCP 服务, Value: on

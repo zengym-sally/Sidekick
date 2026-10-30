@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-30T20:20:58.622763+00:00",
+  "ownedNativePid": 77211,
+  "nativeAlive": false,
+  "actualExitCode": -15,
+  "exitKind": "identity-verified test cleanup SIGTERM, not GUI quit or proven crash",
+  "matchingNativeProcesses": [],
+  "productionAndTestSourcesUnchanged": true,
+  "preexistingSixRecordsPreserved": {
+    "native-reopen-02-exit.json": true,
+    "native-reopen-02-launch.json": true,
+    "native-reopen-03-exit.json": true,
+    "native-reopen-03-launch.json": true,
+    "native-reopen-04-exit.json": true,
+    "native-reopen-04-launch.json": true
+  },
+  "serversConfigExists": false,
+  "serviceLogExists": false,
+  "launcherExitRecord": "docs/reviews/s33-p2-authorized-20261030/native-reopen-05-exit.json",
+  "historicalTemporaryRootsDeleted": false,
+  "p2Complete": false,
+  "historicalNativeItemsClosed": false
+}

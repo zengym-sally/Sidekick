@@ -1,0 +1,46 @@
+[
+  {
+    "action": "getApp(com.sidekick.s33.ui.verify)",
+    "result": "AX returned, live PID had already been verified"
+  },
+  {
+    "action": "getScreenshot()",
+    "result": "returned original JPEG; 01-workbench.jpg"
+  },
+  {
+    "action": "click personal entry -> getAXState",
+    "result": "personal settings returned"
+  },
+  {
+    "action": "click tools tab -> getAXState",
+    "result": "Skills page returned"
+  },
+  {
+    "action": "click MCP tab -> getAXState",
+    "result": "enabled storage and empty service list returned"
+  },
+  {
+    "action": "getAXState(full) and getScreenshot(emit:false)",
+    "result": "returned; 02-mcp-empty-ax.txt and 02-mcp-empty.jpg"
+  },
+  {
+    "action": "getAXState({disableDiffing:true,emit:false}) before add",
+    "result": "-10005 / ScreenCaptureKit -3812; freshEmptyReturned=false, addMatchProduced=false; no click executed"
+  },
+  {
+    "action": "getAXState({disableDiffing:true}) once",
+    "result": "same -3812; recoveryReadReturned=false; stop GUI"
+  },
+  {
+    "action": "save prior AX strings only",
+    "result": "03/04/05 diff text saved; no further GUI call"
+  },
+  {
+    "action": "read-only scope/SQLite/process verification",
+    "result": "same root v4; nine tables zero rows; v3 backup; no config or service log"
+  },
+  {
+    "action": "identity-verified SIGTERM to PID77211",
+    "result": "launcher child wait returned -15; not GUI quit/reopen evidence"
+  }
+]

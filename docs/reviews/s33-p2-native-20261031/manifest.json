@@ -1,0 +1,84 @@
+{
+  "utc": "2026-10-30T20:27:18.306786+00:00",
+  "baseCommit": "057f49528aeed65dd84a2ce1e19f8963ac6f4b36",
+  "files": {
+    "docs/reviews/s33-p2-native-20261031.md": {
+      "sha256": "b0edd3edd0f49a232216762a5e79d500447e13e4bfb6249b6ef1fd1aa93779e4",
+      "bytes": 7314
+    },
+    "docs/reviews/s33-p2-native-20261031/01-workbench.jpg": {
+      "sha256": "26e886a69fb811649e2aecc861259ec94b3daf08481a575950de5aefbcd535ab",
+      "bytes": 170741
+    },
+    "docs/reviews/s33-p2-native-20261031/02-mcp-empty-ax.txt": {
+      "sha256": "4d32c6399aaf28f4394090973e9372ccccfe97b8921898c70580e3c7c1ae58e0",
+      "bytes": 2207
+    },
+    "docs/reviews/s33-p2-native-20261031/02-mcp-empty.jpg": {
+      "sha256": "9e25ca4b1b5176b14f3a13d2757f72d01a89ba7edede60f27225ffe2bfc4ccb8",
+      "bytes": 157043
+    },
+    "docs/reviews/s33-p2-native-20261031/03-settings-ax-diff.txt": {
+      "sha256": "30a66022da504fc00235e1ba5290d81d2f28dd43a9d6dfb38b699f716b5ee8f5",
+      "bytes": 1375
+    },
+    "docs/reviews/s33-p2-native-20261031/04-tools-ax-diff.txt": {
+      "sha256": "73d20f11c8d479fbdf6fce875c84a3d1af7e41805cbf928421a9d0be067a32b7",
+      "bytes": 3800
+    },
+    "docs/reviews/s33-p2-native-20261031/05-mcp-ax-diff.txt": {
+      "sha256": "bdb742b0b4f304792a12416be6bb6bcc43f7b1e905cfc4f2d70f33a53e29864b",
+      "bytes": 1170
+    },
+    "docs/reviews/s33-p2-native-20261031/actions.json": {
+      "sha256": "db87dcf70f897035d22b31b40af1d2f0cde57401d1b0fca0be94561b8300dee4",
+      "bytes": 1428
+    },
+    "docs/reviews/s33-p2-native-20261031/cleanup-request.json": {
+      "sha256": "bb78b4e6999595d5ebb8bc407b9895dd7a0eb25465f7003fab9735d3d9601aae",
+      "bytes": 401
+    },
+    "docs/reviews/s33-p2-native-20261031/cua-transcript-excerpt.json": {
+      "sha256": "3da77dda31e715e1432f663ec3ac7bbde074c773cd04b46c717aa34e624e7f18",
+      "bytes": 24400
+    },
+    "docs/reviews/s33-p2-native-20261031/final-state.json": {
+      "sha256": "9e2ccb2c9bc49059e0d69358f505cc9fc5f4f1a6ff5f3fd147b441558a5b23b8",
+      "bytes": 838
+    },
+    "docs/reviews/s33-p2-native-20261031/native-info-redacted.json": {
+      "sha256": "a94fae8de6307aa98643877cf466a7af9b403f3294e7cc7f96bf7852bb86a530",
+      "bytes": 863
+    },
+    "docs/reviews/s33-p2-native-20261031/readback.json": {
+      "sha256": "abb436cd92db8e2b3ecadeec4872901290a1d2fb689ffd7eeb5ae48a9937ce94",
+      "bytes": 3445
+    },
+    "docs/reviews/s33-p2-native-20261031/review.json": {
+      "sha256": "cbf43911de15b938505a0cc4e4edc757730780adecb8b84210699b7480dbe9f0",
+      "bytes": 1194
+    },
+    "docs/reviews/s33-p2-authorized-20261030/native-reopen-05-launch.json": {
+      "sha256": "dba91df016801a4b9363dfc7272329940db480bdb34261124beae7c81b78510f",
+      "bytes": 570
+    },
+    "docs/reviews/s33-p2-authorized-20261030/native-reopen-05-exit.json": {
+      "sha256": "eff831a65918e8974bab1c355952c76a0b7e968474733fda6462fbd818d106d6",
+      "bytes": 642
+    }
+  },
+  "scope": "P2 native partial evidence and technical blocker only",
+  "excludedPreexistingRecords": [
+    "native-reopen-02-exit.json",
+    "native-reopen-02-launch.json",
+    "native-reopen-03-exit.json",
+    "native-reopen-03-launch.json",
+    "native-reopen-04-exit.json",
+    "native-reopen-04-launch.json"
+  ],
+  "oldTemporaryRootsDeleted": false,
+  "productionOrTestCodeChanged": false,
+  "checkRerun": false,
+  "p2Complete": false,
+  "pushAuthorized": false
+}

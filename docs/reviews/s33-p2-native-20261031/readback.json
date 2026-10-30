@@ -1,0 +1,93 @@
+{
+  "utc": "2026-10-30T20:19:19.943560+00:00",
+  "handoff": "SIDEKICK-P2-NATIVE-HANDOFF-20261030-2012",
+  "head": "057f49528aeed65dd84a2ce1e19f8963ac6f4b36",
+  "pid": 77211,
+  "nativeProcessAlive": true,
+  "processIdentityVerified": true,
+  "identifier": "com.sidekick.s33.ui.verify",
+  "workspace": "/private/tmp/sidekick-s33-authorized-f889amz_/app/workspace",
+  "scope": "controlled-upgrade-no-credentials",
+  "scopeIdentityVerified": true,
+  "schema": 4,
+  "quickCheck": "ok",
+  "foreignKeyViolations": 0,
+  "rowCounts": {
+    "agent_runs": 0,
+    "candidates": 0,
+    "ingestion_operations": 0,
+    "runs": 0,
+    "sources": 0,
+    "todo_events": 0,
+    "todo_sources": 0,
+    "todos": 0,
+    "tool_calls": 0
+  },
+  "serversConfigExists": false,
+  "serviceLogExists": false,
+  "backup": {
+    "path": "/private/tmp/sidekick-s33-authorized-f889amz_/app/workspace/backups/before-schema-4-24222-1793388991511614000.sqlite",
+    "schema": 3,
+    "quickCheck": "ok"
+  },
+  "screenshots": [
+    {
+      "path": "docs/reviews/s33-p2-native-20261031/01-workbench.jpg",
+      "bytes": 170741,
+      "sha256": "26e886a69fb811649e2aecc861259ec94b3daf08481a575950de5aefbcd535ab",
+      "pixelSize": {
+        "width": 1280,
+        "height": 1774
+      },
+      "includesTitlebar": true,
+      "unaltered": true
+    },
+    {
+      "path": "docs/reviews/s33-p2-native-20261031/02-mcp-empty.jpg",
+      "bytes": 157043,
+      "sha256": "9e25ca4b1b5176b14f3a13d2757f72d01a89ba7edede60f27225ffe2bfc4ccb8",
+      "pixelSize": {
+        "width": 1280,
+        "height": 1774
+      },
+      "includesTitlebar": true,
+      "unaltered": true
+    }
+  ],
+  "preservedPreexistingLaunchRecords": {
+    "native-reopen-02-exit.json": "adee78bc4be9a41fd676a651e0adb01a7a992470c54fcc7bb6ba1fc8bce3de0a",
+    "native-reopen-02-launch.json": "583f30a0d54c0abd39e6f528d56a670e1d06bbf545750924c329214aa72b4a89",
+    "native-reopen-03-exit.json": "79dd9c76d917a684f97215c668039530eccf57aaa3361e5b5c72447170406bf3",
+    "native-reopen-03-launch.json": "97b2a7a07784c2a2d8bf9001e81c31fad3533e202d88cdfec501580ebd5a91c7",
+    "native-reopen-04-exit.json": "4be1b7a2e6dc9728cc97b06fef129bf6972b2732018bf0873de7d09d3f457370",
+    "native-reopen-04-launch.json": "d6674704f9cb65c155aaa2742dc352b84f75555fb878c27e741aafcc47597c4a"
+  },
+  "uiStatus": {
+    "axReturned": true,
+    "screenshotReturned": true,
+    "clicksConfirmed": [
+      "个人信息与设置",
+      "工具",
+      "MCP 服务"
+    ],
+    "visibleStorageEnabled": true,
+    "visibleServerListEmpty": true,
+    "addClickExecuted": false,
+    "guiConfigurationOrDiagnosisExecuted": false
+  },
+  "failure": {
+    "action": "p2NativeLocal.getAXState({disableDiffing:true,emit:false}) before adding a service",
+    "target": "com.sidekick.s33.ui.verify / PID77211",
+    "resultReturned": false,
+    "error": "Computer Use server error -10005; ScreenCaptureKit.SCStreamErrorDomain Code=-3812; 参数无效导致失败",
+    "retry": "one getAXState({disableDiffing:true}) only",
+    "retryResult": "same -3812; no further GUI attempts"
+  },
+  "limits": [
+    "Screenshot pixels include titlebar; neither target viewport size is signed off",
+    "Startup native-info is an initial measurement, not current live geometry",
+    "No new service configuration, tools/list or tools/call in this native session",
+    "Not a GUI exit/reopen acceptance result",
+    "Historical native gaps and P2 overall remain open"
+  ]
+}

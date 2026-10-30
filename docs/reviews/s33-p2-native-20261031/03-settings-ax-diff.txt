@@ -1,0 +1,28 @@
+The following is a diff from the previous accessibility tree for Window: "跟班 Sidekick · MCP 隔离验收" with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 11, 15-41
++				53 text 设置
++				54 heading 个人信息, Value: 1
++					55 text 个人信息
++				56 text 让班班认识你，也知道怎么称呼你。
++				57 tab group (selectable) 设置分类
++					58 tab (selected) 个人信息
++					59 tab (selectable) 通用
++					60 tab (selectable) 模型服务
++					61 tab (selectable) 智能体
++					62 tab (selectable) 工具
++					63 tab (selectable) 关于
++				64 container 个人信息
++					65 heading 个人资料, Value: 2
++						66 text 个人资料
++					67 text 昵称与班班称呼独立设置。
++					68 container
++						69 text 昵称
++						70 text field (settable) 昵称, Value: 小明同学
++						71 text 班班对我的称呼
++						72 button 与昵称一致
++						73 text field (settable) 班班对我的称呼, Value: BOSS
++						74 text 默认 BOSS，保存后生效。 保存后，班班会这样招呼你： BOSS，随时交给我。
++				75 text 没有未保存的修改
++				76 button (disabled) 放弃修改
++				77 button (disabled) 保存个人信息
+The focused UI element is 2 HTML content Description: 跟班 Sidekick, URL: tauri://localhost

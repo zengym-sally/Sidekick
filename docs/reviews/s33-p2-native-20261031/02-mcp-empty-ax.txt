@@ -1,0 +1,56 @@
+Window: "跟班 Sidekick · MCP 隔离验收", App: Sidekick MCP Verify.
+0 standard window 跟班 Sidekick · MCP 隔离验收, Secondary Actions: Raise
+	1 scroll area
+		2 HTML content Description: 跟班 Sidekick, URL: tauri://localhost
+			3 container 主导航
+				4 button 跟班 Sidekick，打开今日工作台
+				5 container
+					6 button 今日, Help: 今日工作台
+					7 button 确认, Help: 待确认
+					8 button 事项 0, Help: 全部事项
+				9 button 个人信息与设置，小明同学, Help: 个人信息与设置
+			10 container
+				11 text 设置
+				12 button 刷新清单
+				13 button 快速录入
+			14 container
+				15 heading 工具, Value: 1
+					16 text 工具
+				17 text 管理完整技能与本机 MCP 服务配置。
+				18 tab group (selectable) 设置分类
+					19 tab (selectable) 个人信息
+					20 tab (selectable) 通用
+					21 tab (selectable) 模型服务
+					22 tab (selectable) 智能体
+					23 tab (selected) 工具
+					24 tab (selectable) 关于
+				25 container 工具
+					26 tab group (selectable) 工具分类
+						27 tab (selectable) Skills
+						28 tab (selected) MCP 服务, Value: on
+					29 container MCP 服务
+						30 container 诊断存储
+							31 heading 诊断存储, Value: 3
+								32 text 诊断存储
+							33 text 诊断存储已开启。可以保存诊断记录，不会自动连接服务。
+							34 text 当前工作目录：/private/tmp/sidekick-s33-authorized-f889amz_/app/workspace
+							35 button 重新核对存储状态
+						36 container MCP 服务列表
+							37 button 新增 MCP 服务
+						38 container MCP 服务配置
+							39 heading 添加本机工具服务, Value: 2
+								40 text 添加本机工具服务
+							41 text 填写一项 stdio 服务的启动方式。保存配置后可手动诊断，查看本次发现的工具；不会自动调用工具。
+	42 close button
+	43 full screen button Help: this button also has an action to zoom the window, Secondary Actions: zoom the window
+	44 minimize button
+	45 text 跟班 Sidekick · MCP 隔离验收
+46 menu bar
+	47 Sidekick MCP Verify
+	48 File
+	49 Edit
+	50 View
+	51 Window
+	52 Help
+
+The focused UI element is 28 tab (selected) MCP 服务, Value: on

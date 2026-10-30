@@ -1,0 +1,40 @@
+{
+  "scope": "This run evidence and precise native-control blocker; not P2 feature acceptance",
+  "reviewedReportSha256": "576805fa4c69ba03f9119981dceed4640d9ee89ba18413380143481a543ef1ef",
+  "reviewedBeforeEvidenceNote": true,
+  "A": {
+    "reviewer": "p2_native_local_evidence",
+    "verdict": "APPROVE",
+    "findings": [],
+    "verified": [
+      "22 raw transcript entries against source rollout",
+      "4 AX texts",
+      "2 original JPEG dimensions/hashes",
+      "isolated v4 and v3 backup",
+      "nine empty tables and absent configuration/service log",
+      "exact cleanup and retained prior records",
+      "source diff"
+    ]
+  },
+  "B": {
+    "reviewer": "p2_native_local_safety",
+    "verdict": "APPROVE",
+    "findings": [],
+    "verified": [
+      "authorized scope and stop after capture failures",
+      "private nonce excluded from all candidates",
+      "canonical isolated root identity",
+      "exact instance cleanup, not GUI quit",
+      "no P3/P4 or production credential activation",
+      "historical evidence boundaries"
+    ]
+  },
+  "notRerun": [
+    "GUI by reviewers",
+    "services",
+    "Keychain",
+    "full check",
+    "build"
+  ],
+  "p2Complete": false
+}

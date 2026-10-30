@@ -1,0 +1,52 @@
+The following is a diff from the previous accessibility tree for Window: "跟班 Sidekick · MCP 隔离验收" with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 55-56, 64-77
+~				54 heading 工具, Value: 1
++					64 text 工具
++				65 text 管理完整技能与本机 MCP 服务配置。
+~					58 tab (selectable) 个人信息
+~					62 tab (selected) 工具, Value: on
++				66 container 工具
++					67 tab group (selectable) 工具分类
++						68 tab (selected) Skills
++						69 tab (selectable) MCP 服务
++					70 container Skills
++						71 heading Skills, Value: 2
++							72 text Skills
++						73 text 放入完整技能目录后重新扫描，新任务才会采用。
++						74 button 重新扫描
++						75 text 技能目录
++						76 text field 技能目录, Value: /private/tmp/sidekick-s33-authorized-f889amz_/app/workspace/skills, Placeholder: 正在读取工作目录
++						77 button 打开技能目录
++						78 text 可用 18 / 18 · 上次扫描 10/30 20:16
++						79 container 技能包
++							80 toggle button lark-apps 内置, Value: on
++							81 toggle button lark-base 内置, Value: off
++							82 toggle button lark-calendar 内置, Value: off
++							83 toggle button lark-contact 内置, Value: off
++							84 toggle button lark-doc 内置, Value: off
++							85 toggle button lark-drive 内置, Value: off
++							86 toggle button lark-event 内置, Value: off
++							87 toggle button lark-im 内置, Value: off
++							88 toggle button lark-markdown 内置, Value: off
++							89 toggle button lark-meeting 内置, Value: off
++							90 toggle button lark-okr 内置, Value: off
++							91 toggle button lark-openapi-explorer 内置, Value: off
++							92 toggle button lark-shared 内置, Value: off
++							93 toggle button lark-sheets 内置, Value: off
++							94 toggle button lark-skill-maker 内置, Value: off
++							95 toggle button lark-task 内置, Value: off
++							96 toggle button lark-whiteboard 内置, Value: off
++							97 toggle button lark-wiki 内置, Value: off
++						98 container 技能详情
++							99 container
++								100 heading lark-apps, Value: 3
++									101 text lark-apps
++								102 text lark-apps
++								103 button 恢复内置版本
++							104 text 妙搭（Spark/Miaoda）应用开发与托管：应用创建、本地全栈开发、云端生成迭代、创意设计（UI mockup / 可交互原型 / 线框图 / 落地页 / 仪表盘 / 幻灯片 deck / 视觉探索）、AI相关能力和飞书平台能力或者其他外部能力集成、日志/Trace/监控指标/PV/UV 查询、环境变量管理、应用协作者与协作权限设置、应用角色与成员管理、自动化触发器（定时/记录变更/Webhook/飞书审批）。当用户要开发/新建一个系统·工具·平台·应用，或要本地开发 / 云端开发 / 修改 / 部署 / 发布 / 上线 / 拿可分享链接，或用 HTML 做页面·网站·部署到妙搭，或要设计 / design / mockup / prototype / wireframe / 做 PPT / deck / 视觉探索，或提到妙搭/Spark/Miaoda 应用（链接形如 `/app/app_xxx` 或 `/page/<token>`，运行时域名形如 *.aiforce.cloud）、应用数据库、应用文件存储、开放 API Key、可见范围、应用协作者/开发权限、应用角色/角色成员、线上日志、接口请求量、错
++							105 text 56 个文件 · 589.6 KB
++							106 text 已纳入索引，班班会按需读取正文和支持文件。
++							107 summary 内置文件清单（56）, Value: off
++								108 text 内置文件清单（56）
++						109 text 任务使用启动时的技能副本。Read／Bash 使用当前用户权限，工作目录并非沙箱。
+The focused UI element is 62 tab (selected) 工具, Value: on

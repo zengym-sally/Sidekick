@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-30T20:20:11.011031+00:00",
+  "pid": 77211,
+  "identityChecks": [
+    "exact executable",
+    "same app directory",
+    "same private nonce",
+    "controlled-upgrade-no-credentials"
+  ],
+  "action": "SIGTERM to this process only",
+  "reason": "native AX refresh failed twice with ScreenCaptureKit -3812; stop isolated test instance",
+  "guiQuit": false,
+  "noncePublished": false
+}

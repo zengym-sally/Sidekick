@@ -1,0 +1,20 @@
+{
+  "credentials": "disabled; model files forbidden; no tools/call",
+  "identifier": "com.sidekick.s33.ui.verify",
+  "layer": "real native verification package; production invoke and MCP host",
+  "node": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node",
+  "physicalInnerSize": {
+    "height": 1774,
+    "width": 2880
+  },
+  "pid": 77211,
+  "requestedLogicalSize": {
+    "height": 900,
+    "width": 640
+  },
+  "scale": 2.0,
+  "schemaVersion": 4,
+  "service": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs",
+  "serviceLog": "/private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl",
+  "workspace": "/private/tmp/sidekick-s33-authorized-f889amz_/app/workspace"
+}
