@@ -1,0 +1,56 @@
+Window: "跟班 Sidekick · MCP 隔离验收", App: Sidekick MCP Verify.
+0 standard window 跟班 Sidekick · MCP 隔离验收, Secondary Actions: Raise
+	1 scroll area
+		2 HTML content Description: 跟班 Sidekick, URL: tauri://localhost
+			3 container 主导航
+				4 button 跟班 Sidekick，打开今日工作台
+				5 container
+					6 button 今日工作台
+					7 button 待确认
+					8 button 全部事项 0, Help: 全部事项
+				9 button 个人信息与设置，小明同学, Help: 个人信息与设置
+			10 container
+				11 text 今日工作台
+				12 button 刷新清单
+				13 button 快速录入 ⌘ K
+			14 container
+				15 heading 今天，先盯住这些事。, Value: 1
+					16 text 今天，先盯住这些事。
+				17 text 10月30日 星期五 · 执行的事和跟进的事，分别记清楚。
+				18 heading 待我处理, Value: 2
+					19 text 待我处理
+				20 text 0 项 今天还没有需要到点处理的事项。
+				21 heading 待我跟进, Value: 2
+					22 text 待我跟进
+				23 text 0 项 今天没有安排跟进；有新事就先记下来。
+				24 button 记录第一条
+				25 text 自己要做的，或需要盯着别人交付的，都可以。
+				26 button 或者，整理一段原文
+				27 container 班班简报
+					28 heading 班班简报, Value: 2
+						29 text 班班简报
+					30 heading BOSS，随时交给我。, Value: 3
+						31 text BOSS，随时交给我。
+					32 text 先从一件小事开始，把靠记忆盯着的工作留下来。
+					33 container 班班
+						34 container 班班，穿马甲的圆豆
+					35 text 待我处理
+					36 text 0
+					37 text 待我跟进
+					38 text 0
+					39 text 交付已逾期
+					40 text 0
+					41 text 依据已保存的本地事项统计。截止与下次跟进时间分别保留。
+	42 close button
+	43 full screen button Help: this button also has an action to zoom the window, Secondary Actions: zoom the window
+	44 minimize button
+	45 text 跟班 Sidekick · MCP 隔离验收
+46 menu bar
+	47 Sidekick MCP Verify
+	48 File
+	49 Edit
+	50 View
+	51 Window
+	52 Help
+
+The focused UI element is 2 HTML content Description: 跟班 Sidekick, URL: tauri://localhost

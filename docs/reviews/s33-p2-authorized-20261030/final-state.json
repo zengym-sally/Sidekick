@@ -1,0 +1,29 @@
+{
+  "utc": "2026-10-30T19:02:23.256445+00:00",
+  "head": "2d30009897b0867f1e461347f33223f6eaed4ef6",
+  "psExit": 0,
+  "matchingVerificationProcesses": [],
+  "profilePort1475": {
+    "exitCode": 1,
+    "listening": false,
+    "stderr": ""
+  },
+  "oldCheckpointTemporaryRoots": {
+    "referenced": 53,
+    "stillExist": 53,
+    "deletedByThisTask": 0
+  },
+  "thisFullCheckTemporaryRoots": {
+    "referenced": 53,
+    "stillExist": 53,
+    "cleanup": "test implementation leaves disk roots; no removal performed"
+  },
+  "nativeSessionRetained": "/tmp/sidekick-s33-authorized-f889amz_/session.json",
+  "gitStatus": "?? docs/reviews/s33-p2-authorized-20261030/\n",
+  "notes": [
+    "no browser tab or dev server started",
+    "both owned exec sessions completed",
+    "generated build/dist/node_modules/target retained",
+    "original native PID absent; second exact-identity SIGTERM exit -15; no native service started"
+  ]
+}

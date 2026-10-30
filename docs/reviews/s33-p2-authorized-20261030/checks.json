@@ -1,0 +1,14 @@
+[
+  {
+    "label": "01-full-check",
+    "command": [
+      "npm",
+      "run",
+      "check"
+    ],
+    "startedUtc": "2026-10-30T18:53:54.436034+00:00",
+    "finishedUtc": "2026-10-30T18:57:07.603713+00:00",
+    "exitCode": 0,
+    "log": "docs/reviews/s33-p2-authorized-20261030/raw/01-full-check.log"
+  }
+]

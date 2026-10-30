@@ -1,0 +1,10 @@
+{
+  "utc": "2026-10-30T19:00:34.055932+00:00",
+  "pid": 54341,
+  "identityVerified": true,
+  "commandExecutable": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/MacOS/sidekick",
+  "app": "/tmp/sidekick-s33-authorized-f889amz_/app",
+  "nonceMatched": true,
+  "signal": "SIGTERM",
+  "reason": "native capture returned ScreenCaptureKit -3811; own isolated process only"
+}

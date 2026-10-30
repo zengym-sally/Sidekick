@@ -1,0 +1,20 @@
+{
+  "utc": "2026-10-30T18:59:47.365897+00:00",
+  "pid": 54341,
+  "sessionFile": "/tmp/sidekick-s33-authorized-f889amz_/session.json",
+  "app": "/tmp/sidekick-s33-authorized-f889amz_/app",
+  "bundle": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app",
+  "log": "/tmp/sidekick-s33-authorized-f889amz_/native-reopen-01.log",
+  "scope": "controlled-upgrade-no-credentials",
+  "requestedLogicalSize": {
+    "width": 1440,
+    "height": 1000
+  },
+  "reopen": true,
+  "environmentKeys": [
+    "PATH",
+    "TMPDIR"
+  ],
+  "exitCode": -15,
+  "finishedUtc": "2026-10-30T19:00:34.058822+00:00"
+}

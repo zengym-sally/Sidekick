@@ -1,0 +1,8 @@
+{
+  "head": "2d30009897b0867f1e461347f33223f6eaed4ef6",
+  "checkedFiles": 213,
+  "mismatch": [],
+  "snapshotUtc": "2026-10-30T18:54:19.997178+00:00",
+  "fullCheckStartedUtc": "2026-10-30T18:53:54.436034+00:00",
+  "note": "snapshot was captured during the run; every recorded byte also matches committed HEAD; initial worktree was clean and current product/test/script/dependency/brand bytes unchanged"
+}

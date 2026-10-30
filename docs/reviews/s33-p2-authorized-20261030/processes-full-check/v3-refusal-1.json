@@ -1,0 +1,6 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-wcIADr/isolated",
+  "kind": "real isolated v3 store and production entry",
+  "serviceStarts": 0
+}

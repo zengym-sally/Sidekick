@@ -1,0 +1,24 @@
+{
+  "layer": "P2 discovery snapshots only; legacy full-check calls are separate",
+  "snapshots": 58,
+  "isolatedApps": 53,
+  "rawSnapshotMethods": {
+    "initialize": 44,
+    "notifications/initialized": 42,
+    "tools/list": 178
+  },
+  "deduplicatedMethods": {
+    "initialize": 43,
+    "notifications/initialized": 41,
+    "tools/list": 177
+  },
+  "toolsCall": 0,
+  "containedSnapshots": [
+    {
+      "snapshot": "gate-1.json",
+      "containedIn": "gate-2.json",
+      "records": 6
+    }
+  ],
+  "policy": "group by isolatedApp; validate cumulative prefixes; count the longest once; retain multiplicity within each log"
+}

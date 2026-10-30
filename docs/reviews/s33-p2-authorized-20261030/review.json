@@ -1,0 +1,59 @@
+{
+  "kind": "independent final evidence delivery review; not native or overall P2 acceptance",
+  "workflow": "sop-spec-delivery / sop-engineering orchestration, R3 dual faces",
+  "reviewedEvidenceManifestSha256": "2fa0a1f58096e38d0ea0b9312ef0f7bce9db05ae59476f2adc234b114a915546",
+  "reviewedFiles": 83,
+  "reviewedGeneratedArtifacts": 6,
+  "independence": "fresh contexts, fork_turns none, no cross-face communication or expected verdict; read only",
+  "A": {
+    "agent": "p2_authorized_evidence_a",
+    "verdict": "APPROVE",
+    "findings": [],
+    "verified": [
+      "83 manifest files and 6 generated artifacts",
+      "213 source inputs against HEAD/current",
+      "complete npm command chain/exit0/125 passed/2 ignored/0 filtered",
+      "synthetic OS Keychain test sequence",
+      "legacy calls/P1 23 calls versus P2 zero call snapshots",
+      "58 snapshots longest-prefix dedup 43/41/177",
+      "native initial JPEG/AX/info geometry and partial SQLite",
+      "crash PID difference with no causal attribution",
+      "plan append only, old 53 roots retained, original PIDs absent"
+    ],
+    "additionalObservation": "all retained 53 raw service logs contain 44 initialize/42 initialized/178 list; the exported cancel-unconfirmed snapshot omits records. Snapshot count is correctly qualified and not a total for all retained logs.",
+    "supplement": {
+      "path": "docs/reviews/s33-p2-authorized-20261030/raw/native-cua-transcript.txt",
+      "sha256": "1195810e507a9627963266e85f64812ac15423228aa5167ac0be5cbbab2b6488",
+      "scope": "separately verified existing CUA return excerpt; manual transcription, no absolute timestamps; not in original 83-file manifest"
+    },
+    "limits": [
+      "no test/service/App rerun",
+      "whole-process scan sandbox rejected; precise original PID absence checked; no independent repeat of 1475 check",
+      "native complete journey/target sizes remain unverified",
+      "original first-process exit cause unknown"
+    ]
+  },
+  "B": {
+    "agent": "p2_authorized_evidence_b",
+    "verdict": "APPROVE",
+    "findings": [],
+    "verified": [
+      "83 manifest files and 6 generated artifacts",
+      "213 inputs versus HEAD/current",
+      "explicit bounded authorization and full-check output",
+      "production adapter enabled=false and no ordinary-root upgrade",
+      "P2 snapshot counting and cleanup/exit chronology",
+      "private native session permissions/nonce, isolated SQLite state",
+      "old and new 53 roots retained",
+      "standard-library-only evidence scripts; existing generated dependency workflow"
+    ],
+    "limits": [
+      "read-only file/hash/SQLite checks only",
+      "no test/service/App/Keychain/process actions",
+      "native capture remains technical failure and historical gaps remain open",
+      "additional CUA transcript was added after this face completed and is not attributed to its review"
+    ]
+  },
+  "disposition": "no findings to close; approvals cover accurate partial evidence delivery, not completion of blocked native acceptance",
+  "recordedUtc": "2026-10-30T19:10:32.969868+00:00"
+}

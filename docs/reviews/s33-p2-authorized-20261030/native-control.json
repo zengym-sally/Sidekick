@@ -1,0 +1,73 @@
+{
+  "observedAtUtc": "2026-10-30T19:01:20.444250+00:00",
+  "actions": [
+    {
+      "action": "cua.getApp('com.sidekick.s33.ui.verify')",
+      "result": "success; initial AX chrome only"
+    },
+    {
+      "action": "getAXStateAndScreenshot({disableDiffing:true})",
+      "result": "success; workbench AX and real native screenshot",
+      "files": [
+        "native-initial-ax.txt",
+        "screenshots/initial.jpg"
+      ]
+    },
+    {
+      "action": "click personal settings; getAXState",
+      "result": "success; settings panel with personal/general/model/agents/tools/about tabs"
+    },
+    {
+      "action": "click tools tab",
+      "result": "not executed; Computer Use is not active for target App; get_app_state required"
+    },
+    {
+      "action": "getAXState({disableDiffing:true})",
+      "result": "Computer Use server error -10005: timeoutReached"
+    },
+    {
+      "action": "read-only exact PID/process identity",
+      "result": "first PID 80489 absent; no matching verification process; original exit code/cause unrecorded"
+    },
+    {
+      "action": "reopen same isolated root and nonce with held launcher, then getApp",
+      "result": "Computer Use server error -10005: Error Domain=com.apple.ScreenCaptureKit.SCStreamErrorDomain Code=-3811; audio/video capture failed; could not start stream"
+    }
+  ],
+  "separateCrashReport": {
+    "file": "native-crash-summary.json",
+    "pid": 24925,
+    "relationship": "different from both explicitly launched PIDs 80489 and 54341; no causal attribution to the first process exit or product path",
+    "sourceFile": "~/Library/Logs/DiagnosticReports/sidekick-2026-10-31-025806.ips"
+  },
+  "blockedAction": "native AX/screenshot/keyboard-mouse workflow after settings entry",
+  "blockStatus": "technical failure returned; not approval pending or denial; no retry after last capture failure",
+  "completedNativeScope": [
+    "isolated startup",
+    "native workbench screenshot/AX",
+    "personal settings entry"
+  ],
+  "notCompleted": [
+    "tools tab",
+    "upgrade confirmation",
+    "configuration save",
+    "diagnosis/catalog",
+    "failure/cancel",
+    "GUI quit/reopen persistence",
+    "1440x1000 and 640x900 measured target sizes"
+  ],
+  "geometry": {
+    "requested": [
+      1440,
+      1000
+    ],
+    "initialMeasuredLogicalInner": [
+      1440,
+      887
+    ],
+    "scale": 2,
+    "note": "startup measurement; no stable target-size acceptance"
+  },
+  "systemPermissions": "no OS permission prompt observed or accepted; cause not inferred from error code",
+  "cleanup": "exact identity checked SIGTERM for second PID; first absent; no service ever started"
+}

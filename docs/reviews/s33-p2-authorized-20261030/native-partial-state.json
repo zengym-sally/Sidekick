@@ -1,0 +1,19 @@
+{
+  "utc": "2026-10-30T19:00:34.063669+00:00",
+  "schemaVersion": 3,
+  "quickCheck": "ok",
+  "rowCounts": {
+    "agent_runs": 0,
+    "sources": 0,
+    "candidates": 0,
+    "todos": 0,
+    "todo_events": 0
+  },
+  "serviceLogExists": false,
+  "configurationExists": false,
+  "backups": [],
+  "testLayer": "read-only isolated DB/file observation; no native P2 action performed",
+  "configurationPath": "workspace/mcp/servers.json",
+  "toolCallsTablePresent": false,
+  "toolCallsTableNote": "v3 has no tool_calls table; no MCP service log exists and no probe or business rows were created"
+}

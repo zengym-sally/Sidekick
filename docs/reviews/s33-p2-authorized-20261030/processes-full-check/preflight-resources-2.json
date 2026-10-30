@@ -1,0 +1,30 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-bThcPv/isolated",
+  "kind": "actual Rust host preparation rejection with prior real process positive control",
+  "expectedCode": "MCP_DEPENDENCY_MISSING",
+  "controlRunId": "mcp-probe-52134-1793386514358539000",
+  "failed": {
+    "agentId": null,
+    "createdAtMs": 1793386514933,
+    "errorCode": "MCP_DEPENDENCY_MISSING",
+    "finishedAtMs": 1793386514939,
+    "id": "mcp-probe-52803-1793386514933323000",
+    "input": {
+      "serverId": "mcp-3fa4eee1e32f7db67e498750"
+    },
+    "purpose": "mcp_probe",
+    "result": null,
+    "snapshot": {
+      "configurationRevision": "rev-0c6613dcfebce4173e110054167a04a66bbe19800504ff3b8c6d0fd42943d867",
+      "connectTimeoutMs": 5000,
+      "serverId": "mcp-3fa4eee1e32f7db67e498750"
+    },
+    "status": "failed"
+  },
+  "priorCatalogPreserved": true,
+  "records": [],
+  "serviceStartsAfterRejection": 0,
+  "auditUnchanged": true,
+  "coldReopen": true
+}

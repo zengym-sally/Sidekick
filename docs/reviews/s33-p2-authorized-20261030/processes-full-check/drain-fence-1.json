@@ -1,0 +1,100 @@
+{
+  "source": "actual controlled run; synthetic values only",
+  "isolatedApp": "/tmp/sidekick-s33-discovery-Ha9kwd/isolated",
+  "records": [
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793386505341,
+      "pid": 42563,
+      "ppid": 42473,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "initialize",
+      "at": 1793386505344,
+      "pid": 42563,
+      "ppid": 42473,
+      "role": "service"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793386505376,
+      "pid": 42603,
+      "ppid": 42563,
+      "role": "child"
+    },
+    {
+      "event": "started",
+      "envKeys": [
+        "PATH",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "auditFdInherited": false,
+      "at": 1793386505410,
+      "pid": 42641,
+      "ppid": 42603,
+      "role": "grandchild"
+    },
+    {
+      "event": "request",
+      "method": "notifications/initialized",
+      "at": 1793386505425,
+      "pid": 42563,
+      "ppid": 42473,
+      "role": "service"
+    },
+    {
+      "event": "request",
+      "method": "tools/list",
+      "at": 1793386505425,
+      "pid": 42563,
+      "ppid": 42473,
+      "role": "service"
+    },
+    {
+      "event": "tail-written",
+      "at": 1793386505448,
+      "pid": 42563,
+      "ppid": 42473,
+      "role": "service"
+    }
+  ],
+  "audits": [
+    {
+      "at": 1793386510340,
+      "actor": "cleaner",
+      "group": 42473,
+      "proofPid": 42508,
+      "run": "mcp-probe-42363-1793386505179946000",
+      "nonce": "7aa1e996-ebb4-4d01-9a2b-64c5b196c1e7",
+      "signal": "SIGSTOP",
+      "matched": true
+    },
+    {
+      "at": 1793386510349,
+      "actor": "cleaner",
+      "group": 42473,
+      "proofPid": 42508,
+      "run": "mcp-probe-42363-1793386505179946000",
+      "nonce": "7aa1e996-ebb4-4d01-9a2b-64c5b196c1e7",
+      "signal": "SIGKILL",
+      "matched": true
+    }
+  ],
+  "groupsGone": [
+    42473
+  ],
+  "proofAt": 1793386510543
+}

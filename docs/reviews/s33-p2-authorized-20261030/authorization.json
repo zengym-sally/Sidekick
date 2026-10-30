@@ -1,0 +1,38 @@
+{
+  "sourceThread": "01a1848b-6a6b-7231-b36c-2ad491133039",
+  "userReply": "both agreed (explicit response to permits 1 and 2)",
+  "permit1": {
+    "fullCheck": true,
+    "syntheticKeychain": {
+      "service": "com.sidekick.s0.fixture.<SystemTime nanos>",
+      "account": "synthetic-probe",
+      "value": "s0-synthetic-value",
+      "operations": [
+        "missing read",
+        "write",
+        "readback",
+        "delete own entry",
+        "missing read"
+      ]
+    },
+    "legacyControlledMcpCalls": true,
+    "lifecycleSignals": true,
+    "ignoredModelTestsRemainIgnored": true
+  },
+  "permit2": {
+    "app": "com.sidekick.s33.ui.verify",
+    "controlledNoCredentialsOnly": true,
+    "AXScreenshotKeyboardMouse": true,
+    "osPermissionPrompts": "user only"
+  },
+  "excluded": [
+    "production MCP credential activation",
+    "real credentials",
+    "real ordinary workspace migration",
+    "push",
+    "new production dependencies",
+    "external write",
+    "delete previous 53 temporary roots"
+  ],
+  "mode": "sole workspace writer; serial execution; append evidence to existing approved plan"
+}
