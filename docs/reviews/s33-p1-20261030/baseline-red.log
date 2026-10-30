@@ -1,0 +1,83 @@
+npm notice run sidekick@0.3.0 test:s33-lifecycle
+npm notice run npm run probe:bundle && node scripts/probes/prepare-s33-lifecycle.mjs && node --test --test-timeout=20000 tests/s33-lifecycle.test.mjs
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 176ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 95ms
+
+  build/s0-runtime/skills-manager.mjs  346.8kb
+
+⚡ Done in 15ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+✔ MCP lifecycle: normal (2704.378ms)
+ℹ {"scenario":"normal","discovered":3,"calls":2,"ownedProcessesExited":6,"unrelatedAlive":true,"cleanupMs":2528}
+✖ MCP lifecycle: cancel (2732.789958ms)
+✔ MCP lifecycle: timeout (3201.975167ms)
+ℹ {"scenario":"timeout","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"cleanupMs":2999}
+✔ MCP lifecycle: kill-host (2695.680708ms)
+ℹ {"scenario":"kill-host","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"cleanupMs":2516}
+✖ MCP lifecycle: kill-runtime (5185.843583ms)
+✖ MCP lifecycle: kill-guardian (5216.942042ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 3
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 21787.717208
+
+✖ failing tests:
+
+test at tests/s33-lifecycle.test.mjs:20:3
+✖ MCP lifecycle: cancel (2732.789958ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(frames.some(x => x.type === 'stopped' && x.category === (scenario === 'cancel' ? 'McpAbortError' : 'McpTimeoutError')))
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-lifecycle.test.mjs:58:14)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/s33-lifecycle.test.mjs:20:3
+✖ MCP lifecycle: kill-runtime (5185.843583ms)
+  AssertionError [ERR_ASSERTION]: owned processes survived: 51309,51349,51388,51309,51264,51218
+      at until (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-lifecycle.test.mjs:15:10)
+      at async TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-lifecycle.test.mjs:52:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'fail',
+    diff: 'simple'
+  }
+
+test at tests/s33-lifecycle.test.mjs:20:3
+✖ MCP lifecycle: kill-guardian (5216.942042ms)
+  AssertionError [ERR_ASSERTION]: owned processes survived: 57660,57699,57737,57660,57616,57572
+      at until (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-lifecycle.test.mjs:15:10)
+      at async TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-lifecycle.test.mjs:52:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'fail',
+    diff: 'simple'
+  }

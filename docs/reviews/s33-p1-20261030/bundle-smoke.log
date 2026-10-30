@@ -1,0 +1,3 @@
+npm notice run sidekick@0.3.0 probe:bundle-smoke
+npm notice run node tests/probes/bundle-smoke.mjs
+{"status":"passed","node":"v24.20.0","arch":"arm64","agentAvailable":true,"skillCount":1,"read":true,"bash":true,"bashFindsBundledCli":true,"mcpStdio":true,"mcpStreamableHttp":true,"mcpAgentToolRoundtrip":true,"externalModel":false,"businessWrites":0}

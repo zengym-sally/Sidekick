@@ -1,0 +1,75 @@
+npm notice run sidekick@0.3.0 test:s33-lifecycle
+npm notice run npm run probe:bundle && node scripts/probes/prepare-s33-lifecycle.mjs && node --test --test-timeout=20000 tests/s33-lifecycle.test.mjs
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 110ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 88ms
+
+  build/s0-runtime/skills-manager.mjs  346.8kb
+
+⚡ Done in 10ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+✔ MCP lifecycle: normal (256.818417ms)
+ℹ {"scenario":"normal","discovered":3,"calls":2,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":42}
+✔ MCP lifecycle: cancel (256.930625ms)
+ℹ {"scenario":"cancel","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":42}
+✔ MCP lifecycle: timeout (746.483667ms)
+ℹ {"scenario":"timeout","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":536}
+✔ MCP lifecycle: kill-host (278.50225ms)
+ℹ {"scenario":"kill-host","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":43}
+✔ MCP lifecycle: kill-runtime (234.827041ms)
+ℹ {"scenario":"kill-runtime","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":21}
+✔ MCP lifecycle: kill-guardian (233.185ms)
+ℹ {"scenario":"kill-guardian","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":21}
+✔ MCP lifecycle: kill-server (237.367166ms)
+ℹ {"scenario":"kill-server","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":22}
+✔ MCP lifecycle: guardian-timeout (1070.985292ms)
+ℹ {"scenario":"guardian-timeout","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":831}
+✖ MCP startup lifecycle: no-owner-ack (4108.013292ms)
+✖ MCP startup lifecycle: initialization-wait (1743.752875ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 8
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9210.845625
+
+✖ failing tests:
+
+test at tests/s33-lifecycle.test.mjs:74:3
+✖ MCP startup lifecycle: no-owner-ack (4108.013292ms)
+  AssertionError [ERR_ASSERTION]: startup did not stop within its bound
+      at until (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-lifecycle.test.mjs:15:10)
+      at async TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-lifecycle.test.mjs:94:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'fail',
+    diff: 'simple'
+  }
+
+test at tests/s33-lifecycle.test.mjs:74:3
+✖ MCP startup lifecycle: initialization-wait (1743.752875ms)
+  AssertionError [ERR_ASSERTION]: startup did not stop within its bound
+      at until (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-lifecycle.test.mjs:15:10)
+      at async TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-lifecycle.test.mjs:94:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'fail',
+    diff: 'simple'
+  }

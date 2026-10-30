@@ -1,0 +1,106 @@
+{
+  "scope": "S3.3 P1 stdio lifecycle only",
+  "baseCommit": "bfeb95f79bfacd12bc73a70f399846987935e30a",
+  "pi": {
+    "repository": "https://github.com/earendil-works/pi.git",
+    "commit": "ad702637fdf6fbd3f965c5dba0b14bae100b74eb",
+    "tree": "e89822b0d7a2baf5cc518d3baf568e8dceb73c68",
+    "archiveUrl": "https://codeload.github.com/earendil-works/pi/tar.gz/ad702637fdf6fbd3f965c5dba0b14bae100b74eb",
+    "sha256": "80748d01c12e1c7652a6ea19d386e52cd24fa655de1a746a9b6dde67b43d19f7",
+    "nodeSha256": "9d050fd455b56426e25d4d603c7c501cbb2630348e836cf221dcce748e90588a",
+    "runtime": {
+      "node": "v24.20.0",
+      "arch": "arm64"
+    },
+    "productionWiring": false
+  },
+  "checks": [
+    {
+      "command": "npm run test:s33-lifecycle",
+      "exitCode": 0,
+      "passed": 12,
+      "realProcessCases": 10,
+      "safeStubCases": 2
+    },
+    {
+      "command": "npm run probe:runtime",
+      "exitCode": 0,
+      "passed": 9
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run probe:bundle-smoke",
+      "exitCode": 0
+    }
+  ],
+  "sources": {
+    "package.json": "a4079b7c4389bd9e5704f941e6a3452462c9554b11c6ab2f29d5a61d52e6deb6",
+    "scripts/probes/prepare-s33-lifecycle.mjs": "b02d90223227eb4e5a8ffd8c5a808d42401d4195f6774157ecec36e87cb5b91c",
+    "tests/s33-lifecycle.test.mjs": "ec1620d590d17150aecbf67e7380d57545a3dfa5e400d44b3fb8604a7a6ea688",
+    "tests/probes/s33/guardian.mjs": "55835c0a9f2ac5ab26b567ce01db600946d04282a73a06b67a1ec3a0e91b7a7e",
+    "tests/probes/s33/ownership.test.mjs": "e4fd54db9f94abfac28d661cb771253dc5541c59933a31a6d937d0c5434fa923",
+    "tests/probes/s33/process.mjs": "3b22eeadb8dd39120f2f2e2370fc32223b6ad9728b3fdda7fdb8b28aed26fa69",
+    "tests/probes/s33/service.mjs": "e883dbbb1b39f25afb7964da4d09d3bfaa5fc2e8fc5755966c79816f9589b8fa",
+    "tests/probes/s33/transport-stub.mjs": "56ea0d4e0d91b69d052a2c9b44308163c226d214c76993fa77f721bdc0d841ba",
+    "tests/probes/s33/transport.mjs": "9e775d43f21d3027c17d15bc78253e09ae95bedaef9d4a6d6e9d8bbda6ed0cf6"
+  },
+  "outputs": {
+    "build/s33-lifecycle/process.mjs": "c342b68350da15ca603e9a1e69e78a24d8ab1d9d23be8414de48060046f26b91",
+    "build/s33-lifecycle/guardian.mjs": "55835c0a9f2ac5ab26b567ce01db600946d04282a73a06b67a1ec3a0e91b7a7e",
+    "build/s33-lifecycle/service.mjs": "e883dbbb1b39f25afb7964da4d09d3bfaa5fc2e8fc5755966c79816f9589b8fa",
+    "build/s33-lifecycle/ownership.test.mjs": "58a3fb868580e3b625569f00db360394df7307ea2cf4d09253194b9dd171153e"
+  },
+  "logs": {
+    "baseline-red.log": {
+      "sha256": "1c55a9ea2997c22ff27a3c85b1e7823a874928947d9364490ff1f4a9faa5f3ee",
+      "bytes": 3451
+    },
+    "startup-red.log": {
+      "sha256": "428dec8618106055811235f98265448dbc4205f99d4af64c150e735a101056f8",
+      "bytes": 3579
+    },
+    "ownership-red.log": {
+      "sha256": "3f9b1fae97c00b969e7632a3dbe2c88b45df48fd2bf147e374969cd234958c0e",
+      "bytes": 5360
+    },
+    "lifecycle.log": {
+      "sha256": "61bda50f4b47254d8bff467cdbda24df611a3507266ad702b6f5a517480ffd2f",
+      "bytes": 2456
+    },
+    "neighbor.log": {
+      "sha256": "a774188e6e6b66cbff0ebec55db8e1d4e752a423f07bdb1ad5188f2fc58cccf0",
+      "bytes": 1106
+    },
+    "types.log": {
+      "sha256": "efc5b3a47a0d3023241a6990e4253676d9a17ce360e4d9632131e4b22aaea9c0",
+      "bytes": 72
+    },
+    "bundle-smoke.log": {
+      "sha256": "6321e6ca1e432aa263b43b9920bfbed58cc32b08558f231a4305093815f4f5d5",
+      "bytes": 351
+    }
+  },
+  "reviews": {
+    "A": "APPROVE round 2",
+    "B": "APPROVE round 2",
+    "closedMinors": 3
+  },
+  "notPerformed": [
+    "Rust production integration",
+    "MCP settings and credentials",
+    "SQLite migration and durable tool_calls",
+    "S3.3 production AgentTool integration or real-model MCP call",
+    "native GUI acceptance",
+    "historical native retests",
+    "git commit or push"
+  ],
+  "limits": [
+    "Controlled local stdio service and ordinary descendants",
+    "Node host fixture; not production Rust host",
+    "No claim of cleanup for deliberately detached malicious processes",
+    "Safe stubs are separate from real process evidence"
+  ]
+}

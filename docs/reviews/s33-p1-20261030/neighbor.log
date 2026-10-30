@@ -1,0 +1,21 @@
+npm notice run sidekick@0.3.0 probe:runtime
+npm notice run npm --prefix tests/probes run test:runtime
+npm notice run test:runtime
+npm notice run node --test --test-timeout=30000 runtime.test.mjs
+✔ source packages come from the same pinned workspace (2.446583ms)
+✔ Bash executes scripts with cwd, environment, streaming and nonzero status (217.872333ms)
+✔ Bash timeout terminates its child process group (503.219375ms)
+✔ Bash cancel terminates its child process group (7.095792ms)
+✔ Skills load explicit complete packages, relative Read/Bash, rescan and collisions (28.213459ms)
+✔ MCP stdio discovers and calls tools, distinguishes errors, cancels and closes (536.878333ms)
+✔ MCP reports missing executable instead of a successful connection (0.553542ms)
+✔ MCP Streamable HTTP initializes, invokes, rejects 401 and establishes a fresh connection (31.78825ms)
+✔ Agent traverses a real HTTP streaming adapter and Bash tool loop using a controlled model fixture (75.584833ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1687.343583

@@ -1,0 +1,131 @@
+npm notice run sidekick@0.3.0 test:s33-lifecycle
+npm notice run npm run probe:bundle && node scripts/probes/prepare-s33-lifecycle.mjs && node --test --test-timeout=20000 tests/s33-lifecycle.test.mjs build/s33-lifecycle/ownership.test.mjs
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 103ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 90ms
+
+  build/s0-runtime/skills-manager.mjs  346.8kb
+
+⚡ Done in 18ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+✖ ownership ends once after close (1.271459ms)
+✖ ownership ends once after peer-close (0.548167ms)
+✔ MCP lifecycle: normal (284.205208ms)
+ℹ {"scenario":"normal","discovered":3,"calls":2,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":42}
+✔ MCP lifecycle: cancel (281.355708ms)
+ℹ {"scenario":"cancel","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":46}
+✔ MCP lifecycle: timeout (764.535875ms)
+ℹ {"scenario":"timeout","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":505}
+✔ MCP lifecycle: kill-host (275.885583ms)
+ℹ {"scenario":"kill-host","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":43}
+✔ MCP lifecycle: kill-runtime (253.607792ms)
+ℹ {"scenario":"kill-runtime","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":20}
+✔ MCP lifecycle: kill-guardian (253.526958ms)
+ℹ {"scenario":"kill-guardian","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":22}
+✔ MCP lifecycle: kill-server (276.263875ms)
+ℹ {"scenario":"kill-server","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":21}
+✔ MCP lifecycle: guardian-timeout (1051.050625ms)
+ℹ {"scenario":"guardian-timeout","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":817}
+✔ MCP startup lifecycle: no-owner-ack (2129.117042ms)
+ℹ {"scenario":"no-owner-ack","noToolCalls":true,"ownedProcessesExited":3}
+✔ MCP startup lifecycle: initialization-wait (246.283667ms)
+ℹ {"scenario":"initialization-wait","noToolCalls":true,"ownedProcessesExited":6}
+ℹ tests 12
+ℹ suites 0
+ℹ pass 10
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5858.189708
+
+✖ failing tests:
+
+test at build/s33-lifecycle/ownership.test.mjs:130:3
+✖ ownership ends once after close (1.271459ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+      {
+        type: 'start'
+      },
+      {
+  ...
+      },
+  +   {
+  +     pid: -424242,
+  +     signal: 'SIGSTOP',
+  +     type: 'signal'
+  +   },
+  +   {
+  +     pid: -424242,
+  +     signal: 'SIGKILL',
+  +     type: 'signal'
+  +   }
+    ]
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/build/s33-lifecycle/ownership.test.mjs:142:14)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { type: 'start' }, { type: 'signal', pid: -424242, signal: 'SIGSTOP' }, { type: 'signal', pid: -424242, signal: 'SIGKILL' }, { type: 'end' }, { type: 'signal', pid: -424242, signal: 'SIGSTOP' }, { type: 'signal', pid: -424242, signal: 'SIGKILL' } ],
+    expected: [ { type: 'start' }, { type: 'signal', pid: -424242, signal: 'SIGSTOP' }, { type: 'signal', pid: -424242, signal: 'SIGKILL' }, { type: 'end' } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at build/s33-lifecycle/ownership.test.mjs:130:3
+✖ ownership ends once after peer-close (0.548167ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+      {
+        type: 'start'
+      },
+      {
+  ...
+      },
+  +   {
+  +     pid: -424242,
+  +     signal: 'SIGSTOP',
+  +     type: 'signal'
+  +   },
+  +   {
+  +     pid: -424242,
+  +     signal: 'SIGKILL',
+  +     type: 'signal'
+  +   },
+  +   {
+  +     pid: -424242,
+  +     signal: 'SIGSTOP',
+  +     type: 'signal'
+  +   },
+  +   {
+  +     pid: -424242,
+  +     signal: 'SIGKILL',
+  +     type: 'signal'
+  +   }
+    ]
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/build/s33-lifecycle/ownership.test.mjs:142:14)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { type: 'start' }, { type: 'signal', pid: -424242, signal: 'SIGSTOP' }, { type: 'signal', pid: -424242, signal: 'SIGKILL' }, { type: 'end' }, { type: 'signal', pid: -424242, signal: 'SIGSTOP' }, { type: 'signal', pid: -424242, signal: 'SIGKILL' }, { type: 'signal', pid: -424242, signal: 'SIGSTOP' }, { type: 'signal', pid: -424242, signal: 'SIGKILL' } ],
+    expected: [ { type: 'start' }, { type: 'signal', pid: -424242, signal: 'SIGSTOP' }, { type: 'signal', pid: -424242, signal: 'SIGKILL' }, { type: 'end' } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

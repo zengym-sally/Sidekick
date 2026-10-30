@@ -1,0 +1,47 @@
+npm notice run sidekick@0.3.0 test:s33-lifecycle
+npm notice run npm run probe:bundle && node scripts/probes/prepare-s33-lifecycle.mjs && node --test --test-timeout=20000 tests/s33-lifecycle.test.mjs build/s33-lifecycle/ownership.test.mjs
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 121ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 97ms
+
+  build/s0-runtime/skills-manager.mjs  346.8kb
+
+⚡ Done in 25ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+✔ ownership ends once after close (0.750708ms)
+✔ ownership ends once after peer-close (0.102375ms)
+✔ MCP lifecycle: normal (262.713958ms)
+ℹ {"scenario":"normal","discovered":3,"calls":2,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":42}
+✔ MCP lifecycle: cancel (277.18325ms)
+ℹ {"scenario":"cancel","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":43}
+✔ MCP lifecycle: timeout (750.464125ms)
+ℹ {"scenario":"timeout","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":520}
+✔ MCP lifecycle: kill-host (251.264625ms)
+ℹ {"scenario":"kill-host","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":42}
+✔ MCP lifecycle: kill-runtime (231.791666ms)
+ℹ {"scenario":"kill-runtime","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":20}
+✔ MCP lifecycle: kill-guardian (250.002417ms)
+ℹ {"scenario":"kill-guardian","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":21}
+✔ MCP lifecycle: kill-server (247.913375ms)
+ℹ {"scenario":"kill-server","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":19}
+✔ MCP lifecycle: guardian-timeout (1069.8585ms)
+ℹ {"scenario":"guardian-timeout","discovered":3,"calls":3,"ownedProcessesExited":6,"unrelatedAlive":true,"stopObservationMs":853}
+✔ MCP startup lifecycle: no-owner-ack (2121.863166ms)
+ℹ {"scenario":"no-owner-ack","noToolCalls":true,"ownedProcessesExited":3}
+✔ MCP startup lifecycle: initialization-wait (284.512792ms)
+ℹ {"scenario":"initialization-wait","noToolCalls":true,"ownedProcessesExited":6}
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5790.480791

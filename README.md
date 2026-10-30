@@ -108,3 +108,9 @@ S2 每次任务总期限 120 秒；Bash 缺省 30 秒、最多 60 秒并受任�
 `npm run build:s32-verify`生成独立`Sidekick Skills Verify.app`（`com.sidekick.s32.verify`）。本轮原生证据包含18包安装、自定义包重扫、实际备份恢复、合成服务工具试跑与重开；真实DeepSeek另行验证。验收根含1个`s32-reader`合成技能和明确命名的本地合成模型，普通包不种入它们。`npm run dev:s32-native-model`为可选本地合成HTTP服务，端口由启动输出给出，可用`SIDEKICK_SYNTHETIC_PORT`固定；不代表真实模型或MCP服务。
 
 详见[S3.2实现与验证记录](docs/reviews/s32-20261030.md)。历史原生缺项仍保留，当前不标记G1、S5或推广试用完成。
+
+## stdio MCP 生命周期探针（S3.3／P1）
+
+`npm run test:s33-lifecycle`从固定Pi源码构建独立探针，用随包Node与本机合成服务验证真实发现／调用、取消、工具及守护超时、分别强杀各层后的普通子孙清理，以及启动ACK／初始化取消。另有隔离的安全替身测试核对进程拥有关系结束后不再向旧PGID发信号；替身不作为真实清理证据。
+
+探针及输入位于`tests/probes/s33/`、`tests/s33-lifecycle.test.mjs`；`build/s33-lifecycle/`仅为可重建测试输出，没有加入安装包。宿主为Node替身，尚未接入Rust、MCP设置页、数据库台账或AgentTool；无真实模型／业务服务调用。实施边界与证据见[计划§16.7](docs/product/05-第一阶段实施计划.md#167-p1实施与分层证据2026-10-30)。历史原生未补验继续保留。
