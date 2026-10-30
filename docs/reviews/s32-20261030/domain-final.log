@@ -1,0 +1,32 @@
+npm notice run sidekick@0.3.0 test:s32-domain
+npm notice run node --test --test-timeout=20000 tests/s32-skills.test.mjs tests/s32-client.test.mjs tests/s32-read.test.mjs
+✔ scan errors retain the visible index and disable restoration until successful reread (1.058416ms)
+✔ restoration sends the exact selected hash; unknown outcomes require rescan (0.4325ms)
+✔ a concurrent scan cannot replace an in-flight restore result or clear its busy state (0.264333ms)
+✔ general Read retains Pi home, at-prefix and file URI semantics (1.983083ms)
+✔ an absolute lexical prefix with dot segments cannot change skill context or proof (0.824375ms)
+✔ first install is complete; rescan preserves edits and intentional removal (124.845792ms)
+✔ same-name entries are all excluded; broken reference has a local diagnostic (81.411375ms)
+✔ symlinks and oversized files are diagnosed; no global default is loaded (76.232167ms)
+✔ a frozen task retains complete content while edits require rescan for new tasks (95.239792ms)
+✔ explicit restoration backs up edits and refuses a stale expected hash (115.920125ms)
+✔ failed scan does not replace the last published index (68.828375ms)
+✔ recovery restores the original package after interruption before publication (85.676458ms)
+✔ post-publication edits and malformed journals remain untouched and unknown (82.762625ms)
+✔ parent links and a target created before publication cannot redirect or overwrite (83.702458ms)
+✔ parser diagnostics do not return source fragments or synthetic private markers (52.547167ms)
+✔ existing user package is preserved and identified as an installation conflict (35.374292ms)
+✔ fixed official closure includes its exact source support reference in the frozen layout (1803.101416ms)
+✔ ordinary source escape is rejected and changed pinned support cannot be substituted (306.424083ms)
+✔ published target deletion is a user change and is never silently rolled back (63.260917ms)
+✔ real yaml links are checked while both Markdown fence styles remain examples (60.044333ms)
+✔ missing backups and a journal path escape remain unknown without altering other files (118.533458ms)
+✔ longer closing fences and unclosed fences remain examples rather than dependencies (70.647458ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3416.385584

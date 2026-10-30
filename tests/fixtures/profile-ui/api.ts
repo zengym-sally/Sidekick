@@ -1,5 +1,6 @@
 import { organizerFixture } from './organizer';
 import {agentFixture} from './agents';
+import {skillsFixture} from './skills';
 const parameters=new URLSearchParams(location.search);
 let initialized=!parameters.has('onboarding');
 const rows:unknown[]=[];
@@ -7,6 +8,7 @@ const workspace=()=>({needsSetup:!initialized,root:initialized?'/fixture/sidekic
 let applicationSettings={timeZone:'Asia/Shanghai'};
 const defaults=()=>({version:1,name:'小明同学',address:'BOSS'});
 export async function invoke(command:string,args?:Record<string,unknown>){
+  const skillResult=skillsFixture(command,args);if(skillResult!==undefined)return skillResult;
   if(command==='read_application_settings')return structuredClone(applicationSettings);
   if(command==='save_application_settings'){if(parameters.has('settingsUncertain')){applicationSettings={timeZone:(args?.input as {timeZone:string}).timeZone};throw {code:'SETTINGS_UNCERTAIN',message:'合成场景：请读回核对通用设置。'};}if(parameters.has('settingsSaveError'))throw {code:'WORKSPACE_IO',message:'合成场景：通用设置暂时无法保存。'};applicationSettings={timeZone:(args?.input as {timeZone:string}).timeZone};return {settings:structuredClone(applicationSettings),warning:null};}
   if(command==='open_workspace_directory')return;

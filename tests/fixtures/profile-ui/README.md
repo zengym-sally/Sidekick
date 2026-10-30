@@ -19,3 +19,5 @@
 公共控件回归：访问 `/tests/fixtures/profile-ui/parity.html`，测试数字0与字符串0、连续禁用、分组、独立查询与空结果；输出栏显示value类型、change／submit计数。方向键跳过禁用，Enter不提交；搜索Home／End用于编辑，Tab／Shift+Tab正常离开。复选点击与Space各只触发一次change，禁用域传递。夹具按钮可验证立即卸载／隐藏、dialog归属／关闭；“合成Enter”先打开真实控件再注入isComposing事件，compositionEvents必须增加且changes不增。此注入仅检查合成事件分支，不等于完整真实输入法验收。
 
 本轮真实操作、原稿前后对照和原生截图见[表单对稿修订记录](../../../docs/reviews/visual-parity-20261030.md)。
+
+S3.2工具页在同一夹具中展示合成技能、修改／坏包诊断和恢复确认；`skillsError=1`用于扫描失败。该层不操作真实文件；真实安装、快照和恢复见S3.2 Rust／打包Runtime与原生证据。

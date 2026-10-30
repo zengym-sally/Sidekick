@@ -118,6 +118,7 @@ impl RuntimeState {
         task: StartTask,
         sink: Sink,
     ) -> Result<ModelRun> {
+        let preparation_started = Instant::now();
         let mut slot = self.slot.lock().map_err(|_| busy())?;
         if slot.is_some() {
             return Err(busy());
@@ -131,13 +132,13 @@ impl RuntimeState {
                 StartTask::Test(model_id)=>{let prepared=store.prepare_connection_model_by_id(model_id.as_deref())?;let run=store.begin_model_test(prepared.snapshot.clone())?;let cwd=store.run_directory(&run.id)?;let payload=json!({"runId":run.id,"kind":"test","snapshot":prepared.snapshot,"apiKey":prepared.api_key,"cwd":cwd,"timeZone":"UTC"});return Ok((run,Some(payload)));},
             };
             let prepared=match store.prepare_model(){Ok(p)=>p,Err(e)=>return Ok((store.finish_run_error(&run.id,e.code)?,None))};
-            let mut snapshot=prepared.snapshot;snapshot["context"]=json!({"timeZone":zone,"instructionAtMs":run.created_at_ms});
+            let mut snapshot=prepared.snapshot;let cwd=store.run_directory(&run.id)?;if snapshot["model"]["capabilities"]["toolCall"]!=false {match crate::skills_host::freeze(&directory,&store.root()?,&cwd){Ok(skills)=>snapshot["skills"]=skills,Err(e)=>return Ok((store.finish_run_error(&run.id,e.code)?,None))};}snapshot["context"]=json!({"timeZone":zone,"instructionAtMs":run.created_at_ms});
             let run=store.bind_run_snapshot(&run.id,snapshot.clone())?;
             let source=store.batch(run.source_id.as_deref().ok_or_else(||error("SOURCE_UNAVAILABLE","来源不存在。"))?)?.source;
             let candidate=run.candidate_id.as_ref().map(|id|store.candidate(id)).transpose()?;
             let anchor=if run.kind=="revise"{run.created_at_ms}else{source.anchor_at_ms};
             let cwd=store.run_directory(&run.id)?;
-            let payload=json!({"runId":run.id,"kind":run.kind,"snapshot":snapshot,"apiKey":prepared.api_key,"cwd":cwd,"anchorAtMs":anchor,"source":{"rawText":source.raw_text,"timeZone":zone},"candidate":candidate,"instruction":run.input["instruction"]});
+            let payload=json!({"runId":run.id,"kind":run.kind,"snapshot":snapshot,"apiKey":prepared.api_key,"cwd":cwd,"runLimitMs":120000_u64.saturating_sub(preparation_started.elapsed().as_millis() as u64).max(1),"anchorAtMs":anchor,"source":{"rawText":source.raw_text,"timeZone":zone},"candidate":candidate,"instruction":run.input["instruction"]});
             Ok((run,Some(payload)))
         })?;
         let Some(payload) = payload else {
@@ -256,6 +257,7 @@ impl RuntimeState {
         input: TextInput,
         sink: Sink,
     ) -> Result<AgentRun> {
+        let preparation_started = Instant::now();
         let mut slot = self.slot.lock().map_err(|_| busy())?;
         if slot.is_some() {
             return Err(busy());
@@ -266,7 +268,11 @@ impl RuntimeState {
                 "当前仅事项整理支持试跑，另外两个角色可保存配置。",
             ));
         }
-        let (run,payload)=local.access(|store|{store.interrupt_unowned_runs()?;store.interrupt_agent_trials(None)?;let prepared=store.prepare_agent_model(agent_id)?;let run=store.begin_prepared_agent_trial(agent_id,input,prepared.snapshot)?;let cwd=store.run_directory(&run.id)?;let payload=json!({"runId":run.id,"kind":"trial","snapshot":run.snapshot,"apiKey":prepared.api_key,"cwd":cwd,"anchorAtMs":run.input.source_at_ms.unwrap_or(run.created_at_ms),"source":{"rawText":run.input.text,"timeZone":run.input.time_zone}});Ok((run,payload))})?;
+        let (run,payload)=local.access(|store|{store.interrupt_unowned_runs()?;store.interrupt_agent_trials(None)?;let prepared=store.prepare_agent_model(agent_id)?;let mut run=store.begin_prepared_agent_trial(agent_id,input,prepared.snapshot)?;let cwd=store.run_directory(&run.id)?;if run.snapshot["model"]["capabilities"]["toolCall"]!=false{match crate::skills_host::freeze(&directory,&store.root()?,&cwd){Ok(skills)=>run=store.bind_trial_skills(&run.id,skills)?,Err(e)=>return Ok((store.finish_agent_trial_error(&run.id,e.code)?,None))};}let payload=json!({"runId":run.id,"kind":"trial","snapshot":run.snapshot,"apiKey":prepared.api_key,"cwd":cwd,"runLimitMs":120000_u64.saturating_sub(preparation_started.elapsed().as_millis() as u64).max(1),"anchorAtMs":run.input.source_at_ms.unwrap_or(run.created_at_ms),"source":{"rawText":run.input.text,"timeZone":run.input.time_zone}});Ok((run,Some(payload)))})?;
+        let Some(payload) = payload else {
+            sink(&run.id, "changed");
+            return Ok(run);
+        };
         let job = Job {
             run_id: run.id.clone(),
             trial: true,
@@ -302,6 +308,12 @@ fn execute(
     let mut child = command.spawn().map_err(|_| "RUNTIME_START".to_string())?;
     job.pid.store(child.id(), Ordering::SeqCst);
     let mut stdin = child.stdin.take().ok_or("RUNTIME_START")?;
+    let run_limit = Duration::from_millis(
+        payload["runLimitMs"]
+            .as_u64()
+            .unwrap_or(120000)
+            .clamp(1, 120000),
+    );
     let bytes = serde_json::to_vec(&payload).map_err(|_| "RUNTIME_PROTOCOL")?;
     drop(payload);
     if stdin
@@ -352,7 +364,7 @@ fn execute(
     let mut failure = None;
     let mut finished = false;
     loop {
-        if started.elapsed() > Duration::from_secs(120) && failure.is_none() {
+        if started.elapsed() > run_limit && failure.is_none() {
             failure = Some("MODEL_TIMEOUT".to_string());
         }
         if job.cancel.load(Ordering::SeqCst) || failure.is_some() {

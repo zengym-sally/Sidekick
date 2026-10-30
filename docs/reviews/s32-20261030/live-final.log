@@ -1,0 +1,18 @@
+npm notice run sidekick@0.3.0 test:s32-live
+npm notice run npm run probe:bundle && node tests/s32-live.mjs
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 101ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 92ms
+
+  build/s0-runtime/skills-manager.mjs  345.4kb
+
+⚡ Done in 11ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+{"status":"passed","modelId":"deepseek-flash","elapsedMs":3997,"candidateCount":1,"skillBodyRead":true,"relativeReferenceRead":true,"expectedScriptExecuted":true,"artifactInRunDirectory":true,"isolatedRoot":true,"noBusinessDatabase":true,"credentialOutput":false}

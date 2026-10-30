@@ -1,0 +1,338 @@
+npm notice run sidekick@0.3.0 check
+npm notice run npm run probe:bundle && npm run typecheck && npm run test:s1-domain && npm run test:s2-domain && npm run test:s31-domain && npm run test:layout-domain && npm run test:s32-domain && npm run check:rust && npm run probe:runtime && npm run probe:card && npm run probe:contracts && npm run probe:native && npm run probe:toolchain && npm run test:s2-runtime && node --test --test-timeout=15000 tests/s31-runtime.test.mjs && node --test --test-timeout=20000 tests/layout-runtime.test.mjs && node --test --test-timeout=20000 tests/s32-runtime.test.mjs && npm run probe:bundle-smoke
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 104ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 87ms
+
+  build/s0-runtime/skills-manager.mjs  345.4kb
+
+⚡ Done in 16ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+npm notice run sidekick@0.3.0 typecheck
+npm notice run vue-tsc --noEmit
+npm notice run sidekick@0.3.0 test:s1-domain
+npm notice run node --test tests/s1-domain.test.mjs tests/s1-state.test.mjs tests/s1-profile.test.mjs
+✔ manual dates preserve UTC, timezone, expression and unchanged values (10.761916ms)
+✔ DST gaps and invalid dates fail; repeated times require explicit choice (2.350541ms)
+✔ editing only the offset of a repeated time preserves the chosen occurrence (1.028791ms)
+✔ today follow-ups use next follow-up independently of delivery; deleted stays excluded (2.374375ms)
+✔ type, owner, tag, status and text filters combine without mutating records (0.697667ms)
+✔ profile read failure leaves a safe default and cannot overwrite the unread file (0.789417ms)
+✔ save failure preserves the draft and the previous saved value (0.224ms)
+✔ late read success or failure cannot replace a successful save (0.180125ms)
+✔ a late load or save keeps a newer session draft intact (0.091834ms)
+✔ post-replace warning publishes the current value; unknown result requires a fresh read (0.113875ms)
+✔ nickname copy is explicit, accepts long legal names and never binds or saves (0.094292ms)
+✔ a late old response cannot replace a newer authoritative snapshot (0.6125ms)
+✔ read failure retains the previous snapshot and exposes an error (0.204667ms)
+✔ a committed write is not reported as unsaved when the follow-up read fails (0.194541ms)
+✔ a failed mutation invalidates an old read without leaving refresh disabled (0.106834ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 118.346292
+npm notice run sidekick@0.3.0 test:s2-domain
+npm notice run node --test --test-timeout=15000 tests/s2-dates.test.mjs tests/s2-contract.test.mjs tests/s2-bash.test.mjs tests/s2-client.test.mjs
+✔ managed Bash preserves output and exit status while redacting the active credential (62.471875ms)
+✔ the run deadline bounds a missing or excessive Bash timeout (368.03525ms)
+✔ a crashed guardian is reaped together with its already-running Bash child (74.427625ms)
+✔ SIGKILL --runtime closes the life channel and reaps the owned tool group (101.682417ms)
+✔ SIGKILL --host closes the life channel and reaps the owned tool group (134.153333ms)
+✔ late source reads cannot replace the current selection (9.7165ms)
+✔ a committed sign result survives a failed post-commit read (0.247209ms)
+✔ candidate refresh preserves a newer draft and requires explicit reload (0.555708ms)
+✔ saving candidate fields preserves the explicit selection and target association (0.2845ms)
+✔ date-only editing and overdue checks preserve the original day and timezone (3.214167ms)
+✔ catalog saves preserve a newer object draft and confirmed revision (1.177833ms)
+✔ saving one catalog object preserves another model draft until explicit discard (0.88ms)
+✔ model strings become typed candidates with exact evidence and independent dates (10.171042ms)
+✔ a title-only revision preserves original temporal coordinates, zone and precision (0.635958ms)
+✔ empty results are valid; malformed, oversized or date-fabricating results fail (0.186583ms)
+✔ relative dates use the supplied source anchor and keep delivery and follow-up separate (10.571084ms)
+✔ calendar dates cross years without inventing a clock (0.139042ms)
+✔ DST gaps and repeated instants remain unresolved instead of choosing a guess (0.90525ms)
+✔ alternatives, unsupported relative dates and ambiguous midnight never get combined into a guess (0.465167ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 784.354459
+npm notice run sidekick@0.3.0 test:s31-domain
+npm notice run node --test tests/s31-client.test.mjs
+✔ late role reads cannot select a previous role or replace a newer draft (1.048292ms)
+✔ saving a role preserves newer input while retaining the committed revision (0.2905ms)
+✔ unknown configuration outcomes disable trial until reread without losing the draft (0.268292ms)
+✔ tracker and advisor configuration do not imply that trial is available (0.157625ms)
+✔ a lost save or reset response blocks trials until a read reconciles persisted configuration (0.317833ms)
+✔ a late cancellation response cannot replace a newer trial after polling reconciles the old run (11.663208ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 120.384292
+npm notice run sidekick@0.3.0 test:layout-domain
+npm notice run node --test --test-timeout=15000 tests/layout-domain.test.mjs
+✔ civil calendar is independent of host DST and skipped days (3.292667ms)
+✔ application timezone controls input and display without changing existing instants (9.011ms)
+✔ date-only civil date remains stable while current app day controls grouping and overdue (0.743417ms)
+✔ settings save failure and unknown results preserve drafts and block until reconciled (1.325458ms)
+✔ catalog keeps object drafts and secret replacements across selection, then preserves metadata on save (4.994334ms)
+✔ a lost first catalog save can be reread and discarded without duplicating the initial model (1.931583ms)
+✔ a pending global default survives unrelated saves but cannot apply a disabled model (0.667416ms)
+✔ new text uses the application zone while retries retain the captured source zone and anchor (3.953459ms)
+✔ an uncertain timezone blocks fresh temporal work while preserving captured-source retry (0.458792ms)
+✔ unknown timezone reread keeps a dirty draft when the disk retained the previous value (0.269666ms)
+✔ settings and catalog version conflicts require reread before another save (0.480291ms)
+✔ provider auth edits preserve unrelated nonsecret metadata and use exclusive references (0.177333ms)
+✔ unknown timezone blocks a new isolated agent trial until settings are read back (0.695083ms)
+✔ public control bridge keeps ARIA booleans distinct from HTML booleans and updates errors (4.075625ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 142.913084
+npm notice run sidekick@0.3.0 test:s32-domain
+npm notice run node --test --test-timeout=20000 tests/s32-skills.test.mjs tests/s32-client.test.mjs tests/s32-read.test.mjs
+✔ scan errors retain the visible index and disable restoration until successful reread (1.008542ms)
+✔ restoration sends the exact selected hash; unknown outcomes require rescan (0.431ms)
+✔ a concurrent scan cannot replace an in-flight restore result or clear its busy state (0.309875ms)
+✔ general Read retains Pi home, at-prefix and file URI semantics (1.964542ms)
+✔ an absolute lexical prefix with dot segments cannot change skill context or proof (0.673458ms)
+✔ first install is complete; rescan preserves edits and intentional removal (120.003833ms)
+✔ same-name entries are all excluded; broken reference has a local diagnostic (78.286417ms)
+✔ symlinks and oversized files are diagnosed; no global default is loaded (69.162834ms)
+✔ a frozen task retains complete content while edits require rescan for new tasks (94.316792ms)
+✔ explicit restoration backs up edits and refuses a stale expected hash (114.217042ms)
+✔ failed scan does not replace the last published index (65.4975ms)
+✔ recovery restores the original package after interruption before publication (85.887417ms)
+✔ post-publication edits and malformed journals remain untouched and unknown (89.650792ms)
+✔ parent links and a target created before publication cannot redirect or overwrite (84.538666ms)
+✔ parser diagnostics do not return source fragments or synthetic private markers (48.399542ms)
+✔ existing user package is preserved and identified as an installation conflict (35.194917ms)
+✔ fixed official closure includes its exact source support reference in the frozen layout (1508.863875ms)
+✔ ordinary source escape is rejected and changed pinned support cannot be substituted (277.533833ms)
+✔ published target deletion is a user change and is never silently rolled back (74.890334ms)
+✔ real yaml links are checked while both Markdown fence styles remain examples (59.217291ms)
+✔ missing backups and a journal path escape remain unknown without altering other files (119.490625ms)
+✔ longer closing fences and unclosed fences remain examples rather than dependencies (78.255167ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3073.026083
+npm notice run sidekick@0.3.0 check:rust
+npm notice run cargo fmt --manifest-path src-tauri/Cargo.toml --check && cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.67s
+npm notice run sidekick@0.3.0 probe:runtime
+npm notice run npm --prefix tests/probes run test:runtime
+npm notice run test:runtime
+npm notice run node --test --test-timeout=30000 runtime.test.mjs
+✔ source packages come from the same pinned workspace (2.3855ms)
+✔ Bash executes scripts with cwd, environment, streaming and nonzero status (231.195083ms)
+✔ Bash timeout terminates its child process group (504.922416ms)
+✔ Bash cancel terminates its child process group (8.525916ms)
+✔ Skills load explicit complete packages, relative Read/Bash, rescan and collisions (29.5535ms)
+✔ MCP stdio discovers and calls tools, distinguishes errors, cancels and closes (540.968209ms)
+✔ MCP reports missing executable instead of a successful connection (2.648333ms)
+✔ MCP Streamable HTTP initializes, invokes, rejects 401 and establishes a fresh connection (39.71125ms)
+✔ Agent traverses a real HTTP streaming adapter and Bash tool loop using a controlled model fixture (103.612291ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1816.00375
+npm notice run sidekick@0.3.0 probe:card
+npm notice run npm --prefix tests/probes run test:card
+npm notice run test:card
+npm notice run node --test card-state.test.mjs
+✔ complete is explicit and duplicate delivery takes effect once (0.434ms)
+✔ snooze changes reminder and preserves deadline and pending state (0.06525ms)
+✔ wrong user, wrong card and stale version cannot change the fixture (0.069875ms)
+✔ malformed action and missing event ID leave the fixture untouched (0.072917ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 46.635417
+npm notice run sidekick@0.3.0 probe:contracts
+npm notice run npm --prefix tests/probes run test:contracts
+npm notice run test:contracts
+npm notice run node --test probe-contract.test.mjs listener-lifecycle.test.mjs
+✔ SIGINT stops only the owned child and preserves the interruption status (27.533083ms)
+✔ SIGTERM stops only the owned child and preserves the interruption status (31.55675ms)
+✔ a child that ignores SIGTERM is reaped within the bounded cleanup (2028.752041ms)
+✔ the controlled source yields one complete follow-up candidate (0.348292ms)
+✔ missing fields and dates inconsistent with the source fail validation (0.070208ms)
+✔ the review counterexample and invalid batch structures cannot report success (0.064541ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2129.064542
+npm notice run sidekick@0.3.0 probe:native
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib -- --test-threads=1
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.96s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 56 tests
+test local_store::agent_config::tests::agent_save_reconciles_after_replace_and_blocks_an_unknown_result ... ok
+test local_store::agent_config::tests::cancelled_invalid_and_interrupted_trials_never_publish_results ... ok
+test local_store::agent_config::tests::invalid_config_and_links_never_overwrite_the_original ... ok
+test local_store::agent_config::tests::roles_resolve_models_and_protect_referenced_configuration ... ok
+test local_store::agent_config::tests::three_agents_save_reset_and_reopen_without_business_writes ... ok
+test local_store::agent_config::tests::trial_results_are_private_conditional_and_never_formal_candidates ... ok
+test local_store::agent_config::tests::v2_wal_is_backed_up_and_failed_v3_ddl_preserves_business_history ... ok
+test local_store::ingestion::tests::s2_backup_path_failure_leaves_v1_untouched_and_migration_ddl_rolls_back ... ok
+test local_store::ingestion::tests::s2_batch_second_failure_rolls_back_every_todo_candidate_and_operation ... ok
+test local_store::ingestion::tests::s2_cancel_and_result_have_one_transaction_winner ... ok
+test local_store::ingestion::tests::s2_multiple_links_use_the_initial_target_version_without_overwriting_fields ... ok
+test local_store::ingestion::tests::s2_rejected_and_zero_result_sources_do_not_rerun ... ok
+test local_store::ingestion::tests::s2_result_commit_failure_never_leaves_a_partial_candidate_batch ... ok
+test local_store::ingestion::tests::s2_revision_is_only_a_preview_and_old_candidate_versions_cannot_apply ... ok
+test local_store::ingestion::tests::s2_unsigned_candidates_never_create_todos_and_signing_replays_current_state ... ok
+test local_store::ingestion::tests::s2_v1_wal_migration_backs_up_and_preserves_history_and_replay ... ok
+test local_store::model_config::tests::catalog_revision_guard_precedes_secret_writes_and_targeted_test_keeps_default ... ok
+test local_store::model_config::tests::explicit_auth_carriers_and_invalid_journals_never_replace_current_config ... ok
+test local_store::model_config::tests::model_documents_preserve_metadata_and_validate_references_without_secrets ... ok
+test local_store::model_config::tests::model_json_rejects_plain_secrets_and_conflicting_auth ... ok
+test local_store::model_config::tests::model_pair_recovery_never_exposes_mixed_revisions ... ok
+test local_store::model_config::tests::nested_nonsecret_auth_metadata_survives_the_file_transaction ... ok
+test local_store::model_config::tests::uncertain_model_save_keeps_journal_and_blocks_further_saves_or_tasks ... ok
+test local_store::tests::a_new_app_namespace_never_rebuilds_a_damaged_existing_root ... ok
+test local_store::tests::active_root_cannot_be_replaced_and_missing_root_is_not_recreated ... ok
+test local_store::tests::app_lock_blocks_two_instances_even_before_different_roots_are_chosen ... ok
+test local_store::tests::application_settings_failure_reconciles_without_resetting_existing_values ... ok
+test local_store::tests::application_timezone_persists_without_moving_todos_and_rejects_stale_writes ... ok
+test local_store::tests::blank_invalid_and_undated_inputs_have_explicit_results ... ok
+test local_store::tests::committed_data_recovers_after_abrupt_process_stop ... ok
+test local_store::tests::dangling_marker_is_rejected_without_writing_outside_the_root ... ok
+test local_store::tests::each_initialization_interruption_can_resume_the_same_root ... ok
+test local_store::tests::edit_one_time_never_rewrites_the_other_and_completion_is_reversible ... ok
+test local_store::tests::failed_initial_schema_rolls_back_tables_version_and_product_identity ... ok
+test local_store::tests::future_schema_and_missing_ready_database_never_fall_back_to_empty_data ... ok
+test local_store::tests::hard_link_marker_never_changes_an_outside_file ... ok
+test local_store::tests::invalid_or_unknown_profile_is_not_overwritten ... ok
+test local_store::tests::manual_create_and_cold_reopen_preserve_fields_and_history ... ok
+test local_store::tests::old_reopen_and_deleted_mutations_are_rejected ... ok
+test local_store::tests::profile_defaults_save_and_cold_reopen_do_not_modify_todos ... ok
+test local_store::tests::profile_file_links_are_rejected_without_changing_the_target ... ok
+test local_store::tests::profile_unknown_commit_result_does_not_change_todos_or_history ... ok
+test local_store::tests::profile_write_failure_reconciles_the_authoritative_committed_value ... ok
+test local_store::tests::reading_a_legacy_empty_nickname_uses_the_default_without_rewriting_the_file ... ok
+test local_store::tests::retries_take_effect_once_and_return_current_authoritative_state ... ok
+test local_store::tests::root_lock_blocks_a_second_app_namespace ... ok
+test local_store::tests::sql_values_are_bound_and_history_failure_rolls_back_the_todo ... ok
+test local_store::tests::unknown_nonempty_directory_is_never_adopted_or_overwritten ... ok
+test runtime_host::tests::s2_live_text_preview_sign_and_restart ... ignored, explicit real model integration using the owner-selected private file
+test runtime_host::tests::s31_live_isolated_organizer_trial_and_configuration_reopen ... ignored, explicit real model trial using the owner-selected private file
+test skills_host::runtime_tests::host_trial_reads_frozen_skill_executes_script_and_preserves_business_tables ... ok
+test skills_host::tests::bundled_skills_scan_and_snapshot_use_the_same_private_workspace ... ok
+test skills_host::tests::management_process_timeout_and_stderr_are_bounded ... ok
+test storage_probe::tests::keychain_synthetic_roundtrip ... ok
+test storage_probe::tests::sqlite_migration_wal_backup_restore_and_lock ... ok
+test storage_probe::tests::workspace_switch_preserves_source_on_failure_and_rejects_merge ... ok
+
+test result: ok. 54 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 17.17s
+
+npm notice run sidekick@0.3.0 probe:toolchain
+npm notice run python3 tests/probes/toolchain.py
+{"status": "passed", "cases": [{"case": "configured", "loaded": false, "error": "mis-aligned LINKEDIT string pool"}, {"case": "host", "loaded": true, "error": null}, {"case": "wrapped", "loaded": true, "error": null}], "workaroundNeededOnThisHost": true}
+npm notice run sidekick@0.3.0 test:s2-runtime
+npm notice run npm run probe:bundle && node --test --test-timeout=15000 tests/s2-runtime.test.mjs
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 101ms
+
+  build/s0-runtime/organizer.mjs  2.3mb ⚠️
+
+⚡ Done in 89ms
+
+  build/s0-runtime/skills-manager.mjs  345.4kb
+
+⚡ Done in 11ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+✔ bundled Pi calls the API model ID and returns validated dated candidates without leaking credentials (863.846583ms)
+✔ Pi persisted truncated tool output stays inside the private run directory with mode 600 (228.460458ms)
+✔ authentication and malformed model results fail with safe categories (243.910458ms)
+✔ transient failures retry the current model request within the configured bound (606.99975ms)
+✔ in-flight model cancel stops without candidates (116.138042ms)
+✔ in-flight model eof stops without candidates (121.401ms)
+✔ in-flight model deadline stops without candidates (414.458459ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2645.889583
+✔ trial uses the actual role model and preferences with no tools or business sink (133.331542ms)
+✔ an unavailable role cannot impersonate organizer in an isolated trial (101.82575ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 289.191416
+✔ bundled Runtime forwards model sampling, output cap and three reasoning states for OpenAI and DeepSeek (725.569167ms)
+✔ Pi context safety headroom still reduces the configured output ceiling (117.166958ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 892.308625
+✔ bundled Agent reads two skill contexts sequentially and runs Bash (261.558416ms)
+✔ bundled Agent keeps a text-only model free of tools (159.787875ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 492.868084
+npm notice run sidekick@0.3.0 probe:bundle-smoke
+npm notice run node tests/probes/bundle-smoke.mjs
+{"status":"passed","node":"v24.20.0","arch":"arm64","agentAvailable":true,"skillCount":1,"read":true,"bash":true,"bashFindsBundledCli":true,"mcpStdio":true,"mcpStreamableHttp":true,"mcpAgentToolRoundtrip":true,"externalModel":false,"businessWrites":0}

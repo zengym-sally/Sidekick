@@ -1,0 +1,40 @@
+✖ an unavailable fixed bundle leaves pending recovery explicitly unknown (84.711584ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 169.522875
+
+✖ failing tests:
+
+test at tests/s32-skills.test.mjs:35:1
+✖ an unavailable fixed bundle leaves pending recovery explicitly unknown (84.711584ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   code: 'ENOENT'
+  -   code: 'SKILLS_RESTORE_UNKNOWN'
+    }
+  
+      at async TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s32-skills.test.mjs:35:959)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: ENOENT: no such file or directory, realpath '/var/folders/xh/dzgtg18j5bd8c7b7ncqxrqdh0000gn/T/sidekick-skills-4HMWp8/builtin/unavailable'
+        at async realpath (node:internal/fs/promises:1889:10)
+        at async builtinBundle (file:///Users/zengym/workspace/projects/ai/sidekick/runtime/skills-store.mjs:48:13)
+        at async initializeSkills (file:///Users/zengym/workspace/projects/ai/sidekick/runtime/skills-store.mjs:97:39)
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s32-skills.test.mjs:35:959)
+        at async Test.run (node:internal/test_runner/test:1404:7)
+        at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3),
+    expected: { code: 'SKILLS_RESTORE_UNKNOWN' },
+    operator: 'rejects',
+    diff: 'simple'
+  }

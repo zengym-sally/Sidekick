@@ -1,0 +1,11 @@
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.32s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 3 tests
+test skills_host::runtime_tests::host_trial_reads_frozen_skill_executes_script_and_preserves_business_tables ... ok
+test skills_host::tests::bundled_skills_scan_and_snapshot_use_the_same_private_workspace ... ok
+test skills_host::tests::management_process_timeout_and_stderr_are_bounded ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 53 filtered out; finished in 11.71s
+

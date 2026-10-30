@@ -82,6 +82,25 @@ impl AppStore {
         self.db()?.execute("INSERT INTO agent_runs(id,agent_id,purpose,status,snapshot_json,input_json,created_at_ms) VALUES(?1,?2,'role_trial','running',?3,?4,?5)",params![key,id,serde_json::to_string(&snapshot).map_err(|_|invalid())?,serde_json::to_string(&input).map_err(|_|invalid())?,created]).map_err(db_error)?;
         self.agent_run(&key)
     }
+    pub(crate) fn bind_trial_skills(
+        &self,
+        id: &str,
+        skills: serde_json::Value,
+    ) -> Result<AgentRun> {
+        let run = self.agent_run(id)?;
+        if run.status != "running" {
+            return Err(trial_stopped());
+        }
+        let mut snapshot = run.snapshot;
+        snapshot["skills"] = skills;
+        self.db()?
+            .execute(
+                "UPDATE agent_runs SET snapshot_json=?2 WHERE id=?1 AND status='running'",
+                params![id, serde_json::to_string(&snapshot).map_err(|_| invalid())?],
+            )
+            .map_err(db_error)?;
+        self.agent_run(id)
+    }
     pub fn complete_agent_trial(
         &mut self,
         id: &str,

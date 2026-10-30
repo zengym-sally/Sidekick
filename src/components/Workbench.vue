@@ -18,6 +18,7 @@ import InboxView from './InboxView.vue';
 import TextIntake from './TextIntake.vue';
 import { useOrganizer } from '../stores/organizer';
 import {useAgents} from '../stores/agents';
+import {useSkills} from '../stores/skills';
 import { timeDraft,draftPoint } from '../domain/time';
 import SettingsPanel from './SettingsPanel.vue';
 import { useProfile, DEFAULT_NICKNAME } from '../stores/profile';
@@ -25,9 +26,9 @@ import mark from '../../design/brand/sidekick-mark.svg';
 import pet from '../../design/brand/banban-idle.svg';
 
 const settings=useApplicationSettings(),modelSettings=useModelSettings();
-const store=useTodos(),profile=useProfile(),organizer=useOrganizer(),agents=useAgents();
+const store=useTodos(),profile=useProfile(),organizer=useOrganizer(),agents=useAgents(),skills=useSkills();
 const captureMode=ref<'manual'|'text'>('manual');
-const settingsTab=ref<'profile'|'general'|'models'|'agents'|'about'>('profile');
+const settingsTab=ref<'profile'|'general'|'models'|'agents'|'tools'|'about'>('profile');
 const address=computed(()=>profile.ready?profile.saved.address:'BOSS');
 const profileName=computed(()=>profile.ready?(profile.saved.name||DEFAULT_NICKNAME):DEFAULT_NICKNAME);
 function openSettings(){page.value='settings';settingsTab.value='profile';}
@@ -57,8 +58,8 @@ let organizerUnlisten:UnlistenFn|undefined,poller:ReturnType<typeof setInterval>
 let operationId='',signature='',deleteOperation='',historyRequest=0,lastFocus:HTMLElement|null=null,unlisten:UnlistenFn|undefined,clock:ReturnType<typeof setInterval>|undefined,toastTimer:ReturnType<typeof setTimeout>|undefined;
 const actionNames:Record<string,string>={create:'手工录入',update:'修改事项',complete:'标记完成',reopen:'重新打开',delete:'删除事项',link:'关联来源'};
 
-async function boot(){booting.value=true;startupError.value='';try{await store.boot();if(!store.workspace?.needsSetup){await settings.load();void modelSettings.load().catch(()=>{});void agents.load('organizer').catch(()=>{});void profile.load();void organizer.refresh().catch(()=>{});}}catch(e){startupError.value=errorMessage(e);}finally{booting.value=false;}}
-async function initialize(path:string|null){initializing.value=true;setupError.value='';try{await store.initialize(path);await settings.load();void modelSettings.load().catch(()=>{});void agents.load('organizer').catch(()=>{});void profile.load();void organizer.refresh().catch(()=>{});}catch(e){setupError.value=errorMessage(e);}finally{initializing.value=false;}}
+async function boot(){booting.value=true;startupError.value='';try{await store.boot();if(!store.workspace?.needsSetup){await settings.load();void modelSettings.load().catch(()=>{});void agents.load('organizer').catch(()=>{});void skills.scan().catch(()=>{});void profile.load();void organizer.refresh().catch(()=>{});}}catch(e){startupError.value=errorMessage(e);}finally{booting.value=false;}}
+async function initialize(path:string|null){initializing.value=true;setupError.value='';try{await store.initialize(path);await settings.load();void modelSettings.load().catch(()=>{});void agents.load('organizer').catch(()=>{});void skills.scan().catch(()=>{});void profile.load();void organizer.refresh().catch(()=>{});}catch(e){setupError.value=errorMessage(e);}finally{initializing.value=false;}}
 async function chooseDirectory(){
   setupError.value='';initializing.value=true;
   try{const path=await open({directory:true,multiple:false,title:'选择跟班工作目录'});if(typeof path==='string')await initialize(path);}

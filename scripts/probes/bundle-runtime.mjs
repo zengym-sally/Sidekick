@@ -23,6 +23,7 @@ const result = await build({
     '@sidekick/pi-bash': join(resolve(source), 'packages/coding-agent/dist/core/tools/bash.js'),
     '@sidekick/pi-read': join(resolve(source), 'packages/coding-agent/dist/core/tools/read.js'),
     '@sidekick/pi-skills': join(resolve(source), 'packages/coding-agent/dist/core/skills.js'),
+    '@sidekick/pi-paths': join(resolve(source), 'packages/coding-agent/dist/core/tools/path-utils.js'),
   },
   logLevel: 'info',
   metafile: true,
@@ -35,8 +36,16 @@ const business = await build({
   alias: {
     '@sidekick/pi-bash': join(resolve(source), 'packages/coding-agent/dist/core/tools/bash.js'),
     '@sidekick/pi-read': join(resolve(source), 'packages/coding-agent/dist/core/tools/read.js'),
+    '@sidekick/pi-skills': join(resolve(source), 'packages/coding-agent/dist/core/skills.js'),
+    '@sidekick/pi-paths': join(resolve(source), 'packages/coding-agent/dist/core/tools/path-utils.js'),
   }, logLevel: 'info', metafile: true,
 });
+const skillsBuild = await build({entryPoints:['runtime/skills-manager.mjs'],outfile:join(directory,'skills-manager.mjs'),bundle:true,platform:'node',target:'node24',format:'esm',banner:{js:"import { createRequire as skillsRequire } from 'node:module'; const require = skillsRequire(import.meta.url);"},nodePaths:[join(resolve(source),'node_modules')],alias:{'@sidekick/pi-skills':join(resolve(source),'packages/coding-agent/dist/core/skills.js')},logLevel:'info',metafile:true});
+const skillManifest=JSON.parse(await readFile('resources/skills/manifest.json','utf8'));
+const {createHash}=await import('node:crypto');
+for(const pack of skillManifest.packages)for(const file of pack.files){const bytes=await readFile(join('resources/skills/packages',pack.id,file.path));if(bytes.length!==file.bytes||createHash('sha256').update(bytes).digest('hex')!==file.sha256)throw new Error('Bundled skill provenance mismatch.');}
+for(const file of skillManifest.supportReferences||[]){const bytes=await readFile(join('resources/skills',file.resourcePath));if(bytes.length!==file.bytes||createHash('sha256').update(bytes).digest('hex')!==file.sha256)throw new Error('Skill support provenance mismatch.');}
+await cp('resources/skills',join(directory,'builtin-skills'),{recursive:true});
 await copyFile('runtime/bash-worker.mjs', join(directory, 'bash-worker.mjs'));
 await copyFile(process.execPath, join(directory, 'node'));
 await chmod(join(directory, 'node'), 0o755);
@@ -49,7 +58,7 @@ await cp('tests/probes/fixtures/skills', join(directory, 'skills'), { recursive:
 await copyFile(join(source, 'LICENSE'), join(directory, 'PI-LICENSE'));
 await cp(join(source, 'packages/mcp/LICENSES'), join(directory, 'licenses/pi-mcp'), { recursive: true });
 const packages = new Map();
-for (const input of new Set([...Object.keys(result.metafile.inputs), ...Object.keys(business.metafile.inputs)])) {
+for (const input of new Set([...Object.keys(result.metafile.inputs), ...Object.keys(business.metafile.inputs), ...Object.keys(skillsBuild.metafile.inputs)])) {
   let parent = dirname(resolve(input));
   while (parent !== dirname(parent)) {
     try {
@@ -73,5 +82,5 @@ for (const input of new Set([...Object.keys(result.metafile.inputs), ...Object.k
   }
 }
 await writeFile(join(directory, 'licenses/inventory.json'), JSON.stringify([...packages.values()], null, 2));
-await writeFile(join(directory, 'source.json'), JSON.stringify({ ...metadata, node: process.version, larkCli: '1.0.98', role: 'S0 diagnostics and S2 organizer Runtime; business state belongs to the Rust host' }, null, 2));
+await writeFile(join(directory, 'source.json'), JSON.stringify({ ...metadata, node: process.version, larkCli: '1.0.98', role: 'S0 diagnostics, organizer and Skills Runtime; business state belongs to the Rust host', skills:{source:skillManifest.source,packages:skillManifest.packages.length,files:skillManifest.packages.reduce((sum,p)=>sum+p.files.length,0),supportFiles:(skillManifest.supportReferences||[]).length,license:'builtin-skills/LICENSE'} }, null, 2));
 console.log('Bundled diagnostic Runtime prepared; no model credentials included.');

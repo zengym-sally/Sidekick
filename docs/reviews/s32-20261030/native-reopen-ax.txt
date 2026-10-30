@@ -1,0 +1,16 @@
+The following is a diff from the previous accessibility tree for Window: "跟班 Sidekick · Skills 验收" with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 97-105
+~					61 tab (selected) 智能体
+~							95 toggle button 样例, Value: off
+~							96 toggle button 结果, Value: on
++						109 text 试跑完成，1条预览；未新增正式事项。
++						110 text 10/30 08:41 · 受控工具模型
++						111 container 整理合成清单 待我处理 · 我 · 交付 2026/11/6（仅日期） skill-proof-v1
++							112 text 整理合成清单
++							113 text 待我处理 · 我 · 交付 2026/11/6（仅日期）
++							114 text skill-proof-v1
++							115 summary 原文依据, Value: off
++								116 text 原文依据
++						117 summary 原文与本次设置, Value: off
++							118 text 原文与本次设置
+The focused UI element is 2 HTML content Description: 跟班 Sidekick, URL: tauri://localhost

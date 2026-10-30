@@ -1,0 +1,5 @@
+{
+  "productName": "Sidekick Skills Verify",
+  "identifier": "com.sidekick.s32.verify",
+  "app": {"windows":[{"label":"main","title":"跟班 Sidekick · Skills 验收","width":1240,"height":820,"minWidth":640,"minHeight":600}]}
+}

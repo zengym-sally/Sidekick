@@ -1,0 +1,27 @@
+{
+  "formalCounts": {
+    "sources": 0,
+    "candidates": 0,
+    "todos": 0,
+    "todo_events": 0
+  },
+  "trialStatus": "succeeded",
+  "errorCode": null,
+  "skillCount": 19,
+  "artifact": "skill-proof-v1\n",
+  "toolProof": [
+    {
+      "type": "read",
+      "path": "skills/s32-reader/SKILL.md"
+    },
+    {
+      "type": "read",
+      "path": "skills/s32-reader/references/context.md"
+    },
+    {
+      "type": "bash",
+      "commandHash": "d1118d4c5146c6b85b49f314b1868fd698b3e057dbd173158f18a95184c191da"
+    }
+  ],
+  "modelLayer": "local synthetic HTTP; actual native IPC, Rust, SQLite and bundled Pi"
+}

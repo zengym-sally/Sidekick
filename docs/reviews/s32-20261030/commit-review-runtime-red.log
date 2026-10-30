@@ -1,0 +1,32 @@
+✔ bundled Agent reads two skill contexts sequentially and runs Bash (364.520625ms)
+✔ bundled Agent keeps a text-only model free of tools (158.70325ms)
+✖ proof recording never overwrites existing files or link targets (163.091667ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 2
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 756.367166
+
+✖ failing tests:
+
+test at tests/s32-runtime.test.mjs:16:1
+✖ proof recording never overwrites existing files or link targets (163.091667ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + '[]'
+  - 'existing-proof'
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s32-runtime.test.mjs:16:1178)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '[]',
+    expected: 'existing-proof',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

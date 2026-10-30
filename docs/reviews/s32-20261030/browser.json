@@ -1,0 +1,17 @@
+{
+  "wide": {
+    "diagnostic": "引用的本地支持文件不存在或越界。broken/SKILL.md · SKILL_BROKEN_REFERENCE",
+    "height": 1000,
+    "scroll": 1440,
+    "width": 1440
+  },
+  "narrow": {
+    "columns": "528px",
+    "height": 900,
+    "scroll": 640,
+    "width": 640
+  },
+  "restoreDialogAndReadback": true,
+  "console": [],
+  "layer": "actual Vue with synthetic IPC; not native or filesystem proof"
+}
