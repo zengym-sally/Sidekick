@@ -1,0 +1,22 @@
+npm notice run sidekick@0.3.0 test:s33-schema-store
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_schema -- --test-threads=1
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.25s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 12 tests
+test local_store::mcp_schema_tests::mcp_schema_004_accepts_null_role_probe_and_preserves_trial_rowid ... ok
+test local_store::mcp_schema_tests::mcp_schema_backup_copy_or_sync_failure_never_runs_ddl ... ok
+test local_store::mcp_schema_tests::mcp_schema_catalog_encoded_budget_32k_has_independent_exact_and_plus_one_controls ... ok
+test local_store::mcp_schema_tests::mcp_schema_copy_and_ddl_failures_rollback_full_chain_and_keep_verified_backup ... ok
+test local_store::mcp_schema_tests::mcp_schema_default_open_rejects_source_hardlink_before_writing_and_v4_damage_is_not_repaired ... ok
+test local_store::mcp_schema_tests::mcp_schema_default_open_stays_v3_and_commit_response_loss_requires_reopen ... ok
+test local_store::mcp_schema_tests::mcp_schema_probe_results_and_role_trial_are_separate_and_do_not_write_business_tables ... ok
+test local_store::mcp_schema_tests::mcp_schema_probe_validation_rejects_invalid_metadata_without_recording_success ... ok
+test local_store::mcp_schema_tests::mcp_schema_real_v1_v2_v3_upgrade_preserves_rows_rowids_indexes_and_wal_backup ... ok
+test local_store::mcp_schema_tests::mcp_schema_source_aliases_replacements_and_side_file_links_preserve_outside_files ... ok
+test local_store::mcp_schema_tests::mcp_schema_tool_ledger_enforces_owner_response_hash_and_byte_constraints ... ok
+test local_store::mcp_schema_tests::mcp_schema_unknown_rebuilt_table_extensions_and_inbound_fks_are_rejected_before_backup ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 81 filtered out; finished in 3.13s
+

@@ -190,7 +190,10 @@ fn contains_value(value: &serde_json::Value, secret: &str) -> bool {
 }
 
 impl AppStore {
-    fn verify_mcp_paths(&self) -> Result<()> {
+    pub(super) fn verify_mcp_paths(&self) -> Result<()> {
+        if self.mcp_schema_uncertain {
+            return Err(super::mcp_schema::uncertain());
+        }
         let workspace = self
             .workspace
             .as_ref()

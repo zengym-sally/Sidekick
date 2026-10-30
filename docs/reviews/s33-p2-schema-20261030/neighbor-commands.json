@@ -1,0 +1,42 @@
+[
+  {
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib ingestion::tests -- --test-threads=1",
+    "exitCode": 0,
+    "log": "ingestion-fixed.log"
+  },
+  {
+    "command": "npm run test:s33-config-store",
+    "exitCode": 0,
+    "log": "config.log"
+  },
+  {
+    "command": "npm run test:s33-security-store",
+    "exitCode": 0,
+    "log": "security.log"
+  },
+  {
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib agent_config::tests::three_agents_save_reset_and_reopen_without_business_writes -- --test-threads=1",
+    "exitCode": 0,
+    "log": "agent-config.log"
+  },
+  {
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib agent_config::tests::invalid_config_and_links_never_overwrite_the_original -- --test-threads=1",
+    "exitCode": 0,
+    "log": "agent-invalid.log"
+  },
+  {
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib agent_config::tests::agent_save_reconciles_after_replace_and_blocks_an_unknown_result -- --test-threads=1",
+    "exitCode": 0,
+    "log": "agent-save.log"
+  },
+  {
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib agent_config::tests::v2_wal_is_backed_up_and_failed_v3_ddl_preserves_business_history -- --test-threads=1",
+    "exitCode": 0,
+    "log": "agent-v2.log"
+  },
+  {
+    "command": "npm run check:rust",
+    "exitCode": 101,
+    "log": "rust.log"
+  }
+]

@@ -1,0 +1,28 @@
+npm notice run sidekick@0.3.0 test:s33-security-store
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_security -- --test-threads=1
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.27s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 19 tests
+test local_store::mcp_security_tests::mcp_security_64_values_and_resolved_environment_256k_exact_boundary ... ok
+test local_store::mcp_security_tests::mcp_security_archive_sync_failure_keeps_journal_and_retries_existing_archive_durably ... ok
+test local_store::mcp_security_tests::mcp_security_cold_reopen_missing_private_directory_preserves_moved_state ... ok
+test local_store::mcp_security_tests::mcp_security_complete_input_512k_exact_and_plus_one_independent_of_target_budget ... ok
+test local_store::mcp_security_tests::mcp_security_credential_replacement_keeps_old_refs_and_missing_values_remain_explicit ... ok
+test local_store::mcp_security_tests::mcp_security_default_backend_never_establishes_credential_access ... ok
+test local_store::mcp_security_tests::mcp_security_directory_permission_change_is_not_repaired_and_plaintext_is_rejected ... ok
+test local_store::mcp_security_tests::mcp_security_explicit_environment_does_not_inherit_or_expand_and_missing_values_fail ... ok
+test local_store::mcp_security_tests::mcp_security_failed_backend_and_wrong_readback_never_publish_or_remove_old_refs ... ok
+test local_store::mcp_security_tests::mcp_security_fake_credentials_are_bound_redacted_and_resolved_only_inside_host ... ok
+test local_store::mcp_security_tests::mcp_security_foreign_service_root_field_and_model_references_are_rejected_before_backend_io ... ok
+test local_store::mcp_security_tests::mcp_security_journal_and_archive_links_collision_permissions_block_without_overwrite ... ok
+test local_store::mcp_security_tests::mcp_security_journal_budget_has_valid_exact_control_and_rejects_plus_one ... ok
+test local_store::mcp_security_tests::mcp_security_journal_reconciles_actual_files_without_replaying_credentials_or_overwriting_config ... ok
+test local_store::mcp_security_tests::mcp_security_journal_third_state_unknown_fields_and_versions_preserve_exact_files ... ok
+test local_store::mcp_security_tests::mcp_security_same_field_retains_reference_rename_requires_new_value_and_revision_is_checked ... ok
+test local_store::mcp_security_tests::mcp_security_swapped_root_mcp_or_backup_paths_block_without_creating_outside_files ... ok
+test local_store::mcp_security_tests::mcp_security_unknown_or_untrusted_journal_preserves_all_state ... ok
+test local_store::mcp_security_tests::mcp_security_utf8_value_item_and_input_budgets_precede_backend_io ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 78 filtered out; finished in 3.95s
+

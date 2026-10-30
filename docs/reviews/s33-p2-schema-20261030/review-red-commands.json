@@ -1,0 +1,44 @@
+[
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "src-tauri/Cargo.toml",
+      "--lib",
+      "mcp_schema_sqlite_like_user_table",
+      "--",
+      "--test-threads=1"
+    ],
+    "exitCode": 101,
+    "log": "review-cascade-red.log"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "src-tauri/Cargo.toml",
+      "--lib",
+      "mcp_schema_missing_required",
+      "--",
+      "--test-threads=1"
+    ],
+    "exitCode": 101,
+    "log": "review-required-red.log"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "src-tauri/Cargo.toml",
+      "--lib",
+      "mcp_schema_hash_columns",
+      "--",
+      "--test-threads=1"
+    ],
+    "exitCode": 101,
+    "log": "review-digest-red.log"
+  }
+]

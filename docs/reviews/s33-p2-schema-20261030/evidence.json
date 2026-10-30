@@ -1,0 +1,386 @@
+{
+  "baseCommit": "c84ca1f64ebce520d7a4140c52b206db85994ac8",
+  "scope": "P2 checkpoint 3: isolated schema and probe storage only; no protocol/native acceptance",
+  "status": "isolated migration and probe storage checkpoint passed; dual delivery reviews approve; protocol/native/full P2 pending",
+  "countsFinal": {
+    "rust": 83,
+    "javascript": 16,
+    "schemaRust": 20
+  },
+  "normativeCoreSha256": "e29be2e04b4d033eae52ac8d068e7b9adff2406a237e3b8c6cded89134480ccd",
+  "entries": [
+    {
+      "path": "package.json",
+      "kind": "source",
+      "bytes": 5940,
+      "sha256": "ab828f214e7dac06a91fc73ed8ffad355e27e7a41622da07b1bb5cff6bbd8f83"
+    },
+    {
+      "path": "src-tauri/src/local_store.rs",
+      "kind": "source",
+      "bytes": 44634,
+      "sha256": "d055d2a46df849f63a9b0cd88efa467174ecd557f82c1e20b7666eb131269577"
+    },
+    {
+      "path": "src-tauri/src/agent_trials.rs",
+      "kind": "source",
+      "bytes": 6673,
+      "sha256": "5dd73de9e4e87ab11ac114d6749bffc1a12855449235d097fbca985b1bc21078"
+    },
+    {
+      "path": "src-tauri/src/mcp_security.rs",
+      "kind": "source",
+      "bytes": 34880,
+      "sha256": "2773ec9358e1ee7b75e2970243d8e6eafcae4eac868ebaa6717dec4cd3c984de"
+    },
+    {
+      "path": "src-tauri/src/ingestion_tests.rs",
+      "kind": "source",
+      "bytes": 13575,
+      "sha256": "d082fd525529556ea622e7c5f77490db679ef22aed34b00a7b16a42316a84739"
+    },
+    {
+      "path": "src-tauri/src/mcp_schema.rs",
+      "kind": "source",
+      "bytes": 16422,
+      "sha256": "e6ea7e94b51d4b8c7a25dce504300bf91b9cd3cd72959fb43bb6e4e623e21fc7"
+    },
+    {
+      "path": "src-tauri/src/mcp_probe.rs",
+      "kind": "source",
+      "bytes": 9293,
+      "sha256": "45caf02ccdb2c100c2bcdbc2d6ccacb4431173e1834dacd63840443f96c16ffb"
+    },
+    {
+      "path": "src-tauri/src/mcp_schema_tests.rs",
+      "kind": "source",
+      "bytes": 38713,
+      "sha256": "cf1e3a10cd9600950111d195bedb6caf2ebd03d47cbb740ea00dc776b3f7e4d4"
+    },
+    {
+      "path": "src-tauri/migrations/004_mcp_runs.sql",
+      "kind": "source",
+      "bytes": 4344,
+      "sha256": "e8960c4f529717776bba87522cc9becd3adda14544147c40135230404fe56a1b"
+    },
+    {
+      "path": "src-tauri/migrations/001_todos.sql",
+      "kind": "reference",
+      "bytes": 1558,
+      "sha256": "eae39795f8003e8236b72056bb1b7e2eea82d82c5e2933a493c95fec09657667"
+    },
+    {
+      "path": "src-tauri/migrations/002_ingestion.sql",
+      "kind": "reference",
+      "bytes": 3053,
+      "sha256": "43d9c92a8948a73cf0bc8bc08f1793c0470fee52dd3f459ebbf14d98ce08ba73"
+    },
+    {
+      "path": "src-tauri/migrations/003_agent_runs.sql",
+      "kind": "reference",
+      "bytes": 529,
+      "sha256": "b8f89eab2dc8747cbffd0e59cc7c3816439ace21ebfe977babaf7c1b79b586c9"
+    },
+    {
+      "path": "src-tauri/src/local_store_tests.rs",
+      "kind": "reference",
+      "bytes": 25450,
+      "sha256": "a5a64b9d3682e0eb97bffdd3f461d13a1653f8b7f3062d7ecc2352407a80b060"
+    },
+    {
+      "path": "src-tauri/Cargo.toml",
+      "kind": "reference",
+      "bytes": 785,
+      "sha256": "c9a5aa39419109d325b626b6ce69d1868db347e3bb7ad3c5a14f3b015d79f810"
+    },
+    {
+      "path": "src-tauri/Cargo.lock",
+      "kind": "reference",
+      "bytes": 135251,
+      "sha256": "4e43f06dddcb3722419bab4c65e0d36f6264350a582e162a0c0aa385aba8dcdd"
+    },
+    {
+      "path": "package-lock.json",
+      "kind": "reference",
+      "bytes": 85302,
+      "sha256": "fb837764c57ee664868145e03bdcbc3450cfd20d9d2427bdde3156c3644bc672"
+    },
+    {
+      "path": "README.md",
+      "kind": "documentation",
+      "bytes": 16239,
+      "sha256": "9f94d1709240189bb63f6e1d53cc9df5e87018da3899ad865bfcabd2d51a93b4"
+    },
+    {
+      "path": "docs/product/01-\u4ea7\u54c1\u5b9a\u4e49.md",
+      "kind": "documentation",
+      "bytes": 8647,
+      "sha256": "26e1fe934af685dcc95fc5bf0e00de12148b0ed1f08c89a49364630143c614d3"
+    },
+    {
+      "path": "docs/product/02-\u7528\u6237\u6d41\u7a0b.md",
+      "kind": "documentation",
+      "bytes": 10316,
+      "sha256": "7778aa4e74e82a8bf7db3b8f6818c3a1f2a1cea60d82c1c9be4b576f78e4cc91"
+    },
+    {
+      "path": "docs/product/03-\u667a\u80fd\u4f53\u4e0e\u67b6\u6784.md",
+      "kind": "documentation",
+      "bytes": 21317,
+      "sha256": "7bb8bf5e2c24c4d8eb684cefdcc864d57eca59a8dd3ddb3aee4ebc7d38903bb2"
+    },
+    {
+      "path": "docs/product/04-\u5206\u671f\u4ea4\u4ed8\u4e0e\u9a8c\u6536.md",
+      "kind": "documentation",
+      "bytes": 12648,
+      "sha256": "3742c222b1e35ac5ddef3b2672fee8e92714ca58666fd3b35756fc838a7496a7"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/agent-config.log",
+      "kind": "execution-evidence",
+      "bytes": 385,
+      "sha256": "792053c1d042e473134e269a0c04740b53da1d389764618f3c7db4d06e90ad02"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/agent-invalid.log",
+      "kind": "execution-evidence",
+      "bytes": 380,
+      "sha256": "edb6297f161a7c7d468cfc9081fd4eae25548a55bf39ee68a29c7378f92d1da2"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/agent-save.log",
+      "kind": "execution-evidence",
+      "bytes": 391,
+      "sha256": "ef05ffc9145e4231c10eef6b5cbfeda6590a3ce8fa3559fa393eb4e007eb8c69"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/agent-v2.log",
+      "kind": "execution-evidence",
+      "bytes": 391,
+      "sha256": "83896efc749a8e8757bb2bf60f5deaf510637e31fa572a952e25bce337797f1b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/baseline.json",
+      "kind": "execution-evidence",
+      "bytes": 870,
+      "sha256": "7a3a05db587c837699554fcd8ba3cd2c718c7e8cb36171b2fec97a80589ecff2"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/checked-commands.json",
+      "kind": "execution-evidence",
+      "bytes": 733,
+      "sha256": "35552c078a4ebb6e03461f4b68cb7d84deb289d49f8c7d1a0be955b9ed8360de"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/commands.json",
+      "kind": "execution-evidence",
+      "bytes": 443,
+      "sha256": "73e4ac03eee2705d273208c4d4008bb1984db2f54bb2f87caebdb5060272d936"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/config-checked.log",
+      "kind": "execution-evidence",
+      "bytes": 1072,
+      "sha256": "738054cf00de849ec0bd0dfd1a3b8768f79926a3093b1cabf53e61a15565fbf5"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/config-domain.log",
+      "kind": "execution-evidence",
+      "bytes": 1039,
+      "sha256": "dd7607179b1e98f426f0f9fdc7270738c240d825eefd0bc28c24b2b26fc70b69"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/config.log",
+      "kind": "execution-evidence",
+      "bytes": 1072,
+      "sha256": "a8c95349e0de000b439b9697717c99472e853059f2e54d37fa7e5a6ff50b741b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/ingestion-fixed.log",
+      "kind": "execution-evidence",
+      "bytes": 1342,
+      "sha256": "b52eefe2d5443e3ba63ce747a4e6bc743702dde9f26cf788611844ef22d2e023"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/ingestion-reviewed.log",
+      "kind": "execution-evidence",
+      "bytes": 1256,
+      "sha256": "a8e18fdb703e395d58176f7d610e10c360f7fa74993ee41bcbd823744e0238a5"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/ingestion.log",
+      "kind": "execution-evidence",
+      "bytes": 1985,
+      "sha256": "d077aaed6f6147ad2c9b4022e6d1423d081e64dea8b283201fbdc219edf20bc8"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/local-reviewed.log",
+      "kind": "execution-evidence",
+      "bytes": 2603,
+      "sha256": "05cf51fcf51043427668c8889d7f483509e81f19a5af1ac66eecf84a4a50dab8"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/local-store.log",
+      "kind": "execution-evidence",
+      "bytes": 2603,
+      "sha256": "e957d24bbff0b4a7112c9c7d6728d3a61ed1d8ded7bb125ff9e1cc7a48e78d7b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/mcp-barrier-red.log",
+      "kind": "execution-evidence",
+      "bytes": 2573,
+      "sha256": "8a9012b515209b46740c777ec31e745d0fd81e6b769e7f33fd541648397d86c6"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/neighbor-commands.json",
+      "kind": "execution-evidence",
+      "bytes": 1388,
+      "sha256": "b50671315059be0d1a7645eb69c46d253aeb8d57ddf62a6dc2125477cb3ab82e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/post-commit-path-red.log",
+      "kind": "execution-evidence",
+      "bytes": 1134,
+      "sha256": "db31def374f07abf7946dd82a88028fb9727da1009e73336aff6b195e1d322be"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/probe-error-red.log",
+      "kind": "execution-evidence",
+      "bytes": 1576,
+      "sha256": "d93401e5706a05ddfa67473b0f2d7bccde9a009e11ce032f7d4b1177a433bbe5"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/review-cascade-red.log",
+      "kind": "execution-evidence",
+      "bytes": 1260,
+      "sha256": "c1ac6e619e56b019e7d32ef4776afbb31c05b89eb0f0a2321f5731386723a4ea"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/review-digest-red.log",
+      "kind": "execution-evidence",
+      "bytes": 1040,
+      "sha256": "336c78c8b7427e2895d45167e02a299e49b135323e535b1be6e4d58c5b076777"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/review-red-commands.json",
+      "kind": "execution-evidence",
+      "bytes": 794,
+      "sha256": "20690e63e4b2b16f42fe31376ee9defe5ebcdc532afb84b5b3a76b9c1b7c97a2"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/review-required-red.log",
+      "kind": "execution-evidence",
+      "bytes": 1046,
+      "sha256": "1d4e5de481e4fbcb9b59c86a5d13a3874b3050851af5d76ab6ef38441e74332c"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/reviewed-commands.json",
+      "kind": "execution-evidence",
+      "bytes": 552,
+      "sha256": "d1078d1ef5974c8d4f2ce679e2f8abf3329e3010571c355c1442aa381d13c82e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/rust-checked.log",
+      "kind": "execution-evidence",
+      "bytes": 1362,
+      "sha256": "65b4a24430599d32213e3932bdb5476cb0f9e483c31de1764258ac1388b623f0"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/rust-reviewed.log",
+      "kind": "execution-evidence",
+      "bytes": 351,
+      "sha256": "c0a93b83835b3e4381e7488d9d1aee2321808d8634261685c7e5abe7955669b7"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/rust.log",
+      "kind": "execution-evidence",
+      "bytes": 2646,
+      "sha256": "6a3171b43359b89f80892e22280ce83490cb9c9e966cda62d5ec727aba326522"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/schema-checked.log",
+      "kind": "execution-evidence",
+      "bytes": 3451,
+      "sha256": "fdd917eaf09446865c5d4df7a80d855211b5f6221cec0febb2e508e70e7bd2a5"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/schema-expanded-second.log",
+      "kind": "execution-evidence",
+      "bytes": 5469,
+      "sha256": "b979d4f23bf6453066e4160c7476f2ead1fd1cd890bb12cc39b0b53c3f9884cc"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/schema-expanded-third.log",
+      "kind": "execution-evidence",
+      "bytes": 1968,
+      "sha256": "998b547d1b65fcd107d3996609be4c931006fd4cac77dc243f19a2b105563a35"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/schema-expanded.log",
+      "kind": "execution-evidence",
+      "bytes": 2942,
+      "sha256": "c194a2d18e623be631af88c3eca6e23a9178de8f769bc5fc1659f81024f74ea4"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/schema-final.log",
+      "kind": "execution-evidence",
+      "bytes": 3451,
+      "sha256": "abfc662f74dd87df3e0eb28b744434f77cf0617f8db3f9ca0332ce127407be37"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/schema-first.log",
+      "kind": "execution-evidence",
+      "bytes": 1413,
+      "sha256": "3366f69f9a5f1457e64327cc4458c7d1b5f52cf48a7a3bec33b825f1e237be81"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/schema-red.log",
+      "kind": "execution-evidence",
+      "bytes": 2265,
+      "sha256": "becc6e82568c0d4a361b76d9c838c7947be867b8ca6b13e17ab82e0a01e12d8e"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/schema-reviewed.log",
+      "kind": "execution-evidence",
+      "bytes": 2917,
+      "sha256": "478c99d4b859938a37103a4fbc864716de27cd84821312945fad7ffed3898025"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/schema-second.log",
+      "kind": "execution-evidence",
+      "bytes": 1137,
+      "sha256": "ab57a28303019ec5ce302e638b9860cb1468ceade5eeae79f8ce29ef7b1d84ff"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/security-checked.log",
+      "kind": "execution-evidence",
+      "bytes": 2811,
+      "sha256": "8cbd072aae74ac4eb7e2d8888ebc826816b2f494a8850ba0a6924b05ee5dc26c"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/security-domain.log",
+      "kind": "execution-evidence",
+      "bytes": 939,
+      "sha256": "527fe6fafa65709d5c599e391cdb2012c3839dc020104507a6de5c1fdf57895b"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/security.log",
+      "kind": "execution-evidence",
+      "bytes": 2811,
+      "sha256": "bfbaa8807f309cb316b124ac6e17b7b559140885cb88755f18eee715466221ce"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/static-check.json",
+      "kind": "execution-evidence",
+      "bytes": 1316,
+      "sha256": "7bdfff0d39302ad72c2bfc2f3acd5eddc75786a28a0e168dbb36bdde16e0f3bc"
+    },
+    {
+      "path": "docs/reviews/s33-p2-schema-20261030/types.log",
+      "kind": "execution-evidence",
+      "bytes": 72,
+      "sha256": "efc5b3a47a0d3023241a6990e4253676d9a17ce360e4d9632131e4b22aaea9c0"
+    }
+  ],
+  "documentsReadDirectly": "Plan section and delivery report append review evidence; they and this manifest are not recursively hashed."
+}

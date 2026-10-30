@@ -1,0 +1,22 @@
+{
+  "baseCommit": "c84ca1f64ebce520d7a4140c52b206db85994ac8",
+  "baselineBeforePlan": "clean main, cached origin ahead 2; 60 prior evidence entries verified by read only, no tests rerun",
+  "migrations": [
+    {
+      "path": "src-tauri/migrations/001_todos.sql",
+      "bytes": 1558,
+      "sha256": "eae39795f8003e8236b72056bb1b7e2eea82d82c5e2933a493c95fec09657667"
+    },
+    {
+      "path": "src-tauri/migrations/002_ingestion.sql",
+      "bytes": 3053,
+      "sha256": "43d9c92a8948a73cf0bc8bc08f1793c0470fee52dd3f459ebbf14d98ce08ba73"
+    },
+    {
+      "path": "src-tauri/migrations/003_agent_runs.sql",
+      "bytes": 529,
+      "sha256": "b8f89eab2dc8747cbffd0e59cc7c3816439ace21ebfe977babaf7c1b79b586c9"
+    }
+  ],
+  "authorization": "isolated migration/storage checkpoint; explicit local commit after checks and reviews; no push or ordinary-root migration"
+}

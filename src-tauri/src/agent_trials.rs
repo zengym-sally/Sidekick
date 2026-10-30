@@ -18,7 +18,7 @@ fn trial_stopped() -> StoreError {
 }
 impl AppStore {
     pub fn agent_run(&self, id: &str) -> Result<AgentRun> {
-        let r=self.db()?.query_row("SELECT id,agent_id,purpose,status,snapshot_json,input_json,result_json,error_code,created_at_ms,finished_at_ms FROM agent_runs WHERE id=?1",[id],|r|Ok((r.get::<_,String>(0)?,r.get::<_,String>(1)?,r.get::<_,String>(2)?,r.get::<_,String>(3)?,r.get::<_,String>(4)?,r.get::<_,String>(5)?,r.get::<_,Option<String>>(6)?,r.get::<_,Option<String>>(7)?,r.get::<_,i64>(8)?,r.get::<_,Option<i64>>(9)?))).map_err(db_error)?;
+        let r=self.db()?.query_row("SELECT id,agent_id,purpose,status,snapshot_json,input_json,result_json,error_code,created_at_ms,finished_at_ms FROM agent_runs WHERE id=?1 AND purpose='role_trial'",[id],|r|Ok((r.get::<_,String>(0)?,r.get::<_,String>(1)?,r.get::<_,String>(2)?,r.get::<_,String>(3)?,r.get::<_,String>(4)?,r.get::<_,String>(5)?,r.get::<_,Option<String>>(6)?,r.get::<_,Option<String>>(7)?,r.get::<_,i64>(8)?,r.get::<_,Option<i64>>(9)?))).map_err(db_error)?;
         Ok(AgentRun {
             id: r.0,
             agent_id: r.1,
@@ -41,7 +41,7 @@ impl AppStore {
         let found: Option<String> = self
             .db()?
             .query_row(
-                "SELECT id FROM agent_runs WHERE agent_id=?1 ORDER BY rowid DESC LIMIT 1",
+                "SELECT id FROM agent_runs WHERE agent_id=?1 AND purpose='role_trial' ORDER BY rowid DESC LIMIT 1",
                 [id],
                 |r| r.get(0),
             )
@@ -95,7 +95,7 @@ impl AppStore {
         snapshot["skills"] = skills;
         self.db()?
             .execute(
-                "UPDATE agent_runs SET snapshot_json=?2 WHERE id=?1 AND status='running'",
+                "UPDATE agent_runs SET snapshot_json=?2 WHERE id=?1 AND purpose='role_trial' AND status='running'",
                 params![id, serde_json::to_string(&snapshot).map_err(|_| invalid())?],
             )
             .map_err(db_error)?;
@@ -126,7 +126,7 @@ impl AppStore {
             .into_iter()
             .map(|d| ingestion::validate_draft(d, &source))
             .collect::<Result<Vec<_>>>()?;
-        let n=self.db()?.execute("UPDATE agent_runs SET status='succeeded',result_json=?2,finished_at_ms=?3 WHERE id=?1 AND status='running'",params![id,serde_json::to_string(&drafts).map_err(|_|invalid())?,now_ms()?]).map_err(db_error)?;
+        let n=self.db()?.execute("UPDATE agent_runs SET status='succeeded',result_json=?2,finished_at_ms=?3 WHERE id=?1 AND purpose='role_trial' AND status='running'",params![id,serde_json::to_string(&drafts).map_err(|_|invalid())?,now_ms()?]).map_err(db_error)?;
         if n != 1 {
             return Err(trial_stopped());
         }
@@ -136,15 +136,15 @@ impl AppStore {
         if code.len() > 64 || !code.bytes().all(|c| c.is_ascii_uppercase() || c == b'_') {
             return Err(invalid());
         }
-        self.db()?.execute("UPDATE agent_runs SET status='failed',error_code=?2,finished_at_ms=?3 WHERE id=?1 AND status='running'",params![id,code,now_ms()?]).map_err(db_error)?;
+        self.db()?.execute("UPDATE agent_runs SET status='failed',error_code=?2,finished_at_ms=?3 WHERE id=?1 AND purpose='role_trial' AND status='running'",params![id,code,now_ms()?]).map_err(db_error)?;
         self.agent_run(id)
     }
     pub fn cancel_agent_trial(&mut self, id: &str) -> Result<AgentRun> {
-        self.db()?.execute("UPDATE agent_runs SET status='cancelled',error_code='CANCELLED',finished_at_ms=?2 WHERE id=?1 AND status='running'",params![id,now_ms()?]).map_err(db_error)?;
+        self.db()?.execute("UPDATE agent_runs SET status='cancelled',error_code='CANCELLED',finished_at_ms=?2 WHERE id=?1 AND purpose='role_trial' AND status='running'",params![id,now_ms()?]).map_err(db_error)?;
         self.agent_run(id)
     }
     pub fn interrupt_agent_trials(&mut self, owned: Option<&str>) -> Result<()> {
-        self.db()?.execute("UPDATE agent_runs SET status='interrupted',error_code='INTERRUPTED',finished_at_ms=?1 WHERE status='running' AND (?2 IS NULL OR id<>?2)",params![now_ms()?,owned]).map_err(db_error)?;
+        self.db()?.execute("UPDATE agent_runs SET status='interrupted',error_code='INTERRUPTED',finished_at_ms=?1 WHERE purpose='role_trial' AND status='running' AND (?2 IS NULL OR id<>?2)",params![now_ms()?,owned]).map_err(db_error)?;
         Ok(())
     }
 }

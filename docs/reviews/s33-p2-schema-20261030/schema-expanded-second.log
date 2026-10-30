@@ -1,0 +1,71 @@
+npm notice run sidekick@0.3.0 test:s33-schema-store
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_schema -- --test-threads=1
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.92s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 12 tests
+test local_store::mcp_schema_tests::mcp_schema_004_accepts_null_role_probe_and_preserves_trial_rowid ... ok
+test local_store::mcp_schema_tests::mcp_schema_backup_copy_or_sync_failure_never_runs_ddl ... FAILED
+test local_store::mcp_schema_tests::mcp_schema_catalog_encoded_budget_32k_has_independent_exact_and_plus_one_controls ... ok
+test local_store::mcp_schema_tests::mcp_schema_copy_and_ddl_failures_rollback_full_chain_and_keep_verified_backup ... FAILED
+test local_store::mcp_schema_tests::mcp_schema_default_open_rejects_source_hardlink_before_writing_and_v4_damage_is_not_repaired ... ok
+test local_store::mcp_schema_tests::mcp_schema_default_open_stays_v3_and_commit_response_loss_requires_reopen ... ok
+test local_store::mcp_schema_tests::mcp_schema_probe_results_and_role_trial_are_separate_and_do_not_write_business_tables ... ok
+test local_store::mcp_schema_tests::mcp_schema_probe_validation_rejects_invalid_metadata_without_recording_success ... ok
+test local_store::mcp_schema_tests::mcp_schema_real_v1_v2_v3_upgrade_preserves_rows_rowids_indexes_and_wal_backup ... FAILED
+test local_store::mcp_schema_tests::mcp_schema_source_aliases_replacements_and_side_file_links_preserve_outside_files ... FAILED
+test local_store::mcp_schema_tests::mcp_schema_tool_ledger_enforces_owner_response_hash_and_byte_constraints ... FAILED
+test local_store::mcp_schema_tests::mcp_schema_unknown_rebuilt_table_extensions_and_inbound_fks_are_rejected_before_backup ... FAILED
+
+failures:
+
+---- local_store::mcp_schema_tests::mcp_schema_backup_copy_or_sync_failure_never_runs_ddl stdout ----
+
+thread 'local_store::mcp_schema_tests::mcp_schema_backup_copy_or_sync_failure_never_runs_ddl' panicked at src/mcp_schema_tests.rs:244:9:
+assertion `left == right` failed
+  left: "MCP_DATABASE_CHANGED"
+ right: "MCP_BACKUP_FAILED"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- local_store::mcp_schema_tests::mcp_schema_copy_and_ddl_failures_rollback_full_chain_and_keep_verified_backup stdout ----
+
+thread 'local_store::mcp_schema_tests::mcp_schema_copy_and_ddl_failures_rollback_full_chain_and_keep_verified_backup' panicked at src/mcp_schema_tests.rs:213:13:
+assertion `left == right` failed
+  left: "MCP_DATABASE_CHANGED"
+ right: "MCP_MIGRATION_UNCERTAIN"
+
+---- local_store::mcp_schema_tests::mcp_schema_real_v1_v2_v3_upgrade_preserves_rows_rowids_indexes_and_wal_backup stdout ----
+
+thread 'local_store::mcp_schema_tests::mcp_schema_real_v1_v2_v3_upgrade_preserves_rows_rowids_indexes_and_wal_backup' panicked at src/mcp_schema_tests.rs:177:72:
+called `Result::unwrap()` on an `Err` value: StoreError { code: "MCP_DATABASE_CHANGED", message: "数据库或所属目录的身份／私有性已变化，未修复或替换文件；请恢复原路径后重开核对。" }
+
+---- local_store::mcp_schema_tests::mcp_schema_source_aliases_replacements_and_side_file_links_preserve_outside_files stdout ----
+
+thread 'local_store::mcp_schema_tests::mcp_schema_source_aliases_replacements_and_side_file_links_preserve_outside_files' panicked at src/mcp_schema_tests.rs:504:90:
+called `Result::unwrap()` on an `Err` value: StoreError { code: "MCP_DATABASE_CHANGED", message: "数据库或所属目录的身份／私有性已变化，未修复或替换文件；请恢复原路径后重开核对。" }
+
+---- local_store::mcp_schema_tests::mcp_schema_tool_ledger_enforces_owner_response_hash_and_byte_constraints stdout ----
+
+thread 'local_store::mcp_schema_tests::mcp_schema_tool_ledger_enforces_owner_response_hash_and_byte_constraints' panicked at src/mcp_schema_tests.rs:609:55:
+called `Result::unwrap()` on an `Err` value: StoreError { code: "MCP_DATABASE_CHANGED", message: "数据库或所属目录的身份／私有性已变化，未修复或替换文件；请恢复原路径后重开核对。" }
+
+---- local_store::mcp_schema_tests::mcp_schema_unknown_rebuilt_table_extensions_and_inbound_fks_are_rejected_before_backup stdout ----
+
+thread 'local_store::mcp_schema_tests::mcp_schema_unknown_rebuilt_table_extensions_and_inbound_fks_are_rejected_before_backup' panicked at src/mcp_schema_tests.rs:280:13:
+assertion `left == right` failed: 1 index
+  left: "MCP_DATABASE_CHANGED"
+ right: "MCP_SCHEMA_UNSUPPORTED"
+
+
+failures:
+    local_store::mcp_schema_tests::mcp_schema_backup_copy_or_sync_failure_never_runs_ddl
+    local_store::mcp_schema_tests::mcp_schema_copy_and_ddl_failures_rollback_full_chain_and_keep_verified_backup
+    local_store::mcp_schema_tests::mcp_schema_real_v1_v2_v3_upgrade_preserves_rows_rowids_indexes_and_wal_backup
+    local_store::mcp_schema_tests::mcp_schema_source_aliases_replacements_and_side_file_links_preserve_outside_files
+    local_store::mcp_schema_tests::mcp_schema_tool_ledger_enforces_owner_response_hash_and_byte_constraints
+    local_store::mcp_schema_tests::mcp_schema_unknown_rebuilt_table_extensions_and_inbound_fks_are_rejected_before_backup
+
+test result: FAILED. 6 passed; 6 failed; 0 ignored; 0 measured; 81 filtered out; finished in 0.94s
+
+error: test failed, to rerun pass `--lib`

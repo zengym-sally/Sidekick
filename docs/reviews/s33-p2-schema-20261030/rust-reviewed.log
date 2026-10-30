@@ -1,0 +1,4 @@
+npm notice run sidekick@0.3.0 check:rust
+npm notice run cargo fmt --manifest-path src-tauri/Cargo.toml --check && cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings
+    Checking sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.37s

@@ -1,0 +1,17 @@
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.26s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 9 tests
+test local_store::ingestion::tests::s2_backup_path_failure_leaves_v1_untouched_and_migration_ddl_rolls_back ... ok
+test local_store::ingestion::tests::s2_batch_second_failure_rolls_back_every_todo_candidate_and_operation ... ok
+test local_store::ingestion::tests::s2_cancel_and_result_have_one_transaction_winner ... ok
+test local_store::ingestion::tests::s2_multiple_links_use_the_initial_target_version_without_overwriting_fields ... ok
+test local_store::ingestion::tests::s2_rejected_and_zero_result_sources_do_not_rerun ... ok
+test local_store::ingestion::tests::s2_result_commit_failure_never_leaves_a_partial_candidate_batch ... ok
+test local_store::ingestion::tests::s2_revision_is_only_a_preview_and_old_candidate_versions_cannot_apply ... ok
+test local_store::ingestion::tests::s2_unsigned_candidates_never_create_todos_and_signing_replays_current_state ... ok
+test local_store::ingestion::tests::s2_v1_wal_migration_backs_up_and_preserves_history_and_replay ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 88 filtered out; finished in 0.56s
+

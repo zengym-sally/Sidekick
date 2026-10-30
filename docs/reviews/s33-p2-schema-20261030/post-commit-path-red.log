@@ -1,0 +1,24 @@
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.04s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 1 test
+test local_store::mcp_schema_tests::mcp_schema_post_commit_identity_failure_is_unknown_and_blocks_current_handle ... FAILED
+
+failures:
+
+---- local_store::mcp_schema_tests::mcp_schema_post_commit_identity_failure_is_unknown_and_blocks_current_handle stdout ----
+
+thread 'local_store::mcp_schema_tests::mcp_schema_post_commit_identity_failure_is_unknown_and_blocks_current_handle' panicked at src/mcp_schema_tests.rs:807:5:
+assertion `left == right` failed
+  left: "MCP_DATABASE_CHANGED"
+ right: "MCP_MIGRATION_UNCERTAIN"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    local_store::mcp_schema_tests::mcp_schema_post_commit_identity_failure_is_unknown_and_blocks_current_handle
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 93 filtered out; finished in 0.10s
+
+error: test failed, to rerun pass `--lib`

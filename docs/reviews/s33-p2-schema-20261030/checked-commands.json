@@ -1,0 +1,37 @@
+[
+  {
+    "command": "npm run test:s33-schema-store",
+    "exitCode": 0,
+    "log": "schema-checked.log"
+  },
+  {
+    "command": "npm run test:s33-config-store",
+    "exitCode": 0,
+    "log": "config-checked.log"
+  },
+  {
+    "command": "npm run test:s33-security-store",
+    "exitCode": 0,
+    "log": "security-checked.log"
+  },
+  {
+    "command": "npm run check:rust",
+    "exitCode": 0,
+    "log": "rust-checked.log"
+  },
+  {
+    "command": "npm run typecheck",
+    "exitCode": 0,
+    "log": "types.log"
+  },
+  {
+    "command": "npm run test:s33-config-domain",
+    "exitCode": 0,
+    "log": "config-domain.log"
+  },
+  {
+    "command": "npm run test:s33-security-domain",
+    "exitCode": 0,
+    "log": "security-domain.log"
+  }
+]

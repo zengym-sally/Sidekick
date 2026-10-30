@@ -1,0 +1,22 @@
+[
+  {
+    "command": "npm run test:s33-schema-store",
+    "exitCode": 0,
+    "log": "schema-reviewed.log"
+  },
+  {
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib local_store::tests -- --test-threads=1",
+    "exitCode": 0,
+    "log": "local-reviewed.log"
+  },
+  {
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib ingestion::tests -- --test-threads=1",
+    "exitCode": 0,
+    "log": "ingestion-reviewed.log"
+  },
+  {
+    "command": "npm run check:rust",
+    "exitCode": 0,
+    "log": "rust-reviewed.log"
+  }
+]

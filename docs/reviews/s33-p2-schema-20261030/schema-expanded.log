@@ -1,0 +1,41 @@
+npm notice run sidekick@0.3.0 test:s33-schema-store
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_schema -- --test-threads=1
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+error[E0277]: the trait bound `&str: Into<str>` is not satisfied
+   --> src/mcp_schema_tests.rs:277:349
+    |
+277 | ...ent_runs_role ON agent_runs(purpose);".into()}).unwrap(),"column"=>db.execute_batch(&format!("ALTER TABLE {table} ADD COLUMN private_e...
+    |                                           ^^^^ the trait `From<&str>` is not implemented for `str`
+    |
+    = help: the following other types implement trait `From<T>`:
+              `&str` implements `From<&icu_locale_core::extensions::private::other::Subtag>`
+              `&str` implements `From<&icu_locale_core::extensions::transform::key::Key>`
+              `&str` implements `From<&icu_locale_core::extensions::unicode::attribute::Attribute>`
+              `&str` implements `From<&icu_locale_core::extensions::unicode::key::Key>`
+              `&str` implements `From<&icu_locale_core::extensions::unicode::subdivision::SubdivisionSuffix>`
+              `&str` implements `From<&icu_locale_core::preferences::extensions::unicode::keywords::currency::CurrencyType>`
+              `&str` implements `From<&icu_locale_core::subtags::Subtag>`
+              `&str` implements `From<&icu_locale_core::subtags::language::Language>`
+            and 5 others
+    = note: required for `&str` to implement `Into<str>`
+
+error[E0277]: the trait bound `&str: Into<str>` is not satisfied
+   --> src/mcp_schema_tests.rs:277:254
+    |
+277 | ...o_events_item ON todo_events(action);".into()}else{"DROP INDEX agent_runs_role; CREATE INDEX agent_runs_role ON agent_runs(purpose);"....
+    |                                           ^^^^ the trait `From<&str>` is not implemented for `str`
+    |
+    = help: the following other types implement trait `From<T>`:
+              `&str` implements `From<&icu_locale_core::extensions::private::other::Subtag>`
+              `&str` implements `From<&icu_locale_core::extensions::transform::key::Key>`
+              `&str` implements `From<&icu_locale_core::extensions::unicode::attribute::Attribute>`
+              `&str` implements `From<&icu_locale_core::extensions::unicode::key::Key>`
+              `&str` implements `From<&icu_locale_core::extensions::unicode::subdivision::SubdivisionSuffix>`
+              `&str` implements `From<&icu_locale_core::preferences::extensions::unicode::keywords::currency::CurrencyType>`
+              `&str` implements `From<&icu_locale_core::subtags::Subtag>`
+              `&str` implements `From<&icu_locale_core::subtags::language::Language>`
+            and 5 others
+    = note: required for `&str` to implement `Into<str>`
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `sidekick` (lib test) due to 2 previous errors

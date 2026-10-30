@@ -1,0 +1,22 @@
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.06s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 1 test
+test local_store::mcp_schema_tests::mcp_schema_corrupt_probe_error_cannot_escape_the_closed_metadata_contract ... FAILED
+
+failures:
+
+---- local_store::mcp_schema_tests::mcp_schema_corrupt_probe_error_cannot_escape_the_closed_metadata_contract stdout ----
+
+thread 'local_store::mcp_schema_tests::mcp_schema_corrupt_probe_error_cannot_escape_the_closed_metadata_contract' panicked at src/mcp_schema_tests.rs:917:32:
+called `Result::unwrap_err()` on an `Ok` value: McpProbe { id: "mcp-probe-59602-1793351720069828000", agent_id: None, purpose: "mcp_probe", status: "failed", snapshot: McpProbeSnapshot { server_id: "mcp-4d40aba2f4236179c5034ae2", configuration_revision: "rev-abaa2f3fd483467d15012baabc9fb77de9430a38637f24119bafae45769f006d", connect_timeout_ms: 10000 }, input: McpProbeInput { server_id: "mcp-4d40aba2f4236179c5034ae2" }, result: None, error_code: Some("synthetic-private-marker"), created_at_ms: 1793351720069, finished_at_ms: Some(1793351720070) }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    local_store::mcp_schema_tests::mcp_schema_corrupt_probe_error_cannot_escape_the_closed_metadata_contract
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 96 filtered out; finished in 0.10s
+
+error: test failed, to rerun pass `--lib`

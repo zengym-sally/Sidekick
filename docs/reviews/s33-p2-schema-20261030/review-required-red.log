@@ -1,0 +1,23 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.30s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 1 test
+test local_store::mcp_schema_tests::mcp_schema_missing_required_table_or_index_is_rejected_before_backup_or_ddl ... FAILED
+
+failures:
+
+---- local_store::mcp_schema_tests::mcp_schema_missing_required_table_or_index_is_rejected_before_backup_or_ddl stdout ----
+
+thread 'local_store::mcp_schema_tests::mcp_schema_missing_required_table_or_index_is_rejected_before_backup_or_ddl' panicked at src/mcp_schema_tests.rs:987:9:
+assertion `left == right` failed
+  left: "MCP_MIGRATION_UNCERTAIN"
+ right: "MCP_SCHEMA_UNSUPPORTED"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    local_store::mcp_schema_tests::mcp_schema_missing_required_table_or_index_is_rejected_before_backup_or_ddl
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 99 filtered out; finished in 0.07s
+
+error: test failed, to rerun pass `--lib`

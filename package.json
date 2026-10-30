@@ -54,7 +54,8 @@
     "test:s33-config-domain": "node --test --test-timeout=15000 tests/s33-config.test.mjs",
     "test:s33-config-store": "cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_config -- --test-threads=1",
     "test:s33-security-domain": "node --test --test-timeout=15000 tests/s33-security.test.mjs",
-    "test:s33-security-store": "cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_security -- --test-threads=1"
+    "test:s33-security-store": "cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_security -- --test-threads=1",
+    "test:s33-schema-store": "cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_schema -- --test-threads=1"
   },
   "dependencies": {
     "@larksuite/cli": "1.0.98",

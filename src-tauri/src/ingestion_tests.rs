@@ -235,6 +235,12 @@ fn legacy_root(f: &crate::local_store::tests::Fixture) -> (PathBuf, Connection, 
     drop(store);
     let path = root.join("data/sidekick.sqlite");
     fs::rename(&path, root.join("data/unused-v2.sqlite")).unwrap();
+    OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .mode(0o600)
+        .open(&path)
+        .unwrap();
     let mut db = Connection::open(&path).unwrap();
     db.execute_batch("PRAGMA journal_mode=WAL;PRAGMA wal_autocheckpoint=0;PRAGMA foreign_keys=ON;")
         .unwrap();

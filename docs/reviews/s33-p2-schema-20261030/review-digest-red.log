@@ -1,0 +1,21 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 1 test
+test local_store::mcp_schema_tests::mcp_schema_hash_columns_reject_nul_suffixes_and_blob_bindings_on_insert_and_update ... FAILED
+
+failures:
+
+---- local_store::mcp_schema_tests::mcp_schema_hash_columns_reject_nul_suffixes_and_blob_bindings_on_insert_and_update stdout ----
+
+thread 'local_store::mcp_schema_tests::mcp_schema_hash_columns_reject_nul_suffixes_and_blob_bindings_on_insert_and_update' panicked at src/mcp_schema_tests.rs:1027:13:
+INSERT schema_sha256 must reject non-text or non-64-byte digest
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    local_store::mcp_schema_tests::mcp_schema_hash_columns_reject_nul_suffixes_and_blob_bindings_on_insert_and_update
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 99 filtered out; finished in 0.07s
+
+error: test failed, to rerun pass `--lib`

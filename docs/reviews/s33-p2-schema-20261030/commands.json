@@ -1,0 +1,17 @@
+[
+  {
+    "command": "npm run test:s33-schema-store",
+    "exitCode": 0,
+    "log": "schema-final.log"
+  },
+  {
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib local_store::tests -- --test-threads=1",
+    "exitCode": 0,
+    "log": "local-store.log"
+  },
+  {
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib ingestion::tests -- --test-threads=1",
+    "exitCode": 101,
+    "log": "ingestion.log"
+  }
+]

@@ -286,6 +286,7 @@ struct Workspace {
     root_directory: File,
     mcp_directory: File,
     backups_directory: File,
+    database_identity: mcp_schema::DatabaseIdentity,
 }
 pub struct AppStore {
     app_dir: PathBuf,
@@ -306,6 +307,9 @@ pub struct AppStore {
     mcp_write_fault: Option<McpWriteFault>,
     #[cfg(test)]
     mcp_security_fault: Option<mcp_security::McpSecurityFault>,
+    mcp_schema_uncertain: bool,
+    #[cfg(test)]
+    mcp_migration_fault: Option<mcp_schema::McpMigrationFault>,
 }
 
 fn private_dir(path: &Path) -> Result<()> {
@@ -456,22 +460,13 @@ fn validate_existing_database(path: &Path, initializing: bool) -> Result<()> {
             ))
         };
     }
-    if fs::symlink_metadata(path)
-        .map_err(io_error)?
-        .file_type()
-        .is_symlink()
-    {
-        return Err(StoreError::new(
-            "INVALID_ROOT",
-            "数据库必须保存在工作目录的普通文件中。",
-        ));
-    }
+    mcp_schema::validate_source_files(path)?;
     let db = Connection::open_with_flags(path, OpenFlags::SQLITE_OPEN_READ_ONLY)
         .map_err(|_| StoreError::new("CORRUPT_DATABASE", "数据库无法打开，原文件未重置。"))?;
     let version: i64 = db
         .pragma_query_value(None, "user_version", |r| r.get(0))
         .map_err(db_error)?;
-    if version > 3 {
+    if version > 4 {
         return Err(StoreError::new(
             "SCHEMA_TOO_NEW",
             "数据由较新的跟班版本创建，请升级应用后打开。",
@@ -482,12 +477,12 @@ fn validate_existing_database(path: &Path, initializing: bool) -> Result<()> {
         .map_err(db_error)?;
     let tables: i64 = db
         .query_row(
-            "SELECT count(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'",
+            "SELECT count(*) FROM sqlite_master WHERE type='table' AND name NOT GLOB 'sqlite_*'",
             [],
             |r| r.get(0),
         )
         .map_err(db_error)?;
-    if !(app == APPLICATION_ID && (1..=3).contains(&version)
+    if !(app == APPLICATION_ID && (1..=4).contains(&version)
         || initializing && app == 0 && version == 0 && tables == 0)
     {
         return Err(StoreError::new(
@@ -516,6 +511,9 @@ fn validate_existing_database(path: &Path, initializing: bool) -> Result<()> {
         )
         .map_err(db_error)?;
     }
+    if version == 4 {
+        mcp_schema::validate_v4(&db)?;
+    }
     Ok(())
 }
 
@@ -543,6 +541,9 @@ impl AppStore {
             mcp_write_fault: None,
             #[cfg(test)]
             mcp_security_fault: None,
+            mcp_schema_uncertain: false,
+            #[cfg(test)]
+            mcp_migration_fault: None,
         };
         let bootstrap = store.app_dir.join("bootstrap.json");
         if bootstrap.exists() {
@@ -732,8 +733,8 @@ impl AppStore {
         let backups_directory = File::open(root.join("backups")).map_err(io_error)?;
         self.check_fault(InitPhase::Directories)?;
         let path = root.join("data/sidekick.sqlite");
-        validate_existing_database(&path, initializing)?;
         if !path.exists() {
+            validate_existing_database(&path, initializing)?;
             OpenOptions::new()
                 .write(true)
                 .create_new(true)
@@ -741,7 +742,15 @@ impl AppStore {
                 .open(&path)
                 .map_err(io_error)?;
         }
-        let mut db = Connection::open(&path).map_err(db_error)?;
+        let mut database_identity = mcp_schema::DatabaseIdentity::capture(&root, &root_directory)?;
+        validate_existing_database(&path, initializing)?;
+        database_identity.verify(false)?;
+        let mut db = Connection::open_with_flags(
+            &path,
+            OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        )
+        .map_err(db_error)?;
+        database_identity.verify(false)?;
         db.busy_timeout(std::time::Duration::from_secs(5))
             .map_err(db_error)?;
         db.execute_batch(
@@ -761,9 +770,14 @@ impl AppStore {
             fs::set_permissions(&backup, fs::Permissions::from_mode(0o600)).map_err(io_error)?;
         }
         self.check_fault(InitPhase::BeforeSchema)?;
-        migrations().to_latest(&mut db).map_err(|_| {
-            StoreError::new("MIGRATION_FAILED", "数据库初始化失败，事务已回滚。请重试。")
-        })?;
+        if version <= 3 {
+            migrations().to_latest(&mut db).map_err(|_| {
+                StoreError::new(
+                    "MIGRATION_FAILED",
+                    "数据库初始化失败或结果未确认，原库已保留；请重新打开核对。",
+                )
+            })?;
+        }
         db.execute("UPDATE runs SET status='interrupted',error_code='INTERRUPTED',finished_at_ms=?1 WHERE status IN ('queued','running')",[now_ms()?]).map_err(db_error)?;
         db.execute("UPDATE agent_runs SET status='interrupted',error_code='INTERRUPTED',finished_at_ms=?1 WHERE status='running'",[now_ms()?]).map_err(db_error)?;
         self.check_fault(InitPhase::Schema)?;
@@ -773,6 +787,7 @@ impl AppStore {
             atomic_json(&config_path, &config)?;
         }
         self.check_fault(InitPhase::Ready)?;
+        database_identity.verify(false)?;
         Ok(Workspace {
             root,
             db,
@@ -780,6 +795,7 @@ impl AppStore {
             root_directory,
             mcp_directory,
             backups_directory,
+            database_identity,
         })
     }
     fn db(&self) -> Result<&Connection> {
@@ -1187,3 +1203,15 @@ mod mcp_config_tests;
 #[cfg(test)]
 #[path = "mcp_security_tests.rs"]
 mod mcp_security_tests;
+
+#[cfg(test)]
+#[path = "mcp_schema_tests.rs"]
+mod mcp_schema_tests;
+
+#[path = "mcp_schema.rs"]
+mod mcp_schema;
+pub use mcp_schema::McpSchemaUpgrade;
+
+#[path = "mcp_probe.rs"]
+mod mcp_probe;
+pub use mcp_probe::*;

@@ -1,0 +1,36 @@
+npm notice run sidekick@0.3.0 test:s33-schema-store
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_schema -- --test-threads=1
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+warning: variants `Ddl` and `Copy` are never constructed
+  --> src/mcp_schema.rs:16:5
+   |
+8  | pub(super) enum McpMigrationFault {
+   |                 ----------------- variants in this enum
+...
+16 |     Ddl,
+   |     ^^^
+17 |     #[cfg(test)]
+18 |     Copy,
+   |     ^^^^
+   |
+   = note: `McpMigrationFault` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` on by default
+
+warning: method `require_mcp_schema` is never used
+   --> src/mcp_schema.rs:432:19
+    |
+407 | impl AppStore {
+    | ------------- method in this implementation
+...
+432 |     pub(super) fn require_mcp_schema(&self) -> Result<()> {
+    |                   ^^^^^^^^^^^^^^^^^^
+
+warning: `sidekick` (lib test) generated 2 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.97s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 1 test
+test local_store::mcp_schema_tests::mcp_schema_004_accepts_null_role_probe_and_preserves_trial_rowid ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 81 filtered out; finished in 0.01s
+

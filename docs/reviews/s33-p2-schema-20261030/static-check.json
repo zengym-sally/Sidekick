@@ -1,0 +1,26 @@
+{
+  "baseCommit": "c84ca1f64ebce520d7a4140c52b206db85994ac8",
+  "head": "c84ca1f64ebce520d7a4140c52b206db85994ac8",
+  "oldMigrationsUnchanged": true,
+  "dependenciesLocksBrandRuntimeUiVendorUnchanged": true,
+  "trackedDiffCheck": {
+    "exitCode": 0,
+    "output": "",
+    "scope": "tracked changes before staging; raw untracked logs excluded naturally, check separately at staging"
+  },
+  "normativeCoreSha256": "e29be2e04b4d033eae52ac8d068e7b9adff2406a237e3b8c6cded89134480ccd",
+  "nativeOrOrdinaryRootExecuted": false,
+  "diff": [
+    "README.md",
+    "\"docs/product/01-\\344\\272\\247\\345\\223\\201\\345\\256\\232\\344\\271\\211.md\"",
+    "\"docs/product/02-\\347\\224\\250\\346\\210\\267\\346\\265\\201\\347\\250\\213.md\"",
+    "\"docs/product/03-\\346\\231\\272\\350\\203\\275\\344\\275\\223\\344\\270\\216\\346\\236\\266\\346\\236\\204.md\"",
+    "\"docs/product/04-\\345\\210\\206\\346\\234\\237\\344\\272\\244\\344\\273\\230\\344\\270\\216\\351\\252\\214\\346\\224\\266.md\"",
+    "\"docs/product/05-\\347\\254\\254\\344\\270\\200\\351\\230\\266\\346\\256\\265\\345\\256\\236\\346\\226\\275\\350\\256\\241\\345\\210\\222.md\"",
+    "package.json",
+    "src-tauri/src/agent_trials.rs",
+    "src-tauri/src/ingestion_tests.rs",
+    "src-tauri/src/local_store.rs",
+    "src-tauri/src/mcp_security.rs"
+  ]
+}

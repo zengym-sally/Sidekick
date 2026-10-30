@@ -1,0 +1,24 @@
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.74s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 1 test
+test local_store::mcp_schema_tests::mcp_schema_sqlite_like_user_table_name_cannot_hide_cascading_dependencies ... FAILED
+
+failures:
+
+---- local_store::mcp_schema_tests::mcp_schema_sqlite_like_user_table_name_cannot_hide_cascading_dependencies stdout ----
+
+thread 'local_store::mcp_schema_tests::mcp_schema_sqlite_like_user_table_name_cannot_hide_cascading_dependencies' panicked at src/mcp_schema_tests.rs:954:13:
+assertion `left == right` failed: 1 CASCADE must retain the child, migration result: Ok(McpSchemaUpgrade { from_version: 1, to_version: 4, backup: Some("backups/before-schema-4-71116-1793352483164802000.sqlite") })
+  left: 0
+ right: 1
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    local_store::mcp_schema_tests::mcp_schema_sqlite_like_user_table_name_cannot_hide_cascading_dependencies
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 99 filtered out; finished in 0.11s
+
+error: test failed, to rerun pass `--lib`
