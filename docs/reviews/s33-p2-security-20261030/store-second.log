@@ -1,0 +1,18 @@
+npm notice run sidekick@0.3.0 test:s33-security-store
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_security -- --test-threads=1
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.21s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 8 tests
+test local_store::mcp_security_tests::mcp_security_credential_replacement_keeps_old_refs_and_missing_values_remain_explicit ... ok
+test local_store::mcp_security_tests::mcp_security_default_backend_never_establishes_credential_access ... ok
+test local_store::mcp_security_tests::mcp_security_explicit_environment_does_not_inherit_or_expand_and_missing_values_fail ... ok
+test local_store::mcp_security_tests::mcp_security_fake_credentials_are_bound_redacted_and_resolved_only_inside_host ... ok
+test local_store::mcp_security_tests::mcp_security_foreign_service_root_field_and_model_references_are_rejected_before_backend_io ... ok
+test local_store::mcp_security_tests::mcp_security_journal_reconciles_actual_files_without_replaying_credentials_or_overwriting_config ... ok
+test local_store::mcp_security_tests::mcp_security_swapped_root_mcp_or_backup_paths_block_without_creating_outside_files ... ok
+test local_store::mcp_security_tests::mcp_security_unknown_or_untrusted_journal_preserves_all_state ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 1.23s
+

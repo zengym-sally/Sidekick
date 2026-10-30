@@ -1,0 +1,32 @@
+[
+  {
+    "command": "npm run test:s33-security-domain",
+    "exitCode": 0,
+    "log": "domain-reviewed.log"
+  },
+  {
+    "command": "npm run test:s33-security-store",
+    "exitCode": 0,
+    "log": "store-reviewed.log"
+  },
+  {
+    "command": "npm run test:s33-config-store",
+    "exitCode": 0,
+    "log": "config-reviewed.log"
+  },
+  {
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib local_store::tests -- --test-threads=1",
+    "exitCode": 0,
+    "log": "local-reviewed.log"
+  },
+  {
+    "command": "npm run check:rust",
+    "exitCode": 0,
+    "log": "rust-reviewed.log"
+  },
+  {
+    "command": "npm run typecheck",
+    "exitCode": 0,
+    "log": "types-reviewed.log"
+  }
+]

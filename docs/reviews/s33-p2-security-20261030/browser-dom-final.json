@@ -1,0 +1,19 @@
+{
+  "state": "Browser tab: 1623253445, Title: \"Sidekick 界面验收 · 合成资料\", URL: \"http://127.0.0.1:1481/\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t\t\t\t\t\t\t64 button (expanded) 环境项 · 2 项, Secondary Actions: Collapse\n+\t\t\t\t\t\t\t\t73 text 普通值会写入配置，请勿填写密钥。宿主变量只按所填名称解析；已有安全值只显示设置状态，不回读明文。\n+\t\t\t\t\t\t\t\t74 text 环境项 1 名称\n+\t\t\t\t\t\t\t\t75 text field (settable) 环境项 1 名称, Value: TOKEN, ID: field-v-19\n+\t\t\t\t\t\t\t\t76 text 取值方式\n+\t\t\t\t\t\t\t\t77 container\n+\t\t\t\t\t\t\t\t\t78 combo box (collapsed, settable) 取值方式, Value: 安全值, ID: field-v-20, Secondary Actions: Expand\n+\t\t\t\t\t\t\t\t\t79 image\n+\t\t\t\t\t\t\t\t80 text 安全值 · 缺失\n+\t\t\t\t\t\t\t\t81 text field (settable) 安全值 · 缺失\n+\t\t\t\t\t\t\t\t82 button 显示待保存的Key\n+\t\t\t\t\t\t\t\t83 text 留空保留同服务、同名环境项的原值。改名后需重新填写；新输入仅保留在内存，保存确认后清除。\n+\t\t\t\t\t\t\t\t84 button 移除环境项 1\n+\t\t\t\t\t\t\t\t85 text 环境项 2 名称\n+\t\t\t\t\t\t\t\t86 text field (settable) 环境项 2 名称, Value: HOST_REF, ID: field-v-23\n+\t\t\t\t\t\t\t\t87 text 取值方式\n+\t\t\t\t\t\t\t\t88 container\n+\t\t\t\t\t\t\t\t\t89 combo box (collapsed, settable) 取值方式, Value: 宿主环境变量引用, ID: field-v-24, Secondary Actions: Expand\n+\t\t\t\t\t\t\t\t\t90 image\n+\t\t\t\t\t\t\t\t91 text 宿主变量名\n+\t\t\t\t\t\t\t\t92 text field (settable) 宿主变量名, Value: SYNTHETIC_SOURCE, ID: field-v-26\n+\t\t\t\t\t\t\t\t93 button 移除环境项 2\n+\t\t\t\t\t\t\t\t94 button 添加环境项\nThe focused UI element is 64 button (expanded) 环境项 · 2 项, Secondary Actions: Collapse",
+  "measurements": {
+    "duplicates": [],
+    "overflow": false,
+    "saveButtonBottom": 888,
+    "secret": [
+      {
+        "disabled": false,
+        "length": 0
+      }
+    ],
+    "viewport": [
+      640,
+      900
+    ]
+  },
+  "logs": []
+}

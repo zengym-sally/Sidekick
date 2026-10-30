@@ -1,0 +1,40 @@
+{
+  "scope": "Real Vue/CSS and synthetic IPC in Chrome; no native IPC or real MCP process",
+  "url": "http://127.0.0.1:1481/?mcpUncertain=1",
+  "desktop": {
+    "width": 1440,
+    "height": 1000,
+    "documentWidth": 1440,
+    "duplicateIds": [],
+    "savebarVisible": true
+  },
+  "narrow": {
+    "documentWidth": 640,
+    "duplicateIds": [],
+    "savebar": {
+      "bottom": 900,
+      "top": 837
+    },
+    "viewport": {
+      "height": 900,
+      "width": 640
+    }
+  },
+  "reopenedIdPreserved": true,
+  "observed": [
+    "empty-field aria-invalid=true",
+    "create response loss blocks saves until reread",
+    "reread shows one saved service",
+    "rename and Space disable",
+    "spaced argument retained across reload",
+    "host environment variable name saved without resolution",
+    "ArrowLeft/ArrowRight switch Skills/MCP",
+    "remove confirmation then lost-response reread shows empty list"
+  ],
+  "console": [],
+  "invalidFocus": {
+    "activeId": "field-v-23",
+    "activeInvalid": "true",
+    "activeLabel": "服务名称 *"
+  }
+}

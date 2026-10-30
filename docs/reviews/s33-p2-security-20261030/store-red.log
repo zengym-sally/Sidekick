@@ -1,0 +1,11 @@
+npm notice run sidekick@0.3.0 test:s33-security-store
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_security -- --test-threads=1
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+error[E0432]: unresolved import `super::mcp_security`
+ --> src/mcp_security_tests.rs:2:12
+  |
+2 | use super::mcp_security::*;
+  |            ^^^^^^^^^^^^ could not find `mcp_security` in `super`
+
+For more information about this error, try `rustc --explain E0432`.
+error: could not compile `sidekick` (lib test) due to 1 previous error

@@ -1,0 +1,7 @@
+Current source hashes: 16/16 match
+Hash checker unchanged/changed-byte controls: correct
+Production and development dependency declarations: unchanged
+Locks, Cargo dependencies, migrations 001-003, DESIGN and brand tokens: unchanged
+New source/test/log inputs: not ignored; uncommitted files remain pending explicit Git authorization
+Local links in checkpoint review and fixture guide: present
+git diff --check: exit 0

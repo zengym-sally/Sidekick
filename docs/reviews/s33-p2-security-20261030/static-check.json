@@ -1,0 +1,53 @@
+{
+  "checks": [
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exitCode": 0,
+      "output": "594a105c2073b85b0af6fad0860d6fe8a6bfec70\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--name-only"
+      ],
+      "exitCode": 0,
+      "output": "README.md\n\"docs/product/01-\\344\\272\\247\\345\\223\\201\\345\\256\\232\\344\\271\\211.md\"\n\"docs/product/02-\\347\\224\\250\\346\\210\\267\\346\\265\\201\\347\\250\\213.md\"\n\"docs/product/03-\\346\\231\\272\\350\\203\\275\\344\\275\\223\\344\\270\\216\\346\\236\\266\\346\\236\\204.md\"\n\"docs/product/04-\\345\\210\\206\\346\\234\\237\\344\\272\\244\\344\\273\\230\\344\\270\\216\\351\\252\\214\\346\\224\\266.md\"\n\"docs/product/05-\\347\\254\\254\\344\\270\\200\\351\\230\\266\\346\\256\\265\\345\\256\\236\\346\\226\\275\\350\\256\\241\\345\\210\\222.md\"\npackage.json\nsrc-tauri/src/lib.rs\nsrc-tauri/src/local_store.rs\nsrc-tauri/src/store_commands.rs\nsrc/components/SettingsPanel.vue\nsrc/components/SkillsSettingsPanel.vue\nsrc/styles/settings.css\ntests/fixtures/profile-ui/README.md\ntests/fixtures/profile-ui/api.ts\n"
+    },
+    {
+      "command": [
+        "git",
+        "ls-files",
+        "--others",
+        "--exclude-standard"
+      ],
+      "exitCode": 0,
+      "output": "docs/reviews/s33-p2-config-20261030.md\ndocs/reviews/s33-p2-config-20261030/agents-neighbors.log\ndocs/reviews/s33-p2-config-20261030/browser-env-640.jpg\ndocs/reviews/s33-p2-config-20261030/browser-observations.json\ndocs/reviews/s33-p2-config-20261030/browser-removed-640.jpg\ndocs/reviews/s33-p2-config-20261030/browser-reopened-640.jpg\ndocs/reviews/s33-p2-config-20261030/browser-saved-1440.jpg\ndocs/reviews/s33-p2-config-20261030/browser-unknown-1440.jpg\ndocs/reviews/s33-p2-config-20261030/build.log\ndocs/reviews/s33-p2-config-20261030/design-detector.log\ndocs/reviews/s33-p2-config-20261030/discard-red.log\ndocs/reviews/s33-p2-config-20261030/domain-first.log\ndocs/reviews/s33-p2-config-20261030/domain-red.log\ndocs/reviews/s33-p2-config-20261030/domain.log\ndocs/reviews/s33-p2-config-20261030/evidence.json\ndocs/reviews/s33-p2-config-20261030/layout-neighbors.log\ndocs/reviews/s33-p2-config-20261030/review-a1-red.log\ndocs/reviews/s33-p2-config-20261030/rust.log\ndocs/reviews/s33-p2-config-20261030/skills-neighbors.log\ndocs/reviews/s33-p2-config-20261030/static-check.log\ndocs/reviews/s33-p2-config-20261030/store-first.log\ndocs/reviews/s33-p2-config-20261030/store-neighbors.log\ndocs/reviews/s33-p2-config-20261030/store-red.log\ndocs/reviews/s33-p2-config-20261030/store-second.log\ndocs/reviews/s33-p2-config-20261030/store-shape-red.log\ndocs/reviews/s33-p2-config-20261030/store.log\ndocs/reviews/s33-p2-config-20261030/types-first.log\ndocs/reviews/s33-p2-config-20261030/types.log\ndocs/reviews/s33-p2-security-20261030.md\ndocs/reviews/s33-p2-security-20261030/agents.log\ndocs/reviews/s33-p2-security-20261030/browser-dom-final.json\ndocs/reviews/s33-p2-security-20261030/browser-missing-640.jpg\ndocs/reviews/s33-p2-security-20261030/browser-saved-640.jpg\ndocs/reviews/s33-p2-security-20261030/browser-unavailable-1440.jpg\ndocs/reviews/s33-p2-security-20261030/browser-unknown-1440.jpg\ndocs/reviews/s33-p2-security-20261030/build-reviewed.log\ndocs/reviews/s33-p2-security-20261030/build.log\ndocs/reviews/s33-p2-security-20261030/client-reviewed-commands.json\ndocs/reviews/s33-p2-security-20261030/commands.json\ndocs/reviews/s33-p2-security-20261030/config-domain-reviewed.log\ndocs/reviews/s33-p2-security-20261030/config-domain.log\ndocs/reviews/s33-p2-security-20261030/config-reviewed.log\ndocs/reviews/s33-p2-security-20261030/config-store.log\ndocs/reviews/s33-p2-security-20261030/design-detector.log\ndocs/reviews/s33-p2-security-20261030/domain-final.log\ndocs/reviews/s33-p2-security-20261030/domain-first.log\ndocs/reviews/s33-p2-security-20261030/domain-red.log\ndocs/reviews/s33-p2-security-20261030/domain-reviewed.log\ndocs/reviews/s33-p2-security-20261030/layout.log\ndocs/reviews/s33-p2-security-20261030/local-reviewed.log\ndocs/reviews/s33-p2-security-20261030/local-store.log\ndocs/reviews/s33-p2-security-20261030/review-a1-red.log\ndocs/reviews/s33-p2-security-20261030/review-b1-red.log\ndocs/reviews/s33-p2-security-20261030/review-b2-red.log\ndocs/reviews/s33-p2-security-20261030/reviewed-commands.json\ndocs/reviews/s33-p2-security-20261030/rust-final.log\ndocs/reviews/s33-p2-security-20261030/rust-first.log\ndocs/reviews/s33-p2-security-20261030/rust-reviewed.log\ndocs/reviews/s33-p2-security-20261030/skills.log\ndocs/reviews/s33-p2-security-20261030/store-expanded.log\ndocs/reviews/s33-p2-security-20261030/store-first.log\ndocs/reviews/s33-p2-security-20261030/store-red.log\ndocs/reviews/s33-p2-security-20261030/store-reviewed.log\ndocs/reviews/s33-p2-security-20261030/store-second.log\ndocs/reviews/s33-p2-security-20261030/types-final.log\ndocs/reviews/s33-p2-security-20261030/types-first.log\ndocs/reviews/s33-p2-security-20261030/types-reviewed.log\nsrc-tauri/src/mcp_config.rs\nsrc-tauri/src/mcp_config_tests.rs\nsrc-tauri/src/mcp_security.rs\nsrc-tauri/src/mcp_security_tests.rs\nsrc/components/McpSettingsPanel.vue\nsrc/components/ToolsSettingsPanel.vue\nsrc/domain/mcp.ts\nsrc/stores/mcp.ts\ntests/fixtures/profile-ui/mcp.ts\ntests/s33-config.test.mjs\ntests/s33-security.test.mjs\n"
+    },
+    {
+      "command": [
+        "lsof",
+        "-nP",
+        "-iTCP:1481",
+        "-sTCP:LISTEN"
+      ],
+      "exitCode": 1,
+      "output": ""
+    }
+  ],
+  "dependenciesLocksDesignMigrationsVendorUnchanged": true,
+  "newCommitAuthorization": "Received trusted parent delegation; local commit after final reviews; no push."
+}

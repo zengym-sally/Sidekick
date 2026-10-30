@@ -1,0 +1,38 @@
+npm notice run sidekick@0.3.0 test:s33-config-domain
+npm notice run node --test --test-timeout=15000 tests/s33-config.test.mjs
+✔ MCP configuration creates, renames, disables, removes and reopens without execution (4.30125ms)
+✔ MCP drafts survive switching services, reread and saving another service (0.417167ms)
+✔ MCP late reads do not replace newer reads or edits made while reading (0.146667ms)
+✔ MCP unknown save and conflict keep drafts and block writes until reread (0.792084ms)
+✔ MCP response loss is reconciled by reread without duplicating a new server (0.50075ms)
+✔ MCP readback after an uncertain edit preserves a newer draft (0.344708ms)
+✔ MCP removal response loss rereads history state without removing another service (0.223584ms)
+✔ MCP failed read cannot fabricate an empty ready configuration (0.129875ms)
+✖ MCP discarding an uncertain draft does not skip the required reread (0.541583ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 8
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 136.965958
+
+✖ failing tests:
+
+test at tests/s33-config.test.mjs:64:1
+✖ MCP discarding an uncertain draft does not skip the required reread (0.541583ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-config.test.mjs:66:180)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

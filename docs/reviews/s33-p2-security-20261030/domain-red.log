@@ -1,0 +1,60 @@
+npm notice run sidekick@0.3.0 test:s33-security-domain
+npm notice run node --test --test-timeout=15000 tests/s33-security.test.mjs
+✖ secure input uses a dedicated command and never sends a persisted credential reference (0.83875ms)
+✖ secret response loss requires the exact durable operation receipt rather than matching empty fields (0.13875ms)
+✖ a committed secret response loss clears only the confirmed input after reread (0.09725ms)
+✖ a late secret save does not clear newer secret or ordinary drafts (0.521167ms)
+✖ the default unavailable backend blocks secure submissions without issuing a write (0.147333ms)
+✖ a foreign secret operation on reread cannot acknowledge the pending input (0.097625ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 0
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 127.072208
+
+✖ failing tests:
+
+test at tests/s33-security.test.mjs:23:1
+✖ secure input uses a dedicated command and never sends a persisted credential reference (0.83875ms)
+  TypeError: m.setSecret is not a function
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-security.test.mjs:24:64)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at tests/s33-security.test.mjs:27:1
+✖ secret response loss requires the exact durable operation receipt rather than matching empty fields (0.13875ms)
+  TypeError: m.setSecret is not a function
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-security.test.mjs:28:64)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+
+test at tests/s33-security.test.mjs:30:1
+✖ a committed secret response loss clears only the confirmed input after reread (0.09725ms)
+  TypeError: m.setSecret is not a function
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-security.test.mjs:31:64)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+
+test at tests/s33-security.test.mjs:33:1
+✖ a late secret save does not clear newer secret or ordinary drafts (0.521167ms)
+  TypeError: m.setSecret is not a function
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-security.test.mjs:34:64)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+
+test at tests/s33-security.test.mjs:36:1
+✖ the default unavailable backend blocks secure submissions without issuing a write (0.147333ms)
+  TypeError: m.setSecret is not a function
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-security.test.mjs:37:189)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+
+test at tests/s33-security.test.mjs:39:1
+✖ a foreign secret operation on reread cannot acknowledge the pending input (0.097625ms)
+  TypeError: m.setSecret is not a function
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-security.test.mjs:40:64)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7)

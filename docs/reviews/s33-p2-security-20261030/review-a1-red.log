@@ -1,0 +1,36 @@
+npm notice run sidekick@0.3.0 test:s33-security-domain
+npm notice run node --test --test-timeout=15000 tests/s33-security.test.mjs
+✔ secure input uses a dedicated command and never sends a persisted credential reference (3.327417ms)
+✔ secret response loss requires the exact durable operation receipt rather than matching empty fields (0.375416ms)
+✔ a committed secret response loss clears only the confirmed input after reread (0.319917ms)
+✔ a late secret save does not clear newer secret or ordinary drafts (0.274209ms)
+✔ the default unavailable backend blocks secure submissions without issuing a write (0.17525ms)
+✔ a foreign secret operation on reread cannot acknowledge the pending input (0.221083ms)
+✖ legal __proto__ secret names are submitted and confirmed for existing and new services (0.439833ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 6
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 122.062917
+
+✖ failing tests:
+
+test at tests/s33-security.test.mjs:43:1
+✖ legal __proto__ secret names are submitted and confirmed for existing and new services (0.439833ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///Users/zengym/workspace/projects/ai/sidekick/tests/s33-security.test.mjs:50:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

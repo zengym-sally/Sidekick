@@ -283,6 +283,9 @@ struct Workspace {
     root: PathBuf,
     db: Connection,
     _lock: File,
+    root_directory: File,
+    mcp_directory: File,
+    backups_directory: File,
 }
 pub struct AppStore {
     app_dir: PathBuf,
@@ -299,6 +302,10 @@ pub struct AppStore {
     #[cfg(test)]
     agent_write_fault: Option<agent_config::AgentWriteFault>,
     agent_uncertain: std::collections::BTreeSet<String>,
+    #[cfg(test)]
+    mcp_write_fault: Option<McpWriteFault>,
+    #[cfg(test)]
+    mcp_security_fault: Option<mcp_security::McpSecurityFault>,
 }
 
 fn private_dir(path: &Path) -> Result<()> {
@@ -532,6 +539,10 @@ impl AppStore {
             #[cfg(test)]
             agent_write_fault: None,
             agent_uncertain: Default::default(),
+            #[cfg(test)]
+            mcp_write_fault: None,
+            #[cfg(test)]
+            mcp_security_fault: None,
         };
         let bootstrap = store.app_dir.join("bootstrap.json");
         if bootstrap.exists() {
@@ -656,6 +667,7 @@ impl AppStore {
         time_zone: &str,
         allow_init: bool,
     ) -> Result<Workspace> {
+        let root_directory = File::open(&root).map_err(io_error)?;
         let config_path = root.join("config/app.json");
         let mut config = if config_path.exists() {
             read_json::<RootConfig>(&config_path, "CORRUPT_CONFIG")?
@@ -692,9 +704,32 @@ impl AppStore {
                 "请先完成工作目录初始化。",
             ));
         }
+        // A ready root must retain its sensitive directories. Recreating one
+        // would hide the old configuration or an unresolved credential journal.
+        if !initializing {
+            for path in [&root, &root.join("mcp"), &root.join("backups")] {
+                let metadata = fs::symlink_metadata(path).map_err(|_| {
+                    StoreError::new(
+                        "MCP_PATH_CHANGED",
+                        "工作根或MCP私有目录缺失，未重建目录；请恢复原目录后重新打开。",
+                    )
+                })?;
+                if !metadata.is_dir()
+                    || metadata.file_type().is_symlink()
+                    || metadata.mode() & 0o7777 != 0o700
+                {
+                    return Err(StoreError::new(
+                        "MCP_PATH_CHANGED",
+                        "工作根或MCP私有目录身份／权限不符，未修复或重建；请核对原目录。",
+                    ));
+                }
+            }
+        }
         for name in ["config", "data", "runs", "skills", "mcp", "logs", "backups"] {
             private_dir(&root.join(name))?;
         }
+        let mcp_directory = File::open(root.join("mcp")).map_err(io_error)?;
+        let backups_directory = File::open(root.join("backups")).map_err(io_error)?;
         self.check_fault(InitPhase::Directories)?;
         let path = root.join("data/sidekick.sqlite");
         validate_existing_database(&path, initializing)?;
@@ -742,6 +777,9 @@ impl AppStore {
             root,
             db,
             _lock: lock,
+            root_directory,
+            mcp_directory,
+            backups_directory,
         })
     }
     fn db(&self) -> Result<&Connection> {
@@ -1131,3 +1169,21 @@ mod app_settings;
 #[cfg(test)]
 use app_settings::SettingsWriteFault;
 pub use app_settings::*;
+
+#[path = "mcp_config.rs"]
+mod mcp_config;
+#[cfg(test)]
+use mcp_config::McpWriteFault;
+pub use mcp_config::*;
+
+#[path = "mcp_security.rs"]
+mod mcp_security;
+pub use mcp_security::{McpConfigurationView, McpSecretInput, PreparedMcpEnvironment};
+
+#[cfg(test)]
+#[path = "mcp_config_tests.rs"]
+mod mcp_config_tests;
+
+#[cfg(test)]
+#[path = "mcp_security_tests.rs"]
+mod mcp_security_tests;

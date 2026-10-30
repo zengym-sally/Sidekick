@@ -1,0 +1,45 @@
+npm notice run sidekick@0.3.0 test:s33-config-store
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_config -- --test-threads=1
+   Compiling objc2-exception-helper v0.1.1
+   Compiling mac-notification-sys v0.6.15
+   Compiling libsqlite3-sys v0.37.0
+   Compiling objc2 v0.6.5
+   Compiling objc2-core-foundation v0.3.2
+   Compiling block2 v0.6.2
+   Compiling dispatch2 v0.3.1
+   Compiling objc2-foundation v0.3.2
+   Compiling objc2-core-graphics v0.3.2
+   Compiling rusqlite v0.39.0
+   Compiling rusqlite_migration v2.5.0
+   Compiling objc2-app-kit v0.3.2
+   Compiling notify-rust v4.18.2
+   Compiling objc2-web-kit v0.3.2
+   Compiling muda v0.19.3
+   Compiling tao v0.35.3
+   Compiling window-vibrancy v0.6.0
+   Compiling rfd v0.16.1
+   Compiling global-hotkey v0.8.0
+   Compiling tauri-runtime v2.11.3
+   Compiling wry v0.55.1
+   Compiling tray-icon v0.24.2
+   Compiling tauri-runtime-wry v2.11.4
+   Compiling tauri v2.11.6
+   Compiling tauri-plugin-fs v2.5.2
+   Compiling tauri-plugin-notification v2.4.0
+   Compiling tauri-plugin-autostart v2.5.1
+   Compiling tauri-plugin-global-shortcut v2.3.2
+   Compiling tauri-plugin-dialog v2.6.0
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.40s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 6 tests
+test local_store::mcp_config_tests::mcp_config_crud_reopen_is_private_and_never_runs_a_command ... ok
+test local_store::mcp_config_tests::mcp_config_invalid_json_version_shape_links_and_limits_preserve_originals ... ok
+test local_store::mcp_config_tests::mcp_config_rejects_unknown_fields_duplicate_ids_and_nonprivate_files ... ok
+test local_store::mcp_config_tests::mcp_config_stale_revision_and_unknown_id_do_not_overwrite ... ok
+test local_store::mcp_config_tests::mcp_config_validates_fields_environment_and_encoded_budget ... ok
+test local_store::mcp_config_tests::mcp_config_write_failures_read_back_or_require_reconciliation ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 72 filtered out; finished in 0.74s
+

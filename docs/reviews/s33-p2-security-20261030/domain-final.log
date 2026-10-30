@@ -1,0 +1,16 @@
+npm notice run sidekick@0.3.0 test:s33-security-domain
+npm notice run node --test --test-timeout=15000 tests/s33-security.test.mjs
+✔ secure input uses a dedicated command and never sends a persisted credential reference (3.585375ms)
+✔ secret response loss requires the exact durable operation receipt rather than matching empty fields (0.440792ms)
+✔ a committed secret response loss clears only the confirmed input after reread (0.342709ms)
+✔ a late secret save does not clear newer secret or ordinary drafts (0.453083ms)
+✔ the default unavailable backend blocks secure submissions without issuing a write (0.239542ms)
+✔ a foreign secret operation on reread cannot acknowledge the pending input (0.263583ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 121.590292

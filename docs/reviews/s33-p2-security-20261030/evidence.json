@@ -1,0 +1,478 @@
+{
+  "checkpoint": "P2 environment and credential safety boundary; not complete P2 or real Keychain",
+  "baseCommit": "594a105c2073b85b0af6fad0860d6fe8a6bfec70",
+  "productionCredentialBackend": "disabled; no persistent backend instantiated",
+  "testCredentialBackend": "in-memory synthetic only",
+  "countsFinal": {
+    "javascript": 64,
+    "rust": 50,
+    "securityJavascript": 7,
+    "securityRust": 19
+  },
+  "commands": [
+    {
+      "command": "npm run test:s33-security-domain",
+      "exitCode": 0,
+      "log": "domain-final.log"
+    },
+    {
+      "command": "npm run test:s33-config-domain",
+      "exitCode": 0,
+      "log": "config-domain.log"
+    },
+    {
+      "command": "npm run test:s33-config-store",
+      "exitCode": 0,
+      "log": "config-store.log"
+    },
+    {
+      "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib local_store::tests -- --test-threads=1",
+      "exitCode": 0,
+      "log": "local-store.log"
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "log": "types-final.log"
+    },
+    {
+      "command": "npm run check:rust",
+      "exitCode": 0,
+      "log": "rust-final.log"
+    },
+    {
+      "command": "npm run test:layout-domain",
+      "exitCode": 0,
+      "log": "layout.log"
+    },
+    {
+      "command": "npm run test:s32-domain",
+      "exitCode": 0,
+      "log": "skills.log"
+    },
+    {
+      "command": "npm run test:s31-domain",
+      "exitCode": 0,
+      "log": "agents.log"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    {
+      "command": "npm run test:s33-security-domain",
+      "exitCode": 0,
+      "log": "domain-reviewed.log"
+    },
+    {
+      "command": "npm run test:s33-security-store",
+      "exitCode": 0,
+      "log": "store-reviewed.log"
+    },
+    {
+      "command": "npm run test:s33-config-store",
+      "exitCode": 0,
+      "log": "config-reviewed.log"
+    },
+    {
+      "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib local_store::tests -- --test-threads=1",
+      "exitCode": 0,
+      "log": "local-reviewed.log"
+    },
+    {
+      "command": "npm run check:rust",
+      "exitCode": 0,
+      "log": "rust-reviewed.log"
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "log": "types-reviewed.log"
+    },
+    {
+      "command": "npm run test:s33-config-domain",
+      "exitCode": 0,
+      "log": "config-domain-reviewed.log"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "log": "build-reviewed.log"
+    },
+    {
+      "command": "npm run test:s33-security-store",
+      "exitCode": 0,
+      "log": "store-expanded.log",
+      "phase": "expanded before review"
+    },
+    {
+      "command": "impeccable detect --json src/components/McpSettingsPanel.vue",
+      "exitCode": 0,
+      "log": "design-detector.log"
+    }
+  ],
+  "entries": [
+    {
+      "path": "package.json",
+      "bytes": 5823,
+      "sha256": "d9537dc713330e1fbe68a4cd6db65ea1275149b42c2459a35df0c7df1bd7114c",
+      "kind": "source"
+    },
+    {
+      "path": "src-tauri/src/lib.rs",
+      "bytes": 9237,
+      "sha256": "f31f36475cdc3cd18e9c7545a79bc013d396db1a2a1586f7dca4121f529cfbbc",
+      "kind": "source"
+    },
+    {
+      "path": "src-tauri/src/local_store.rs",
+      "bytes": 43724,
+      "sha256": "3ce395306084d5d87531aa399019280083ef98246a67962545baf75938c6774e",
+      "kind": "source"
+    },
+    {
+      "path": "src-tauri/src/store_commands.rs",
+      "bytes": 12263,
+      "sha256": "c168f4ebd11e19da7f48dd1f8f44068ebdf322fec4739c6a9da7926368f08407",
+      "kind": "source"
+    },
+    {
+      "path": "src-tauri/src/mcp_config.rs",
+      "bytes": 6439,
+      "sha256": "309b275d633f3c473fc9b46d1ec59eaf94434e115db410dafb0786fc1f5429c6",
+      "kind": "source"
+    },
+    {
+      "path": "src-tauri/src/mcp_config_tests.rs",
+      "bytes": 10853,
+      "sha256": "802bd130a375ba0e039fc8b317c98ef8ba9def4a2e1c9270f00b36cd3f998b68",
+      "kind": "source"
+    },
+    {
+      "path": "src-tauri/src/mcp_security.rs",
+      "bytes": 34764,
+      "sha256": "96de0d952c0609860c416327610a3d7e1f14f08648b950fd334ae1b7b1c4ea45",
+      "kind": "source"
+    },
+    {
+      "path": "src-tauri/src/mcp_security_tests.rs",
+      "bytes": 32291,
+      "sha256": "f27509eff3e06d61399573ae06c6e61585016cf2695aecf13e9890b9fdb6bf63",
+      "kind": "source"
+    },
+    {
+      "path": "src/domain/mcp.ts",
+      "bytes": 1263,
+      "sha256": "8f19f665e2dfcaae7975558a8670862b6071b3516edda96868ff79190546b34a",
+      "kind": "source"
+    },
+    {
+      "path": "src/stores/mcp.ts",
+      "bytes": 9454,
+      "sha256": "b1f6c599e0b38b1532338c0f38f3424eeb74f28ad32797105cbfc2984ccc9fb3",
+      "kind": "source"
+    },
+    {
+      "path": "src/components/McpSettingsPanel.vue",
+      "bytes": 10688,
+      "sha256": "61ddf5dd5b71a3cdad5d7ef377ab7fb070a454cab09eba603d9a873a8993eb4b",
+      "kind": "source"
+    },
+    {
+      "path": "src/components/ToolsSettingsPanel.vue",
+      "bytes": 1226,
+      "sha256": "0c31fe2e50d684b71bd483ffff660f907e2c422bd4449d6489eb05d9172273df",
+      "kind": "source"
+    },
+    {
+      "path": "src/components/SettingsPanel.vue",
+      "bytes": 8517,
+      "sha256": "8493404328805e29df5655da47da84d1353c28b3609b0de718c9296b9c3de0ab",
+      "kind": "source"
+    },
+    {
+      "path": "src/components/SkillsSettingsPanel.vue",
+      "bytes": 4979,
+      "sha256": "580f0d06ccd8e7eb65f4cac1502802773ce5a069a731948e08813bbb86d839cf",
+      "kind": "source"
+    },
+    {
+      "path": "src/styles/settings.css",
+      "bytes": 16107,
+      "sha256": "476de03aac05067209448ade6a0f8735b979436fa115eb69dfa39e406448be8e",
+      "kind": "source"
+    },
+    {
+      "path": "tests/s33-config.test.mjs",
+      "bytes": 7401,
+      "sha256": "8a64ac28df95e8d691f2bf3ec79d0d75d7c31392858dde67352bf447622c5cfc",
+      "kind": "source"
+    },
+    {
+      "path": "tests/s33-security.test.mjs",
+      "bytes": 5077,
+      "sha256": "a836426514531c3975bdc3409d4bbb50992fb03c4f2de63623d6ccce82b90f47",
+      "kind": "source"
+    },
+    {
+      "path": "tests/fixtures/profile-ui/mcp.ts",
+      "bytes": 3163,
+      "sha256": "4732752caad58c87d80f8b2881a11ed573aaf2271097c3630657c853618b29e1",
+      "kind": "source"
+    },
+    {
+      "path": "tests/fixtures/profile-ui/api.ts",
+      "bytes": 3236,
+      "sha256": "085174f344add1d8b85d65b27fa43fbb1816bd410bfb6a923ed1cb2444e94a6a",
+      "kind": "source"
+    },
+    {
+      "path": "tests/fixtures/profile-ui/vite.config.ts",
+      "bytes": 755,
+      "sha256": "0245c260211dd82368ed0feaa8c83d221d3f6b313f05e9dfd0db1942173ab0c2",
+      "kind": "source"
+    },
+    {
+      "path": "tests/fixtures/profile-ui/README.md",
+      "bytes": 4426,
+      "sha256": "53cc02adc4713b21b63c1580b47230addba60431dfefc15d93c7fdfc054c2a5c",
+      "kind": "source"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/agents.log",
+      "bytes": 801,
+      "sha256": "e3c3bea1ef9da6a8319ef04b213dfd3451a5b9fe582fd2816ea0f9dd078c0709",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/browser-dom-final.json",
+      "bytes": 2241,
+      "sha256": "d06e66bf72d8482c377e7b2986a14309401ecfb2a4bd08d7bbd78c5c6f4f1992",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/browser-missing-640.jpg",
+      "bytes": 35216,
+      "sha256": "4ee0e082382154d2b412d15e3ad2bf992dc7d222db76e80fa5b8635814a3ab8b",
+      "kind": "screenshot"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/browser-saved-640.jpg",
+      "bytes": 36480,
+      "sha256": "e973800ad6bef5a2bde5eb8cd3a101eead827788d9b38b776b0b05e9976358f3",
+      "kind": "screenshot"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/browser-unavailable-1440.jpg",
+      "bytes": 68131,
+      "sha256": "b59ef45788462f78e056d85b30bad9f5df8d38c1e8506e1f99f0d15f9ffb308c",
+      "kind": "screenshot"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/browser-unknown-1440.jpg",
+      "bytes": 73603,
+      "sha256": "100640f634a81c6d1343670721d38dd0058ebc59c205da61b74bfe2b9ceac18a",
+      "kind": "screenshot"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/build-reviewed.log",
+      "bytes": 938,
+      "sha256": "4958db5b5459e5dd124ca42c1f2bd16b0f0a5b0ebd21f016ebfa54ce5b18fb2b",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/build.log",
+      "bytes": 938,
+      "sha256": "e49858a150b75841e4e7e89390d5c72b22c9af73de9cdf8be06ba8b8368fcad3",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/client-reviewed-commands.json",
+      "bytes": 212,
+      "sha256": "702c5e478cbe5e24582593c7aaf8b6acdb522ac27b1d32099db3634b13067add",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/commands.json",
+      "bytes": 1048,
+      "sha256": "1fcb7bd9516a5652fe211dc217303c7e1961bab9cc22fed411b534730292fc87",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/config-domain-reviewed.log",
+      "bytes": 1037,
+      "sha256": "fbdaef70be4cd78fb68757ea289685b3ef826b62f47bf5da069bd8580e96f3fb",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/config-domain.log",
+      "bytes": 1041,
+      "sha256": "f379324e2605c5307dc0f6744de03474a3fbbdc5dd7064f2d559ba73281eb38c",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/config-reviewed.log",
+      "bytes": 1072,
+      "sha256": "c9a766fbf16f4e60431608355944ec24d0c558a163931f0e57e7c0752f7f498f",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/config-store.log",
+      "bytes": 2169,
+      "sha256": "0912ce62099c153f51d32569bc5ad4ce4f3a69237280428532440728692bf967",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/design-detector.log",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/domain-final.log",
+      "bytes": 835,
+      "sha256": "ad55a74e7ba1bf7dddb26b18988637fc26742dc824b175d20aa6e0fa4eb98648",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/domain-first.log",
+      "bytes": 832,
+      "sha256": "3f45796e4c312f14984fd39bcfa6be59bf9c98974f87c93d5eaa18dbb46c826b",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/domain-red.log",
+      "bytes": 3553,
+      "sha256": "abded5ab203bba8c228277cea5f067666cc1bcec0e15010cfb9460f968e99286",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/domain-reviewed.log",
+      "bytes": 939,
+      "sha256": "ac21719fdae105d97e84b2f491aec7d1a19be100f13a6fe731b50abc61f6a289",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/layout.log",
+      "bytes": 1662,
+      "sha256": "759c51e61aa01845c1a8d96548d5b30f4c6fb4588950d6c789487429e4b6272d",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/local-reviewed.log",
+      "bytes": 2603,
+      "sha256": "9a7c867ff6997d1ae8e70dc68c7898ecd39c6a7832ae319d7efd0e3acf938330",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/local-store.log",
+      "bytes": 2603,
+      "sha256": "550d34ba5a0fbde988089a189c832c203db50f4af75a1cb4cc1006542e1e8b48",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/review-a1-red.log",
+      "bytes": 1614,
+      "sha256": "1c012ac58fcb5bae9b36279e10041dc39b1ed9b31268eb1240a71aec61c79a66",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/review-b1-red.log",
+      "bytes": 2093,
+      "sha256": "c32d3f22034254ffbcc055e8dc6db4279e70554c70cd657220a1a09944b00af6",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/review-b2-red.log",
+      "bytes": 1835,
+      "sha256": "a6faa98a5fc637a37603627d6fb5c5860de1ca9248be64a8b57ff7598a77be2f",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/reviewed-commands.json",
+      "bytes": 697,
+      "sha256": "122ace0ec17330ac24272473812f9ba5265e5c1ba7d680b8d83d23b3a49b1491",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/rust-final.log",
+      "bytes": 1362,
+      "sha256": "a2f1deb04e3b184bfa75ff037b8f897ed94900f1479c318c59884ba64644faf2",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/rust-first.log",
+      "bytes": 748,
+      "sha256": "4440eebb7f7ae0c806f75ae3c3d9f1e92923ecd8d27e39901d4182f95cf89699",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/rust-reviewed.log",
+      "bytes": 1362,
+      "sha256": "be812ddee654b9a5ebe828fcff32d3f169f2921b29134af1c931b16ec83f6283",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/skills.log",
+      "bytes": 2959,
+      "sha256": "d08c9c38cfb32b44826ae7da9b06e3367755d0f57f309950786573955d34ceeb",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/static-check.json",
+      "bytes": 5862,
+      "sha256": "ee2b44f5e5c6840d31d956724be58343daa8f958020083775dc3109e82334607",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/store-expanded.log",
+      "bytes": 3534,
+      "sha256": "d12f9421986b975b7a3ff7e5262f254dc2f0d592eba2b9770531e2aba44b917e",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/store-first.log",
+      "bytes": 1592,
+      "sha256": "e65ee0940c2868fa1efc59aa118e310e2d368bc88a2c76d08b924b9c535da1ff",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/store-red.log",
+      "bytes": 577,
+      "sha256": "657aee43502f005c83942ee09ea04e3dffe49323987ad1c77dc531e151b17e8f",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/store-reviewed.log",
+      "bytes": 3908,
+      "sha256": "898c31f71329f1dbe09db7079c2228782377e642960fb215fa4bad879c34e836",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/store-second.log",
+      "bytes": 1532,
+      "sha256": "8dd785528753f538e3241d25f0c26e7e8e6e29f0222e7d997671f154044242f8",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/types-final.log",
+      "bytes": 72,
+      "sha256": "efc5b3a47a0d3023241a6990e4253676d9a17ce360e4d9632131e4b22aaea9c0",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/types-first.log",
+      "bytes": 72,
+      "sha256": "efc5b3a47a0d3023241a6990e4253676d9a17ce360e4d9632131e4b22aaea9c0",
+      "kind": "execution-evidence"
+    },
+    {
+      "path": "docs/reviews/s33-p2-security-20261030/types-reviewed.log",
+      "bytes": 72,
+      "sha256": "efc5b3a47a0d3023241a6990e4253676d9a17ce360e4d9632131e4b22aaea9c0",
+      "kind": "execution-evidence"
+    }
+  ],
+  "reportExcludedFromHashEntries": "Review report, normative plan and this manifest are read directly; avoid recursive evidence hashes. Prior checkpoint evidence remains historical."
+}

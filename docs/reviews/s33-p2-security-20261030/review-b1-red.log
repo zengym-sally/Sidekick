@@ -1,0 +1,51 @@
+   Compiling objc2-exception-helper v0.1.1
+   Compiling mac-notification-sys v0.6.15
+   Compiling libsqlite3-sys v0.37.0
+   Compiling objc2 v0.6.5
+   Compiling block2 v0.6.2
+   Compiling objc2-core-foundation v0.3.2
+   Compiling dispatch2 v0.3.1
+   Compiling objc2-foundation v0.3.2
+   Compiling objc2-core-graphics v0.3.2
+   Compiling rusqlite v0.39.0
+   Compiling rusqlite_migration v2.5.0
+   Compiling objc2-app-kit v0.3.2
+   Compiling notify-rust v4.18.2
+   Compiling objc2-web-kit v0.3.2
+   Compiling tao v0.35.3
+   Compiling muda v0.19.3
+   Compiling window-vibrancy v0.6.0
+   Compiling global-hotkey v0.8.0
+   Compiling rfd v0.16.1
+   Compiling wry v0.55.1
+   Compiling tauri-runtime v2.11.3
+   Compiling tray-icon v0.24.2
+   Compiling tauri-runtime-wry v2.11.4
+   Compiling tauri v2.11.6
+   Compiling tauri-plugin-fs v2.5.2
+   Compiling tauri-plugin-notification v2.4.0
+   Compiling tauri-plugin-autostart v2.5.1
+   Compiling tauri-plugin-global-shortcut v2.3.2
+   Compiling tauri-plugin-dialog v2.6.0
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.98s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 1 test
+test local_store::mcp_security_tests::mcp_security_cold_reopen_missing_private_directory_preserves_moved_state ... FAILED
+
+failures:
+
+---- local_store::mcp_security_tests::mcp_security_cold_reopen_missing_private_directory_preserves_moved_state stdout ----
+
+thread 'local_store::mcp_security_tests::mcp_security_cold_reopen_missing_private_directory_preserves_moved_state' panicked at src/mcp_security_tests.rs:787:9:
+ready root must reject missing mcp, not recreate it
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    local_store::mcp_security_tests::mcp_security_cold_reopen_missing_private_directory_preserves_moved_state
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 78 filtered out; finished in 0.11s
+
+error: test failed, to rerun pass `--lib`

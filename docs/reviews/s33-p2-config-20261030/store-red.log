@@ -1,0 +1,300 @@
+npm notice run sidekick@0.3.0 test:s33-config-store
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_config -- --test-threads=1
+   Compiling objc2-exception-helper v0.1.1
+   Compiling mac-notification-sys v0.6.15
+   Compiling libsqlite3-sys v0.37.0
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+   Compiling objc2 v0.6.5
+   Compiling block2 v0.6.2
+   Compiling objc2-core-foundation v0.3.2
+   Compiling dispatch2 v0.3.1
+   Compiling objc2-foundation v0.3.2
+   Compiling objc2-core-graphics v0.3.2
+   Compiling rusqlite v0.39.0
+   Compiling rusqlite_migration v2.5.0
+   Compiling objc2-app-kit v0.3.2
+   Compiling notify-rust v4.18.2
+   Compiling objc2-web-kit v0.3.2
+   Compiling muda v0.19.3
+   Compiling tao v0.35.3
+   Compiling window-vibrancy v0.6.0
+   Compiling global-hotkey v0.8.0
+   Compiling rfd v0.16.1
+   Compiling wry v0.55.1
+   Compiling tauri-runtime v2.11.3
+   Compiling tray-icon v0.24.2
+   Compiling tauri-runtime-wry v2.11.4
+   Compiling tauri v2.11.6
+   Compiling tauri-plugin-fs v2.5.2
+   Compiling tauri-plugin-global-shortcut v2.3.2
+   Compiling tauri-plugin-notification v2.4.0
+   Compiling tauri-plugin-autostart v2.5.1
+   Compiling tauri-plugin-dialog v2.6.0
+error[E0412]: cannot find type `McpServerDraft` in this scope
+ --> src/mcp_config_tests.rs:4:15
+  |
+4 | fn draft() -> McpServerDraft {
+  |               ^^^^^^^^^^^^^^ not found in this scope
+
+error[E0412]: cannot find type `McpServerDraft` in this scope
+ --> src/mcp_config_tests.rs:7:51
+  |
+7 | fn save(s: &AppStore, id: Option<String>, server: McpServerDraft) -> Result<McpConfigSave> {
+  |                                                   ^^^^^^^^^^^^^^ not found in this scope
+
+error[E0412]: cannot find type `McpConfigSave` in this scope
+  --> src/mcp_config_tests.rs:7:77
+   |
+7  | fn save(s: &AppStore, id: Option<String>, server: McpServerDraft) -> Result<McpConfigSave> {
+   |                                                                             ^^^^^^^^^^^^^
+   |
+  ::: src/model_config.rs:29:1
+   |
+29 | pub struct ModelConfigSave {
+   | -------------------------- similarly named struct `ModelConfigSave` defined here
+   |
+help: a struct with a similar name exists
+   |
+7  - fn save(s: &AppStore, id: Option<String>, server: McpServerDraft) -> Result<McpConfigSave> {
+7  + fn save(s: &AppStore, id: Option<String>, server: McpServerDraft) -> Result<ModelConfigSave> {
+   |
+help: you might be missing a type parameter
+   |
+7  | fn save<McpConfigSave>(s: &AppStore, id: Option<String>, server: McpServerDraft) -> Result<McpConfigSave> {
+   |        +++++++++++++++
+
+error[E0422]: cannot find struct, variant or union type `McpServerInput` in this scope
+ --> src/mcp_config_tests.rs:8:23
+  |
+8 |     s.save_mcp_server(McpServerInput { id, expected_revision: s.mcp_configuration()?.revision, server })
+  |                       ^^^^^^^^^^^^^^ not found in this scope
+
+error[E0422]: cannot find struct, variant or union type `McpRemoveInput` in this scope
+  --> src/mcp_config_tests.rs:23:25
+   |
+23 |     s.remove_mcp_server(McpRemoveInput{id,expected_revision:config.revision}).unwrap();assert!(s.mcp_configuration().unwrap().servers.is_...
+   |                         ^^^^^^^^^^^^^^ not found in this scope
+
+error[E0422]: cannot find struct, variant or union type `McpServerInput` in this scope
+  --> src/mcp_config_tests.rs:29:34
+   |
+29 |     assert_eq!(s.save_mcp_server(McpServerInput{id:None,expected_revision:String::new(),server:draft()}).unwrap_err().code,"MCP_VERSION_C...
+   |                                  ^^^^^^^^^^^^^^ not found in this scope
+
+error[E0422]: cannot find struct, variant or union type `McpRemoveInput` in this scope
+  --> src/mcp_config_tests.rs:31:36
+   |
+31 |     assert_eq!(s.remove_mcp_server(McpRemoveInput{id:saved.server_id.unwrap(),expected_revision:String::new()}).unwrap_err().code,"MCP_VE...
+   |                                    ^^^^^^^^^^^^^^ not found in this scope
+
+error[E0599]: no method named `save_mcp_server` found for reference `&local_store::AppStore` in the current scope
+ --> src/mcp_config_tests.rs:8:7
+  |
+8 |     s.save_mcp_server(McpServerInput { id, expected_revision: s.mcp_configuration()?.revision, server })
+  |       ^^^^^^^^^^^^^^^ method not found in `&local_store::AppStore`
+
+error[E0599]: no method named `mcp_configuration` found for reference `&local_store::AppStore` in the current scope
+ --> src/mcp_config_tests.rs:8:65
+  |
+8 |     s.save_mcp_server(McpServerInput { id, expected_revision: s.mcp_configuration()?.revision, server })
+  |                                                                 ^^^^^^^^^^^^^^^^^ method not found in `&local_store::AppStore`
+
+error[E0599]: no method named `mcp_configuration` found for struct `local_store::AppStore` in the current scope
+   --> src/mcp_config_tests.rs:14:15
+    |
+14  |     assert!(s.mcp_configuration().unwrap().servers.is_empty());assert!(!path.exists());
+    |               ^^^^^^^^^^^^^^^^^ method not found in `local_store::AppStore`
+    |
+   ::: src/local_store.rs:287:1
+    |
+287 | pub struct AppStore {
+    | ------------------- method `mcp_configuration` not found for this struct
+
+error[E0599]: no method named `mcp_configuration` found for struct `local_store::AppStore` in the current scope
+   --> src/mcp_config_tests.rs:19:46
+    |
+19  |     drop(s);let mut s=f.store();let config=s.mcp_configuration().unwrap();assert_eq!(config.servers[0].settings.name,"更名");assert!(!config....
+    |                                              ^^^^^^^^^^^^^^^^^ method not found in `local_store::AppStore`
+    |
+   ::: src/local_store.rs:287:1
+    |
+287 | pub struct AppStore {
+    | ------------------- method `mcp_configuration` not found for this struct
+
+error[E0599]: no method named `remove_mcp_server` found for struct `local_store::AppStore` in the current scope
+   --> src/mcp_config_tests.rs:23:7
+    |
+23  |     s.remove_mcp_server(McpRemoveInput{id,expected_revision:config.revision}).unwrap();assert!(s.mcp_configuration().unwrap().servers.is_...
+    |       ^^^^^^^^^^^^^^^^^ method not found in `local_store::AppStore`
+    |
+   ::: src/local_store.rs:287:1
+    |
+287 | pub struct AppStore {
+    | ------------------- method `remove_mcp_server` not found for this struct
+
+error[E0599]: no method named `mcp_configuration` found for struct `local_store::AppStore` in the current scope
+   --> src/mcp_config_tests.rs:23:98
+    |
+23  | ...onfig.revision}).unwrap();assert!(s.mcp_configuration().unwrap().servers.is_empty());assert_eq!(fs::read(sentinel).unwrap(),b"preserve");
+    |                                        ^^^^^^^^^^^^^^^^^ method not found in `local_store::AppStore`
+    |
+   ::: src/local_store.rs:287:1
+    |
+287 | pub struct AppStore {
+    | ------------------- method `mcp_configuration` not found for this struct
+
+error[E0599]: no method named `save_mcp_server` found for struct `local_store::AppStore` in the current scope
+   --> src/mcp_config_tests.rs:29:18
+    |
+29  |     assert_eq!(s.save_mcp_server(McpServerInput{id:None,expected_revision:String::new(),server:draft()}).unwrap_err().code,"MCP_VERSION_C...
+    |                  ^^^^^^^^^^^^^^^ method not found in `local_store::AppStore`
+    |
+   ::: src/local_store.rs:287:1
+    |
+287 | pub struct AppStore {
+    | ------------------- method `save_mcp_server` not found for this struct
+
+error[E0599]: no method named `remove_mcp_server` found for struct `local_store::AppStore` in the current scope
+   --> src/mcp_config_tests.rs:31:18
+    |
+31  |     assert_eq!(s.remove_mcp_server(McpRemoveInput{id:saved.server_id.unwrap(),expected_revision:String::new()}).unwrap_err().code,"MCP_VE...
+    |                  ^^^^^^^^^^^^^^^^^ method not found in `local_store::AppStore`
+    |
+   ::: src/local_store.rs:287:1
+    |
+287 | pub struct AppStore {
+    | ------------------- method `remove_mcp_server` not found for this struct
+
+error[E0599]: no method named `mcp_configuration` found for struct `local_store::AppStore` in the current scope
+   --> src/mcp_config_tests.rs:37:52
+    |
+37  | ...   fs::write(&path,&bytes).unwrap();assert!(s.mcp_configuration().is_err());assert!(save(&s,None,draft()).is_err());assert_eq!(fs::rea...
+    |                                                  ^^^^^^^^^^^^^^^^^ method not found in `local_store::AppStore`
+    |
+   ::: src/local_store.rs:287:1
+    |
+287 | pub struct AppStore {
+    | ------------------- method `mcp_configuration` not found for this struct
+
+error[E0599]: no method named `mcp_configuration` found for struct `local_store::AppStore` in the current scope
+   --> src/mcp_config_tests.rs:40:147
+    |
+40  | ...&outside,&path).unwrap();}assert!(s.mcp_configuration().is_err());assert!(save(&s,None,draft()).is_err());assert_eq!(fs::read(&outside...
+    |                                        ^^^^^^^^^^^^^^^^^ method not found in `local_store::AppStore`
+    |
+   ::: src/local_store.rs:287:1
+    |
+287 | pub struct AppStore {
+    | ------------------- method `mcp_configuration` not found for this struct
+
+error[E0599]: no method named `mcp_configuration` found for struct `local_store::AppStore` in the current scope
+   --> src/mcp_config_tests.rs:41:139
+    |
+41  | ...(&f.0,directory).unwrap();assert!(s.mcp_configuration().is_err());assert!(save(&s,None,draft()).is_err());
+    |                                        ^^^^^^^^^^^^^^^^^ method not found in `local_store::AppStore`
+    |
+   ::: src/local_store.rs:287:1
+    |
+287 | pub struct AppStore {
+    | ------------------- method `mcp_configuration` not found for this struct
+
+error[E0609]: no field `mcp_write_fault` on type `local_store::AppStore`
+  --> src/mcp_config_tests.rs:56:7
+   |
+56 |     s.mcp_write_fault=Some(McpWriteFault::BeforeReplace);assert!(save(&s,None,draft()).is_err());assert_eq!(fs::read(&path).unwrap(),befo...
+   |       ^^^^^^^^^^^^^^^ unknown field
+   |
+help: a field with a similar name exists
+   |
+56 -     s.mcp_write_fault=Some(McpWriteFault::BeforeReplace);assert!(save(&s,None,draft()).is_err());assert_eq!(fs::read(&path).unwrap(),before);
+56 +     s.model_write_fault=Some(McpWriteFault::BeforeReplace);assert!(save(&s,None,draft()).is_err());assert_eq!(fs::read(&path).unwrap(),before);
+   |
+
+error[E0433]: failed to resolve: use of undeclared type `McpWriteFault`
+  --> src/mcp_config_tests.rs:56:28
+   |
+56 |     s.mcp_write_fault=Some(McpWriteFault::BeforeReplace);assert!(save(&s,None,draft()).is_err());assert_eq!(fs::read(&path).unwrap(),befo...
+   |                            ^^^^^^^^^^^^^
+   |                            |
+   |                            use of undeclared type `McpWriteFault`
+   |                            help: an enum with a similar name exists: `ModelWriteFault`
+
+error[E0609]: no field `mcp_write_fault` on type `local_store::AppStore`
+  --> src/mcp_config_tests.rs:57:7
+   |
+57 |     s.mcp_write_fault=Some(McpWriteFault::AfterReplace);let recovered=save(&s,None,draft()).unwrap();assert!(recovered.warning.is_some())...
+   |       ^^^^^^^^^^^^^^^ unknown field
+   |
+help: a field with a similar name exists
+   |
+57 -     s.mcp_write_fault=Some(McpWriteFault::AfterReplace);let recovered=save(&s,None,draft()).unwrap();assert!(recovered.warning.is_some());assert_eq!(recovered.configuration.servers.len(),2);
+57 +     s.model_write_fault=Some(McpWriteFault::AfterReplace);let recovered=save(&s,None,draft()).unwrap();assert!(recovered.warning.is_some());assert_eq!(recovered.configuration.servers.len(),2);
+   |
+
+error[E0433]: failed to resolve: use of undeclared type `McpWriteFault`
+  --> src/mcp_config_tests.rs:57:28
+   |
+57 |     s.mcp_write_fault=Some(McpWriteFault::AfterReplace);let recovered=save(&s,None,draft()).unwrap();assert!(recovered.warning.is_some())...
+   |                            ^^^^^^^^^^^^^
+   |                            |
+   |                            use of undeclared type `McpWriteFault`
+   |                            help: an enum with a similar name exists: `ModelWriteFault`
+
+error[E0609]: no field `mcp_write_fault` on type `local_store::AppStore`
+  --> src/mcp_config_tests.rs:58:7
+   |
+58 |     s.mcp_write_fault=Some(McpWriteFault::ReadBack);assert_eq!(save(&s,None,draft()).unwrap_err().code,"MCP_SAVE_UNCERTAIN");s.mcp_write_...
+   |       ^^^^^^^^^^^^^^^ unknown field
+   |
+help: a field with a similar name exists
+   |
+58 -     s.mcp_write_fault=Some(McpWriteFault::ReadBack);assert_eq!(save(&s,None,draft()).unwrap_err().code,"MCP_SAVE_UNCERTAIN");s.mcp_write_fault=None;assert_eq!(s.mcp_configuration().unwrap().servers.len(),3);assert_eq!(s.mcp_configuration().unwrap().servers[0].id,first.server_id.unwrap());
+58 +     s.model_write_fault=Some(McpWriteFault::ReadBack);assert_eq!(save(&s,None,draft()).unwrap_err().code,"MCP_SAVE_UNCERTAIN");s.mcp_write_fault=None;assert_eq!(s.mcp_configuration().unwrap().servers.len(),3);assert_eq!(s.mcp_configuration().unwrap().servers[0].id,first.server_id.unwrap());
+   |
+
+error[E0433]: failed to resolve: use of undeclared type `McpWriteFault`
+  --> src/mcp_config_tests.rs:58:28
+   |
+58 |     s.mcp_write_fault=Some(McpWriteFault::ReadBack);assert_eq!(save(&s,None,draft()).unwrap_err().code,"MCP_SAVE_UNCERTAIN");s.mcp_write_...
+   |                            ^^^^^^^^^^^^^
+   |                            |
+   |                            use of undeclared type `McpWriteFault`
+   |                            help: an enum with a similar name exists: `ModelWriteFault`
+
+error[E0609]: no field `mcp_write_fault` on type `local_store::AppStore`
+  --> src/mcp_config_tests.rs:58:128
+   |
+58 | ...,draft()).unwrap_err().code,"MCP_SAVE_UNCERTAIN");s.mcp_write_fault=None;assert_eq!(s.mcp_configuration().unwrap().servers.len(),3);as...
+   |                                                        ^^^^^^^^^^^^^^^ unknown field
+   |
+help: a field with a similar name exists
+   |
+58 -     s.mcp_write_fault=Some(McpWriteFault::ReadBack);assert_eq!(save(&s,None,draft()).unwrap_err().code,"MCP_SAVE_UNCERTAIN");s.mcp_write_fault=None;assert_eq!(s.mcp_configuration().unwrap().servers.len(),3);assert_eq!(s.mcp_configuration().unwrap().servers[0].id,first.server_id.unwrap());
+58 +     s.mcp_write_fault=Some(McpWriteFault::ReadBack);assert_eq!(save(&s,None,draft()).unwrap_err().code,"MCP_SAVE_UNCERTAIN");s.model_write_fault=None;assert_eq!(s.mcp_configuration().unwrap().servers.len(),3);assert_eq!(s.mcp_configuration().unwrap().servers[0].id,first.server_id.unwrap());
+   |
+
+error[E0599]: no method named `mcp_configuration` found for struct `local_store::AppStore` in the current scope
+   --> src/mcp_config_tests.rs:58:162
+    |
+58  | ...s.mcp_write_fault=None;assert_eq!(s.mcp_configuration().unwrap().servers.len(),3);assert_eq!(s.mcp_configuration().unwrap().servers[0]...
+    |                                        ^^^^^^^^^^^^^^^^^ method not found in `local_store::AppStore`
+    |
+   ::: src/local_store.rs:287:1
+    |
+287 | pub struct AppStore {
+    | ------------------- method `mcp_configuration` not found for this struct
+
+error[E0599]: no method named `mcp_configuration` found for struct `local_store::AppStore` in the current scope
+   --> src/mcp_config_tests.rs:58:221
+    |
+58  | ...rap().servers.len(),3);assert_eq!(s.mcp_configuration().unwrap().servers[0].id,first.server_id.unwrap());
+    |                                        ^^^^^^^^^^^^^^^^^ method not found in `local_store::AppStore`
+    |
+   ::: src/local_store.rs:287:1
+    |
+287 | pub struct AppStore {
+    | ------------------- method `mcp_configuration` not found for this struct
+
+Some errors have detailed explanations: E0412, E0422, E0433, E0599, E0609.
+For more information about an error, try `rustc --explain E0412`.
+error: could not compile `sidekick` (lib test) due to 27 previous errors

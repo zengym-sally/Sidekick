@@ -1,0 +1,284 @@
+{
+  "scope": "S3.3 P2 configuration persistence checkpoint only",
+  "baseCommit": "594a105c2073b85b0af6fad0860d6fe8a6bfec70",
+  "status": "Configuration persistence checkpoint passed; P2 overall incomplete; native acceptance pending",
+  "environment": {
+    "macOS": "27.0.1 (26A434)",
+    "arch": "arm64",
+    "node": "v24.20.0"
+  },
+  "checks": [
+    {
+      "command": "npm run test:s33-config-domain",
+      "exitCode": 0,
+      "log": "domain.log",
+      "passed": 9
+    },
+    {
+      "command": "npm run test:s33-config-store",
+      "exitCode": 0,
+      "log": "store.log",
+      "passed": 6
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "log": "types.log"
+    },
+    {
+      "command": "npm run check:rust",
+      "exitCode": 0,
+      "log": "rust.log"
+    },
+    {
+      "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib local_store::tests -- --test-threads=1",
+      "exitCode": 0,
+      "log": "store-neighbors.log",
+      "passed": 25
+    },
+    {
+      "command": "npm run test:layout-domain",
+      "exitCode": 0,
+      "log": "layout-neighbors.log",
+      "passed": 14
+    },
+    {
+      "command": "npm run test:s32-domain",
+      "exitCode": 0,
+      "log": "skills-neighbors.log",
+      "passed": 28
+    },
+    {
+      "command": "npm run test:s31-domain",
+      "exitCode": 0,
+      "log": "agents-neighbors.log",
+      "passed": 6
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "log": "build.log"
+    }
+  ],
+  "sources": {
+    "package.json": {
+      "sha256": "fbbb7eaeb096676f2820dce0a5f9171bb276eca81c2821bc86ddf05e1e4718a8",
+      "bytes": 5570
+    },
+    "src-tauri/src/lib.rs": {
+      "sha256": "6f3d3978ffc9a5ab9cc375a71621cfa6e3cc16bbd8d1e405aab5198b42826296",
+      "bytes": 9204
+    },
+    "src-tauri/src/local_store.rs": {
+      "sha256": "93ca69cd466ed9edffa358c6e3649e80eabcd1e2e52ffddbb402bfc1917de345",
+      "bytes": 41955
+    },
+    "src-tauri/src/store_commands.rs": {
+      "sha256": "567b993c78e1b569affac6ac92af679d1f6e51f99076a02006cb8809dadd140a",
+      "bytes": 12007
+    },
+    "src-tauri/src/mcp_config.rs": {
+      "sha256": "813fe036a765d4ddc5d1c85b2ad76023d61879d10b39d8784c4570d50dc788a3",
+      "bytes": 12303
+    },
+    "src-tauri/src/mcp_config_tests.rs": {
+      "sha256": "802bd130a375ba0e039fc8b317c98ef8ba9def4a2e1c9270f00b36cd3f998b68",
+      "bytes": 10853
+    },
+    "src/domain/mcp.ts": {
+      "sha256": "c59836d92f36c8d2ea464ddeadb71fe8795396f82105b7cd3b05f84adf888b82",
+      "bytes": 1080
+    },
+    "src/stores/mcp.ts": {
+      "sha256": "45b95b129b4a8459e05ff9ef380e7ba19e34f7e442b660045b00cfdadfbcd190",
+      "bytes": 7118
+    },
+    "src/components/McpSettingsPanel.vue": {
+      "sha256": "9b1fca1f4162a258c5d952dc00b149d3cae2f9f155180c03486d67131299bb76",
+      "bytes": 8761
+    },
+    "src/components/ToolsSettingsPanel.vue": {
+      "sha256": "0c31fe2e50d684b71bd483ffff660f907e2c422bd4449d6489eb05d9172273df",
+      "bytes": 1226
+    },
+    "src/components/SettingsPanel.vue": {
+      "sha256": "8493404328805e29df5655da47da84d1353c28b3609b0de718c9296b9c3de0ab",
+      "bytes": 8517
+    },
+    "src/components/SkillsSettingsPanel.vue": {
+      "sha256": "580f0d06ccd8e7eb65f4cac1502802773ce5a069a731948e08813bbb86d839cf",
+      "bytes": 4979
+    },
+    "src/styles/settings.css": {
+      "sha256": "476de03aac05067209448ade6a0f8735b979436fa115eb69dfa39e406448be8e",
+      "bytes": 16107
+    },
+    "tests/s33-config.test.mjs": {
+      "sha256": "8a64ac28df95e8d691f2bf3ec79d0d75d7c31392858dde67352bf447622c5cfc",
+      "bytes": 7401
+    },
+    "tests/fixtures/profile-ui/mcp.ts": {
+      "sha256": "996b1408d559c48ae8d845dc23e8dd82b81bd0f70301f191f466d852aeba58c3",
+      "bytes": 1904
+    },
+    "tests/fixtures/profile-ui/api.ts": {
+      "sha256": "085174f344add1d8b85d65b27fa43fbb1816bd410bfb6a923ed1cb2444e94a6a",
+      "bytes": 3236
+    }
+  },
+  "logs": {
+    "agents-neighbors.log": {
+      "sha256": "4960c3c9a42f5e31aa8cf10bfce6aa422ec792aa1930cea016047dfe567c9239",
+      "bytes": 802
+    },
+    "build.log": {
+      "sha256": "03928f03126177d58d801368069d3eabff1a2b2e95514beec405d98124937bef",
+      "bytes": 938
+    },
+    "design-detector.log": {
+      "sha256": "8471ad59ce853a03c84cee75a6fed874c694206ae36747d1e7b08a2d859fa6a7",
+      "bytes": 11008
+    },
+    "discard-red.log": {
+      "sha256": "b784983fd0d94069124b176eed642777242a880c30b7b0124f6f15e7a38ab2eb",
+      "bytes": 1693
+    },
+    "domain-first.log": {
+      "sha256": "8bd3e8e75285cba9389ab517d2ede92088f853ce3e372462116833e35f1bbd76",
+      "bytes": 952
+    },
+    "domain-red.log": {
+      "sha256": "d302f4c32c1853e10a936a7b2c1e4d230e02c73f227fc6fa9eb48a2decf0f30a",
+      "bytes": 1525
+    },
+    "domain.log": {
+      "sha256": "7b4167ce4f167dc841313d703125bcd2ef3af69c85e76b8727efbae3394178b4",
+      "bytes": 1040
+    },
+    "layout-neighbors.log": {
+      "sha256": "ae437c5f9ef57bed3a563d5d41caf6c88eecb2119412ca1f3f1769d3efa7ef1c",
+      "bytes": 1663
+    },
+    "review-a1-red.log": {
+      "sha256": "387b55039dbb6bab202e5348326647dc584a8ee6676a4eb2d4bf98a1d962f420",
+      "bytes": 1781
+    },
+    "rust.log": {
+      "sha256": "90382084de14fc1f41970f3e2568f9530790271ff43d3f5e92ff1cefb6d8ed32",
+      "bytes": 351
+    },
+    "skills-neighbors.log": {
+      "sha256": "76d460110474f28dc7b7024c9a9cae21a76416ba77a630002e955b30c5e2e813",
+      "bytes": 2954
+    },
+    "static-check.log": {
+      "sha256": "dc037014991d5d13eb74b9e40481dbcf902584d5220f72be6bb65890e53f4e5c",
+      "bytes": 419
+    },
+    "store-first.log": {
+      "sha256": "3680019a20b36ea44ca62947bce0fe14e998549ef8f1776f2fb63b3da98e6429",
+      "bytes": 2699
+    },
+    "store-neighbors.log": {
+      "sha256": "dca85ba0a05653e780f10d376990fdf085950aef158ccce932c5e4eb5389ee29",
+      "bytes": 2603
+    },
+    "store-red.log": {
+      "sha256": "9a1fce81e72a41139d1fac02e88e68f3537346c19ceee5ffb6df1e07e1051591",
+      "bytes": 15757
+    },
+    "store-second.log": {
+      "sha256": "17c11aaacd7810e5470d2210ab8a30be142033bf7a23b20084e652b25b96cd08",
+      "bytes": 1046
+    },
+    "store-shape-red.log": {
+      "sha256": "3e31fb53935c173e5c9109c37b57a7decdf18aa075ec6db15af9014da390e8a8",
+      "bytes": 1733
+    },
+    "store.log": {
+      "sha256": "45736b1d7654d4a5a18d8365146df4d0f65e193a638a8e89b6cd51767ef5be4d",
+      "bytes": 1158
+    },
+    "types-first.log": {
+      "sha256": "efc5b3a47a0d3023241a6990e4253676d9a17ce360e4d9632131e4b22aaea9c0",
+      "bytes": 72
+    },
+    "types.log": {
+      "sha256": "efc5b3a47a0d3023241a6990e4253676d9a17ce360e4d9632131e4b22aaea9c0",
+      "bytes": 72
+    }
+  },
+  "browser": {
+    "scope": "Chrome real Vue/CSS with synthetic IPC, not native Tauri or filesystem acceptance",
+    "viewportCases": [
+      "1440x1000",
+      "640x900"
+    ],
+    "observations": "browser-observations.json",
+    "artifacts": {
+      "browser-env-640.jpg": {
+        "sha256": "b0f594a611be3f29db224705a19651bee63de7dcbe579c5c1b31f92a32879e61",
+        "bytes": 40930
+      },
+      "browser-removed-640.jpg": {
+        "sha256": "b75c915d5a039c353431f343b3585904f8dd607fbac47f8085044809ea6cc8d1",
+        "bytes": 23706
+      },
+      "browser-reopened-640.jpg": {
+        "sha256": "7d5579212d12eeb306747d5895c8eaaf5a35e6a72f70b1bc5730294376d49a68",
+        "bytes": 44526
+      },
+      "browser-saved-1440.jpg": {
+        "sha256": "d69997c571db4f9eb6a422fc57a3ed6db82a8cb8d47d005e3b1a627490cba15d",
+        "bytes": 63019
+      },
+      "browser-unknown-1440.jpg": {
+        "sha256": "1ab4903c6d6e02c574b6bbccf669266bf610fb17de0f20d740ac306a80b049bd",
+        "bytes": 67055
+      }
+    }
+  },
+  "reviews": {
+    "A": {
+      "conclusion": "APPROVE round 2",
+      "firstRound": "APPROVE_WITH_CHANGES",
+      "closedFindings": [
+        "A1 P2: negative tests masked by earlier permission or JSON errors"
+      ],
+      "verification": "Read-only review of source, logs, screenshots and hashes; no independent test rerun"
+    },
+    "B": {
+      "conclusion": "APPROVE round 2",
+      "firstRound": "APPROVE",
+      "remainingFindings": [],
+      "verification": "Read-only review of source, logs, screenshots and hashes; no independent test rerun"
+    }
+  },
+  "notPerformed": [
+    "full npm run check",
+    "Keychain operations or real credential access",
+    "MCP service launch / initialize / tools/list / tools/call",
+    "004 migration or real user-root migration",
+    "real-model call",
+    "native GUI or app bundle acceptance",
+    "historical native retests",
+    "git commit / push",
+    "external writes"
+  ],
+  "limits": [
+    "Configuration saves only; host environment references are stored as names and not resolved",
+    "Keychain sources and arbitrary credential-reference fields rejected",
+    "No active MCP session exists at this checkpoint; active-service mutation guard required before diagnostics is enabled",
+    "Prior P1 evidence retained at its original revision",
+    "Existing Vite chunk-size advisory retained; no new dependencies or threshold changes"
+  ],
+  "cleanup": {
+    "uiFixturePid": 25477,
+    "verifiedProjectAndPortBeforeSignal": true,
+    "signal": "SIGTERM",
+    "sessionExitCode": 143,
+    "port1481ListeningAfterCleanup": false,
+    "browserTabClosed": true,
+    "viewportOverrideReset": true
+  }
+}

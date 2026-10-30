@@ -1,0 +1,16 @@
+npm notice run sidekick@0.3.0 test:s31-domain
+npm notice run node --test tests/s31-client.test.mjs
+✔ late role reads cannot select a previous role or replace a newer draft (1.039709ms)
+✔ saving a role preserves newer input while retaining the committed revision (0.285833ms)
+✔ unknown configuration outcomes disable trial until reread without losing the draft (0.263292ms)
+✔ tracker and advisor configuration do not imply that trial is available (0.14775ms)
+✔ a lost save or reset response blocks trials until a read reconciles persisted configuration (0.312208ms)
+✔ a late cancellation response cannot replace a newer trial after polling reconciles the old run (9.347292ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 125.149708

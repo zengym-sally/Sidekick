@@ -1,0 +1,22 @@
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.33s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 1 test
+test local_store::mcp_security_tests::mcp_security_archive_sync_failure_keeps_journal_and_retries_existing_archive_durably ... FAILED
+
+failures:
+
+---- local_store::mcp_security_tests::mcp_security_archive_sync_failure_keeps_journal_and_retries_existing_archive_durably stdout ----
+
+thread 'local_store::mcp_security_tests::mcp_security_archive_sync_failure_keeps_journal_and_retries_existing_archive_durably' panicked at src/mcp_security_tests.rs:818:42:
+called `Result::unwrap_err()` on an `Ok` value: McpConfigurationView { version: 1, revision: "rev-088d1fe7b5642ada5c5e7a487a27e43d3d859f7004ed4c829d3b932cc0ba6d8f", servers: [McpServer { id: "mcp-d876765d67d2751d44d83b64", last_secret_operation: Some("op-00000000-0000-4000-8000-000000000001"), settings: McpServerDraft { name: "合成安全服务", transport: "stdio", enabled: true, command: "/synthetic/not-executed", args: [], cwd: None, env: [McpEnvironment { name: "TOKEN", source: "keychain", value: "" }], connect_timeout_ms: 10000, tool_timeout_ms: 30000 } }], secure_storage_available: true, credential_status: {"mcp-d876765d67d2751d44d83b64": {"TOKEN": "stored"}}, warning: Some("上次保存已读回确认；已有安全值不会回读。") }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    local_store::mcp_security_tests::mcp_security_archive_sync_failure_keeps_journal_and_retries_existing_archive_durably
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 79 filtered out; finished in 0.10s
+
+error: test failed, to rerun pass `--lib`

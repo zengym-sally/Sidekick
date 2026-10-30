@@ -1,0 +1,27 @@
+npm notice run sidekick@0.3.0 test:s33-security-store
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_security -- --test-threads=1
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+error[E0382]: borrow of partially moved value: `saved`
+    --> src/mcp_security_tests.rs:88:38
+     |
+82   |     let id = saved.server_id.unwrap();
+     |              --------------- -------- `saved.server_id` partially moved due to this method call
+     |              |
+     |              help: consider calling `.as_ref()` or `.as_mut()` to borrow the type's contents
+...
+88   |     let view = serde_json::to_string(&saved).unwrap();
+     |                                      ^^^^^^ value borrowed here after partial move
+     |
+note: `std::option::Option::<T>::unwrap` takes ownership of the receiver `self`, which moves `saved.server_id`
+    --> /Users/zengym/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/option.rs:1002:25
+     |
+1002 |     pub const fn unwrap(self) -> T {
+     |                         ^^^^
+     = note: partial move occurs because `saved.server_id` has type `std::option::Option<std::string::String>`, which does not implement the `Copy` trait
+help: you can `clone` the value and consume it, but this might not be your desired behavior
+     |
+82   |     let id = saved.server_id.clone().unwrap();
+     |                             ++++++++
+
+For more information about this error, try `rustc --explain E0382`.
+error: could not compile `sidekick` (lib test) due to 1 previous error

@@ -378,3 +378,32 @@ pub async fn save_application_settings(
 ) -> Result<crate::local_store::ApplicationSettingsSave, StoreError> {
     call(state, move |s| s.save_application_settings(input)).await
 }
+
+#[tauri::command]
+pub async fn read_mcp_configuration(
+    state: State<'_, LocalState>,
+) -> Result<crate::local_store::McpConfigurationView, StoreError> {
+    call(state, |s| s.mcp_configuration()).await
+}
+#[tauri::command]
+pub async fn save_mcp_server(
+    state: State<'_, LocalState>,
+    input: crate::local_store::McpServerInput,
+) -> Result<crate::local_store::McpConfigSave, StoreError> {
+    call(state, move |s| s.save_mcp_server(input)).await
+}
+#[tauri::command]
+pub async fn remove_mcp_server(
+    state: State<'_, LocalState>,
+    input: crate::local_store::McpRemoveInput,
+) -> Result<crate::local_store::McpConfigSave, StoreError> {
+    call(state, move |s| s.remove_mcp_server(input)).await
+}
+
+#[tauri::command]
+pub async fn save_mcp_secrets(
+    state: State<'_, LocalState>,
+    input: crate::local_store::McpSecretInput,
+) -> Result<crate::local_store::McpConfigSave, StoreError> {
+    call(state, move |s| s.save_mcp_secrets(input)).await
+}

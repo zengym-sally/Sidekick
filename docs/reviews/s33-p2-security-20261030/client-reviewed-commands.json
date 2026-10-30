@@ -1,0 +1,12 @@
+[
+  {
+    "command": "npm run test:s33-config-domain",
+    "exitCode": 0,
+    "log": "config-domain-reviewed.log"
+  },
+  {
+    "command": "npm run build",
+    "exitCode": 0,
+    "log": "build-reviewed.log"
+  }
+]

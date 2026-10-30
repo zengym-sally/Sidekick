@@ -1,0 +1,32 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.56s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 25 tests
+test local_store::tests::a_new_app_namespace_never_rebuilds_a_damaged_existing_root ... ok
+test local_store::tests::active_root_cannot_be_replaced_and_missing_root_is_not_recreated ... ok
+test local_store::tests::app_lock_blocks_two_instances_even_before_different_roots_are_chosen ... ok
+test local_store::tests::application_settings_failure_reconciles_without_resetting_existing_values ... ok
+test local_store::tests::application_timezone_persists_without_moving_todos_and_rejects_stale_writes ... ok
+test local_store::tests::blank_invalid_and_undated_inputs_have_explicit_results ... ok
+test local_store::tests::committed_data_recovers_after_abrupt_process_stop ... ok
+test local_store::tests::dangling_marker_is_rejected_without_writing_outside_the_root ... ok
+test local_store::tests::each_initialization_interruption_can_resume_the_same_root ... ok
+test local_store::tests::edit_one_time_never_rewrites_the_other_and_completion_is_reversible ... ok
+test local_store::tests::failed_initial_schema_rolls_back_tables_version_and_product_identity ... ok
+test local_store::tests::future_schema_and_missing_ready_database_never_fall_back_to_empty_data ... ok
+test local_store::tests::hard_link_marker_never_changes_an_outside_file ... ok
+test local_store::tests::invalid_or_unknown_profile_is_not_overwritten ... ok
+test local_store::tests::manual_create_and_cold_reopen_preserve_fields_and_history ... ok
+test local_store::tests::old_reopen_and_deleted_mutations_are_rejected ... ok
+test local_store::tests::profile_defaults_save_and_cold_reopen_do_not_modify_todos ... ok
+test local_store::tests::profile_file_links_are_rejected_without_changing_the_target ... ok
+test local_store::tests::profile_unknown_commit_result_does_not_change_todos_or_history ... ok
+test local_store::tests::profile_write_failure_reconciles_the_authoritative_committed_value ... ok
+test local_store::tests::reading_a_legacy_empty_nickname_uses_the_default_without_rewriting_the_file ... ok
+test local_store::tests::retries_take_effect_once_and_return_current_authoritative_state ... ok
+test local_store::tests::root_lock_blocks_a_second_app_namespace ... ok
+test local_store::tests::sql_values_are_bound_and_history_failure_rolls_back_the_todo ... ok
+test local_store::tests::unknown_nonempty_directory_is_never_adopted_or_overwritten ... ok
+
+test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 53 filtered out; finished in 1.96s
+

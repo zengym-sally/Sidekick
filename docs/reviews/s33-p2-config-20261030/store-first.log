@@ -1,0 +1,47 @@
+npm notice run sidekick@0.3.0 test:s33-config-store
+npm notice run cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_config -- --test-threads=1
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+error[E0034]: multiple applicable items in scope
+    --> src/mcp_config.rs:141:39
+     |
+141  |         let mut bytes=Vec::new();file.by_ref().take((CONFIG_LIMIT+1) as u64).read_to_end(&mut bytes).map_err(io_error)?;
+     |                                       ^^^^^^ multiple `by_ref` found
+     |
+note: candidate #1 is defined in the trait `std::iter::Iterator`
+    --> /Users/zengym/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/iter/traits/iterator.rs:1895:5
+     |
+1895 | /     fn by_ref(&mut self) -> &mut Self
+1896 | |     where
+1897 | |         Self: Sized,
+     | |____________________^
+     = note: candidate #2 is defined in an impl of the trait `std::io::Read` for the type `std::fs::File`
+     = note: candidate #3 is defined in an impl of the trait `std::io::Write` for the type `std::fs::File`
+help: disambiguate the method for candidate #1
+     |
+141  -         let mut bytes=Vec::new();file.by_ref().take((CONFIG_LIMIT+1) as u64).read_to_end(&mut bytes).map_err(io_error)?;
+141  +         let mut bytes=Vec::new();std::iter::Iterator::by_ref(&mut file).take((CONFIG_LIMIT+1) as u64).read_to_end(&mut bytes).map_err(io_error)?;
+     |
+help: disambiguate the method for candidate #2
+     |
+141  -         let mut bytes=Vec::new();file.by_ref().take((CONFIG_LIMIT+1) as u64).read_to_end(&mut bytes).map_err(io_error)?;
+141  +         let mut bytes=Vec::new();std::io::Read::by_ref(&mut file).take((CONFIG_LIMIT+1) as u64).read_to_end(&mut bytes).map_err(io_error)?;
+     |
+help: disambiguate the method for candidate #3
+     |
+141  -         let mut bytes=Vec::new();file.by_ref().take((CONFIG_LIMIT+1) as u64).read_to_end(&mut bytes).map_err(io_error)?;
+141  +         let mut bytes=Vec::new();std::io::Write::by_ref(&mut file).take((CONFIG_LIMIT+1) as u64).read_to_end(&mut bytes).map_err(io_error)?;
+     |
+
+warning: variable does not need to be mutable
+  --> src/mcp_config_tests.rs:19:17
+   |
+19 |     drop(s);let mut s=f.store();let config=s.mcp_configuration().unwrap();assert_eq!(config.servers[0].settings.name,"更名");assert!(!config....
+   |                 ----^
+   |                 |
+   |                 help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` on by default
+
+For more information about this error, try `rustc --explain E0034`.
+warning: `sidekick` (lib test) generated 1 warning
+error: could not compile `sidekick` (lib test) due to 1 previous error; 1 warning emitted
