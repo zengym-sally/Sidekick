@@ -1,38 +1,26 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { getVersion } from '@tauri-apps/api/app';
-import { Button as TButton } from 'tdesign-vue-next';
-import { useProfile } from '../stores/profile';
-import { currentZone } from '../domain/todos';
-import Icon from './Icon.vue';
-import ModelSettingsPanel from './ModelSettingsPanel.vue';
-const props=defineProps<{tab:'profile'|'general'|'models'|'about';root:string}>();
-const emit=defineEmits<{selectTab:[tab:'profile'|'general'|'models'|'about'];openDirectory:[]}>();
-const profile=useProfile(),version=ref(''),versionError=ref(false),savedNotice=ref('');
-const tabs=[{id:'profile',label:'个人信息'},{id:'general',label:'通用设置'},{id:'models',label:'模型'},{id:'about',label:'关于'}] as const;
-async function save(){savedNotice.value='';try{await profile.save();savedNotice.value=profile.warning?'':'个人信息已保存。';}catch{}}
+import {computed,onMounted,ref} from 'vue';
+import {getVersion} from '@tauri-apps/api/app';
+import {useProfile} from '../stores/profile';import {useApplicationSettings} from '../stores/settings';
+import Icon from './Icon.vue';import ModelSettingsPanel from './ModelSettingsPanel.vue';import AgentSettingsPanel from './AgentSettingsPanel.vue';
+import SkField from './ui/SkField.vue';import SkInput from './ui/SkInput.vue';import SkSelect from './ui/SkSelect.vue';import SkFieldset from './ui/SkFieldset.vue';import SkPathField from './ui/SkPathField.vue';import SkButton from './ui/SkButton.vue';import SkSaveBar from './ui/SkSaveBar.vue';
+type Tab='profile'|'general'|'models'|'agents'|'about';
+const props=defineProps<{tab:Tab;root:string}>(),emit=defineEmits<{selectTab:[tab:Tab];openDirectory:[]}>();
+const profile=useProfile(),settings=useApplicationSettings(),version=ref(''),versionError=ref(false),savedNotice=ref('');
+const tabs=[{id:'profile',label:'个人信息',description:'让班班认识你，也知道怎么称呼你。'},{id:'general',label:'通用',description:'安排工作目录与日期规则。'},{id:'models',label:'模型服务',description:'一个服务管理一组模型，供不同角色选择。'},{id:'agents',label:'智能体',description:'三个固定分工，分别安排模型与工作习惯。'},{id:'about',label:'关于',description:'盯着呢，老板。'}] as const;
+const title=computed(()=>tabs.find(t=>t.id===props.tab)!),profileDirty=computed(()=>profile.draft.name!==profile.saved.name||profile.draft.address!==profile.saved.address);
+const zones=computed(()=>{const intl=Intl as unknown as {supportedValuesOf?:(key:string)=>string[]};const known:Record<string,string>={'Asia/Shanghai':'中国标准时间 · 上海','Asia/Tokyo':'日本标准时间 · 东京','Europe/London':'英国时间 · 伦敦','America/New_York':'美国东部时间 · 纽约',UTC:'协调世界时 · UTC'};const descriptions:Record<string,string>={'Asia/Shanghai':'UTC+08:00','Asia/Tokyo':'UTC+09:00','Europe/London':'随夏令时切换','America/New_York':'随夏令时切换',UTC:'UTC+00:00'};return [...new Set([settings.saved.timeZone,...Object.keys(known),...(intl.supportedValuesOf?.('timeZone')||[])])].map(value=>({value,label:known[value]||value,description:descriptions[value]}));});
+async function saveProfile(){savedNotice.value='';try{await profile.save();savedNotice.value=profile.warning?'':'个人信息已保存。';}catch{}}
+async function saveSettings(){try{await settings.save();}catch{}}
 async function loadVersion(){versionError.value=false;try{version.value=await getVersion();}catch{versionError.value=true;}}
-function tabKey(event:KeyboardEvent){
-  const index=tabs.findIndex(tab=>tab.id===props.tab);let next=index;
-  if(event.key==='ArrowRight')next=(index+1)%tabs.length;else if(event.key==='ArrowLeft')next=(index+tabs.length-1)%tabs.length;else if(event.key==='Home')next=0;else if(event.key==='End')next=tabs.length-1;else return;
-  event.preventDefault();emit('selectTab',tabs[next].id);document.getElementById(`settings-tab-${tabs[next].id}`)?.focus();
-}
-onMounted(loadVersion);
+function tabKey(event:KeyboardEvent){const index=tabs.findIndex(tab=>tab.id===props.tab);let next=index;if(event.key==='ArrowRight')next=(index+1)%tabs.length;else if(event.key==='ArrowLeft')next=(index+tabs.length-1)%tabs.length;else if(event.key==='Home')next=0;else if(event.key==='End')next=tabs.length-1;else return;event.preventDefault();emit('selectTab',tabs[next].id);document.getElementById(`settings-tab-${tabs[next].id}`)?.focus();}
+onMounted(()=>{void loadVersion();if(!settings.ready)void settings.load().catch(()=>{});});
 </script>
-<template>
-  <div class="page-intro"><h1>让班班更懂你。</h1><p>个人偏好和工作空间，都在这里安排。</p></div>
-  <div class="settings-tabs" role="tablist" aria-label="设置分类" @keydown="tabKey"><button v-for="item in tabs" :id="`settings-tab-${item.id}`" :key="item.id" role="tab" :aria-selected="tab===item.id" :aria-controls="`settings-panel-${item.id}`" :tabindex="tab===item.id?0:-1" @click="emit('selectTab',item.id)">{{ item.label }}</button></div>
-  <section v-show="tab==='profile'" id="settings-panel-profile" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-profile">
-    <p class="muted">告诉班班怎么认识你、怎么称呼你。这些偏好只保存在当前工作目录。</p>
-    <p v-if="profile.loading" class="muted" role="status">正在读取个人信息…</p>
-    <div v-if="profile.loadError" class="profile-alert" role="alert"><p>{{ profile.loadError }}</p><p class="muted">暂用默认称呼 BOSS，重新读取前不会覆盖原配置。</p><TButton class="button entry" :disabled="profile.loading" @click="profile.load">重新读取</TButton></div>
-    <form class="profile-form" @submit.prevent="save"><div class="field"><label for="profile-name">昵称</label><input id="profile-name" v-model="profile.draft.name" maxlength="60" placeholder="小明同学" :disabled="!profile.ready||profile.loading||profile.saving" @input="savedNotice=''"></div><div class="field"><div class="address-heading"><label for="profile-address">班班对我的称呼</label><button class="text-button" type="button" :disabled="!profile.ready||profile.loading||profile.saving" @click="profile.useNickname();savedNotice=''">与昵称一致</button></div><input id="profile-address" v-model="profile.draft.address" maxlength="60" placeholder="BOSS" aria-describedby="profile-address-help" :disabled="!profile.ready||profile.loading||profile.saving" @input="savedNotice=''"><small id="profile-address-help" class="muted">默认 BOSS。可复制当前昵称，保存后生效。</small></div>
-      <div class="profile-preview"><Icon name="user"/><span>保存后，班班会这样招呼你：<strong>{{ profile.draft.address.trim()||'BOSS' }}，随时交给我。</strong></span></div>
-      <p v-if="profile.saveError" class="form-error" role="alert">{{ profile.saveError }}</p><p v-if="profile.warning" class="profile-alert" role="status">{{ profile.warning }}</p><p v-if="savedNotice" class="saved-notice" role="status">{{ savedNotice }}</p>
-      <TButton class="button primary" type="submit" :loading="profile.saving" :disabled="!profile.ready||profile.loading||profile.saving"><Icon name="check"/>保存个人信息</TButton>
-    </form>
-  </section>
-  <section v-show="tab==='general'" id="settings-panel-general" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-general"><h2>工作目录</h2><label for="workspace-location">当前保存位置</label><input id="workspace-location" class="path-input" :value="root" readonly><TButton class="button ghost" @click="emit('openDirectory')"><Icon name="folder"/>打开目录</TButton><p class="muted">事项与个人偏好保存在这个工作目录，重开应用后会继续使用。</p><h2>时间显示</h2><p>当前设备时区：{{ currentZone() }}</p><p class="muted">交付截止与下次跟进分别保存，修改一个时间不会连带修改另一个。</p></section>
-  <section v-show="tab==='models'" id="settings-panel-models" role="tabpanel" aria-labelledby="settings-tab-models"><ModelSettingsPanel v-if="tab==='models'"/></section>
-  <section v-show="tab==='about'" id="settings-panel-about" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-about"><h2>跟班 Sidekick</h2><p>盯着呢，老板。</p><p v-if="version">版本 {{ version }}</p><p v-else-if="versionError">暂时无法读取版本。<button class="text-button" @click="loadVersion">重新读取</button></p><p v-else class="muted">正在读取版本…</p><h2>当前可用</h2><p>手工录入、文本智能整理、人工签收与本地事项管理。</p><p class="muted">持续收集、提醒与日报仍在开发中。</p></section>
-</template>
+<template><section class="settings-shell"><div class="settings-scroll"><div class="settings-content"><header class="settings-heading"><div><h1>{{tab==='general'?'通用设置':title.label}}</h1><p>{{title.description}}</p></div><div id="settings-heading-actions"/></header><div class="settings-tabs" role="tablist" aria-label="设置分类" @keydown="tabKey"><button v-for="item in tabs" :id="`settings-tab-${item.id}`" :key="item.id" role="tab" :aria-selected="tab===item.id" :aria-controls="`settings-panel-${item.id}`" :tabindex="tab===item.id?0:-1" @click="emit('selectTab',item.id)">{{item.label}}</button></div>
+<section v-show="tab==='profile'" id="settings-panel-profile" role="tabpanel" aria-labelledby="settings-tab-profile"><div class="settings-section"><div class="settings-section-label"><h2>个人资料</h2><p>昵称与班班称呼独立设置。</p></div><div class="settings-section-body"><p v-if="profile.loading" class="muted" role="status">正在读取个人信息…</p><div v-if="profile.loadError" class="profile-alert" role="alert"><p>{{profile.loadError}}</p><SkButton kind="entry" :disabled="profile.loading" @click="profile.load">重新读取，保留草稿</SkButton></div><form @submit.prevent="saveProfile"><SkFieldset :disabled="!profile.ready||profile.loading||profile.saving"><div class="form-grid"><SkField label="昵称"><SkInput v-model="profile.draft.name" maxlength="60" placeholder="小明同学"/></SkField><SkField label="班班对我的称呼" help="默认 BOSS，保存后生效。"><template #action><button class="text-button" type="button" @click="profile.useNickname()">与昵称一致</button></template><SkInput v-model="profile.draft.address" maxlength="60" placeholder="BOSS"/></SkField></div><div class="profile-preview"><Icon name="user"/><span>保存后，班班会这样招呼你：<strong>{{profile.draft.address.trim()||'BOSS'}}，随时交给我。</strong></span></div></SkFieldset></form></div></div></section>
+<section v-show="tab==='general'" id="settings-panel-general" role="tabpanel" aria-labelledby="settings-tab-general"><div class="settings-section"><div class="settings-section-label"><h2>工作目录</h2><p>配置、事项和运行资料的保存位置。</p></div><div class="settings-section-body"><SkField label="当前保存位置" help="完整路径可选中复制；目录切换将在后续阶段开放。"><SkPathField :path="root" @open="emit('openDirectory')"/></SkField></div></div><div class="settings-section"><div class="settings-section-label"><h2>日期与时间</h2><p>统一所有页面的时间规则。</p></div><div class="settings-section-body"><p v-if="settings.loading" role="status">正在读取通用设置…</p><p v-if="!settings.ready&&!settings.loading" class="form-error" role="alert">{{settings.error||'通用设置尚未确认，请重新读取后继续。'}} <button class="text-button" @click="settings.load().catch(()=>{})">重新读取，保留草稿</button></p><SkFieldset :disabled="!settings.ready||settings.loading||settings.saving"><SkField label="应用时区" help="用于日期理解、显示和日期归组。更改不会挪动已有事项的具体截止时刻；仅日期保留日期值。"><SkSelect v-model="settings.draft.timeZone" :options="zones" searchable/></SkField></SkFieldset></div></div></section>
+<section v-if="tab==='models'" id="settings-panel-models" role="tabpanel" aria-labelledby="settings-tab-models"><ModelSettingsPanel/></section><section v-if="tab==='agents'" id="settings-panel-agents" role="tabpanel" aria-labelledby="settings-tab-agents"><AgentSettingsPanel @models="emit('selectTab','models')"/></section>
+<section v-show="tab==='about'" id="settings-panel-about" class="settings-about" role="tabpanel" aria-labelledby="settings-tab-about"><h2>跟班 Sidekick</h2><p>盯着呢，老板。 / On it, boss.</p><p v-if="version">版本 {{version}}</p><p v-else-if="versionError">暂时无法读取版本。<button class="text-button" @click="loadVersion">重新读取</button></p><p v-else class="muted">正在读取版本…</p><h3>当前可用</h3><p>手工录入、文本智能整理、人工签收、本地事项管理与三个内置智能体配置。</p><p class="muted">持续收集、工具接入、提醒与日报仍在开发中。</p></section></div></div><div id="settings-save-slot" class="settings-save-host"/>
+<SkSaveBar v-if="tab==='profile'" target="#settings-save-slot" :dirty="profileDirty" :busy="profile.saving" :disabled="!profile.ready||profile.loading" :error="profile.saveError||profile.loadError" :notice="profile.warning||savedNotice" label="保存个人信息" @save="saveProfile" @discard="profile.discard();savedNotice=''"/>
+<SkSaveBar v-if="tab==='general'" target="#settings-save-slot" :dirty="settings.dirty" :busy="settings.saving" :disabled="!settings.ready||settings.loading" :error="settings.error" :notice="settings.notice" label="保存设置" @save="saveSettings" @discard="settings.discard"/>
+</section></template>

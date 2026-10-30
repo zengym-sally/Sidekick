@@ -304,3 +304,77 @@ pub async fn cancel_model_run(
     );
     Ok(run)
 }
+
+#[tauri::command]
+pub async fn read_agent_configuration(
+    state: State<'_, LocalState>,
+    agent_id: String,
+) -> Result<crate::local_store::AgentConfig, StoreError> {
+    call(state, move |s| s.read_agent_config(&agent_id)).await
+}
+#[tauri::command]
+pub async fn save_agent_configuration(
+    state: State<'_, LocalState>,
+    input: crate::local_store::AgentConfigInput,
+) -> Result<crate::local_store::AgentConfigSave, StoreError> {
+    call(state, move |s| s.save_agent_config(input)).await
+}
+#[tauri::command]
+pub async fn reset_agent_configuration(
+    state: State<'_, LocalState>,
+    agent_id: String,
+    expected_revision: String,
+) -> Result<crate::local_store::AgentConfigSave, StoreError> {
+    call(state, move |s| {
+        s.reset_agent_config(&agent_id, &expected_revision)
+    })
+    .await
+}
+#[tauri::command]
+pub async fn read_agent_trial(
+    state: State<'_, LocalState>,
+    runtime: State<'_, crate::runtime_host::RuntimeState>,
+    id: String,
+) -> Result<crate::local_store::AgentRun, StoreError> {
+    let active = runtime.active_trial();
+    call(state, move |s| {
+        let run = s.agent_run(&id)?;
+        if active.as_deref() != Some(&id) && run.status == "running" {
+            s.interrupt_agent_trials(active.as_deref())?;
+        }
+        s.agent_run(&id)
+    })
+    .await
+}
+#[tauri::command]
+pub async fn latest_agent_trial(
+    state: State<'_, LocalState>,
+    agent_id: String,
+) -> Result<Option<crate::local_store::AgentRun>, StoreError> {
+    call(state, move |s| s.latest_agent_trial(&agent_id)).await
+}
+#[tauri::command]
+pub async fn cancel_agent_trial(
+    state: State<'_, LocalState>,
+    runtime: State<'_, crate::runtime_host::RuntimeState>,
+    id: String,
+) -> Result<crate::local_store::AgentRun, StoreError> {
+    let key = id.clone();
+    let run = call(state, move |s| s.cancel_agent_trial(&key)).await?;
+    runtime.cancel(&id);
+    Ok(run)
+}
+
+#[tauri::command]
+pub async fn read_application_settings(
+    state: State<'_, LocalState>,
+) -> Result<crate::local_store::ApplicationSettings, StoreError> {
+    call(state, |s| s.application_settings()).await
+}
+#[tauri::command]
+pub async fn save_application_settings(
+    state: State<'_, LocalState>,
+    input: crate::local_store::AppSettingsInput,
+) -> Result<crate::local_store::ApplicationSettingsSave, StoreError> {
+    call(state, move |s| s.save_application_settings(input)).await
+}

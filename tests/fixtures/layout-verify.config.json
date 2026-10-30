@@ -1,0 +1,5 @@
+{
+  "productName": "Sidekick Layout Verify",
+  "identifier": "com.sidekick.layout.verify",
+  "app": {"windows":[{"label":"main","title":"跟班 Sidekick · 布局验收","width":1240,"height":820,"minWidth":640,"minHeight":600}]}
+}

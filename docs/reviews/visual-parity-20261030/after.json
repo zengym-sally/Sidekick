@@ -1,0 +1,176 @@
+{
+  "profile": [
+    {
+      "height": 38,
+      "top": 248.7890625
+    },
+    {
+      "height": 38,
+      "top": 248.7890625
+    }
+  ],
+  "select": {
+    "descriptionRows": 5,
+    "focusSearch": true,
+    "optionHeight": 49,
+    "optionPadding": "8px",
+    "readonly": true,
+    "searchFields": 1,
+    "selectedCheck": 1,
+    "triggerOutline": "3px"
+  },
+  "agentMenu": {
+    "descriptionRows": 3,
+    "groups": [
+      "跟随全局",
+      "公司模型网关",
+      "个人模型服务"
+    ],
+    "labels": [
+      "继承全局默认 · 团队主力",
+      "团队主力",
+      "轻量快模",
+      "个人推理模型"
+    ]
+  },
+  "wide": {
+    "body": 1440,
+    "descriptions": [
+      "team-chat",
+      "team-fast",
+      "personal-reasoner"
+    ],
+    "height": 1000,
+    "popup": {
+      "bottom": 427,
+      "left": 1113,
+      "right": 1398
+    },
+    "width": 1440
+  },
+  "narrow": {
+    "body": 640,
+    "height": 900,
+    "popup": {
+      "bottom": 817,
+      "left": 94,
+      "right": 622
+    },
+    "width": 640
+  },
+  "checks": [
+    {
+      "name": "跳过两个连续禁用项与分组",
+      "pass": true,
+      "detail": "字符串零string-zero"
+    },
+    {
+      "name": "数字0与字符串0区分且Enter仅触发一次",
+      "pass": true,
+      "detail": {
+        "type": "string",
+        "value": "0",
+        "changes": 1,
+        "submits": 0,
+        "checked": false,
+        "checks": 0
+      }
+    },
+    {
+      "name": "搜索不改变选择且显示空结果",
+      "pass": true
+    },
+    {
+      "name": "空结果Enter不提交",
+      "pass": true
+    }
+  ],
+  "productionConsole": [],
+  "harnessConsole": [],
+  "verificationNotes": [
+    "浏览器viewport高层设置未改变已有页实际尺寸，错误尺寸检查不计；改用CUA CDP实测640×900和1440×1000并清除临时覆盖。",
+    "最初IME夹具未将合成事件送达实际输入，不计该结果；修订后compositionEvents=1且changes=0，再正常Enter单次选择。",
+    "最初dialog关闭按钮被下拉遮住；夹具移到弹层上方后实际关闭，未将最初尝试计为通过。"
+  ],
+  "native": {
+    "app": "Sidekick Form Verify.app",
+    "id": "com.sidekick.form.verify",
+    "screenshots": [
+      "native-profile.jpg",
+      "native-select.jpg",
+      "native-checkbox.jpg",
+      "native-home.jpg"
+    ],
+    "observed": [
+      "个人信息默认小明同学/BOSS，两框视觉对齐",
+      "通用下拉独立搜索、说明、右勾可见；粘贴东京筛出东京，Escape关闭未改时区",
+      "手工录入中选中勾与未选边框可见；Space从1切回0",
+      "dialog内非搜索事项类型使用Down/Return选中待我跟进，未提交事项",
+      "首页主按钮打开手工录入，辅助入口打开文本整理；均关闭未保存"
+    ],
+    "historicalPendingUnchanged": true
+  },
+  "manualChecks": [
+    {
+      "name": "真实公共控件：方向键跨分组跳过连续两个禁用项",
+      "result": "通过"
+    },
+    {
+      "name": "0数字继承值与字符串0分别选择，保持原类型",
+      "result": "通过"
+    },
+    {
+      "name": "搜索独立查询不改变当前已选项，空结果Enter不提交",
+      "result": "通过"
+    },
+    {
+      "name": "输入法合成事件实际注入1次，未触发选择或提交；后续普通Enter选择1次",
+      "result": "通过"
+    },
+    {
+      "name": "Tab到后一个控件，Shift+Tab到前一个控件",
+      "result": "通过"
+    },
+    {
+      "name": "复选点击1次／Space1次分别只产生一次change，禁用域传递",
+      "result": "通过"
+    },
+    {
+      "name": "打开后同一任务立即卸载／隐藏不遗留可见弹层",
+      "result": "通过"
+    },
+    {
+      "name": "dialog内弹层归属正确，首个Escape仅关闭下拉",
+      "result": "通过"
+    },
+    {
+      "name": "关闭所属dialog后无可见弹层",
+      "result": "通过"
+    },
+    {
+      "name": "空结果仍有可引用listbox及role=status，清空查询恢复5选项",
+      "result": "通过"
+    },
+    {
+      "name": "搜索Home移动到起点，Shift+End选择完整文本",
+      "result": "通过"
+    },
+    {
+      "name": "个人设置两个输入框同为38px，顶部差0px",
+      "result": "通过"
+    },
+    {
+      "name": "常用时区两行49px／padding8px、独立搜索与选中右勾",
+      "result": "通过"
+    },
+    {
+      "name": "智能体模型包含继承、供应商分组和API标识",
+      "result": "通过"
+    },
+    {
+      "name": "实际640×900、1440×1000视口下弹层均不越界",
+      "result": "通过"
+    }
+  ],
+  "manualCheckMethod": "上述为本轮CUA实际操作与DOM断言记录；合成输入法事件为夹具注入，不声称完整真实中文输入法验收。checks数组是最初一组断言的直接记录，不据此推算全部用例数。"
+}

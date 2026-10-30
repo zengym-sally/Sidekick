@@ -1,0 +1,47 @@
+{
+  "provenance": "isolated com.sidekick.s31.verify final native app + local synthetic model, actual UI saves/reset/quit/relaunch/trial display; not external model UI E2E",
+  "schemaVersion": 3,
+  "quickCheck": "ok",
+  "formalCounts": {
+    "todos": 0,
+    "sources": 0,
+    "candidates": 0,
+    "todo_events": 0
+  },
+  "agentRuns": [
+    {
+      "status": "succeeded",
+      "count": 2
+    }
+  ],
+  "roles": [
+    {
+      "agentId": "advisor",
+      "modelId": null,
+      "preferences": {
+        "detail": "standard",
+        "focus": "deadline"
+      },
+      "supplementalLength": 0
+    },
+    {
+      "agentId": "organizer",
+      "modelId": "native-role",
+      "preferences": {
+        "detail": "standard",
+        "focus": "balanced"
+      },
+      "supplementalLength": 21
+    },
+    {
+      "agentId": "tracker",
+      "modelId": null,
+      "preferences": {
+        "detail": "standard",
+        "focus": "evidence"
+      },
+      "supplementalLength": 19
+    }
+  ],
+  "lateCaptureFailure": "ScreenCaptureKit -3812 after successful scoped captures; historical native gaps remain open"
+}

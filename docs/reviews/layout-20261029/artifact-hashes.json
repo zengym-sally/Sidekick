@@ -1,0 +1,20 @@
+{
+  "design/layout-review/review.css": "5c38662855f29778c7ae24473f824de2bf08593ae628c5cf17749536a25e5b71",
+  "design/layout-review/review.js": "1d2b9a8039e72745fe7f07ad7ec30b893927b3661432b1f23005d41acd7b8bf4",
+  "design/layout-review/index.html": "51e8d618d0909a55158c3e67c7d88293a50e9e7684ddaf372b3d1d691dda2415",
+  "docs/reviews/layout-20261029/production-baseline.json": "8e703ee549f875dff077fe8b5b2603f667c5050e80073339f2d3c3e4a4f1134b",
+  "docs/reviews/layout-20261029/agents-result-1440.jpg": "7e705c45f0027a8a4324758a3d83225b6bd2d0bffdb3bfc9d55b84e7fcceeceb",
+  "docs/reviews/layout-20261029/browser-observations.json": "8438a9d913609ababa27f59029a8051508b4c7bffd8775e6f75493afb248036d",
+  "docs/reviews/layout-20261029/general-640.jpg": "d0c3bbcdc9c980014aa90eca858e8e7e7e72594c543e1a411a0156bcf1a7421b",
+  "docs/reviews/layout-20261029/date-dialog-1440.jpg": "d3a4ccf7cd13c77720143d5214df9f2e32e7514480d6e6b8ae9e33ab8f086d7e",
+  "docs/reviews/layout-20261029/general-1440.jpg": "559d1210eec729a48a987e11e1ab371ac542bbeaf1857f1b5c0bad16c25b21c3",
+  "docs/reviews/layout-20261029/native-controls.json": "3c866422d9d80d7e327dd0f7103bcfcb65860bb0a67932b0eccfc176cbb915ba",
+  "docs/reviews/layout-20261029/date-time-1440.jpg": "36b34424ea480ecd299a1e5444ca0e7301be7b4aa0c157c82fcd50bff4aece99",
+  "docs/reviews/layout-20261029/models-1440.jpg": "4edda05d9b0b760cbda3d671f4caa76c8afe7a5ee821ce7df7cabc3c3eb1f94a",
+  "docs/reviews/layout-20261029/agents-640.jpg": "b2429db7437c408e566396003db0bfff61b967e3593fc4c0717703460e8f289c",
+  "docs/reviews/layout-20261029/models-1240.jpg": "6f922276db43f71a0acdf8a2140c7233cdbc68524582a4dbb6a4eabb106bc254",
+  "docs/reviews/layout-20261029/inbox-1440.jpg": "a8044ad7c8e24f28c64237ea802190ac66c81365a53631d835b236c37663139e",
+  "docs/reviews/layout-20261029/models-640.jpg": "64b4f1aabf4d65fb9b24c16fa2c6787453b70e37319dda6d0691e83053c0dd9c",
+  "docs/reviews/layout-20261029/agents-1440.jpg": "fa44077283975818b475cefb452a1fb9632b2a5a36a87c1e0f61681581d51201",
+  ".impeccable/surfaces/sidekick-settings-review.md": "3cd45003e70ae8f1fe528992c1b30c482180cced5d20477cecf4e6e7ffa78e43"
+}

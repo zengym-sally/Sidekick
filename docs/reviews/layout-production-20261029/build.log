@@ -1,0 +1,20 @@
+npm notice run sidekick@0.3.0 build
+npm notice run npm run typecheck && vite build
+npm notice run sidekick@0.3.0 typecheck
+npm notice run vue-tsc --noEmit
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 4290 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                          0.36 kB │ gzip:   0.28 kB
+dist/assets/SpaceGrotesk-Dcw4Q7AU.ttf  136.67 kB
+dist/assets/index-DWkXVoUT.css         148.90 kB │ gzip:  19.89 kB
+dist/assets/index-CYlmo1d_.js          602.06 kB │ gzip: 195.04 kB
+
+✓ built in 516ms
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

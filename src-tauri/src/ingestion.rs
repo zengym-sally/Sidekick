@@ -185,7 +185,10 @@ fn ensure_pending(c: &Candidate, version: i64) -> Result<()> {
     }
     Ok(())
 }
-fn validate_draft(mut draft: CandidateDraft, source: &TextSource) -> Result<CandidateDraft> {
+pub(super) fn validate_draft(
+    mut draft: CandidateDraft,
+    source: &TextSource,
+) -> Result<CandidateDraft> {
     draft.fields = draft.fields.normalized()?;
     if draft.evidence.trim().is_empty()
         || draft.evidence.chars().count() > 2000

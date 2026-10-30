@@ -1,0 +1,17 @@
+{
+  "check_exit": 0,
+  "js_passed": 84,
+  "rust_passed": 51,
+  "live_ignored": 2,
+  "build_layout_verify_exit": 0,
+  "codesign_deep_strict_exit": 0,
+  "native_gui_verified": false,
+  "historical_native_pending_preserved": true,
+  "dependencies_added": false,
+  "commit_or_push_performed": false,
+  "direct_form_counts": {
+    "select": 0,
+    "input": 0,
+    "textarea": 0
+  }
+}

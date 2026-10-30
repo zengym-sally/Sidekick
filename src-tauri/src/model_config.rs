@@ -11,6 +11,8 @@ pub struct ModelConfigInput {
     pub models: Value,
     pub default_model_id: String,
     #[serde(default)]
+    pub expected_revision: Option<String>,
+    #[serde(default)]
     pub api_keys: BTreeMap<String, String>,
 }
 #[derive(Debug, Clone, Serialize)]
@@ -203,6 +205,7 @@ fn validate_pair(providers: &Value, models: &Value, selected: &str) -> Result<()
     }
     let mut model_ids = BTreeSet::new();
     for model in entries {
+        validate_parameters(model)?;
         if !model_ids.insert(id_field(model, "id")?)
             || !ids.contains(id_field(model, "providerId")?)
         {
@@ -222,8 +225,76 @@ fn validate_pair(providers: &Value, models: &Value, selected: &str) -> Result<()
         .iter()
         .find(|p| p["id"] == model["providerId"])
         .ok_or_else(config_error)?;
-    if provider.get("enabled") == Some(&Value::Bool(false)) {
+    if provider.get("enabled") == Some(&Value::Bool(false))
+        || model.get("enabled") == Some(&Value::Bool(false))
+        || model.get("status").and_then(Value::as_str) == Some("disabled")
+    {
         return Err(config_error());
+    }
+    Ok(())
+}
+fn validate_parameters(model: &Value) -> Result<()> {
+    for (path, min, max) in [
+        ("/limits/maxInputTokens", 1024, 2_000_000),
+        ("/limits/maxOutputTokens", 1, 262_144),
+    ] {
+        if let Some(v) = model.pointer(path).filter(|v| !v.is_null()) {
+            if !v.as_u64().is_some_and(|n| (min..=max).contains(&n)) {
+                return Err(config_error());
+            }
+        }
+    }
+    if let (Some(input), Some(output)) = (
+        model
+            .pointer("/limits/maxInputTokens")
+            .and_then(Value::as_u64),
+        model
+            .pointer("/limits/maxOutputTokens")
+            .and_then(Value::as_u64),
+    ) {
+        if output > input {
+            return Err(config_error());
+        }
+    }
+    for (path, max) in [
+        ("/defaultParams/temperature", 2.0),
+        ("/defaultParams/topP", 1.0),
+    ] {
+        if let Some(v) = model.pointer(path).filter(|v| !v.is_null()) {
+            if !v
+                .as_f64()
+                .is_some_and(|n| n.is_finite() && (0.0..=max).contains(&n))
+            {
+                return Err(config_error());
+            }
+        }
+    }
+    if let Some(effort) = model
+        .pointer("/reasoning/defaultEffort")
+        .filter(|v| !v.is_null())
+    {
+        let effort = effort.as_str().ok_or_else(config_error)?;
+        if ![
+            "default", "off", "minimal", "low", "medium", "high", "xhigh", "max",
+        ]
+        .contains(&effort)
+        {
+            return Err(config_error());
+        }
+        if effort == "off"
+            && (model.pointer("/reasoning/onlyReasoning") == Some(&Value::Bool(true))
+                || model.pointer("/reasoning/canDisableThinking") == Some(&Value::Bool(false)))
+        {
+            return Err(config_error());
+        }
+        if !["default", "off"].contains(&effort)
+            && model
+                .pointer("/reasoning/supportedEfforts")
+                .and_then(Value::as_array)
+                .is_some_and(|values| !values.iter().any(|v| v.as_str() == Some(effort)))
+        {
+            return Err(config_error());
+        }
     }
     Ok(())
 }
@@ -374,7 +445,15 @@ impl AppStore {
         }))
     }
     pub fn save_models(&self, mut input: ModelConfigInput) -> Result<ModelConfigSave> {
-        self.read_models()?;
+        let current = self.read_models()?;
+        if input.expected_revision.as_ref().is_some_and(|expected| {
+            current.as_ref().map(|c| c.revision.as_str()).unwrap_or("") != expected
+        }) {
+            return Err(StoreError::new(
+                "MODEL_VERSION_CONFLICT",
+                "模型配置已有更新，草稿已保留，请重新读取后核对。",
+            ));
+        }
         reject_plain_secrets(&input.providers)?;
         reject_plain_secrets(&input.models)?;
         let mut references = BTreeMap::new();
@@ -389,10 +468,19 @@ impl AppStore {
                 .find(|p| p["id"].as_str() == Some(id))
                 .ok_or_else(config_error)?;
             let reference = format!("credential-{}", new_model_reference());
-            provider["auth"] = json!({"type":"bearer","apiKeyRef":reference});
+            let mut auth = provider["auth"]
+                .as_object()
+                .cloned()
+                .ok_or_else(config_error)?;
+            auth.remove("apiKeyEnv");
+            auth.remove("apiKeyRef");
+            auth.insert("type".into(), json!("bearer"));
+            auth.insert("apiKeyRef".into(), json!(reference));
+            provider["auth"] = Value::Object(auth);
             references.insert(id.clone(), reference);
         }
         validate_pair(&input.providers, &input.models, &input.default_model_id)?;
+        self.validate_agent_model_refs(&input.providers, &input.models)?;
         for key in input.api_keys.values() {
             if !key.is_empty()
                 && (encode(&input.providers)?.contains(key) || encode(&input.models)?.contains(key))
@@ -458,17 +546,37 @@ impl AppStore {
         }
     }
     pub fn prepare_model(&self) -> Result<PreparedModel> {
+        self.prepare_agent_model("organizer")
+    }
+    pub fn prepare_agent_model(&self, role: &str) -> Result<PreparedModel> {
+        self.prepare_selected_model(Some(self.agent_config(role)?), None)
+    }
+    pub fn prepare_connection_model(&self) -> Result<PreparedModel> {
+        self.prepare_selected_model(None, None)
+    }
+    pub fn prepare_connection_model_by_id(&self, id: Option<&str>) -> Result<PreparedModel> {
+        self.prepare_selected_model(None, id)
+    }
+    fn prepare_selected_model(
+        &self,
+        agent: Option<AgentConfig>,
+        override_id: Option<&str>,
+    ) -> Result<PreparedModel> {
         let config = self.read_models()?.ok_or_else(|| {
             StoreError::new(
                 "MODEL_NOT_CONFIGURED",
                 "请先在个人信息与设置的模型页配置默认模型。",
             )
         })?;
+        let selected = override_id
+            .or(agent.as_ref().and_then(|a| a.model_id.as_deref()))
+            .unwrap_or(&config.default_model_id);
+        super::agent_config::validate_model_ref(selected, &config.providers, &config.models)?;
         let model = config.models["models"]
             .as_array()
             .ok_or_else(config_error)?
             .iter()
-            .find(|m| m["id"].as_str() == Some(&config.default_model_id))
+            .find(|m| m["id"].as_str() == Some(selected))
             .ok_or_else(config_error)?
             .clone();
         let provider = config.providers["providers"]
@@ -523,7 +631,7 @@ impl AppStore {
         };
         let profile = self.profile().unwrap_or_default();
         Ok(PreparedModel {
-            snapshot: json!({"revision":config.revision,"modelId":config.default_model_id,"model":model,"provider":provider,"profile":profile}),
+            snapshot: json!({"revision":config.revision,"modelId":selected,"model":model,"provider":provider,"profile":profile,"agent":agent}),
             api_key,
         })
     }

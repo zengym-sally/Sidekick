@@ -2,6 +2,7 @@ use super::*;
 use crate::local_store::tests::Fixture;
 fn config(model: &str) -> ModelConfigInput {
     ModelConfigInput {
+        expected_revision: None,
         providers: json!({"$comment":"fixture","providers":[{"id":"fixture","name":"合成服务","apiFormat":"openai-compatible","baseUrl":"http://127.0.0.1:1/v1","auth":{"type":"bearer","apiKeyEnv":"SIDEKICK_MISSING_SYNTHETIC_CREDENTIAL"},"network":{"timeoutMs":2000,"retry":{"maxRetries":0,"backoff":"exponential"}},"extraHeaders":{},"enabled":true,"tags":["test"]}]}),
         models: json!({"models":[{"id":model,"providerId":"fixture","apiModelId":"deployment-name","capabilities":{"input":["text"],"toolCall":true},"pricing":{"input":null},"reasoning":{"supported":false}}]}),
         default_model_id: model.into(),
@@ -123,4 +124,62 @@ fn explicit_auth_carriers_and_invalid_journals_never_replace_current_config() {
         assert_eq!(fs::read(root.join("models.json")).unwrap(), models);
         assert_eq!(fs::read(root.join(".llm-journal.json")).unwrap(), bytes);
     }
+}
+
+#[test]
+fn catalog_revision_guard_precedes_secret_writes_and_targeted_test_keeps_default() {
+    let f = Fixture::new();
+    let mut s = f.store();
+    s.initialize(None, "Asia/Shanghai").unwrap();
+    let mut initial = config("logical");
+    initial.providers["providers"][0]["auth"] = json!({"type":"bearer","apiKeyEnv":"PATH"});
+    initial.models["models"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({"id":"other","providerId":"fixture","apiModelId":"wire-other"}));
+    let saved = s.save_models(initial).unwrap().configuration;
+    let prepared = s.prepare_connection_model_by_id(Some("other")).unwrap();
+    assert_eq!(prepared.snapshot["modelId"], "other");
+    assert_eq!(prepared.snapshot["model"]["apiModelId"], "wire-other");
+    assert_eq!(
+        s.read_models().unwrap().unwrap().default_model_id,
+        "logical"
+    );
+    let mut stale = config("logical");
+    stale.expected_revision = Some("outdated".into());
+    stale
+        .api_keys
+        .insert("fixture".into(), "synthetic-not-to-be-written".into());
+    assert_eq!(
+        s.save_models(stale).unwrap_err().code,
+        "MODEL_VERSION_CONFLICT"
+    );
+    assert_eq!(s.read_models().unwrap().unwrap().revision, saved.revision);
+    let mut disabled = config("logical");
+    disabled.models["models"][0]["enabled"] = json!(false);
+    assert!(s.save_models(disabled).is_err());
+    let mut invalid = config("logical");
+    invalid.models["models"][0]["defaultParams"] = json!({"topP":2});
+    assert!(s.save_models(invalid).is_err());
+}
+
+#[test]
+fn nested_nonsecret_auth_metadata_survives_the_file_transaction() {
+    let f = Fixture::new();
+    let mut s = f.store();
+    s.initialize(None, "Asia/Shanghai").unwrap();
+    let mut value = config("logical");
+    value.providers["providers"][0]["auth"]["audience"] = json!("retained-audience");
+    value.providers["providers"][0]["auth"]["extra"] = json!({"keep":true});
+    let saved = s.save_models(value).unwrap();
+    assert_eq!(
+        saved.configuration.providers["providers"][0]["auth"]["audience"],
+        "retained-audience"
+    );
+    drop(s);
+    let s = f.store();
+    assert_eq!(
+        s.read_models().unwrap().unwrap().providers["providers"][0]["auth"]["extra"]["keep"],
+        true
+    );
 }

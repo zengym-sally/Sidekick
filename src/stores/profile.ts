@@ -35,6 +35,7 @@ export function createProfileModel(api:Backend){
     finally{saving.value=false;}
   }
   function useNickname(){if(!ready.value||loading.value||saving.value||loadError.value)return;draft.address=draft.name.trim()||DEFAULT_NICKNAME;}
-  return {saved,draft,ready,loading,saving,loadError,saveError,warning,load,save,useNickname};
+  function discard(){if(!saving.value){Object.assign(draft,{name:saved.value.name,address:saved.value.address});saveError.value='';warning.value='';}}
+  return {saved,draft,ready,loading,saving,loadError,saveError,warning,load,save,useNickname,discard};
 }
 export const useProfile=defineStore('profile',()=>createProfileModel(invoke));

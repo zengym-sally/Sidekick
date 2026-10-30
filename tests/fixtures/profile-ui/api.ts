@@ -1,10 +1,16 @@
 import { organizerFixture } from './organizer';
+import {agentFixture} from './agents';
 const parameters=new URLSearchParams(location.search);
 let initialized=!parameters.has('onboarding');
 const rows:unknown[]=[];
 const workspace=()=>({needsSetup:!initialized,root:initialized?'/fixture/sidekick':null,defaultRoot:'/fixture/sidekick',pendingRoot:null});
+let applicationSettings={timeZone:'Asia/Shanghai'};
 const defaults=()=>({version:1,name:'小明同学',address:'BOSS'});
 export async function invoke(command:string,args?:Record<string,unknown>){
+  if(command==='read_application_settings')return structuredClone(applicationSettings);
+  if(command==='save_application_settings'){if(parameters.has('settingsUncertain')){applicationSettings={timeZone:(args?.input as {timeZone:string}).timeZone};throw {code:'SETTINGS_UNCERTAIN',message:'合成场景：请读回核对通用设置。'};}if(parameters.has('settingsSaveError'))throw {code:'WORKSPACE_IO',message:'合成场景：通用设置暂时无法保存。'};applicationSettings={timeZone:(args?.input as {timeZone:string}).timeZone};return {settings:structuredClone(applicationSettings),warning:null};}
+  if(command==='open_workspace_directory')return;
+  const agent=agentFixture(command,args?JSON.parse(JSON.stringify(args)):args,command==='start_agent_trial'?organizerFixture('read_model_configuration',undefined,rows):undefined);if(agent!==undefined)return JSON.parse(JSON.stringify(agent));
   const organized=organizerFixture(command,args?JSON.parse(JSON.stringify(args)):args,rows);if(organized!==undefined)return JSON.parse(JSON.stringify(organized));
   if(command==='workspace_info')return workspace();
   if(command==='initialize_workspace'){initialized=true;return workspace();}
@@ -27,4 +33,4 @@ export async function invoke(command:string,args?:Record<string,unknown>){
 }
 export async function listen(){return ()=>{};}
 export async function open(){return null;}
-export async function getVersion(){return '0.2.0（界面样本）';}
+export async function getVersion(){return '0.3.0（界面样本）';}

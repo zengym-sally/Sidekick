@@ -1,0 +1,241 @@
+{
+  "date": "2026-10-29",
+  "version": "0.3.0",
+  "scope": "S3.1 only: three built-in role configurations + organizer isolated trial; S3.2 onward not implemented",
+  "git": {
+    "base": "8db82536cbeefce1f4425be158089dda6e2f1a15",
+    "current": "uncommitted; not pushed"
+  },
+  "dependencyChanges": "none; Pi and migrations 001/002 unchanged",
+  "check": {
+    "command": "npm run check",
+    "exitCode": 0,
+    "jsPassed": 69,
+    "rustPassed": 47,
+    "ignoredExplicitModelTests": 2,
+    "failed": 0,
+    "log": "check.log"
+  },
+  "focused": {
+    "clientPassed": 6,
+    "agentStorePassed": 7,
+    "allStorePassed": 44,
+    "s2AndS31RuntimePassed": 9,
+    "includedInCheck": true
+  },
+  "review": {
+    "design": "reused approved S3 plan A/B round2 APPROVE; owner confirmed S3.1",
+    "deliveryA": "APPROVE round2",
+    "deliveryB": "APPROVE round2",
+    "closedP2": [
+      "save/reset IPC result unknown blocks trial until reconciliation",
+      "late cancellation response/error cannot replace new trial"
+    ],
+    "unresolvedP1P2": 0
+  },
+  "live": {
+    "command": "SIDEKICK_MODEL_ENV=\"$PWD/.env.deepseek\" npm run test:s31-live",
+    "exitCode": 0,
+    "passed": 1,
+    "seconds": 12.54,
+    "model": "owner-selected DeepSeek",
+    "candidatePreviews": 3,
+    "modelOverrideAgainstInvalidGlobalDefault": true,
+    "personalizationTag": true,
+    "formalTodosBefore": 1,
+    "formalTodosAfter": 1,
+    "formalSources": 0,
+    "businessHistoryUnchanged": true,
+    "threeConfigurationsAndTrialRestored": true,
+    "keychainCredential": true,
+    "provenance": "real model + production Rust methods + bundled Pi, not native real-key GUI test",
+    "log": "live-model.log"
+  },
+  "native": {
+    "appId": "com.sidekick.s31.verify",
+    "provenance": "final isolated native app + loopback synthetic model + nonsecret environment reference",
+    "passed": [
+      "personal entry defaults profile",
+      "three role save",
+      "organizer model override",
+      "three role quit/relaunch restore",
+      "current advisor reset does not change organizer",
+      "earlier trial result restored in final app",
+      "final app actual trial and readonly result display"
+    ],
+    "finalTrialPreviews": 3,
+    "checkpoint": {
+      "provenance": "isolated com.sidekick.s31.verify final native app + local synthetic model, actual UI saves/reset/quit/relaunch/trial display; not external model UI E2E",
+      "schemaVersion": 3,
+      "quickCheck": "ok",
+      "formalCounts": {
+        "todos": 0,
+        "sources": 0,
+        "candidates": 0,
+        "todo_events": 0
+      },
+      "agentRuns": [
+        {
+          "status": "succeeded",
+          "count": 2
+        }
+      ],
+      "roles": [
+        {
+          "agentId": "advisor",
+          "modelId": null,
+          "preferences": {
+            "detail": "standard",
+            "focus": "deadline"
+          },
+          "supplementalLength": 0
+        },
+        {
+          "agentId": "organizer",
+          "modelId": "native-role",
+          "preferences": {
+            "detail": "standard",
+            "focus": "balanced"
+          },
+          "supplementalLength": 21
+        },
+        {
+          "agentId": "tracker",
+          "modelId": null,
+          "preferences": {
+            "detail": "standard",
+            "focus": "evidence"
+          },
+          "supplementalLength": 19
+        }
+      ],
+      "lateCaptureFailure": "ScreenCaptureKit -3812 after successful scoped captures; historical native gaps remain open"
+    },
+    "lateCaptureFailure": "ScreenCaptureKit -3812 after scoped proof; all historical missing checks preserved",
+    "secureKeyEntryAndExternalModelGui": "not verified"
+  },
+  "browser": {
+    "coldReload": true,
+    "viewports": [
+      [
+        1440,
+        1000
+      ],
+      [
+        640,
+        900
+      ]
+    ],
+    "horizontalOverflow": false,
+    "duplicateDomIds": 0,
+    "finalWarnErrorCount": 0,
+    "keyboardLeftRightObserved": true,
+    "dirtyBlocksTrial": true,
+    "provenance": "API fixture only"
+  },
+  "build": {
+    "normalCommand": "npm run probe:app",
+    "nativeCommand": "npm run build:s31-verify",
+    "normalExitCode": 0,
+    "nativeExitCode": 0,
+    "bothCodesignVerifyExitCode": 0,
+    "signature": "ad-hoc; not notarized",
+    "version": "0.3.0",
+    "normalApp": "src-tauri/target/release/bundle/macos/Sidekick.app",
+    "nativeApp": "src-tauri/target/release/bundle/macos/Sidekick S31 Verify.app",
+    "sha256": {
+      "src-tauri/target/release/bundle/macos/Sidekick.app/Contents/MacOS/sidekick": "431be53869b2cd79199585a65bcbcc0a4ee77b7cdbe02124fa9b94f40a1e5de0",
+      "src-tauri/target/release/bundle/macos/Sidekick.app/Contents/Resources/s0-runtime/organizer.mjs": "c3dca74414622313ee2379c5be0d6bcc044dbdb473eb0bb97447db7167054407",
+      "src-tauri/target/release/bundle/macos/Sidekick S31 Verify.app/Contents/MacOS/sidekick": "99af49b13ec874e9ac1150bc2daf8aad3c9a663b29f532a430f32bd14e3b42ab",
+      "src-tauri/target/release/bundle/macos/Sidekick S31 Verify.app/Contents/Resources/s0-runtime/organizer.mjs": "c3dca74414622313ee2379c5be0d6bcc044dbdb473eb0bb97447db7167054407"
+    }
+  },
+  "productionFrontend": {
+    "fixtureMarkersAbsent": true,
+    "expectedBusinessCommandsPresent": true
+  },
+  "secretScan": {
+    "selectedCredentialOccurrences": 0,
+    "files": 80,
+    "scope": "modified/untracked, dist, bundled text resources; no credential value recorded"
+  },
+  "sourceSha256": {
+    "DESIGN.md": "0426e5f071c8523baa5d28fe46505207e5e4076e81e9326c871a0526e6c6da39",
+    "README.md": "f9b1581c1b5e83c7f9461e43a8bf3142e0158255d4215ad4413175ce5d6d6e08",
+    "docs/product/01-产品定义.md": "885e3e07deb1d0c48465ae090cb48d655e84fde75dd44fbeb9dc2c44217a4c5e",
+    "docs/product/02-用户流程.md": "72e2d54ce679f3b5478ef5cfb987aa096c63f4a08f7c79b9be39fd6747ccb841",
+    "docs/product/03-智能体与架构.md": "636110eeadc2c2f2053ce16c00ffd60f82cfce1bd3979184553fd547b569f9a1",
+    "docs/product/04-分期交付与验收.md": "620e258934a5a8d6de9645998dfb35f0ce975709479727c9655aefaa6f46a60f",
+    "docs/product/05-第一阶段实施计划.md": "ea55345d7182493dc8664b2fe4c6dc5e35301e7d4d97182a019454534bbae5a5",
+    "docs/reviews/s31-20261029.md": "f01385a9d40b5e75e5b4145dd5e5c09bebe5246c239da8e6f8ea4557b25fca29",
+    "package-lock.json": "fb837764c57ee664868145e03bdcbc3450cfd20d9d2427bdde3156c3644bc672",
+    "package.json": "32524782e5fd49ffd73d45b06a8f79624f92cd67ca663a98d865e4173c3c74bf",
+    "runtime/organizer-entry.mjs": "bb18cc602f072a6e894f26a402c73df362720ef64fa2087fba1dbb6c5950aae3",
+    "src-tauri/Cargo.lock": "4e43f06dddcb3722419bab4c65e0d36f6264350a582e162a0c0aa385aba8dcdd",
+    "src-tauri/Cargo.toml": "c9a5aa39419109d325b626b6ce69d1868db347e3bb7ad3c5a14f3b015d79f810",
+    "src-tauri/migrations/003_agent_runs.sql": "b8f89eab2dc8747cbffd0e59cc7c3816439ace21ebfe977babaf7c1b79b586c9",
+    "src-tauri/src/agent_config.rs": "ef1f338668a0313c1399804887b8e79af2cb4e90544078820c8b579a8073515b",
+    "src-tauri/src/agent_config_tests.rs": "6785a3aec5bb163b4befc21d7f2a2e1bc38ffadaa2c49b7fe8bcd850f679a660",
+    "src-tauri/src/agent_trials.rs": "d17b5167d0acb0fd615a77e40ecee5c0cdb93021927d81a9ea013077c63f028a",
+    "src-tauri/src/ingestion.rs": "3e65c2a9bc8f85cfa365874378f1266a9d3610ad59cfeb50ff27ca19fff2ad29",
+    "src-tauri/src/lib.rs": "49aa5761868996dbaf57bda4dfbfb68f753e88c782520527fd80f100d7cdbe80",
+    "src-tauri/src/local_store.rs": "142bbd514de039d3e5fda5c18a921e3b87efb99e7d77013ae73818acdd7e32b9",
+    "src-tauri/src/local_store_tests.rs": "fe1309ce003b2cbaab1909303669cb98b1be99416a2bdbb3aa847c67013149cc",
+    "src-tauri/src/model_config.rs": "70523be3106eb3e35086a03720ee3388dbc988aa73017c11ffb0ed923dc1cd11",
+    "src-tauri/src/runtime_host.rs": "cf8c3a4d86569d84a7d73170c8d62467e97c2a6afc7bb79526b4bad943bdba07",
+    "src-tauri/src/store_commands.rs": "aa2c07933ef87b8ac6a74d86636977fdd57c748a242965709e9c7513df5ae487",
+    "src-tauri/tauri.conf.json": "605dbcbca1f059dd178c793a31682ab041c0f1df99fd48a031d34b3537d6d344",
+    "src/components/AgentSettingsPanel.vue": "b9ef374a99b77bd8bbc4f8031fb411ad01ea92dafe6e94dacd62a8f6802bbcf1",
+    "src/components/SettingsPanel.vue": "09815e79302821dd234c9b1fcb9f8c98805add90e0cd810c5e7ac470401448db",
+    "src/components/Workbench.vue": "28fc3ab0175e195d17d7db0fb150cd02baf8cf5ec24871d533c609c05c9e4177",
+    "src/domain/agents.ts": "f6d2f8d36f7de333f77d7ec9a475e7d36b8808179f33483bfc745d6b3678af7a",
+    "src/domain/organizer.ts": "10ba133078cbb6235be9e2386bc9312403cf795ba0dda5eb80c6d2a047c01f6a",
+    "src/stores/agents.ts": "a2aa510f087cdcd865277d378b0e56be25c517659a34a51ce5169be59873710c",
+    "src/style.css": "3381a9d03390cd836e8642596fcde23eecbd1d78699e83965f938651a55ea957",
+    "tests/fixtures/profile-ui/agents.ts": "30b797b528ea02c7e2642199ebfd5bec1f2f9c0791ade24bc55a0f40afcdef7a",
+    "tests/fixtures/profile-ui/api.ts": "0fc26e57ba3cbe5fa89613eab2334cb54c1471f4155695bd371982857b879eb5",
+    "tests/fixtures/s31-verify.config.json": "2b7defd36471ed360e82aed87a060e58565bc3952441a9ce069dc39c2b89d02b",
+    "tests/s31-client.test.mjs": "e8bef23da5acca35bc3591ddb96a67552b885cd9a561aefded2df20ecf17a1be",
+    "tests/s31-runtime.test.mjs": "8df03e1d4cf14e63381b16d81cdf0c4374d9d06c655e7a7fadfcadf4ba0c15b0"
+  },
+  "screenshots": {
+    "trial-native.jpg": {
+      "pixels": [
+        2480,
+        1640
+      ],
+      "sha256": "e6129da4544a1faa8ab08418483c9424eac22ad93ffac4acd57da48747ce98ee",
+      "provenance": "final native Tauri IPC + local synthetic model; not real DeepSeek GUI E2E"
+    },
+    "agents-browser.jpg": {
+      "pixels": [
+        1440,
+        1000
+      ],
+      "sha256": "498f9332d2eb1d933aefca2aa42c4373872ae84d43fc00be23d318574f9d2d74",
+      "provenance": "real Vue/CSS + synthetic browser API; not IPC, SQLite or real model"
+    },
+    "agents-narrow-browser.jpg": {
+      "pixels": [
+        640,
+        900
+      ],
+      "sha256": "6fd80f9242be0712498a0cc6df45203c2999af1c0c91d65eddbaf75a5c81663a",
+      "provenance": "real Vue/CSS + synthetic browser API; not IPC, SQLite or real model"
+    },
+    "agents-native.jpg": {
+      "pixels": [
+        2480,
+        1640
+      ],
+      "sha256": "9f6a27476c5b7338c134b622b854b82e058e1de6e46a7e22513af6dbdf187049",
+      "provenance": "final native Tauri IPC + local synthetic model; not real DeepSeek GUI E2E"
+    }
+  },
+  "logsSha256": {
+    "live-model.log": "a245292fcf59d5f53f1d80778e96832e51b5b88c1cf7d1a185987e31a55bdb85",
+    "check.log": "b8e8bef23273eef7b52f385ae7768858d067f5a032392a682fe7a3bb4918cc2f",
+    "native-build.log": "d4a367c40495ba8564c8e6a4d14127c01af86fd052584240a266e4325ae22027",
+    "build.log": "31ebe256d0f3f7430f882007bacf9eb03b2fd4961fde2c8905a4bfa12549e7e8"
+  }
+}

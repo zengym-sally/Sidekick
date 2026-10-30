@@ -1,0 +1,5 @@
+{
+  "productName": "Sidekick Form Verify",
+  "identifier": "com.sidekick.form.verify",
+  "app": {"windows":[{"label":"main","title":"跟班 Sidekick · 表单修订验收","width":1240,"height":820,"minWidth":640,"minHeight":600}]}
+}

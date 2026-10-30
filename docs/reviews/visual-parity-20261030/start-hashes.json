@@ -1,0 +1,16 @@
+{
+  "src/components/ui/SkSelect.vue": "9809e6066b04ec79e53190a24d0eb7a47669a57851a3349d4536d10421c8c75b",
+  "src/components/ui/SkCheckbox.vue": "caeba755445d17dee2a9fe2c7888961593b388fec293ae624dca3332dac6663b",
+  "src/components/ui/control.ts": "4921490e436c059a5ac618113706553ea5eb5597e1fda35f1a87b82aaeadc7e8",
+  "src/styles/forms.css": "d461be80be4bc47397b1d4120038c5774913ac376038f12e7bbb514b1e2c3083",
+  "src/styles/settings.css": "bd3707019b6c356d923a7227ba60555068e1a2b07ea0e5fc0fe3ba54f253c9e7",
+  "src/components/SettingsPanel.vue": "904ea8cd786a49b7b7d2a69025eae98e095178e0a73cfcbd7c5804cdf78d2f47",
+  "src/components/ModelSettingsPanel.vue": "e0ae8912575cca2045d95558fdb6a58147ebb070c9e0b658cc8f8b0119dc2b4e",
+  "src/components/AgentSettingsPanel.vue": "00bfc8dfe01ac916e2ad4aa63de69a557fd0572cf4a718054b997955ea2cba7a",
+  "src/components/Workbench.vue": "b767a0b5ab78d8d11eabf5b87b48bcf91e616edad1f4b4131183c9aaab65726a",
+  "package.json": "b69023970c8ff90c20b2459f0db23e5841575dd25f4d5655e867386daa61847d",
+  "package-lock.json": "fb837764c57ee664868145e03bdcbc3450cfd20d9d2427bdde3156c3644bc672",
+  "src-tauri/Cargo.toml": "c9a5aa39419109d325b626b6ce69d1868db347e3bb7ad3c5a14f3b015d79f810",
+  "src-tauri/Cargo.lock": "4e43f06dddcb3722419bab4c65e0d36f6264350a582e162a0c0aa385aba8dcdd",
+  "design/brand/tokens.css": "7c17be629f03c20effb731bffe92cb9ca66d1f0f3513c780441b26513ec0d712"
+}

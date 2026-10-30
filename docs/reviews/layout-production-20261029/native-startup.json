@@ -1,0 +1,13 @@
+{
+  "process_started": true,
+  "native_gui_observed": false,
+  "capture_error": "ScreenCaptureKit -3811; stream could not start",
+  "startup_diagnostic": {
+    "mainVisible": true,
+    "windows": [
+      "quick",
+      "pet",
+      "main"
+    ]
+  }
+}

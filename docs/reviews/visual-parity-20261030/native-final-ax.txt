@@ -1,0 +1,8 @@
+The following is a diff from the previous accessibility tree for Window: "跟班 Sidekick · 表单修订验收" with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~					20 tab (selected) 通用
+~						65 combo box (expanded) 应用时区, Value: 中国标准时间 · 上海, Secondary Actions: Collapse
++			72 combo box (expanded, settable) 搜索选项, Placeholder: 搜索选项…, Secondary Actions: Collapse
++				73 text 搜索选项…
++			74 list (settable) (showing 0-7 of 100 items)
++				75 text (selected) 中国标准时间 · 上海 UTC+08:00, Help: 中国标准时间 · 上海
+The focused UI element is 75 text (selected) 中国标准时间 · 上海 UTC+08:00, Help: 中国标准时间 · 上海

@@ -1,0 +1,43 @@
+{
+  "current": {
+    "src/components/ui/SkSelect.vue": "d4cb8115e84c8e8bfae7761d8b16dec77d3e592ef459fb823940296b116af98d",
+    "src/components/ui/SkCheckbox.vue": "30e877557ff8acb3275f235a46a6258248717becdc3aa377fbd10d436dc0f9fd",
+    "src/components/ui/control.ts": "de30a6fd5b9bd556d2735586a94e44ec8bfdc6e47ccde6c59f2620989b5fa8e0",
+    "src/styles/forms.css": "28ad6747d3ebf3f08567562e63a2affbfd9a70ab21c764fc19396087c96e1b3f",
+    "src/styles/settings.css": "bd3707019b6c356d923a7227ba60555068e1a2b07ea0e5fc0fe3ba54f253c9e7",
+    "src/components/SettingsPanel.vue": "e97bac0b34fd9b7be192a692f85a3f1f6a246a5ca18d0e37f0e3c60d14c969b0",
+    "src/components/ModelSettingsPanel.vue": "3a68cfb34d7013ad445e99683fee8ba1f571f95425cd57444b449c981285df69",
+    "src/components/AgentSettingsPanel.vue": "9ecbe5800b015b9e0a55c3c58d08af7fb8fb1916c66322fa46bc5dca6b91d734",
+    "src/components/Workbench.vue": "82dcab783f4b5a112ce3a6ee6c9dfb3cd83295e5bf946c24e4824e56389b75a2",
+    "package.json": "b69023970c8ff90c20b2459f0db23e5841575dd25f4d5655e867386daa61847d",
+    "package-lock.json": "fb837764c57ee664868145e03bdcbc3450cfd20d9d2427bdde3156c3644bc672",
+    "src-tauri/Cargo.toml": "c9a5aa39419109d325b626b6ce69d1868db347e3bb7ad3c5a14f3b015d79f810",
+    "src-tauri/Cargo.lock": "4e43f06dddcb3722419bab4c65e0d36f6264350a582e162a0c0aa385aba8dcdd",
+    "design/brand/tokens.css": "7c17be629f03c20effb731bffe92cb9ca66d1f0f3513c780441b26513ec0d712"
+  },
+  "unchangedFromStart": [
+    "package.json",
+    "package-lock.json",
+    "src-tauri/Cargo.toml",
+    "src-tauri/Cargo.lock",
+    "design/brand/tokens.css",
+    "src/styles/settings.css"
+  ],
+  "additionalSources": {
+    "src/style.css": "ef0b121c64123f20102819cf570d2de5604b313218d8cdca37462efe1a6e5fbb",
+    "DESIGN.md": "41195f817ddbccb156ff487e90d66ada56493284241ce8c626225cf01a5321bb",
+    "tests/fixtures/visual-parity-verify.config.json": "3709a63950834ded899be3229deb913236678540316c7fba95d0de85af7f8c9f",
+    "tests/fixtures/profile-ui/FormParityHarness.vue": "5b12c3d99e970a0e87ee01ece32e03a4bb0a2478e4478d1adfec93368b13f32f",
+    "tests/fixtures/profile-ui/parity.ts": "ea1f6587ad0ae97d8448b609be7331ccd23ea34dbb48448188ac9be1d911764d",
+    "tests/fixtures/profile-ui/parity.html": "f83448a599071871086d234dc3c2865530dae23a34072d373fed0fe4f66a2066"
+  },
+  "bundle": {
+    "app": "src-tauri/target/release/bundle/macos/Sidekick Form Verify.app",
+    "binarySha256": "d25a870592a78c3f833be06d20bc23bdce56e7b3099469d2ecdd8497164d8143",
+    "assets": [
+      "dist/assets/index-DAVQ_6Om.js",
+      "dist/assets/index-Ctyj4SkM.css"
+    ],
+    "signVerification": "valid on disk; satisfies its Designated Requirement"
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "profile": [
+    {
+      "height": 38,
+      "labelHeight": 19.796875,
+      "top": 244.5859375
+    },
+    {
+      "height": 38,
+      "labelHeight": 24.1484375,
+      "top": 248.9375
+    }
+  ],
+  "select": {
+    "descriptions": 0,
+    "optionHeight": 28,
+    "optionPadding": "0px 8px",
+    "searchFields": 0,
+    "themeAnti": "#fff",
+    "themeBorder": "#ddd"
+  },
+  "prototypeSelect": {
+    "descriptionRows": 4,
+    "optionHeight": 49,
+    "optionPadding": "8px",
+    "searchFields": 1
+  },
+  "checkboxes": [
+    {
+      "box": {
+        "border": "1px solid rgb(31, 58, 95)",
+        "height": 16,
+        "overflow": "visible",
+        "width": 16
+      },
+      "checked": true,
+      "class": "t-checkbox t-is-checked sk-check",
+      "native": {
+        "height": "1px",
+        "opacity": "1",
+        "position": "absolute",
+        "width": "107px"
+      },
+      "pseudo": {
+        "border": "",
+        "borderBottomWidth": "2px",
+        "content": "\"\"",
+        "display": "block",
+        "opacity": "1",
+        "transform": "matrix(0.707107, 0.707107, -0.707107, 0.707107, 1.41421, -4.94975)"
+      }
+    },
+    {
+      "box": {
+        "border": "1px solid rgb(86, 99, 112)",
+        "height": 16,
+        "overflow": "visible",
+        "width": 16
+      },
+      "checked": false,
+      "class": "t-checkbox sk-check",
+      "native": {
+        "height": "1px",
+        "opacity": "1",
+        "position": "absolute",
+        "width": "71px"
+      },
+      "pseudo": {
+        "border": "0px solid rgb(31, 58, 95)",
+        "borderBottomWidth": "0px",
+        "content": "\"\"",
+        "display": "block",
+        "opacity": "0",
+        "transform": "none"
+      }
+    }
+  ]
+}

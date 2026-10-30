@@ -479,7 +479,7 @@ fn future_schema_and_missing_ready_database_never_fall_back_to_empty_data() {
     assert_eq!(fs::read(&db_path).unwrap(), bytes);
     {
         let db = Connection::open(&db_path).unwrap();
-        db.pragma_update(None, "user_version", 2).unwrap();
+        db.pragma_update(None, "user_version", 3).unwrap();
     }
     let store = fixture.store();
     assert_eq!(store.get(&todo.id).unwrap().id, todo.id);
@@ -664,4 +664,74 @@ fn committed_data_recovers_after_abrupt_process_stop() {
     assert_eq!(recovered.history(&saved.id).unwrap().len(), 1);
     assert_eq!(recovered.create(input(), "crash-create").unwrap(), saved);
     assert_eq!(recovered.history(&saved.id).unwrap().len(), 1);
+}
+
+#[test]
+fn application_timezone_persists_without_moving_todos_and_rejects_stale_writes() {
+    let f = Fixture::new();
+    let mut s = f.store();
+    s.initialize(None, "Asia/Shanghai").unwrap();
+    let todo = s.create(input(), "before-zone").unwrap();
+    let old = s.application_settings().unwrap();
+    assert_eq!(old.time_zone, "Asia/Shanghai");
+    s.save_application_settings(AppSettingsInput {
+        time_zone: "Asia/Tokyo".into(),
+        expected_time_zone: old.time_zone,
+    })
+    .unwrap();
+    assert_eq!(
+        s.save_application_settings(AppSettingsInput {
+            time_zone: "UTC".into(),
+            expected_time_zone: "Asia/Shanghai".into()
+        })
+        .unwrap_err()
+        .code,
+        "SETTINGS_CONFLICT"
+    );
+    assert!(s
+        .save_application_settings(AppSettingsInput {
+            time_zone: "../etc/passwd".into(),
+            expected_time_zone: "Asia/Tokyo".into()
+        })
+        .is_err());
+    assert_eq!(s.list().unwrap(), vec![todo.clone()]);
+    drop(s);
+    let s = f.store();
+    assert_eq!(s.application_settings().unwrap().time_zone, "Asia/Tokyo");
+    assert_eq!(s.list().unwrap(), vec![todo]);
+    assert_eq!(
+        fs::metadata(s.root().unwrap().join("config/app.json"))
+            .unwrap()
+            .mode()
+            & 0o777,
+        0o600
+    );
+}
+
+#[test]
+fn application_settings_failure_reconciles_without_resetting_existing_values() {
+    for fault in [
+        SettingsWriteFault::BeforeReplace,
+        SettingsWriteFault::AfterReplace,
+        SettingsWriteFault::ReadBack,
+    ] {
+        let f = Fixture::new();
+        let mut s = f.store();
+        s.initialize(None, "Asia/Shanghai").unwrap();
+        s.settings_write_fault = Some(fault);
+        let result = s.save_application_settings(AppSettingsInput {
+            time_zone: "Asia/Tokyo".into(),
+            expected_time_zone: "Asia/Shanghai".into(),
+        });
+        match fault {
+            SettingsWriteFault::BeforeReplace => {
+                assert!(result.is_err());
+                assert_eq!(s.application_settings().unwrap().time_zone, "Asia/Shanghai");
+            }
+            SettingsWriteFault::AfterReplace => assert!(result.unwrap().warning.is_some()),
+            SettingsWriteFault::ReadBack => {
+                assert_eq!(result.unwrap_err().code, "SETTINGS_UNCERTAIN")
+            }
+        }
+    }
 }

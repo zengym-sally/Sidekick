@@ -1,0 +1,16 @@
+{
+  "displayProbe": {
+    "prefix": 0,
+    "trigger": "继承全局默认"
+  },
+  "displayResult": {
+    "type": "string",
+    "value": "0",
+    "changes": 1,
+    "submits": 0,
+    "checked": false,
+    "checks": 0,
+    "compositionEvents": 0
+  },
+  "triggerAfter": "字符串零"
+}

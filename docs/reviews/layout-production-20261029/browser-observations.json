@@ -1,0 +1,124 @@
+{
+  "kind": "production Vue with synthetic IPC; not native/real model",
+  "observations": [
+    {
+      "contentOverflow": false,
+      "duplicates": [],
+      "heading": "通用设置",
+      "pageOverflow": false,
+      "saveVisible": true,
+      "size": [
+        1440,
+        1000
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "duplicates": [],
+      "heading": "模型服务",
+      "pageOverflow": false,
+      "saveVisible": true,
+      "size": [
+        1440,
+        1000
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "duplicates": [],
+      "heading": "智能体",
+      "pageOverflow": false,
+      "saveVisible": true,
+      "size": [
+        1440,
+        1000
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "duplicates": [],
+      "heading": "通用设置",
+      "pageOverflow": false,
+      "saveVisible": true,
+      "size": [
+        1240,
+        820
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "duplicates": [],
+      "heading": "模型服务",
+      "pageOverflow": false,
+      "saveVisible": true,
+      "size": [
+        1240,
+        820
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "duplicates": [],
+      "heading": "智能体",
+      "pageOverflow": false,
+      "saveVisible": true,
+      "size": [
+        1240,
+        820
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "duplicates": [],
+      "heading": "通用设置",
+      "pageOverflow": false,
+      "saveVisible": true,
+      "size": [
+        640,
+        900
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "duplicates": [],
+      "heading": "模型服务",
+      "pageOverflow": false,
+      "saveVisible": true,
+      "size": [
+        640,
+        900
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "duplicates": [],
+      "heading": "智能体",
+      "pageOverflow": false,
+      "saveVisible": true,
+      "size": [
+        640,
+        900
+      ]
+    }
+  ],
+  "console": [],
+  "journeys": [
+    "initial provider+model save",
+    "second provider/model save",
+    "model parameters and selected-model test",
+    "unsaved model draft return/cross-provider/reopen",
+    "manual civil date and app-zone display conversion",
+    "calendar arrows/Escape/focus return",
+    "settings uncertain -> block -> discard -> reread recovery",
+    "model conflict -> discard -> reread -> save",
+    "text -> three candidates -> explicit sign -> three formal rows",
+    "organizer model override -> isolated trial leaves formal count three",
+    "dirty role configuration blocks trial"
+  ],
+  "finalChecks": {
+    "discardRecoveryVisible": true,
+    "selectedModelTestPreservesGlobal": true,
+    "placeholderColor": "rgb(86, 99, 112)",
+    "placeholderOpacity": "1"
+  }
+}

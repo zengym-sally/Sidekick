@@ -36,26 +36,11 @@ test('date-only editing and overdue checks preserve the original day and timezon
     assert.equal(isOverdue(skipped,Date.parse('2026-10-29T01:00:00Z')),true);
   }finally{if(previous===undefined)delete process.env.TZ;else process.env.TZ=previous;}
 });
-test('a model save response does not clear a newer JSON draft, and JSON edits invalidate prior test success',async()=>{
-  const config={providers:{providers:[{id:'p',name:'原服务',baseUrl:'https://example.invalid/v1',apiFormat:'openai-compatible',auth:{type:'bearer',apiKeyEnv:'FIXTURE'}}]},models:{models:[{id:'m',providerId:'p',apiModelId:'wire'}]},defaultModelId:'m',revision:'old',credentialStatus:{p:'missing'}};
-  let finish;const model=createModelSettings(async command=>command==='read_model_configuration'?config:new Promise(resolve=>finish=resolve));
-  await model.load();model.providerJson.value='{"providers":["new draft"]}';assert.equal(model.dirty.value,true);
-  const save=model.saveBasic();model.providerJson.value='{"providers":["newer draft"]}';finish({configuration:{...config,revision:'new'},warning:null});await save;
-  assert.equal(model.providerJson.value,'{"providers":["newer draft"]}');assert.equal(model.dirty.value,true);
+test('catalog saves preserve a newer object draft and confirmed revision',async()=>{
+ const config={providers:{providers:[{id:'p',name:'原服务',baseUrl:'https://example.invalid/v1',apiFormat:'openai-compatible',auth:{type:'bearer',apiKeyEnv:'FIXTURE'}}]},models:{models:[{id:'m',providerId:'p',apiModelId:'wire'}]},defaultModelId:'m',revision:'old',credentialStatus:{p:'missing'}};
+ let finish;const model=createModelSettings(async command=>command==='read_model_configuration'?config:new Promise(resolve=>finish=resolve));await model.load();model.providerDraft.value.name='提交草稿';const saving=model.saveProvider();model.providerDraft.value.name='更新草稿';finish({configuration:{...config,providers:{providers:[{...config.providers.providers[0],name:'提交草稿'}]},revision:'new'},warning:null});await saving;assert.equal(model.providerDraft.value.name,'更新草稿');assert.equal(model.configuration.value.revision,'new');assert.equal(model.dirty.value,true);
 });
-test('basic model editing preserves imported metadata and other models without mutating the saved snapshot',async()=>{
-  const original={providers:{providers:[{id:'p',name:'原服务',baseUrl:'https://example.invalid/v1',apiFormat:'openai-compatible',auth:{type:'bearer',apiKeyEnv:'FIXTURE_ENV'},tags:['retain']}]},models:{models:[{id:'logical',providerId:'p',apiModelId:'wire',pricing:{input:null}},{id:'other',providerId:'p',apiModelId:'other-wire'}]},defaultModelId:'logical',revision:'old',credentialStatus:{p:'missing'}};
-  let sent;const model=createModelSettings(async(command,args)=>{if(command==='read_model_configuration')return original;sent=args.input;return {configuration:{...original,providers:args.input.providers,models:args.input.models,revision:'new'},warning:null};});
-  await model.load();model.basic.apiModelId='changed-wire';await model.saveBasic();
-  assert.equal(sent.models.models[0].apiModelId,'changed-wire');assert.deepEqual(sent.providers.providers[0].tags,['retain']);assert.equal(sent.models.models.length,2);assert.equal(original.models.models[0].apiModelId,'wire');
-});
-test('saving one model editor preserves the other editor draft until an explicit reset',async()=>{
-  let config={providers:{providers:[{id:'p',name:'原服务',baseUrl:'https://example.invalid/v1',apiFormat:'openai-compatible',auth:{type:'bearer',apiKeyEnv:'FIXTURE'}}]},models:{models:[{id:'m',providerId:'p',apiModelId:'wire'}]},defaultModelId:'m',revision:'old',credentialStatus:{p:'missing'}};
-  const model=createModelSettings(async(command,args)=>{if(command==='read_model_configuration')return config;config={...config,providers:args.input.providers,models:args.input.models,defaultModelId:args.input.defaultModelId,revision:'new'};return {configuration:config,warning:null};});
-  await model.load();const jsonDraft=JSON.stringify({providers:[{...config.providers.providers[0],name:'JSON草稿'}]});model.providerJson.value=jsonDraft;
-  model.basic.apiModelId='basic-wire';await model.saveBasic();assert.equal(model.providerJson.value,jsonDraft);assert.equal(model.dirty.value,true);
-  model.resetJson();assert.equal(model.dirty.value,false);
-  model.basic.name='未保存的基础草稿';model.providerJson.value=jsonDraft;await model.importPair();
-  assert.equal(model.basic.name,'未保存的基础草稿');assert.equal(model.configuration.value.providers.providers[0].name,'JSON草稿');assert.equal(model.dirty.value,true);
-  model.resetBasic();assert.equal(model.basic.name,'JSON草稿');assert.equal(model.dirty.value,false);
+test('saving one catalog object preserves another model draft until explicit discard',async()=>{
+ let config={providers:{providers:[{id:'p',name:'原服务',baseUrl:'https://example.invalid/v1',apiFormat:'openai-compatible',auth:{type:'bearer',apiKeyEnv:'FIXTURE'},tags:['retain']}]},models:{models:[{id:'m',providerId:'p',apiModelId:'wire',custom:{retain:true}},{id:'other',providerId:'p',apiModelId:'other-wire'}]},defaultModelId:'m',revision:'old',credentialStatus:{p:'missing'}};
+ const model=createModelSettings(async(command,args)=>{if(command==='read_model_configuration')return config;config={...config,providers:args.input.providers,models:args.input.models,defaultModelId:args.input.defaultModelId,revision:'new'};return {configuration:config,warning:null};});await model.load();model.editModel('other');model.modelDraft.value.apiModelId='未保存标识';model.selectProvider('p');model.providerDraft.value.name='更新服务';await model.saveProvider();assert.deepEqual(config.providers.providers[0].tags,['retain']);assert.equal(config.models.models[0].custom.retain,true);model.editModel('other');assert.equal(model.modelDraft.value.apiModelId,'未保存标识');model.discard();assert.equal(model.modelDraft.value.apiModelId,'other-wire');assert.equal(model.dirty.value,false);
 });

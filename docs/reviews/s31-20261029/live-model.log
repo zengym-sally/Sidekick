@@ -1,0 +1,22 @@
+npm notice run sidekick@0.3.0 test:s31-live
+npm notice run npm run probe:bundle && cargo test --manifest-path src-tauri/Cargo.toml --lib s31_live_isolated_organizer_trial_and_configuration_reopen -- --ignored --nocapture
+npm notice run sidekick@0.3.0 probe:bundle
+npm notice run node scripts/probes/bundle-runtime.mjs
+
+  build/s0-runtime/probe.mjs  2.3mb ⚠️
+
+⚡ Done in 111ms
+
+  build/s0-runtime/organizer.mjs  2.0mb ⚠️
+
+⚡ Done in 81ms
+Bundled diagnostic Runtime prepared; no model credentials included.
+   Compiling sidekick v0.3.0 (/Users/zengym/workspace/projects/ai/sidekick/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.81s
+     Running unittests src/lib.rs (src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1)
+
+running 1 test
+S31_LIVE {"businessHistoryUnchanged":true,"candidatePreviews":3,"formalSources":0,"formalTodosAfter":1,"formalTodosBefore":1,"keychainCredential":true,"modelOverride":true,"personalizationTag":true,"roleConfigurationsRestored":3,"status":"passed","trialResultRestored":true}
+test runtime_host::tests::s31_live_isolated_organizer_trial_and_configuration_reopen ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 48 filtered out; finished in 12.54s

@@ -1,0 +1,160 @@
+{
+  "kind": "synthetic HTML prototype; not native app evidence",
+  "observations": [
+    {
+      "contentOverflow": false,
+      "pageOverflow": false,
+      "route": "#models",
+      "saveVisible": true,
+      "savebarBottom": 820,
+      "size": [
+        1240,
+        820
+      ]
+    },
+    {
+      "columns": "476.094px 499.906px",
+      "contentOverflow": false,
+      "pageOverflow": false,
+      "route": "#agents",
+      "saveVisible": true,
+      "size": [
+        1240,
+        820
+      ]
+    },
+    {
+      "columns": "538px",
+      "contentOverflow": false,
+      "pageOverflow": false,
+      "route": "#agents",
+      "saveVisible": true,
+      "size": [
+        640,
+        900
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "pageOverflow": false,
+      "route": "#models",
+      "saveVisible": true,
+      "size": [
+        640,
+        900
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "pageOverflow": false,
+      "popupBottom": 758.75,
+      "popupWidth": 538,
+      "route": "#general",
+      "saveVisible": true,
+      "size": [
+        640,
+        900
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "pageOverflow": false,
+      "route": "#models",
+      "saveVisible": true,
+      "savebarBottom": 820,
+      "size": [
+        1240,
+        820
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "pageOverflow": false,
+      "route": "#agents",
+      "saveVisible": true,
+      "savebarBottom": 820,
+      "size": [
+        1240,
+        820
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "pageOverflow": false,
+      "route": "#general",
+      "saveVisible": true,
+      "savebarBottom": 820,
+      "size": [
+        1240,
+        820
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "pageOverflow": false,
+      "route": "#general",
+      "saveVisible": true,
+      "savebarBottom": 900,
+      "size": [
+        640,
+        900
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "pageOverflow": false,
+      "route": "#models",
+      "saveVisible": true,
+      "savebarBottom": 900,
+      "size": [
+        640,
+        900
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "pageOverflow": false,
+      "route": "#agents",
+      "saveVisible": true,
+      "savebarBottom": 900,
+      "size": [
+        640,
+        900
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "pageOverflow": false,
+      "route": "#agents",
+      "saveVisible": true,
+      "savebarBottom": 1000,
+      "size": [
+        1440,
+        1000
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "pageOverflow": false,
+      "route": "#models",
+      "saveVisible": true,
+      "savebarBottom": 1000,
+      "size": [
+        1440,
+        1000
+      ]
+    },
+    {
+      "contentOverflow": false,
+      "pageOverflow": false,
+      "route": "#general",
+      "saveVisible": true,
+      "savebarBottom": 1000,
+      "size": [
+        1440,
+        1000
+      ]
+    }
+  ],
+  "console": []
+}

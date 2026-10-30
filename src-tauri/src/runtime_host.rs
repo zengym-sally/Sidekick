@@ -1,4 +1,4 @@
-use crate::local_store::{ModelRun, StoreError, TextInput};
+use crate::local_store::{AgentRun, ModelRun, StoreError, TextInput};
 use crate::store_commands::LocalState;
 use serde_json::{json, Value};
 use std::collections::BTreeMap;
@@ -18,6 +18,7 @@ type Sink = Arc<dyn Fn(&str, &str) + Send + Sync>;
 #[derive(Clone)]
 struct Job {
     run_id: String,
+    trial: bool,
     cancel: Arc<AtomicBool>,
     pid: Arc<AtomicU32>,
     workers: Arc<Mutex<BTreeMap<u32, String>>>,
@@ -37,7 +38,7 @@ pub enum StartTask {
         instruction: String,
         time_zone: String,
     },
-    Test,
+    Test(Option<String>),
 }
 fn error(code: &'static str, message: &'static str) -> StoreError {
     StoreError { code, message }
@@ -123,10 +124,11 @@ impl RuntimeState {
         }
         let (run,payload)=local.access(|store|{
             store.interrupt_unowned_runs()?;
+            store.interrupt_agent_trials(None)?;
             let (run,zone)=match task {
                 StartTask::Extract{input,retry}=>{let zone=input.time_zone.clone();let batch=store.begin_import(input,Value::Null,retry)?;let run=batch.run.ok_or_else(||error("SOURCE_UNAVAILABLE","无法读取来源任务，请刷新。"))?;if !batch.started{return Ok((run,None));}(run,zone)},
                 StartTask::Revise{id,version,instruction,time_zone}=>{if time_zone.is_empty()||time_zone.len()>128{return Err(error("INVALID_TIMEZONE","请填写有效时区。"));}let run=store.begin_revision(&id,version,instruction,Value::Null)?;(run,time_zone)},
-                StartTask::Test=>{let prepared=store.prepare_model()?;let run=store.begin_model_test(prepared.snapshot.clone())?;let cwd=store.run_directory(&run.id)?;let payload=json!({"runId":run.id,"kind":"test","snapshot":prepared.snapshot,"apiKey":prepared.api_key,"cwd":cwd,"timeZone":"UTC"});return Ok((run,Some(payload)));},
+                StartTask::Test(model_id)=>{let prepared=store.prepare_connection_model_by_id(model_id.as_deref())?;let run=store.begin_model_test(prepared.snapshot.clone())?;let cwd=store.run_directory(&run.id)?;let payload=json!({"runId":run.id,"kind":"test","snapshot":prepared.snapshot,"apiKey":prepared.api_key,"cwd":cwd,"timeZone":"UTC"});return Ok((run,Some(payload)));},
             };
             let prepared=match store.prepare_model(){Ok(p)=>p,Err(e)=>return Ok((store.finish_run_error(&run.id,e.code)?,None))};
             let mut snapshot=prepared.snapshot;snapshot["context"]=json!({"timeZone":zone,"instructionAtMs":run.created_at_ms});
@@ -144,17 +146,46 @@ impl RuntimeState {
         };
         let job = Job {
             run_id: run.id.clone(),
+            trial: false,
             cancel: Arc::new(AtomicBool::new(false)),
             pid: Arc::new(AtomicU32::new(0)),
             workers: Arc::new(Mutex::new(BTreeMap::new())),
         };
         *slot = Some(job.clone());
+        self.launch(local, directory, job, payload, sink.clone());
+        drop(slot);
+        sink(&run.id, "started");
+        Ok(run)
+    }
+    fn launch(&self, local: LocalState, directory: PathBuf, job: Job, payload: Value, sink: Sink) {
         let state = self.clone();
-        let id = run.id.clone();
+        let id = job.run_id.clone();
         let worker_sink = sink.clone();
         std::thread::spawn(move || {
             let result = execute(&job, &directory, payload, worker_sink.clone());
             let stored = local.access(|store| {
+                if job.trial {
+                    if job.cancel.load(Ordering::SeqCst) {
+                        store.cancel_agent_trial(&id)?;
+                    } else {
+                        match result {
+                            Ok(value) => {
+                                let applied = serde_json::from_value(
+                                    value.get("candidates").cloned().unwrap_or(Value::Null),
+                                )
+                                .map_err(|_| error("MODEL_INVALID_OUTPUT", "试跑结果格式不正确。"))
+                                .and_then(|drafts| store.complete_agent_trial(&id, drafts));
+                                if let Err(e) = applied {
+                                    store.finish_agent_trial_error(&id, e.code)?;
+                                }
+                            }
+                            Err(code) => {
+                                store.finish_agent_trial_error(&id, &code)?;
+                            }
+                        }
+                    }
+                    return Ok(());
+                }
                 if job.cancel.load(Ordering::SeqCst) {
                     store.cancel_run(&id)?;
                     return Ok(());
@@ -204,6 +235,47 @@ impl RuntimeState {
                 },
             );
         });
+    }
+    pub fn active_trial(&self) -> Option<String> {
+        self.slot
+            .lock()
+            .ok()
+            .and_then(|s| s.as_ref().filter(|j| j.trial).map(|j| j.run_id.clone()))
+    }
+    pub fn active_business(&self) -> Option<String> {
+        self.slot
+            .lock()
+            .ok()
+            .and_then(|s| s.as_ref().filter(|j| !j.trial).map(|j| j.run_id.clone()))
+    }
+    pub(crate) fn start_trial(
+        &self,
+        local: LocalState,
+        directory: PathBuf,
+        agent_id: &str,
+        input: TextInput,
+        sink: Sink,
+    ) -> Result<AgentRun> {
+        let mut slot = self.slot.lock().map_err(|_| busy())?;
+        if slot.is_some() {
+            return Err(busy());
+        }
+        if agent_id != "organizer" {
+            return Err(error(
+                "AGENT_TRIAL_UNAVAILABLE",
+                "当前仅事项整理支持试跑，另外两个角色可保存配置。",
+            ));
+        }
+        let (run,payload)=local.access(|store|{store.interrupt_unowned_runs()?;store.interrupt_agent_trials(None)?;let prepared=store.prepare_agent_model(agent_id)?;let run=store.begin_prepared_agent_trial(agent_id,input,prepared.snapshot)?;let cwd=store.run_directory(&run.id)?;let payload=json!({"runId":run.id,"kind":"trial","snapshot":run.snapshot,"apiKey":prepared.api_key,"cwd":cwd,"anchorAtMs":run.input.source_at_ms.unwrap_or(run.created_at_ms),"source":{"rawText":run.input.text,"timeZone":run.input.time_zone}});Ok((run,payload))})?;
+        let job = Job {
+            run_id: run.id.clone(),
+            trial: true,
+            cancel: Arc::new(AtomicBool::new(false)),
+            pid: Arc::new(AtomicU32::new(0)),
+            workers: Arc::new(Mutex::new(BTreeMap::new())),
+        };
+        *slot = Some(job.clone());
+        self.launch(local, directory, job, payload, sink.clone());
         drop(slot);
         sink(&run.id, "started");
         Ok(run)
@@ -436,15 +508,45 @@ pub async fn revise_candidate(
 }
 #[tauri::command]
 pub async fn test_model(
+    model_id: Option<String>,
     app: tauri::AppHandle,
     local: State<'_, LocalState>,
     runtime: State<'_, RuntimeState>,
 ) -> Result<ModelRun> {
-    start(app, local, runtime, StartTask::Test).await
+    start(app, local, runtime, StartTask::Test(model_id)).await
 }
 #[tauri::command]
 pub async fn active_model_run(runtime: State<'_, RuntimeState>) -> Result<Option<String>> {
-    Ok(runtime.active_run())
+    Ok(runtime.active_business())
+}
+
+#[tauri::command]
+pub async fn start_agent_trial(
+    app: tauri::AppHandle,
+    local: State<'_, LocalState>,
+    runtime: State<'_, RuntimeState>,
+    agent_id: String,
+    input: TextInput,
+) -> Result<AgentRun> {
+    let directory = app
+        .path()
+        .resource_dir()
+        .map_err(|_| error("RUNTIME_START", "无法定位随包Runtime。"))?
+        .join("s0-runtime");
+    let state = runtime.inner().clone();
+    let local = local.inner().clone();
+    let sink: Sink = Arc::new(move |id, phase| {
+        let _ = app.emit("agent-trial-changed", json!({"runId":id,"phase":phase}));
+    });
+    tauri::async_runtime::spawn_blocking(move || {
+        state.start_trial(local, directory, &agent_id, input, sink)
+    })
+    .await
+    .map_err(|_| error("RUNTIME_START", "试跑启动中断，请重试。"))?
+}
+#[tauri::command]
+pub async fn active_agent_trial(runtime: State<'_, RuntimeState>) -> Result<Option<String>> {
+    Ok(runtime.active_trial())
 }
 
 #[cfg(test)]
@@ -517,7 +619,7 @@ mod tests {
             service,
             references: vec![],
         };
-        let saved=local.access(|store|store.save_models(ModelConfigInput{
+        let saved=local.access(|store|store.save_models(ModelConfigInput{expected_revision:None,
             providers:json!({"providers":[{"id":"live","name":"Real model integration","apiFormat":"openai-compatible","baseUrl":private["url"],"auth":{"type":"bearer","apiKeyEnv":"UNUSED_FIXTURE_ENV"},"extraHeaders":{},"network":{"timeoutMs":120000,"retry":{"maxRetries":0,"backoff":"exponential"}},"enabled":true}]}),
             models:json!({"models":[{"id":"s2-logical-model","name":"Real integration","providerId":"live","apiModelId":private["model"],"capabilities":{"toolCall":true,"input":["text"]}}]}),default_model_id:"s2-logical-model".into(),api_keys:std::collections::BTreeMap::from([("live".into(),private["key"].as_str().unwrap().into())])
         })).unwrap();
@@ -692,6 +794,161 @@ mod tests {
         println!(
             "S2_LIVE {}",
             json!({"status":"passed","modelId":private["model"],"candidateCount":batch.candidates.len(),"unsignedCandidateWrites":0,"beforeSignIncludingManualTarget":1,"afterSign":2,"revisionPreview":true,"linkedWithoutOverwrite":true,"duplicateIdempotent":true,"restartEqual":true,"isolatedWorkspace":true,"keychainCredential":true})
+        );
+        drop(reopened);
+        drop(cleanup);
+    }
+    #[test]
+    #[ignore = "explicit real model trial using the owner-selected private file"]
+    fn s31_live_isolated_organizer_trial_and_configuration_reopen() {
+        let directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../build/s0-runtime")
+            .canonicalize()
+            .unwrap();
+        let env_file =
+            std::env::var("SIDEKICK_MODEL_ENV").expect("set selected private configuration path");
+        let output=Command::new(directory.join("node")).args(["-e","process.loadEnvFile(process.argv[1]);process.stdout.write(JSON.stringify({key:process.env.DEEPSEEK_API_KEY,url:process.env.DEEPSEEK_BASE_URL,model:process.env.DEEPSEEK_MODEL_ID}))",&env_file]).env_clear().env("PATH","/usr/bin:/bin").output().unwrap();
+        assert!(output.status.success());
+        let private: Value = serde_json::from_slice(&output.stdout).unwrap();
+        let root = std::env::temp_dir().join(format!(
+            "sidekick-s31-live-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&root).unwrap();
+        let local = LocalState::new(root.join("app"));
+        let workspace = local
+            .access(|s| s.initialize(Some(root.join("workspace")), "Asia/Shanghai"))
+            .unwrap();
+        let service = format!(
+            "com.sidekick.credentials.{:x}",
+            Sha256::digest(
+                format!(
+                    "{}\0{}",
+                    root.join("app").canonicalize().unwrap().display(),
+                    PathBuf::from(workspace.root.unwrap()).display()
+                )
+                .as_bytes()
+            )
+        );
+        let mut cleanup = Cleanup {
+            root: root.clone(),
+            service,
+            references: vec![],
+        };
+        let saved=local.access(|s|s.save_models(ModelConfigInput{expected_revision:None,providers:json!({"providers":[{"id":"live","apiFormat":"openai-compatible","baseUrl":private["url"],"auth":{"type":"bearer","apiKeyEnv":"UNUSED"},"enabled":true,"network":{"timeoutMs":120000,"retry":{"maxRetries":0}}}]}),models:json!({"models":[{"id":"global-decoy","providerId":"live","apiModelId":"deliberately-unused-default"},{"id":"trial-override","providerId":"live","apiModelId":private["model"],"capabilities":{"toolCall":true,"input":["text"]}}]}),default_model_id:"global-decoy".into(),api_keys:std::collections::BTreeMap::from([("live".into(),private["key"].as_str().unwrap().into())])})).unwrap();
+        cleanup.references.push(
+            saved.configuration.providers["providers"][0]["auth"]["apiKeyRef"]
+                .as_str()
+                .unwrap()
+                .into(),
+        );
+        let mut configs = vec![];
+        for id in crate::local_store::AGENT_IDS {
+            let c = local.access(|s| s.agent_config(id)).unwrap();
+            configs.push(
+                local
+                    .access(|s| {
+                        s.save_agent_config(crate::local_store::AgentConfigInput {
+                            agent_id: id.into(),
+                            expected_revision: c.revision,
+                            model_id: if id == "organizer" {
+                                Some("trial-override".into())
+                            } else {
+                                None
+                            },
+                            preferences: crate::local_store::AgentPreferences {
+                                detail: "concise".into(),
+                                focus: c.preferences.focus,
+                            },
+                            supplemental_instructions: if id == "organizer" {
+                                "为每条候选添加标签“S31试跑”。".into()
+                            } else {
+                                "合成角色偏好，仅测试配置恢复。".into()
+                            },
+                        })
+                    })
+                    .unwrap()
+                    .configuration,
+            );
+        }
+        let before = local
+            .access(|s| {
+                let todo = s.create(
+                    crate::local_store::TodoInput {
+                        title: "试跑前的正式事项".into(),
+                        kind: "action".into(),
+                        owner: "我".into(),
+                        priority: "medium".into(),
+                        due: None,
+                        followup: None,
+                        tags: vec![],
+                    },
+                    "s31-existing",
+                )?;
+                Ok((
+                    s.list()?,
+                    serde_json::to_value(s.history(&todo.id)?).unwrap(),
+                ))
+            })
+            .unwrap();
+        let state = RuntimeState::default();
+        let run=state.start_trial(local.clone(),directory,"organizer",TextInput{text:"合成试跑材料：\n我负责整理接入清单，下周五17点前交付。\n林川负责修复SDK鉴权，本周五16点交付，我今天15点跟进。\n我确认试用名单，时间待定。".into(),source_at_ms:Some(1793239200000),time_zone:"Asia/Shanghai".into()},Arc::new(|_,_|{})).unwrap();
+        assert!(state.active_business().is_none());
+        assert_eq!(run.snapshot["modelId"], "trial-override");
+        assert_eq!(run.snapshot["agent"]["revision"], configs[0].revision);
+        assert_eq!(
+            state
+                .start_trial(
+                    local.clone(),
+                    PathBuf::new(),
+                    "organizer",
+                    run.input.clone(),
+                    Arc::new(|_, _| {})
+                )
+                .unwrap_err()
+                .code,
+            "RUNTIME_BUSY"
+        );
+        wait(&state);
+        let completed = local.access(|s| s.agent_run(&run.id)).unwrap();
+        assert_eq!(
+            completed.status, "succeeded",
+            "safe category: {:?}",
+            completed.error_code
+        );
+        let results = completed.result.as_ref().unwrap();
+        assert!(results.len() >= 3);
+        assert!(results
+            .iter()
+            .all(|c| c.fields.tags.iter().any(|t| t == "S31试跑")));
+        assert_eq!(local.access(|s| s.list()).unwrap(), before.0);
+        assert_eq!(
+            local
+                .access(|s| Ok(serde_json::to_value(s.history(&before.0[0].id)?).unwrap()))
+                .unwrap(),
+            before.1
+        );
+        assert!(local.access(|s| s.list_batches()).unwrap().is_empty());
+        drop(local);
+        let reopened = LocalState::new(root.join("app"));
+        for c in &configs {
+            assert_eq!(
+                reopened.access(|s| s.agent_config(&c.agent_id)).unwrap(),
+                *c
+            )
+        }
+        assert_eq!(
+            reopened.access(|s| s.agent_run(&run.id)).unwrap().status,
+            "succeeded"
+        );
+        assert_eq!(reopened.access(|s| s.list()).unwrap(), before.0);
+        println!(
+            "S31_LIVE {}",
+            json!({"status":"passed","candidatePreviews":results.len(),"formalTodosBefore":1,"formalTodosAfter":1,"formalSources":0,"roleConfigurationsRestored":3,"modelOverride":true,"personalizationTag":true,"trialResultRestored":true,"businessHistoryUnchanged":true,"keychainCredential":true})
         );
         drop(reopened);
         drop(cleanup);

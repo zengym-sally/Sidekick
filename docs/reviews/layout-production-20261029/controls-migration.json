@@ -1,0 +1,10 @@
+{
+  "before_static_form_declarations": 45,
+  "after_direct_product_declarations": {
+    "select": 0,
+    "input": 0,
+    "textarea": 0
+  },
+  "shared_vue_components": 13,
+  "note": "declarations migrated to public components or removed under approved scope; semantic HTML inside public controls remains"
+}

@@ -293,7 +293,12 @@ pub struct AppStore {
     #[cfg(test)]
     profile_write_fault: Option<ProfileWriteFault>,
     #[cfg(test)]
+    settings_write_fault: Option<SettingsWriteFault>,
+    #[cfg(test)]
     model_write_fault: Option<ModelWriteFault>,
+    #[cfg(test)]
+    agent_write_fault: Option<agent_config::AgentWriteFault>,
+    agent_uncertain: std::collections::BTreeSet<String>,
 }
 
 fn private_dir(path: &Path) -> Result<()> {
@@ -430,6 +435,7 @@ fn migrations() -> Migrations<'static> {
     Migrations::new(vec![
         M::up(include_str!("../migrations/001_todos.sql")),
         M::up(include_str!("../migrations/002_ingestion.sql")),
+        M::up(include_str!("../migrations/003_agent_runs.sql")),
     ])
 }
 fn validate_existing_database(path: &Path, initializing: bool) -> Result<()> {
@@ -458,7 +464,7 @@ fn validate_existing_database(path: &Path, initializing: bool) -> Result<()> {
     let version: i64 = db
         .pragma_query_value(None, "user_version", |r| r.get(0))
         .map_err(db_error)?;
-    if version > 2 {
+    if version > 3 {
         return Err(StoreError::new(
             "SCHEMA_TOO_NEW",
             "数据由较新的跟班版本创建，请升级应用后打开。",
@@ -474,7 +480,7 @@ fn validate_existing_database(path: &Path, initializing: bool) -> Result<()> {
             |r| r.get(0),
         )
         .map_err(db_error)?;
-    if !(app == APPLICATION_ID && (1..=2).contains(&version)
+    if !(app == APPLICATION_ID && (1..=3).contains(&version)
         || initializing && app == 0 && version == 0 && tables == 0)
     {
         return Err(StoreError::new(
@@ -520,7 +526,12 @@ impl AppStore {
             #[cfg(test)]
             profile_write_fault: None,
             #[cfg(test)]
+            settings_write_fault: None,
+            #[cfg(test)]
             model_write_fault: None,
+            #[cfg(test)]
+            agent_write_fault: None,
+            agent_uncertain: Default::default(),
         };
         let bootstrap = store.app_dir.join("bootstrap.json");
         if bootstrap.exists() {
@@ -705,10 +716,10 @@ impl AppStore {
         let version: i64 = db
             .pragma_query_value(None, "user_version", |r| r.get(0))
             .map_err(db_error)?;
-        if version == 1 {
+        if (1..3).contains(&version) {
             let backup = root
                 .join("backups")
-                .join(format!("before-schema-2-{}.sqlite", nonce()));
+                .join(format!("before-schema-3-{}.sqlite", nonce()));
             db.backup(rusqlite::MAIN_DB, &backup, None)
                 .map_err(db_error)?;
             use std::os::unix::fs::PermissionsExt;
@@ -719,6 +730,7 @@ impl AppStore {
             StoreError::new("MIGRATION_FAILED", "数据库初始化失败，事务已回滚。请重试。")
         })?;
         db.execute("UPDATE runs SET status='interrupted',error_code='INTERRUPTED',finished_at_ms=?1 WHERE status IN ('queued','running')",[now_ms()?]).map_err(db_error)?;
+        db.execute("UPDATE agent_runs SET status='interrupted',error_code='INTERRUPTED',finished_at_ms=?1 WHERE status='running'",[now_ms()?]).map_err(db_error)?;
         self.check_fault(InitPhase::Schema)?;
         db.prepare(SELECT_TODO).map_err(db_error)?;
         if initializing {
@@ -1105,3 +1117,17 @@ pub use ingestion::*;
 #[path = "model_config.rs"]
 mod model_config;
 pub use model_config::*;
+
+#[path = "agent_config.rs"]
+mod agent_config;
+pub use agent_config::*;
+
+#[path = "agent_trials.rs"]
+mod agent_trials;
+pub use agent_trials::*;
+
+#[path = "app_settings.rs"]
+mod app_settings;
+#[cfg(test)]
+use app_settings::SettingsWriteFault;
+pub use app_settings::*;

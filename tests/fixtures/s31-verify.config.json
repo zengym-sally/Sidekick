@@ -1,0 +1,5 @@
+{
+  "productName": "Sidekick S31 Verify",
+  "identifier": "com.sidekick.s31.verify",
+  "app": {"windows":[{"label":"main","title":"跟班 Sidekick · 智能体设置验收","width":1240,"height":820,"minWidth":640,"minHeight":600}]}
+}

@@ -1,12 +1,14 @@
 import { computed,reactive,ref } from 'vue';
+import {useModelSettings} from './models.ts';
+import {useAgents} from './agents.ts';
 import { defineStore } from 'pinia';
 import { invoke } from '@tauri-apps/api/core';
 import { errorMessage } from './todos.ts';
-import { currentZone,type TodoInput,type Todo } from '../domain/todos.ts';
+import { currentZone,requireApplicationZone,type TodoInput,type Todo } from '../domain/todos.ts';
 import { candidateState,editorSignature,type CandidateEditorState } from '../domain/candidate.ts';
 import { isRunning,type ImportBatch,type BatchSummary,type ModelRun,type Candidate,type SignChoice } from '../domain/organizer.ts';
 type Backend=(command:string,args?:Record<string,unknown>)=>Promise<unknown>;
-export function createOrganizerModel(api:Backend){
+export function createOrganizerModel(api:Backend,guard:(command:string)=>void=()=>{}){
   const batches=ref<BatchSummary[]>([]),batch=ref<ImportBatch|null>(null),selected=ref(''),run=ref<ModelRun|null>(null),loading=ref(false),saving=ref(false),starting=ref(false),error=ref(''),phase=ref('');
   const text=reactive({body:'',sourceTime:'',timeZone:currentZone(),sourceChoice:null as number|null});
   const reconcileRequired=ref(false);
@@ -32,7 +34,7 @@ export function createOrganizerModel(api:Backend){
   }
   async function select(id:string){++generation;selected.value=id;batch.value=null;await refresh();}
   async function start(command:string,args?:Record<string,unknown>){starting.value=true;error.value='';++generation;
-    try{const next=await api(command,args) as ModelRun;++generation;run.value=next;if(next.sourceId)selected.value=next.sourceId;try{await refresh();}catch{error.value='请求已受理，但状态暂时无法刷新，请重新读取核对。';}return next;}
+    try{guard(command);const next=await api(command,args) as ModelRun;++generation;run.value=next;if(next.sourceId)selected.value=next.sourceId;try{await refresh();}catch{error.value='请求已受理，但状态暂时无法刷新，请重新读取核对。';}return next;}
     catch(e){error.value=errorMessage(e);throw e;}finally{starting.value=false;}
   }
   async function mutation<T>(command:string,args:Record<string,unknown>):Promise<T>{saving.value=true;error.value='';++generation;
@@ -43,10 +45,10 @@ export function createOrganizerModel(api:Backend){
     }catch(e){error.value=errorMessage(e);throw e;}finally{saving.value=false;}
   }
   return {batches,batch,selected,run,loading,saving,starting,error,phase,text,drafts,running,pending,reconcileRequired,sync,refresh,select,
-    organize:(sourceAtMs:number|null,retry=false)=>start('organize_text',{input:{text:text.body,sourceAtMs,timeZone:text.timeZone},retry}),
+    organize:async(sourceAtMs:number|null,retry=false)=>start('organize_text',{input:{text:text.body,sourceAtMs,timeZone:requireApplicationZone()},retry}),
     retry:async()=>{if(!batch.value)return;const source=batch.value.source;return start('organize_text',{input:{text:source.rawText,sourceAtMs:source.sourceAtMs,timeZone:source.timeZone},retry:true});},
-    revise:(c:Candidate,instruction:string)=>start('revise_candidate',{candidateId:c.id,expectedVersion:c.version,instruction,timeZone:currentZone()}),
-    testModel:()=>start('test_model'),
+    revise:async(c:Candidate,instruction:string)=>start('revise_candidate',{candidateId:c.id,expectedVersion:c.version,instruction,timeZone:requireApplicationZone()}),
+    testModel:(modelId?:string)=>start('test_model',{modelId:modelId||null}),
     cancel:()=>run.value?mutation<ModelRun>('cancel_model_run',{id:run.value.id}):Promise.resolve(null),
     saveCandidate:(c:Candidate,input:TodoInput,timeReviewed:boolean,operationId:string)=>mutation<Candidate>('save_candidate',{id:c.id,expectedVersion:c.version,input,timeReviewed,operationId}),
     discard:(c:Candidate,operationId:string)=>mutation<Candidate>('discard_candidate',{id:c.id,expectedVersion:c.version,operationId}),
@@ -54,4 +56,4 @@ export function createOrganizerModel(api:Backend){
     sign:(choices:SignChoice[],operationId:string)=>mutation<Todo[]>('sign_candidates',{choices,operationId}),
   };
 }
-export const useOrganizer=defineStore('organizer',()=>createOrganizerModel(invoke));
+export const useOrganizer=defineStore('organizer',()=>createOrganizerModel(invoke,command=>{const model=useModelSettings();if(!model.ready||model.loading||model.saving)throw Error('请先在模型服务重新读取并核对配置。');if(command!=='test_model'){const role=useAgents().states.organizer;if(!role.ready||role.loading||role.saving)throw Error('请先在智能体页重新读取并核对事项整理配置。');}}));
