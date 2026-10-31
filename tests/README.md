@@ -48,6 +48,8 @@
 | `mcp-trial.test.mjs` | unit | MCP隔离调用的命名、参数、结果预算、ACK归属及unknown提示 |
 | `mcp-recovery.test.mjs` | integration | 真实Pi／Runtime取消、迟到、progress硬期限、ACK身份与拥塞下绝对期限；受控ACK替身 |
 | `model-budget.test.mjs` | integration | 独立临时SQLite／假上游的跨进程额度、锁、故障、SSE及MCP-only边界 |
+| `native-launcher.test.mjs` | integration | 原生runner恢复准入与零副作用拒绝；仅OS替身，不启动GUI |
+| `native-model-fetch.test.mjs` | integration | 原生验收专用固定socket、模型owner、零重连／重定向与有界HTTP；合成输入 |
 | `mcp-launcher.test.mjs` | integration | 真实验收launcher准入、异常收尾、进程退出竞态；替身与自有OS进程分层 |
 
 Rust的`store/mcp_calls_tests.rs`覆盖调用台账、冻结和终态优先级，聚焦入口为`npm run test:mcp-calls`；`host/mcp_trial_tests.rs`通过真实Rust宿主、随包Runtime／Pi、本机合成模型和stdio服务做整链集成，使用`npm run test:mcp-trial`（先打包）。两者也随既有`probe:native`进入完整`check`，不需要真实模型或用户根。合成模型／服务输入在`fixtures/mcp-trial.mjs`；不能用这些结果替代原生验收。
@@ -65,3 +67,7 @@ P5正式任务矩阵在`host/mcp_formal_tests.rs`，聚焦`npm run test:mcp-form
 - 新增断言优先落在已有测试的领域文件里；确需新文件时保持单一领域主题，并同步在本文档增加一行映射。
 - 测试数据只放 `fixtures/`，使用合成内容；不提交真实密钥、个人来源原文或本机私有路径。
 - npm 脚本名沿用既有切片命名（稳定接口）；新测试通过既有 `test:*` 脚本或 `node --test` 路径接入，必要时由维护者另行决定脚本名。
+
+P6原生入口`npm run probe:mcp-native`只启动专用包、新根／nonce和随包Node合成模型，先核实际LISTEN归属再经LaunchServices启动；不读取模型环境文件，不调用真实上游。`test:mcp-native-fetch`随完整门禁运行，校验已连接socket发送前归属、owner丢失／端口替代、无重试／重定向与输入响应预算；它不代替原生GUI。Rust双特性守卫另覆盖内存模型、校验后稳定路径替换、journal入口拒绝、冷启owner和恢复前身份门。
+
+无交互stdin时，冷重开用`node scripts/probes/run-mcp-native.mjs --reopen <本轮证据目录> 640 900`或1440 1000；必须先经GUI退出旧App。独立入口只读已有私有receipt并验证原模型owner／marker／scope，不创建新根或模型Child；实际尺寸确认后才发布ready。`test:mcp-native-launcher`在完整check的两包构建之后运行，所有负例由测试包装器阻止OS open，不能冒充原生启动证据。

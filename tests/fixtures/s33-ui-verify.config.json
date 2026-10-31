@@ -1,7 +1,28 @@
 {
   "productName": "Sidekick MCP Verify",
   "identifier": "com.sidekick.s33.ui.verify",
-  "build": {"features": ["s33-mcp-ui-verification"]},
-  "app": {"windows": [{"label":"main","title":"跟班 Sidekick · MCP 隔离验收","width":1440,"height":1000,"minWidth":640,"minHeight":600}]},
-  "bundle": {"resources": {"../build/s0-runtime/":"s0-runtime/","../tests/fixtures/s33-discovery/service.mjs":"s33-ui/service.mjs"}}
+  "build": {
+    "features": [
+      "s33-mcp-ui-verification"
+    ]
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "跟班 Sidekick · MCP 隔离验收",
+        "width": 1440,
+        "height": 1000,
+        "minWidth": 640,
+        "minHeight": 600
+      }
+    ]
+  },
+  "bundle": {
+    "resources": {
+      "../build/s0-runtime/": "s0-runtime/",
+      "../tests/fixtures/s33-discovery/service.mjs": "s33-ui/service.mjs",
+      "../tests/fixtures/mcp-trial.mjs": "s33-ui/mcp-trial.mjs"
+    }
+  }
 }

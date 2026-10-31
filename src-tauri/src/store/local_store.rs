@@ -293,6 +293,10 @@ pub struct AppStore {
     app_dir: PathBuf,
     workspace: Option<Workspace>,
     _instance: File,
+    #[cfg(feature = "s33-mcp-ui-verification")]
+    verification_model: Option<ModelConfiguration>,
+    #[cfg(feature = "s33-mcp-ui-verification")]
+    verification_validate: Option<std::sync::Arc<dyn Fn() -> Result<()> + Send + Sync>>,
     #[cfg(test)]
     init_fault: Option<InitPhase>,
     #[cfg(test)]
@@ -524,14 +528,34 @@ fn validate_existing_database(path: &Path, initializing: bool) -> Result<()> {
     Ok(())
 }
 
+#[cfg(all(test, feature = "s33-mcp-ui-verification"))]
+type VerificationCheckpoint = Option<Box<dyn FnMut(&str)>>;
+#[cfg(all(test, feature = "s33-mcp-ui-verification"))]
+thread_local! { static VERIFICATION_CHECKPOINT: std::cell::RefCell<VerificationCheckpoint> = std::cell::RefCell::new(None); }
+#[cfg(all(test, feature = "s33-mcp-ui-verification"))]
+pub(crate) fn verification_checkpoint_hook(hook: VerificationCheckpoint) {
+    VERIFICATION_CHECKPOINT.with(|slot| *slot.borrow_mut() = hook);
+}
+#[cfg(all(test, feature = "s33-mcp-ui-verification"))]
+fn verification_checkpoint(name: &str) {
+    VERIFICATION_CHECKPOINT.with(|slot| {
+        if let Some(hook) = slot.borrow_mut().as_mut() {
+            hook(name);
+        }
+    });
+}
 impl AppStore {
-    pub fn open(app_dir: PathBuf) -> Result<Self> {
+    fn open_empty(app_dir: PathBuf) -> Result<Self> {
         private_dir(&app_dir)?;
         let app_dir = fs::canonicalize(app_dir).map_err(io_error)?;
         let instance = lock_file(&app_dir.join(".sidekick-app.lock"), "APP_IN_USE")?;
-        let mut store = Self {
+        let store = Self {
             app_dir,
             _instance: instance,
+            #[cfg(feature = "s33-mcp-ui-verification")]
+            verification_model: None,
+            #[cfg(feature = "s33-mcp-ui-verification")]
+            verification_validate: None,
             workspace: None,
             #[cfg(test)]
             init_fault: None,
@@ -558,6 +582,10 @@ impl AppStore {
             #[cfg(test)]
             mcp_migration_fault: None,
         };
+        Ok(store)
+    }
+    pub fn open(app_dir: PathBuf) -> Result<Self> {
+        let mut store = Self::open_empty(app_dir)?;
         let bootstrap = store.app_dir.join("bootstrap.json");
         if bootstrap.exists() {
             let pointer: Pointer = read_json(&bootstrap, "CORRUPT_BOOTSTRAP")?;
@@ -581,8 +609,37 @@ impl AppStore {
                     "工作目录尚未完成初始化，原数据未重置。",
                 ));
             }
-            store.workspace = Some(store.finish_root(root, lock, &pointer.time_zone, false)?);
+            store.workspace =
+                Some(store.finish_root(root, lock, &pointer.time_zone, false, None)?);
         }
+        Ok(store)
+    }
+    #[cfg(feature = "s33-mcp-ui-verification")]
+    pub(crate) fn open_verification(
+        app_dir: PathBuf,
+        root: PathBuf,
+        model: ModelConfiguration,
+        validate: std::sync::Arc<dyn Fn() -> Result<()> + Send + Sync>,
+    ) -> Result<Self> {
+        validate()?;
+        let marker = root.join(ROOT_MARKER);
+        let m = fs::symlink_metadata(&marker).map_err(io_error)?;
+        if !m.is_file()
+            || m.file_type().is_symlink()
+            || m.nlink() != 1
+            || m.mode() & 0o7777 != 0o600
+            || fs::read(&marker).map_err(io_error)? != MAGIC
+        {
+            return Err(StoreError::new("VERIFY_INPUT", "隔离验证根标记不符。"));
+        }
+        validate()?;
+        let mut store = Self::open_empty(app_dir)?;
+        validate()?;
+        let lock = lock_file(&marker, "ROOT_IN_USE")?;
+        store.workspace =
+            Some(store.finish_root(root, lock, "UTC", false, Some(validate.as_ref()))?);
+        store.verification_model = Some(model);
+        store.verification_validate = Some(validate);
         Ok(store)
     }
     fn validate_pointer(&self, p: &Pointer) -> Result<()> {
@@ -652,7 +709,7 @@ impl AppStore {
             atomic_json(&intent_path, &pointer)?;
         }
         self.check_fault(InitPhase::Marker)?;
-        let workspace = self.finish_root(root, lock, time_zone, allow_init)?;
+        let workspace = self.finish_root(root, lock, time_zone, allow_init, None)?;
         self.check_fault(InitPhase::BeforeBootstrap)?;
         let target = self.app_dir.join("bootstrap.json");
         if target.exists() {
@@ -680,8 +737,22 @@ impl AppStore {
         lock: File,
         time_zone: &str,
         allow_init: bool,
+        validate: Option<&dyn Fn() -> Result<()>>,
     ) -> Result<Workspace> {
+        if let Some(validate) = validate {
+            validate()?;
+        }
         let root_directory = File::open(&root).map_err(io_error)?;
+        if let Some(validate) = validate {
+            validate()?;
+        }
+        #[cfg(all(test, feature = "s33-mcp-ui-verification"))]
+        if validate.is_some() {
+            verification_checkpoint("before-configuration");
+        }
+        if let Some(validate) = validate {
+            validate()?;
+        }
         let config_path = root.join("config/app.json");
         let mut config = if config_path.exists() {
             read_json::<RootConfig>(&config_path, "CORRUPT_CONFIG")?
@@ -710,6 +781,9 @@ impl AppStore {
                 "CORRUPT_CONFIG",
                 "工作目录版本或状态无法识别，原数据未重置。",
             ));
+        }
+        if validate.is_some() && config.state != "ready" {
+            return Err(StoreError::new("VERIFY_INPUT", "隔离验证根尚未就绪。"));
         }
         let initializing = config.state == "initializing";
         if initializing && !allow_init {
@@ -745,6 +819,9 @@ impl AppStore {
             }
         }
         for name in ["config", "data", "runs", "skills", "mcp", "logs", "backups"] {
+            if let Some(validate) = validate {
+                validate()?;
+            }
             private_dir(&root.join(name))?;
         }
         let mcp_directory = File::open(root.join("mcp")).map_err(io_error)?;
@@ -762,14 +839,37 @@ impl AppStore {
                 .map_err(io_error)?;
         }
         let mut database_identity = mcp_schema::DatabaseIdentity::capture(&root, &root_directory)?;
+        if let Some(validate) = validate {
+            validate()?;
+        }
         validate_existing_database(&path, initializing)?;
         database_identity.verify(false)?;
+        #[cfg(all(test, feature = "s33-mcp-ui-verification"))]
+        if validate.is_some() {
+            verification_checkpoint("before-database-open");
+        }
+        if let Some(validate) = validate {
+            validate()?;
+        }
         let mut db = Connection::open_with_flags(
             &path,
             OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NOFOLLOW,
         )
         .map_err(db_error)?;
+        #[cfg(all(test, feature = "s33-mcp-ui-verification"))]
+        if validate.is_some() {
+            verification_checkpoint("before-write-sql");
+        }
         database_identity.verify(false)?;
+        if let Some(validate) = validate {
+            validate()?;
+            let version: i64 = db
+                .pragma_query_value(None, "user_version", |r| r.get(0))
+                .map_err(db_error)?;
+            if version != 4 {
+                return Err(StoreError::new("VERIFY_INPUT", "隔离验证根版本不符。"));
+            }
+        }
         db.busy_timeout(std::time::Duration::from_secs(5))
             .map_err(db_error)?;
         db.execute_batch(

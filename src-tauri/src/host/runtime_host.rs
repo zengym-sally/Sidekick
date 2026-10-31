@@ -400,6 +400,13 @@ fn execute(
     if *state.trial_policy.lock().map_err(|_| "RUNTIME_PROTOCOL")? == Some("mcp-only") {
         payload["verificationMcpOnly"] = true.into();
     }
+    #[cfg(feature = "s33-mcp-ui-verification")]
+    if let Some(pin) = local.native_model_pin() {
+        payload["verificationNativeModel"] = pin;
+        if payload["kind"] != "test" {
+            payload["verificationMcpOnly"] = true.into();
+        }
+    }
     payload["hostNonce"] = job.nonce.clone().into();
     let mut mcp = crate::mcp_trial::TrialControl::new(job, directory, local, &payload);
     let mut command = Command::new(directory.join("node"));

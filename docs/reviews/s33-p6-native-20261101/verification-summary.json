@@ -1,0 +1,3099 @@
+{
+  "scope": "independent complete checks; raw source under build; final second run closes the first capture gap",
+  "first": {
+    "conclusion": "pass",
+    "conclusionScope": "Independent execution of the original complete npm run check plus source/worktree/staged-content stability, static checks, actual package resource/identity/signature inspection. Not a production release or fresh native GUI acceptance decision.",
+    "createdUtc": "2026-10-31T23:25:27.678325+00:00",
+    "command": {
+      "command": [
+        "npm",
+        "run",
+        "check"
+      ],
+      "startedEpoch": 1793488507.61984,
+      "finishedEpoch": 1793488937.024605,
+      "seconds": 429.40476512908936,
+      "exitCode": 0,
+      "scriptShellInstrumentation": "$REPO/build/p6-native-20261101/independent-final/script-shell.py",
+      "scope": "actual unchanged package check script; no --real/--ignored/skip overrides"
+    },
+    "instrumentation": "npm_config_script_shell points to the ignored Python logger, which invokes /bin/sh with the original arguments and inherited environment. Actual npm run check and all package script bodies remain unchanged. No skip, --real or --ignored override was added.",
+    "npmScriptExecutionCount": 50,
+    "allNpmScriptsHaveExitZero": true,
+    "npmScriptExecutions": [
+      {
+        "id": "9c90bb8eaae14c1d977e05f07b7bb2b8",
+        "script": "check",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run check:structure && npm run check:docs && npm run probe:bundle && npm run typecheck && npm run test:s1-domain && npm run test:s2-domain && npm run test:s31-domain && npm run test:layout-domain && npm run test:s32-domain && npm run test:s33-config-domain && npm run test:s33-security-domain && npm run test:s33-ui-domain && npm run test:s33-upgrade-domain && npm run test:mcp-contract && npm run test:mcp-recovery && npm run test:model-budget && npm run test:mcp-native-fetch && npm run check:rust && npm run check:s33-p2-runtime && npm run test:s33-lifecycle && npm run probe:runtime && npm run probe:card && npm run probe:contracts && npm run probe:native && npm run test:mcp-budgeted && npm run probe:toolchain && npm run test:s2-runtime && node --test --test-timeout=15000 tests/integration/s31-runtime.test.mjs && node --test --test-timeout=20000 tests/integration/layout-runtime.test.mjs && node --test --test-timeout=20000 tests/integration/s32-runtime.test.mjs && npm run probe:bundle-smoke && npm run check:s33-p2-package && npm run test:mcp-native-launcher"
+        ],
+        "startedEpoch": 1793488508.09764,
+        "exitCode": 0,
+        "seconds": 428.91981530189514
+      },
+      {
+        "id": "308b363072204f6c8ab0fb1f4f9c2ba2",
+        "script": "check:structure",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/checks/check-structure.mjs --self-test && node scripts/checks/check-structure.mjs"
+        ],
+        "startedEpoch": 1793488508.244065,
+        "exitCode": 0,
+        "seconds": 0.174530029296875
+      },
+      {
+        "id": "45151abff1a9440daefad9aa3d786758",
+        "script": "check:docs",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/checks/check-docs.mjs"
+        ],
+        "startedEpoch": 1793488508.580568,
+        "exitCode": 0,
+        "seconds": 0.04654884338378906
+      },
+      {
+        "id": "da9eeb2e4cb94c5389c58aae2abc4c08",
+        "script": "probe:bundle",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/build/bundle-runtime.mjs"
+        ],
+        "startedEpoch": 1793488508.7744699,
+        "exitCode": 0,
+        "seconds": 0.9236001968383789
+      },
+      {
+        "id": "d57ca4177ae24301bfab4e73f642b639",
+        "script": "typecheck",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "vue-tsc --noEmit"
+        ],
+        "startedEpoch": 1793488509.8409579,
+        "exitCode": 0,
+        "seconds": 2.990460157394409
+      },
+      {
+        "id": "4bcdebac23e74507b75d6e38f75c6b1f",
+        "script": "test:s1-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test tests/unit/s1-domain.test.mjs tests/unit/s1-state.test.mjs tests/unit/s1-profile.test.mjs"
+        ],
+        "startedEpoch": 1793488512.9850502,
+        "exitCode": 0,
+        "seconds": 0.15448665618896484
+      },
+      {
+        "id": "603d39b6f0d043e79bc92ac2f7d5ffca",
+        "script": "test:s2-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/unit/s2-dates.test.mjs tests/unit/s2-contract.test.mjs tests/integration/s2-bash.test.mjs tests/unit/s2-client.test.mjs"
+        ],
+        "startedEpoch": 1793488513.283088,
+        "exitCode": 0,
+        "seconds": 0.8219940662384033
+      },
+      {
+        "id": "7625108348914f01abd7a24988429571",
+        "script": "test:s31-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test tests/unit/s31-client.test.mjs"
+        ],
+        "startedEpoch": 1793488514.251743,
+        "exitCode": 0,
+        "seconds": 0.16258883476257324
+      },
+      {
+        "id": "2f250e3de2544589800bd91d2297e25c",
+        "script": "test:layout-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/unit/layout-domain.test.mjs"
+        ],
+        "startedEpoch": 1793488514.560549,
+        "exitCode": 0,
+        "seconds": 0.17810273170471191
+      },
+      {
+        "id": "6d1c23b0b8dd487eb601acee89f8dbcf",
+        "script": "test:s32-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=20000 tests/unit/s32-skills.test.mjs tests/unit/s32-client.test.mjs tests/unit/s32-read.test.mjs"
+        ],
+        "startedEpoch": 1793488514.8832169,
+        "exitCode": 0,
+        "seconds": 13.861088991165161
+      },
+      {
+        "id": "53ebb86385f843c3bbb42283453f02ca",
+        "script": "test:s33-config-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/unit/s33-config.test.mjs tests/unit/s33-json.test.mjs"
+        ],
+        "startedEpoch": 1793488528.898805,
+        "exitCode": 0,
+        "seconds": 0.1531059741973877
+      },
+      {
+        "id": "5560c492561247efb77a0ac968c83930",
+        "script": "test:s33-security-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/unit/s33-security.test.mjs"
+        ],
+        "startedEpoch": 1793488529.198101,
+        "exitCode": 0,
+        "seconds": 0.14762115478515625
+      },
+      {
+        "id": "63ff2b7fa1ad4f50ade973ecb8cc21f4",
+        "script": "test:s33-ui-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/unit/s33-ui-state.test.mjs"
+        ],
+        "startedEpoch": 1793488529.490068,
+        "exitCode": 0,
+        "seconds": 0.1466989517211914
+      },
+      {
+        "id": "f1a5f423782c4b2eb5606bf8801a5fe7",
+        "script": "test:s33-upgrade-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/unit/s33-upgrade.test.mjs"
+        ],
+        "startedEpoch": 1793488529.78213,
+        "exitCode": 0,
+        "seconds": 0.13498902320861816
+      },
+      {
+        "id": "b886f205b6c74d6782ef34f64e0a914d",
+        "script": "test:mcp-contract",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/unit/mcp-trial.test.mjs"
+        ],
+        "startedEpoch": 1793488530.050573,
+        "exitCode": 0,
+        "seconds": 0.1394789218902588
+      },
+      {
+        "id": "e1a89302de1241f492d0b5a57d773ee8",
+        "script": "test:mcp-recovery",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/probes/prepare-mcp-recovery.mjs && node --test --test-timeout=15000 tests/integration/mcp-recovery.test.mjs"
+        ],
+        "startedEpoch": 1793488530.346313,
+        "exitCode": 0,
+        "seconds": 5.738503932952881
+      },
+      {
+        "id": "28605427650743f084b577ac1febb8ba",
+        "script": "test:model-budget",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=30000 tests/integration/model-budget.test.mjs tests/integration/mcp-launcher.test.mjs"
+        ],
+        "startedEpoch": 1793488536.234091,
+        "exitCode": 0,
+        "seconds": 12.576490879058838
+      },
+      {
+        "id": "c37c2e795ab94861bf97d899faa4b784",
+        "script": "test:mcp-native-fetch",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/integration/native-model-fetch.test.mjs"
+        ],
+        "startedEpoch": 1793488548.9635699,
+        "exitCode": 0,
+        "seconds": 4.441508054733276
+      },
+      {
+        "id": "642f0c58440e40e1811c84d1183c456a",
+        "script": "check:rust",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "cargo fmt --manifest-path src-tauri/Cargo.toml --check && cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings"
+        ],
+        "startedEpoch": 1793488553.550742,
+        "exitCode": 0,
+        "seconds": 4.299602031707764
+      },
+      {
+        "id": "e4ae9d3bef04479f8c488b9207bd2d48",
+        "script": "check:s33-p2-runtime",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run test:s33-ui-safety && npm run test:s33-discovery && npm run test:s33-verification-guards && npm run check:s33-verification"
+        ],
+        "startedEpoch": 1793488558.0012412,
+        "exitCode": 0,
+        "seconds": 107.12250709533691
+      },
+      {
+        "id": "3d36b78fc0a24f39b327e4a2a9e13a6e",
+        "script": "test:s33-ui-safety",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "cargo build --manifest-path src-tauri/Cargo.toml --features s33-mcp-verification --example s33-mcp-host && node --test --test-timeout=15000 tests/integration/s33-ui-safety.test.mjs"
+        ],
+        "startedEpoch": 1793488558.146283,
+        "exitCode": 0,
+        "seconds": 10.016869068145752
+      },
+      {
+        "id": "93cd42d899904269a60a962ee841a76f",
+        "script": "test:s33-discovery",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run probe:bundle && cargo build --manifest-path src-tauri/Cargo.toml --features s33-mcp-verification --example s33-mcp-host && node --test --test-concurrency=1 --test-timeout=25000 tests/unit/s33-catalog.test.mjs tests/integration/s33-discovery.test.mjs tests/integration/s33-native-fd.test.mjs"
+        ],
+        "startedEpoch": 1793488568.320645,
+        "exitCode": 0,
+        "seconds": 55.948724031448364
+      },
+      {
+        "id": "7560914a93a6496996ead8728ba7074b",
+        "script": "probe:bundle",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/build/bundle-runtime.mjs"
+        ],
+        "startedEpoch": 1793488568.4659681,
+        "exitCode": 0,
+        "seconds": 0.9361848831176758
+      },
+      {
+        "id": "53f5a5330c7e44c581d53145d4e88456",
+        "script": "test:s33-verification-guards",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "cargo test --manifest-path src-tauri/Cargo.toml --lib --features s33-mcp-verification,s33-mcp-ui-verification verification -- --test-threads=1"
+        ],
+        "startedEpoch": 1793488624.4227111,
+        "exitCode": 0,
+        "seconds": 37.574291944503784
+      },
+      {
+        "id": "d7b746a8918f4888a507874017fd6a47",
+        "script": "check:s33-verification",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --features s33-mcp-verification,s33-mcp-ui-verification -- -D warnings"
+        ],
+        "startedEpoch": 1793488662.147024,
+        "exitCode": 0,
+        "seconds": 2.968518018722534
+      },
+      {
+        "id": "23526645ce594a14a782d278893946ee",
+        "script": "test:s33-lifecycle",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run probe:bundle && node scripts/probes/prepare-s33-lifecycle.mjs && node --test --test-timeout=20000 tests/integration/s33-lifecycle.test.mjs build/s33-lifecycle/ownership.test.mjs"
+        ],
+        "startedEpoch": 1793488665.272526,
+        "exitCode": 0,
+        "seconds": 7.792587041854858
+      },
+      {
+        "id": "0ee02e332e684abca05275410a1e9cf4",
+        "script": "probe:bundle",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/build/bundle-runtime.mjs"
+        ],
+        "startedEpoch": 1793488665.41359,
+        "exitCode": 0,
+        "seconds": 0.8944389820098877
+      },
+      {
+        "id": "df6288e21891403da24fa39f4024f7d4",
+        "script": "probe:runtime",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm --prefix tests/probes run test:runtime"
+        ],
+        "startedEpoch": 1793488673.2121542,
+        "exitCode": 0,
+        "seconds": 1.876781702041626
+      },
+      {
+        "id": "fa1178daf9a44c95aaef60a77a01a28d",
+        "script": "test:runtime",
+        "package": "sidekick-s0-probes",
+        "command": [
+          "-c",
+          "node --test --test-timeout=30000 runtime.test.mjs"
+        ],
+        "startedEpoch": 1793488673.354002,
+        "exitCode": 0,
+        "seconds": 1.7282891273498535
+      },
+      {
+        "id": "5cab23c3f3a946c6b4637f347925e0fb",
+        "script": "probe:card",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm --prefix tests/probes run test:card"
+        ],
+        "startedEpoch": 1793488675.2343261,
+        "exitCode": 0,
+        "seconds": 0.22851777076721191
+      },
+      {
+        "id": "e88b6748f9a9460b96b0df4cd5fa0c73",
+        "script": "test:card",
+        "package": "sidekick-s0-probes",
+        "command": [
+          "-c",
+          "node --test card-state.test.mjs"
+        ],
+        "startedEpoch": 1793488675.374393,
+        "exitCode": 0,
+        "seconds": 0.08179903030395508
+      },
+      {
+        "id": "42012c0492974802aa507b206243349d",
+        "script": "probe:contracts",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm --prefix tests/probes run test:contracts"
+        ],
+        "startedEpoch": 1793488675.6041589,
+        "exitCode": 0,
+        "seconds": 2.326723098754883
+      },
+      {
+        "id": "e914b01e59a342e7963c57287dc6ee1c",
+        "script": "test:contracts",
+        "package": "sidekick-s0-probes",
+        "command": [
+          "-c",
+          "node --test probe-contract.test.mjs listener-lifecycle.test.mjs"
+        ],
+        "startedEpoch": 1793488675.7459772,
+        "exitCode": 0,
+        "seconds": 2.1759748458862305
+      },
+      {
+        "id": "9ec3cabd0348461b9b2257b7315f7f3f",
+        "script": "probe:native",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "cargo test --manifest-path src-tauri/Cargo.toml --lib -- --test-threads=1"
+        ],
+        "startedEpoch": 1793488678.0751371,
+        "exitCode": 0,
+        "seconds": 186.89948391914368
+      },
+      {
+        "id": "3171d4ba2faf4ad190b9f6431443d9a1",
+        "script": "test:mcp-budgeted",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "python3 scripts/probes/run-mcp-live.py --synthetic"
+        ],
+        "startedEpoch": 1793488865.142657,
+        "exitCode": 0,
+        "seconds": 5.35536789894104
+      },
+      {
+        "id": "8f330a758e3b44979657f84f77102f8b",
+        "script": "probe:toolchain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "python3 tests/probes/toolchain.py"
+        ],
+        "startedEpoch": 1793488870.663209,
+        "exitCode": 0,
+        "seconds": 1.0136079788208008
+      },
+      {
+        "id": "45c5466a01dc41fd950547ca45069a3b",
+        "script": "test:s2-runtime",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run probe:bundle && node --test --test-timeout=15000 tests/integration/s2-runtime.test.mjs"
+        ],
+        "startedEpoch": 1793488871.82697,
+        "exitCode": 0,
+        "seconds": 3.8768110275268555
+      },
+      {
+        "id": "896ad21e2aee4689ac5dd588dbf38a60",
+        "script": "probe:bundle",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/build/bundle-runtime.mjs"
+        ],
+        "startedEpoch": 1793488871.966926,
+        "exitCode": 0,
+        "seconds": 1.1292088031768799
+      },
+      {
+        "id": "f8e5027c5c914a9999b6c7c8b2baad1f",
+        "script": "probe:bundle-smoke",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node tests/probes/bundle-smoke.mjs"
+        ],
+        "startedEpoch": 1793488878.152703,
+        "exitCode": 0,
+        "seconds": 0.6032371520996094
+      },
+      {
+        "id": "f838b9c5649a43ebbd13869c0313e8c2",
+        "script": "check:s33-p2-package",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run build:s33-ui-verify && npm run probe:app && npm run test:s33-ui-artifacts"
+        ],
+        "startedEpoch": 1793488878.9035661,
+        "exitCode": 0,
+        "seconds": 50.283241987228394
+      },
+      {
+        "id": "95f183f7c2d54a2d82f725b54cb34a40",
+        "script": "build:s33-ui-verify",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run probe:bundle && node scripts/build/build-app.mjs tests/fixtures/s33-ui-verify.config.json"
+        ],
+        "startedEpoch": 1793488879.0490391,
+        "exitCode": 0,
+        "seconds": 24.67322587966919
+      },
+      {
+        "id": "967bb4c66bf94447a4949f1284f99756",
+        "script": "probe:bundle",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/build/bundle-runtime.mjs"
+        ],
+        "startedEpoch": 1793488879.197016,
+        "exitCode": 0,
+        "seconds": 0.8420979976654053
+      },
+      {
+        "id": "de62c9972bc645b28819d4a0c6771185",
+        "script": "build",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run typecheck && vite build"
+        ],
+        "startedEpoch": 1793488880.959125,
+        "exitCode": 0,
+        "seconds": 3.779837131500244
+      },
+      {
+        "id": "aca1b44f3c3c4d589e54f197ac923e18",
+        "script": "typecheck",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "vue-tsc --noEmit"
+        ],
+        "startedEpoch": 1793488881.10199,
+        "exitCode": 0,
+        "seconds": 2.8351168632507324
+      },
+      {
+        "id": "5f90c8eac310485b8511bfe3e92eaf76",
+        "script": "probe:app",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run probe:bundle && node scripts/build/build-app.mjs"
+        ],
+        "startedEpoch": 1793488903.9033349,
+        "exitCode": 0,
+        "seconds": 23.746217966079712
+      },
+      {
+        "id": "ff0d4c61630448e38b75ae2106c291e1",
+        "script": "probe:bundle",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/build/bundle-runtime.mjs"
+        ],
+        "startedEpoch": 1793488904.047531,
+        "exitCode": 0,
+        "seconds": 0.8830809593200684
+      },
+      {
+        "id": "c2a9629eaa794d64ae5e5f93b572a9ea",
+        "script": "build",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run typecheck && vite build"
+        ],
+        "startedEpoch": 1793488905.792232,
+        "exitCode": 0,
+        "seconds": 3.8344550132751465
+      },
+      {
+        "id": "31f4df6346c84c14a86511f1be3094ae",
+        "script": "typecheck",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "vue-tsc --noEmit"
+        ],
+        "startedEpoch": 1793488905.944438,
+        "exitCode": 0,
+        "seconds": 2.9000370502471924
+      },
+      {
+        "id": "aaff32ef9fec434c84c07e894406e26c",
+        "script": "test:s33-ui-artifacts",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/integration/s33-ui-artifacts.test.mjs"
+        ],
+        "startedEpoch": 1793488927.822797,
+        "exitCode": 0,
+        "seconds": 1.3574249744415283
+      },
+      {
+        "id": "777c70ab08174522b13a4c7ed50bcd30",
+        "script": "test:mcp-native-launcher",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-concurrency=1 --test-timeout=15000 tests/integration/native-launcher.test.mjs"
+        ],
+        "startedEpoch": 1793488929.334601,
+        "exitCode": 0,
+        "seconds": 7.676455974578857
+      }
+    ],
+    "nodeGroupCount": 25,
+    "nodeTotals": {
+      "tests": 493,
+      "pass": 493,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "nodeGroups": [
+      {
+        "index": 1,
+        "logStartLine": 48,
+        "logEndLine": 55,
+        "tests": 15,
+        "suites": 0,
+        "pass": 15,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 117.9655,
+        "command": "node --test tests/unit/s1-domain.test.mjs tests/unit/s1-state.test.mjs tests/unit/s1-profile.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s1-domain"
+        ]
+      },
+      {
+        "index": 2,
+        "logStartLine": 105,
+        "logEndLine": 112,
+        "tests": 47,
+        "suites": 0,
+        "pass": 47,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 782.229667,
+        "command": "node --test --test-timeout=15000 tests/unit/s2-dates.test.mjs tests/unit/s2-contract.test.mjs tests/integration/s2-bash.test.mjs tests/unit/s2-client.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s2-domain"
+        ]
+      },
+      {
+        "index": 3,
+        "logStartLine": 140,
+        "logEndLine": 147,
+        "tests": 25,
+        "suites": 0,
+        "pass": 25,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 124.601458,
+        "command": "node --test tests/unit/s31-client.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s31-domain"
+        ]
+      },
+      {
+        "index": 4,
+        "logStartLine": 164,
+        "logEndLine": 171,
+        "tests": 14,
+        "suites": 0,
+        "pass": 14,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 139.440375,
+        "command": "node --test --test-timeout=15000 tests/unit/layout-domain.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:layout-domain"
+        ]
+      },
+      {
+        "index": 5,
+        "logStartLine": 202,
+        "logEndLine": 209,
+        "tests": 28,
+        "suites": 0,
+        "pass": 28,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 13824.241958,
+        "command": "node --test --test-timeout=20000 tests/unit/s32-skills.test.mjs tests/unit/s32-client.test.mjs tests/unit/s32-read.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s32-domain"
+        ]
+      },
+      {
+        "index": 6,
+        "logStartLine": 245,
+        "logEndLine": 252,
+        "tests": 33,
+        "suites": 0,
+        "pass": 33,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 115.948584,
+        "command": "node --test --test-timeout=15000 tests/unit/s33-config.test.mjs tests/unit/s33-json.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s33-config-domain"
+        ]
+      },
+      {
+        "index": 7,
+        "logStartLine": 262,
+        "logEndLine": 269,
+        "tests": 7,
+        "suites": 0,
+        "pass": 7,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 109.641417,
+        "command": "node --test --test-timeout=15000 tests/unit/s33-security.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s33-security-domain"
+        ]
+      },
+      {
+        "index": 8,
+        "logStartLine": 290,
+        "logEndLine": 297,
+        "tests": 18,
+        "suites": 0,
+        "pass": 18,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 109.965458,
+        "command": "node --test --test-timeout=15000 tests/unit/s33-ui-state.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s33-ui-domain"
+        ]
+      },
+      {
+        "index": 9,
+        "logStartLine": 308,
+        "logEndLine": 315,
+        "tests": 8,
+        "suites": 0,
+        "pass": 8,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 97.456375,
+        "command": "node --test --test-timeout=15000 tests/unit/s33-upgrade.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s33-upgrade-domain"
+        ]
+      },
+      {
+        "index": 10,
+        "logStartLine": 325,
+        "logEndLine": 332,
+        "tests": 7,
+        "suites": 0,
+        "pass": 7,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 103.590375,
+        "command": "node --test --test-timeout=15000 tests/unit/mcp-trial.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:mcp-contract"
+        ]
+      },
+      {
+        "index": 11,
+        "logStartLine": 350,
+        "logEndLine": 357,
+        "tests": 14,
+        "suites": 0,
+        "pass": 14,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 5593.295166,
+        "command": "node --test --test-timeout=15000 tests/integration/mcp-recovery.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:mcp-recovery"
+        ]
+      },
+      {
+        "index": 12,
+        "logStartLine": 475,
+        "logEndLine": 482,
+        "tests": 100,
+        "suites": 0,
+        "pass": 100,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 12540.727208,
+        "command": "node --test --test-timeout=30000 tests/integration/model-budget.test.mjs tests/integration/mcp-launcher.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:model-budget"
+        ]
+      },
+      {
+        "index": 13,
+        "logStartLine": 511,
+        "logEndLine": 518,
+        "tests": 26,
+        "suites": 0,
+        "pass": 26,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 4402.378458,
+        "command": "node --test --test-timeout=15000 tests/integration/native-model-fetch.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:mcp-native-fetch"
+        ]
+      },
+      {
+        "index": 14,
+        "logStartLine": 540,
+        "logEndLine": 547,
+        "tests": 5,
+        "suites": 0,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 1248.257625,
+        "command": "node --test --test-timeout=15000 tests/integration/s33-ui-safety.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "check:s33-p2-runtime",
+          "test:s33-ui-safety"
+        ]
+      },
+      {
+        "index": 15,
+        "logStartLine": 679,
+        "logEndLine": 686,
+        "tests": 66,
+        "suites": 0,
+        "pass": 66,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 52239.385667,
+        "command": "node --test --test-concurrency=1 --test-timeout=25000 tests/unit/s33-catalog.test.mjs tests/integration/s33-discovery.test.mjs tests/integration/s33-native-fd.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "check:s33-p2-runtime",
+          "test:s33-discovery"
+        ]
+      },
+      {
+        "index": 16,
+        "logStartLine": 761,
+        "logEndLine": 768,
+        "tests": 12,
+        "suites": 0,
+        "pass": 12,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 5810.551292,
+        "command": "node --test --test-timeout=20000 tests/integration/s33-lifecycle.test.mjs build/s33-lifecycle/ownership.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s33-lifecycle"
+        ]
+      },
+      {
+        "index": 17,
+        "logStartLine": 782,
+        "logEndLine": 789,
+        "tests": 9,
+        "suites": 0,
+        "pass": 9,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 1687.126959,
+        "command": "node --test --test-timeout=30000 runtime.test.mjs",
+        "directory": "tests/probes",
+        "scriptChain": [
+          "check",
+          "probe:runtime",
+          "test:runtime"
+        ]
+      },
+      {
+        "index": 18,
+        "logStartLine": 798,
+        "logEndLine": 805,
+        "tests": 4,
+        "suites": 0,
+        "pass": 4,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 43.299333,
+        "command": "node --test card-state.test.mjs",
+        "directory": "tests/probes",
+        "scriptChain": [
+          "check",
+          "probe:card",
+          "test:card"
+        ]
+      },
+      {
+        "index": 19,
+        "logStartLine": 816,
+        "logEndLine": 823,
+        "tests": 6,
+        "suites": 0,
+        "pass": 6,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 2138.3345,
+        "command": "node --test probe-contract.test.mjs listener-lifecycle.test.mjs",
+        "directory": "tests/probes",
+        "scriptChain": [
+          "check",
+          "probe:contracts",
+          "test:contracts"
+        ]
+      },
+      {
+        "index": 20,
+        "logStartLine": 1062,
+        "logEndLine": 1069,
+        "tests": 7,
+        "suites": 0,
+        "pass": 7,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 2570.557042,
+        "command": "node --test --test-timeout=15000 tests/integration/s2-runtime.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s2-runtime"
+        ]
+      },
+      {
+        "index": 21,
+        "logStartLine": 1072,
+        "logEndLine": 1079,
+        "tests": 2,
+        "suites": 0,
+        "pass": 2,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 285.978458,
+        "command": "node --test --test-timeout=15000 tests/integration/s31-runtime.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check"
+        ]
+      },
+      {
+        "index": 22,
+        "logStartLine": 1082,
+        "logEndLine": 1089,
+        "tests": 2,
+        "suites": 0,
+        "pass": 2,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 918.867792,
+        "command": "node --test --test-timeout=20000 tests/integration/layout-runtime.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check"
+        ]
+      },
+      {
+        "index": 23,
+        "logStartLine": 1093,
+        "logEndLine": 1100,
+        "tests": 3,
+        "suites": 0,
+        "pass": 3,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 997.739125,
+        "command": "node --test --test-timeout=20000 tests/integration/s32-runtime.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check"
+        ]
+      },
+      {
+        "index": 24,
+        "logStartLine": 1230,
+        "logEndLine": 1237,
+        "tests": 2,
+        "suites": 0,
+        "pass": 2,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 1319.240875,
+        "command": "node --test --test-timeout=15000 tests/integration/s33-ui-artifacts.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "check:s33-p2-package",
+          "test:s33-ui-artifacts"
+        ]
+      },
+      {
+        "index": 25,
+        "logStartLine": 1273,
+        "logEndLine": 1280,
+        "tests": 33,
+        "suites": 0,
+        "pass": 33,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 7641.140125,
+        "command": "node --test --test-concurrency=1 --test-timeout=15000 tests/integration/native-launcher.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:mcp-native-launcher"
+        ]
+      }
+    ],
+    "directNodeExitEvidence": "The three direct node --test commands are present in the unchanged top-level && chain; overall exit 0 and their successful complete statistics establish successful completion. Other npm child script exit codes are directly captured by the shell logger.",
+    "rustSummaries": [
+      {
+        "logLine": 712,
+        "status": "ok",
+        "passed": 17,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 194,
+        "seconds": 34.71,
+        "raw": "test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 194 filtered out; finished in 34.71s"
+      },
+      {
+        "logLine": 1026,
+        "status": "ok",
+        "passed": 192,
+        "failed": 0,
+        "ignored": 2,
+        "measured": 0,
+        "filtered": 0,
+        "seconds": 182.97,
+        "raw": "test result: ok. 192 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 182.97s"
+      }
+    ],
+    "rustIgnoredBoundary": "The two default ignored tests are the explicit owner-private-file real model s2 and s31 integrations. They were not enabled. Default S0 synthetic Keychain roundtrip was not skipped.",
+    "syntheticBudgetedRun": {
+      "layer": "synthetic-budgeted",
+      "conclusion": "pass",
+      "occupiedSlots": 6,
+      "possiblyForwarded": 6,
+      "completed": 6,
+      "remaining": 4,
+      "realModelRequests": 0,
+      "realModelRequestUpperBound": 0,
+      "evidence": "build/p5-formal-20261101/synthetic-budgeted-1793488865281905000",
+      "summaryPath": "build/p5-formal-20261101/synthetic-budgeted-1793488865281905000/summary.json",
+      "summarySha256": "32b1fde3342a0da5d6eddc1784526832c852fd977cf1afc4405fc34c66444637",
+      "summaryExitCode": 0,
+      "naturalCleanup": true,
+      "native": {
+        "businessCounts": {
+          "todoEvents": 1,
+          "todoSources": 1,
+          "todos": 1
+        },
+        "calls": [
+          {
+            "argsSHA": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+            "callId": "a4267c81-ed26-4e36-ba8a-126a16b611d5",
+            "category": "success",
+            "runId": "e32d5a8edf38ca7791b6fd4bf3022879",
+            "schema": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a"
+          },
+          {
+            "argsSHA": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+            "callId": "6c40e735-b215-45ca-a8a9-d0a8ad919c84",
+            "category": "success",
+            "runId": "aa1ab08b0b7169d86533c9c8835d21f6",
+            "schema": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a"
+          },
+          {
+            "argsSHA": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+            "callId": "0d9e40cb-3528-4e30-aed7-3f992948d09e",
+            "category": "success",
+            "runId": "trial-1937-1793488868925732000",
+            "schema": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a"
+          }
+        ],
+        "serviceCounts": {
+          "lookup": 3
+        },
+        "trialBusinessUnchanged": true
+      }
+    },
+    "probeBundleExecutions": 6,
+    "packageBuildOrder": [
+      "build:s33-ui-verify",
+      "probe:app"
+    ],
+    "warnings": {
+      "baseline": "docs/engineering/verification.md known nonblocking outputs",
+      "counts": {
+        "esbuild_runtime_size": 12,
+        "vite_chunk_size": 2,
+        "notarization_skipped": 2,
+        "warning_continuation": 2,
+        "test_title_mentions_warning": 2,
+        "command_warnings_flag": 2,
+        "unclassified": 0
+      },
+      "adHocSignature": "Both actual codesign --display outputs say Signature=adhoc, consistent with the documented baseline.",
+      "newUnclassifiedCount": 0,
+      "pass": true
+    },
+    "staticChecks": {
+      "pass": true,
+      "changedPathCount": 25,
+      "protectedChanges": [],
+      "packageNonScriptsUnchanged": true,
+      "packageChangedScriptKeys": [
+        "check",
+        "probe:mcp-native",
+        "test:mcp-native-fetch",
+        "test:mcp-native-launcher"
+      ],
+      "syntaxChecks": [
+        {
+          "command": [
+            "node",
+            "--check",
+            "runtime/entries/organizer-entry.mjs"
+          ],
+          "exitCode": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "node",
+            "--check",
+            "runtime/lib/native-model-fetch.mjs"
+          ],
+          "exitCode": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "python3",
+            "ast.parse",
+            "scripts/probes/read-mcp-native.py"
+          ],
+          "exitCode": 0,
+          "output": "AST parse passed; no pycache written"
+        },
+        {
+          "command": [
+            "node",
+            "--check",
+            "scripts/probes/run-mcp-native.mjs"
+          ],
+          "exitCode": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "node",
+            "--check",
+            "tests/fixtures/mcp-trial.mjs"
+          ],
+          "exitCode": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "node",
+            "--check",
+            "tests/integration/native-launcher.test.mjs"
+          ],
+          "exitCode": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "node",
+            "--check",
+            "tests/integration/native-model-fetch.test.mjs"
+          ],
+          "exitCode": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "node",
+            "--check",
+            "tests/integration/s33-ui-artifacts.test.mjs"
+          ],
+          "exitCode": 0,
+          "output": ""
+        }
+      ],
+      "oldPathSearch": {
+        "command": [
+          "rg",
+          "-n",
+          "--glob",
+          "*.mjs",
+          "--glob",
+          "*.ts",
+          "--glob",
+          "*.vue",
+          "--glob",
+          "*.json",
+          "--glob",
+          "*.rs",
+          "--glob",
+          "*.py",
+          "tests/s[0-9]|tests/layout-|scripts/probes/(bundle-runtime|build-app)",
+          "src",
+          "shared",
+          "runtime",
+          "scripts/build",
+          "scripts/probes",
+          "src-tauri/src",
+          "src-tauri/examples",
+          "tests",
+          "package.json"
+        ],
+        "exitCode": 1,
+        "output": ""
+      },
+      "pureMoveReview": "Not applicable: no rename or copy changes in this delivery."
+    },
+    "workspace": {
+      "headBefore": "514eb3a8fe9796002ee651ecae4943934c13b92a",
+      "headAfter": "514eb3a8fe9796002ee651ecae4943934c13b92a",
+      "fileCountBefore": 4196,
+      "fileCountAfter": 4196,
+      "fileManifestBeforeSha256": "e56c5849b2490ec474d32e1dd3170fa652ffbc93e2af036ef9cfc486103f970b",
+      "fileManifestAfterSha256": "e56c5849b2490ec474d32e1dd3170fa652ffbc93e2af036ef9cfc486103f970b",
+      "allNonignoredFileBytesAndModesStable": true,
+      "statusDiffStatNameStatusAndStagedEntriesStable": true,
+      "sourceFreezeCount": 229,
+      "sourceFreezeSha256": "21738487a529d29771970ed883b38e2ff79869f9fc27ec1e67b2a2dfbe1ee410",
+      "sourceMismatches": [],
+      "coreSha256": "c1a5b043b546297f5200338f5ae6bed2a86a9c81befb750df40c41bc45022925",
+      "indexRawBeforeSha256": "0c8ce4f563900619626aee7139e93a3c928af278df3d62a56f6104d9033e37d9",
+      "indexRawAfterSha256": "91e624873257fe4da1a30a3a7cf7372d7f784de6fa258b35b4c2b8c51d1857f0",
+      "indexRawBytesStable": false,
+      "indexStagedObjectModeStagePathEntriesStable": true,
+      "afterIndexFlags": {
+        "H": 4185
+      },
+      "allCapturedWorkspaceFieldsByteIdentical": false
+    },
+    "indexObservation": {
+      "status": "observed raw-byte difference; no staged-content or worktree difference",
+      "evidence": "index-observation.json and workspace-comparison.json",
+      "exactRawDifferenceCauseProven": false,
+      "boundary": "Before-index raw bytes were hashed but not retained. The stage entries, cached diff, worktree diff, status, and all nonignored file bytes/modes are proven equal. Current tracked flags are all H. chmod/ctime and git stat refresh are a consistent causal candidate, not asserted as a reconstructed binary diff. The raw-index byte identity claim is explicitly not made."
+    },
+    "bundles": [
+      {
+        "name": "Sidekick MCP Verify.app",
+        "appId": "com.sidekick.s33.ui.verify",
+        "resourceEntryCount": 559,
+        "controlledResourceEntries": [
+          "s33-ui",
+          "s33-ui/mcp-trial.mjs",
+          "s33-ui/service.mjs"
+        ],
+        "executableSha256": "6897e86020fa76edc2f8eae652a65076548108985cc8b939c1ebc18013659648",
+        "signatureVerifyExitCode": 0,
+        "adHoc": true
+      },
+      {
+        "name": "Sidekick.app",
+        "appId": "com.sidekick.s0",
+        "resourceEntryCount": 556,
+        "controlledResourceEntries": [],
+        "executableSha256": "ffa0906fda2e5126d8cdfb8cc79905e5fa1c165b7f95ef425038458522dd2f7e",
+        "signatureVerifyExitCode": 0,
+        "adHoc": true
+      }
+    ],
+    "keyArtifacts": [
+      {
+        "path": "build/s0-runtime/organizer.mjs",
+        "beforeSha256": "8db408822271bc96b88cd4ead4ff7c5285f792c7391b6830becaa37664b5f9ed",
+        "afterSha256": "8db408822271bc96b88cd4ead4ff7c5285f792c7391b6830becaa37664b5f9ed",
+        "sameBytes": true,
+        "bytes": 2448410
+      },
+      {
+        "path": "build/s0-runtime/probe.mjs",
+        "beforeSha256": "b5f0b50b12f946024f72d0bf9fb55d3f078cac1e0ac82b9ff9ceae4b01159178",
+        "afterSha256": "b5f0b50b12f946024f72d0bf9fb55d3f078cac1e0ac82b9ff9ceae4b01159178",
+        "sameBytes": true,
+        "bytes": 2429006
+      },
+      {
+        "path": "build/s0-runtime/mcp-probe.mjs",
+        "beforeSha256": "05e3b85b75de2e684e04ba13c44f47e912f90a72aaf5a61bd4693b5914a8d976",
+        "afterSha256": "05e3b85b75de2e684e04ba13c44f47e912f90a72aaf5a61bd4693b5914a8d976",
+        "sameBytes": true,
+        "bytes": 36810
+      },
+      {
+        "path": "build/s0-runtime/skills-manager.mjs",
+        "beforeSha256": "cbb8a425695cb4e97719a8f34b7336ff5303c1ff129c35daa7c929edad647504",
+        "afterSha256": "cbb8a425695cb4e97719a8f34b7336ff5303c1ff129c35daa7c929edad647504",
+        "sameBytes": true,
+        "bytes": 355093
+      },
+      {
+        "path": "tests/fixtures/mcp-trial.mjs",
+        "beforeSha256": "64a4b217691876f71ebca8b17d249bb90c1eac5aa64e6079d17349bfeaec26de",
+        "afterSha256": "64a4b217691876f71ebca8b17d249bb90c1eac5aa64e6079d17349bfeaec26de",
+        "sameBytes": true,
+        "bytes": 8885
+      },
+      {
+        "path": "src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/MacOS/sidekick",
+        "beforeSha256": "61ad938e6bd782cbb62c182a47b832b0a40611c2900d20e0a27b840d4a20bbdb",
+        "afterSha256": "6897e86020fa76edc2f8eae652a65076548108985cc8b939c1ebc18013659648",
+        "sameBytes": false,
+        "bytes": 17001120
+      },
+      {
+        "path": "src-tauri/target/release/bundle/macos/Sidekick.app/Contents/MacOS/sidekick",
+        "beforeSha256": "e5053e74381ebc3efae18db3dba5eae695096344a2152fe8a0198f1876eeff4f",
+        "afterSha256": "ffa0906fda2e5126d8cdfb8cc79905e5fa1c165b7f95ef425038458522dd2f7e",
+        "sameBytes": false,
+        "bytes": 16963024
+      },
+      {
+        "path": "build/p6-native-20261101/native/actions-final-indexed.json",
+        "beforeSha256": "ac098a1bda446e7ec81271bc123c9cf07b1c1579d6840b8bda363b5f54ed24d5",
+        "afterSha256": "ac098a1bda446e7ec81271bc123c9cf07b1c1579d6840b8bda363b5f54ed24d5",
+        "sameBytes": true,
+        "bytes": 444835
+      },
+      {
+        "path": "build/p6-native-20261101/native/30-owned-cleanup.json",
+        "beforeSha256": "488701b5c3dc91d9e74b59e87dad28f0ffcf11a1b5b011a036bbc84e6e7e05f5",
+        "afterSha256": "488701b5c3dc91d9e74b59e87dad28f0ffcf11a1b5b011a036bbc84e6e7e05f5",
+        "sameBytes": true,
+        "bytes": 337
+      },
+      {
+        "path": "build/p6-native-20261101/core.md",
+        "beforeSha256": "c1a5b043b546297f5200338f5ae6bed2a86a9c81befb750df40c41bc45022925",
+        "afterSha256": "c1a5b043b546297f5200338f5ae6bed2a86a9c81befb750df40c41bc45022925",
+        "sameBytes": true,
+        "bytes": 7576
+      }
+    ],
+    "artifactSnapshotTiming": "Captured after the first check probe:bundle completed, before either App package build. Native SHA and organizer SHA also independently match the supplied frozen prior values.",
+    "observedArtifactDifferences": [
+      {
+        "path": "src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/MacOS/sidekick",
+        "beforeSha256": "61ad938e6bd782cbb62c182a47b832b0a40611c2900d20e0a27b840d4a20bbdb",
+        "afterSha256": "6897e86020fa76edc2f8eae652a65076548108985cc8b939c1ebc18013659648",
+        "sameBytes": false,
+        "bytes": 17001120
+      },
+      {
+        "path": "src-tauri/target/release/bundle/macos/Sidekick.app/Contents/MacOS/sidekick",
+        "beforeSha256": "e5053e74381ebc3efae18db3dba5eae695096344a2152fe8a0198f1876eeff4f",
+        "afterSha256": "ffa0906fda2e5126d8cdfb8cc79905e5fa1c165b7f95ef425038458522dd2f7e",
+        "sameBytes": false,
+        "bytes": 16963024
+      }
+    ],
+    "nativeGuiEvidenceBoundary": "Prior native GUI observations are bound to the pre-build verification executable 61ad938e6bd782cbb62c182a47b832b0a40611c2900d20e0a27b840d4a20bbdb. The complete check rebuilt it to 6897e86020fa76edc2f8eae652a65076548108985cc8b939c1ebc18013659648. They are separately recorded; no fresh GUI acceptance of the rebuilt executable is claimed here.",
+    "notPerformed": [
+      "No ordinary App real-root startup. The configured ordinary executable --s33-mcp-ui negative-entry test returned 2 before root startup.",
+      "No fresh GUI interaction by this independent verifier.",
+      "No real model request, real credentials/env/private_model/budget database access, production MCP Keychain or real user root operation.",
+      "No clean clone, CI, notarized distribution or true Feishu integration verification.",
+      "No source/docs edits, staging, commit or push."
+    ],
+    "evidence": {
+      "log": "check.log",
+      "logSha256": "5991bb37026dc9e60fc28e591cefd20e1129199ee92f8a173dac285c3c92e54b",
+      "perScriptExitCodes": "script-events.jsonl",
+      "parsedGroups": "parsed-check.json",
+      "workspaceBefore": "before-workspace.json",
+      "workspaceAfter": "after-workspace.json",
+      "workspaceComparison": "workspace-comparison.json",
+      "static": "static-checks.json",
+      "warnings": "warnings.json",
+      "packages": "artifacts.json",
+      "index": "index-observation.json",
+      "syntheticBudgeted": "synthetic-budgeted.json",
+      "indexParsed": "after-index-parsed.json",
+      "indexAnalysis": "index-analysis.json"
+    },
+    "indexBeforeAfterDetail": {
+      "beforeRawIndexAvailable": false,
+      "beforeAvailableFields": [
+        "raw index sha256",
+        "mode",
+        "blob",
+        "stage",
+        "path",
+        "cached diff",
+        "worktree status and diff"
+      ],
+      "beforeUnavailableFields": [
+        "raw stat-cache entry bytes",
+        "entry flags",
+        "extension signatures/payloads",
+        "whole raw index bytes"
+      ],
+      "afterVersion": 2,
+      "afterEntryCount": 4185,
+      "afterChecksumValid": true,
+      "logicalModeBlobStagePathDifferences": [],
+      "afterFlagCounts": {
+        "assumeValid": 0,
+        "skipWorktree": 0,
+        "intentToAdd": 0,
+        "extended": 0
+      },
+      "afterExtensions": [
+        {
+          "signature": "TREE",
+          "size": 13225,
+          "sha256": "2ebf1a8220d14498a5b7272868464a1b0bb26a1d1d99d69c607863d465b1e37a"
+        }
+      ],
+      "afterBuildWrapper": {
+        "path": "scripts/probes/rustc-host-macro.py",
+        "mode": "100755",
+        "blob": "b4867f83e24696990bdbd44a25d56ba746f25ab3",
+        "stage": 0,
+        "rawFlags": 34,
+        "assumeValid": false,
+        "extended": false,
+        "rawExtendedFlags": 0,
+        "skipWorktree": false,
+        "intentToAdd": false,
+        "stat": {
+          "ctimeSeconds": 1793488904,
+          "ctimeNanoseconds": 967456065,
+          "mtimeSeconds": 1793212785,
+          "mtimeNanoseconds": 921357697,
+          "device": 16777234,
+          "inode": 286559721,
+          "mode": 33261,
+          "uid": 501,
+          "gid": 20,
+          "size": 249
+        }
+      },
+      "resultByField": {
+        "modeBlobStagePath": "verified equal before/after",
+        "flags": "before unavailable; after no assumeValid/skipWorktree/intentToAdd flags",
+        "stat": "before unavailable; current wrapper ctime is within the complete check build phase",
+        "extensions": "before unavailable; after payloads listed and hashed",
+        "rawBytes": "different SHA; exact binary cause not independently reconstructable"
+      },
+      "conclusion": "Full check passes and staged content is unchanged. Exact raw-index freeze and before/after flags/stat/extensions equality remain unverified; no restoration/reset performed."
+    },
+    "indexRawFreezeResult": "unverified: raw SHA changed; before flags/stat/extensions and raw bytes were not captured. Staged mode/blob/stage/path equality is independently verified.",
+    "syntheticKeychainActualLogLines": [
+      {
+        "line": 1022,
+        "text": "test storage_probe::tests::keychain_synthetic_roundtrip ... ok"
+      }
+    ]
+  },
+  "repeat": {
+    "conclusion": "pass",
+    "scope": "Second independent execution of the original complete npm run check on the same frozen source/docs/HEAD/staged contents; exact raw-index copies and field/payload comparison address the first capture gap. First round remains unchanged.",
+    "createdUtc": "2026-10-31T23:37:03.611551+00:00",
+    "command": {
+      "command": [
+        "npm",
+        "run",
+        "check"
+      ],
+      "startedEpoch": 1793489335.907249,
+      "finishedEpoch": 1793489760.246946,
+      "seconds": 424.33969712257385,
+      "exitCode": 0,
+      "scriptShellInstrumentation": "$REPO/build/p6-native-20261101/independent-repeat/script-shell.py",
+      "scope": "actual unchanged package check script; no --real/--ignored/skip overrides"
+    },
+    "instrumentation": "Ignored script-shell collector invokes the original /bin/sh arguments; no package scripts, skip flags, --real or --ignored overrides were changed.",
+    "npmScriptExecutionCount": 50,
+    "allNpmScriptsHaveExitZero": true,
+    "npmScriptExecutions": [
+      {
+        "id": "aadefb247a114f4dac3421c998fedca5",
+        "script": "check",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run check:structure && npm run check:docs && npm run probe:bundle && npm run typecheck && npm run test:s1-domain && npm run test:s2-domain && npm run test:s31-domain && npm run test:layout-domain && npm run test:s32-domain && npm run test:s33-config-domain && npm run test:s33-security-domain && npm run test:s33-ui-domain && npm run test:s33-upgrade-domain && npm run test:mcp-contract && npm run test:mcp-recovery && npm run test:model-budget && npm run test:mcp-native-fetch && npm run check:rust && npm run check:s33-p2-runtime && npm run test:s33-lifecycle && npm run probe:runtime && npm run probe:card && npm run probe:contracts && npm run probe:native && npm run test:mcp-budgeted && npm run probe:toolchain && npm run test:s2-runtime && node --test --test-timeout=15000 tests/integration/s31-runtime.test.mjs && node --test --test-timeout=20000 tests/integration/layout-runtime.test.mjs && node --test --test-timeout=20000 tests/integration/s32-runtime.test.mjs && npm run probe:bundle-smoke && npm run check:s33-p2-package && npm run test:mcp-native-launcher"
+        ],
+        "startedEpoch": 1793489336.506756,
+        "exitCode": 0,
+        "seconds": 423.7331237792969
+      },
+      {
+        "id": "3dd0422d2a3a478898743bc9fd4ea59a",
+        "script": "check:structure",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/checks/check-structure.mjs --self-test && node scripts/checks/check-structure.mjs"
+        ],
+        "startedEpoch": 1793489336.647391,
+        "exitCode": 0,
+        "seconds": 0.18349528312683105
+      },
+      {
+        "id": "d78adb95e22b493faeaa85d49ce11271",
+        "script": "check:docs",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/checks/check-docs.mjs"
+        ],
+        "startedEpoch": 1793489336.98162,
+        "exitCode": 0,
+        "seconds": 0.04459214210510254
+      },
+      {
+        "id": "685a4763dfb84dc2ba44015380186b15",
+        "script": "probe:bundle",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/build/bundle-runtime.mjs"
+        ],
+        "startedEpoch": 1793489337.171604,
+        "exitCode": 0,
+        "seconds": 0.8202500343322754
+      },
+      {
+        "id": "c19ed0bc75f24d608e5847beac4186ca",
+        "script": "typecheck",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "vue-tsc --noEmit"
+        ],
+        "startedEpoch": 1793489338.1273248,
+        "exitCode": 0,
+        "seconds": 2.8614919185638428
+      },
+      {
+        "id": "4799f21010964b8ba226ffa447e15f5d",
+        "script": "test:s1-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test tests/unit/s1-domain.test.mjs tests/unit/s1-state.test.mjs tests/unit/s1-profile.test.mjs"
+        ],
+        "startedEpoch": 1793489341.1363451,
+        "exitCode": 0,
+        "seconds": 0.15424489974975586
+      },
+      {
+        "id": "622a329cf2b842e0ae8deebef0031925",
+        "script": "test:s2-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/unit/s2-dates.test.mjs tests/unit/s2-contract.test.mjs tests/integration/s2-bash.test.mjs tests/unit/s2-client.test.mjs"
+        ],
+        "startedEpoch": 1793489341.4326851,
+        "exitCode": 0,
+        "seconds": 0.8154592514038086
+      },
+      {
+        "id": "1e76d67e3bba46cebb5f49723db42734",
+        "script": "test:s31-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test tests/unit/s31-client.test.mjs"
+        ],
+        "startedEpoch": 1793489342.394125,
+        "exitCode": 0,
+        "seconds": 0.15865492820739746
+      },
+      {
+        "id": "6b180980154f4ce686b0273389f7447a",
+        "script": "test:layout-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/unit/layout-domain.test.mjs"
+        ],
+        "startedEpoch": 1793489342.69398,
+        "exitCode": 0,
+        "seconds": 0.1746668815612793
+      },
+      {
+        "id": "37d2ba9ec3cc48db82e288165e2f8c7c",
+        "script": "test:s32-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=20000 tests/unit/s32-skills.test.mjs tests/unit/s32-client.test.mjs tests/unit/s32-read.test.mjs"
+        ],
+        "startedEpoch": 1793489343.010154,
+        "exitCode": 0,
+        "seconds": 13.737436771392822
+      },
+      {
+        "id": "b2f1f7296f474b88822af1f01255a5f9",
+        "script": "test:s33-config-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/unit/s33-config.test.mjs tests/unit/s33-json.test.mjs"
+        ],
+        "startedEpoch": 1793489356.896209,
+        "exitCode": 0,
+        "seconds": 0.15552425384521484
+      },
+      {
+        "id": "e3f55982a83a4302815f44486b8dd989",
+        "script": "test:s33-security-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/unit/s33-security.test.mjs"
+        ],
+        "startedEpoch": 1793489357.194413,
+        "exitCode": 0,
+        "seconds": 0.14917516708374023
+      },
+      {
+        "id": "611e4772af804a47a615234cf204fc1e",
+        "script": "test:s33-ui-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/unit/s33-ui-state.test.mjs"
+        ],
+        "startedEpoch": 1793489357.496214,
+        "exitCode": 0,
+        "seconds": 0.15723609924316406
+      },
+      {
+        "id": "6c9c798efc68435eac31932203978cd0",
+        "script": "test:s33-upgrade-domain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/unit/s33-upgrade.test.mjs"
+        ],
+        "startedEpoch": 1793489357.80533,
+        "exitCode": 0,
+        "seconds": 0.14708495140075684
+      },
+      {
+        "id": "e7bbc63b1e134e1c912efede9be32ee2",
+        "script": "test:mcp-contract",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/unit/mcp-trial.test.mjs"
+        ],
+        "startedEpoch": 1793489358.103421,
+        "exitCode": 0,
+        "seconds": 0.14254212379455566
+      },
+      {
+        "id": "0ebdd51731bc4929b320e96db1ab8fa7",
+        "script": "test:mcp-recovery",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/probes/prepare-mcp-recovery.mjs && node --test --test-timeout=15000 tests/integration/mcp-recovery.test.mjs"
+        ],
+        "startedEpoch": 1793489358.39769,
+        "exitCode": 0,
+        "seconds": 5.7324371337890625
+      },
+      {
+        "id": "275c81ce712c4f65b93e7d5ea6f74a8d",
+        "script": "test:model-budget",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=30000 tests/integration/model-budget.test.mjs tests/integration/mcp-launcher.test.mjs"
+        ],
+        "startedEpoch": 1793489364.276122,
+        "exitCode": 0,
+        "seconds": 12.61368203163147
+      },
+      {
+        "id": "c07b7636c65f48d585f210b19c81c82e",
+        "script": "test:mcp-native-fetch",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/integration/native-model-fetch.test.mjs"
+        ],
+        "startedEpoch": 1793489377.048646,
+        "exitCode": 0,
+        "seconds": 4.4898459911346436
+      },
+      {
+        "id": "c671da0b1bfb4962bd28e60af7df22ae",
+        "script": "check:rust",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "cargo fmt --manifest-path src-tauri/Cargo.toml --check && cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings"
+        ],
+        "startedEpoch": 1793489381.686597,
+        "exitCode": 0,
+        "seconds": 3.616576671600342
+      },
+      {
+        "id": "209feb0b56794fafb492de4807b4758b",
+        "script": "check:s33-p2-runtime",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run test:s33-ui-safety && npm run test:s33-discovery && npm run test:s33-verification-guards && npm run check:s33-verification"
+        ],
+        "startedEpoch": 1793489385.451398,
+        "exitCode": 0,
+        "seconds": 102.79319787025452
+      },
+      {
+        "id": "85ce8b2be8a94f7c8a08e9cfaa627e9b",
+        "script": "test:s33-ui-safety",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "cargo build --manifest-path src-tauri/Cargo.toml --features s33-mcp-verification --example s33-mcp-host && node --test --test-timeout=15000 tests/integration/s33-ui-safety.test.mjs"
+        ],
+        "startedEpoch": 1793489385.5969112,
+        "exitCode": 0,
+        "seconds": 5.336802959442139
+      },
+      {
+        "id": "ff8b7e58177c490c9cd7730255028541",
+        "script": "test:s33-discovery",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run probe:bundle && cargo build --manifest-path src-tauri/Cargo.toml --features s33-mcp-verification --example s33-mcp-host && node --test --test-concurrency=1 --test-timeout=25000 tests/unit/s33-catalog.test.mjs tests/integration/s33-discovery.test.mjs tests/integration/s33-native-fd.test.mjs"
+        ],
+        "startedEpoch": 1793489391.082123,
+        "exitCode": 0,
+        "seconds": 56.24843788146973
+      },
+      {
+        "id": "7f59ef8f4e52416ead8513ebf07c31c8",
+        "script": "probe:bundle",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/build/bundle-runtime.mjs"
+        ],
+        "startedEpoch": 1793489391.2264562,
+        "exitCode": 0,
+        "seconds": 0.9450497627258301
+      },
+      {
+        "id": "8a3226c6e5c2473d87aed7a701e86645",
+        "script": "test:s33-verification-guards",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "cargo test --manifest-path src-tauri/Cargo.toml --lib --features s33-mcp-verification,s33-mcp-ui-verification verification -- --test-threads=1"
+        ],
+        "startedEpoch": 1793489447.480587,
+        "exitCode": 0,
+        "seconds": 37.64430093765259
+      },
+      {
+        "id": "d59bc5e125c740b28e74cd27f6152fdc",
+        "script": "check:s33-verification",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --features s33-mcp-verification,s33-mcp-ui-verification -- -D warnings"
+        ],
+        "startedEpoch": 1793489485.274671,
+        "exitCode": 0,
+        "seconds": 2.9630610942840576
+      },
+      {
+        "id": "e4267935b6834c72aa38fcb0db09a134",
+        "script": "test:s33-lifecycle",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run probe:bundle && node scripts/probes/prepare-s33-lifecycle.mjs && node --test --test-timeout=20000 tests/integration/s33-lifecycle.test.mjs build/s33-lifecycle/ownership.test.mjs"
+        ],
+        "startedEpoch": 1793489488.391915,
+        "exitCode": 0,
+        "seconds": 7.807580947875977
+      },
+      {
+        "id": "e19a2271b4564dda91cdcb58ae0dfb21",
+        "script": "probe:bundle",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/build/bundle-runtime.mjs"
+        ],
+        "startedEpoch": 1793489488.53532,
+        "exitCode": 0,
+        "seconds": 0.8871109485626221
+      },
+      {
+        "id": "6f44c068214c487ebaed7ca4555fec34",
+        "script": "probe:runtime",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm --prefix tests/probes run test:runtime"
+        ],
+        "startedEpoch": 1793489496.3467882,
+        "exitCode": 0,
+        "seconds": 1.8910942077636719
+      },
+      {
+        "id": "0bf4c37bc8bb4fc4a8b56562b54be7e8",
+        "script": "test:runtime",
+        "package": "sidekick-s0-probes",
+        "command": [
+          "-c",
+          "node --test --test-timeout=30000 runtime.test.mjs"
+        ],
+        "startedEpoch": 1793489496.48943,
+        "exitCode": 0,
+        "seconds": 1.7412850856781006
+      },
+      {
+        "id": "bbcfbc5735cd493b8b7b1891ce8392f0",
+        "script": "probe:card",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm --prefix tests/probes run test:card"
+        ],
+        "startedEpoch": 1793489498.3858309,
+        "exitCode": 0,
+        "seconds": 0.24822616577148438
+      },
+      {
+        "id": "9f89b68aa7404469a425d6067fd83415",
+        "script": "test:card",
+        "package": "sidekick-s0-probes",
+        "command": [
+          "-c",
+          "node --test card-state.test.mjs"
+        ],
+        "startedEpoch": 1793489498.5458739,
+        "exitCode": 0,
+        "seconds": 0.08038020133972168
+      },
+      {
+        "id": "0fcce67ae1f64f579df2d1267c699355",
+        "script": "probe:contracts",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm --prefix tests/probes run test:contracts"
+        ],
+        "startedEpoch": 1793489498.784953,
+        "exitCode": 0,
+        "seconds": 2.3301048278808594
+      },
+      {
+        "id": "2e37428ea718465893d178bb6676589a",
+        "script": "test:contracts",
+        "package": "sidekick-s0-probes",
+        "command": [
+          "-c",
+          "node --test probe-contract.test.mjs listener-lifecycle.test.mjs"
+        ],
+        "startedEpoch": 1793489498.932318,
+        "exitCode": 0,
+        "seconds": 2.175832986831665
+      },
+      {
+        "id": "9b970196210e48a8a1388ab26f31eec1",
+        "script": "probe:native",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "cargo test --manifest-path src-tauri/Cargo.toml --lib -- --test-threads=1"
+        ],
+        "startedEpoch": 1793489501.261536,
+        "exitCode": 0,
+        "seconds": 187.36957597732544
+      },
+      {
+        "id": "79629f1648f54f5bb47914084b117b87",
+        "script": "test:mcp-budgeted",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "python3 scripts/probes/run-mcp-live.py --synthetic"
+        ],
+        "startedEpoch": 1793489688.778903,
+        "exitCode": 0,
+        "seconds": 5.3018200397491455
+      },
+      {
+        "id": "fc136a015752441aa94df2bcc24f8f81",
+        "script": "probe:toolchain",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "python3 tests/probes/toolchain.py"
+        ],
+        "startedEpoch": 1793489694.229866,
+        "exitCode": 0,
+        "seconds": 1.258971929550171
+      },
+      {
+        "id": "bc5a00eccaec424bb0c0bbf40f4ef43b",
+        "script": "test:s2-runtime",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run probe:bundle && node --test --test-timeout=15000 tests/integration/s2-runtime.test.mjs"
+        ],
+        "startedEpoch": 1793489695.632704,
+        "exitCode": 0,
+        "seconds": 3.6824707984924316
+      },
+      {
+        "id": "52bd52dc8c7340878204813ccd213da0",
+        "script": "probe:bundle",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/build/bundle-runtime.mjs"
+        ],
+        "startedEpoch": 1793489695.776128,
+        "exitCode": 0,
+        "seconds": 0.8377940654754639
+      },
+      {
+        "id": "74a6a6669c8b440493bd48d50c9957c1",
+        "script": "probe:bundle-smoke",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node tests/probes/bundle-smoke.mjs"
+        ],
+        "startedEpoch": 1793489701.764425,
+        "exitCode": 0,
+        "seconds": 0.6003611087799072
+      },
+      {
+        "id": "8b1ce46a2ea343c5a84b71bfb8a3e4e2",
+        "script": "check:s33-p2-package",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run build:s33-ui-verify && npm run probe:app && npm run test:s33-ui-artifacts"
+        ],
+        "startedEpoch": 1793489702.539351,
+        "exitCode": 0,
+        "seconds": 49.92720317840576
+      },
+      {
+        "id": "5869f9082c8e4a05836d7faae3576352",
+        "script": "build:s33-ui-verify",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run probe:bundle && node scripts/build/build-app.mjs tests/fixtures/s33-ui-verify.config.json"
+        ],
+        "startedEpoch": 1793489702.6806421,
+        "exitCode": 0,
+        "seconds": 24.084743976593018
+      },
+      {
+        "id": "4e0b9b4bd29d48dc8ef6ecf98ebfe050",
+        "script": "probe:bundle",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/build/bundle-runtime.mjs"
+        ],
+        "startedEpoch": 1793489702.8205109,
+        "exitCode": 0,
+        "seconds": 0.8207008838653564
+      },
+      {
+        "id": "f83b495b48534132abf3bf2ca5f13d3a",
+        "script": "build",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run typecheck && vite build"
+        ],
+        "startedEpoch": 1793489704.5110998,
+        "exitCode": 0,
+        "seconds": 3.821061134338379
+      },
+      {
+        "id": "4cc59ed6459b4856a9b0e02b2e1e2ffc",
+        "script": "typecheck",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "vue-tsc --noEmit"
+        ],
+        "startedEpoch": 1793489704.658165,
+        "exitCode": 0,
+        "seconds": 2.882683038711548
+      },
+      {
+        "id": "5c9f442c32644720b47a8867e568e594",
+        "script": "probe:app",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run probe:bundle && node scripts/build/build-app.mjs"
+        ],
+        "startedEpoch": 1793489726.938571,
+        "exitCode": 0,
+        "seconds": 23.896840810775757
+      },
+      {
+        "id": "84dfb61116e345a5ae3914a8592650f5",
+        "script": "probe:bundle",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node scripts/build/bundle-runtime.mjs"
+        ],
+        "startedEpoch": 1793489727.0821261,
+        "exitCode": 0,
+        "seconds": 0.9061739444732666
+      },
+      {
+        "id": "43532504e7b04794bbe149102e2816ec",
+        "script": "build",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "npm run typecheck && vite build"
+        ],
+        "startedEpoch": 1793489728.838912,
+        "exitCode": 0,
+        "seconds": 3.856825113296509
+      },
+      {
+        "id": "4c2d0846fb574e1f98d1e9f7a6b3e375",
+        "script": "typecheck",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "vue-tsc --noEmit"
+        ],
+        "startedEpoch": 1793489728.9860091,
+        "exitCode": 0,
+        "seconds": 2.9048330783843994
+      },
+      {
+        "id": "ca8a97cd2222427babecae8c97de78eb",
+        "script": "test:s33-ui-artifacts",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-timeout=15000 tests/integration/s33-ui-artifacts.test.mjs"
+        ],
+        "startedEpoch": 1793489751.01029,
+        "exitCode": 0,
+        "seconds": 1.4493310451507568
+      },
+      {
+        "id": "205bc00bf4744a1c8b92d916ff735667",
+        "script": "test:mcp-native-launcher",
+        "package": "sidekick",
+        "command": [
+          "-c",
+          "node --test --test-concurrency=1 --test-timeout=15000 tests/integration/native-launcher.test.mjs"
+        ],
+        "startedEpoch": 1793489752.6113951,
+        "exitCode": 0,
+        "seconds": 7.62177300453186
+      }
+    ],
+    "nodeGroupCount": 25,
+    "nodeTotals": {
+      "tests": 493,
+      "pass": 493,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "nodeGroups": [
+      {
+        "index": 1,
+        "logStartLine": 48,
+        "logEndLine": 55,
+        "tests": 15,
+        "suites": 0,
+        "pass": 15,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 116.901416,
+        "command": "node --test tests/unit/s1-domain.test.mjs tests/unit/s1-state.test.mjs tests/unit/s1-profile.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s1-domain"
+        ]
+      },
+      {
+        "index": 2,
+        "logStartLine": 105,
+        "logEndLine": 112,
+        "tests": 47,
+        "suites": 0,
+        "pass": 47,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 775.893,
+        "command": "node --test --test-timeout=15000 tests/unit/s2-dates.test.mjs tests/unit/s2-contract.test.mjs tests/integration/s2-bash.test.mjs tests/unit/s2-client.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s2-domain"
+        ]
+      },
+      {
+        "index": 3,
+        "logStartLine": 140,
+        "logEndLine": 147,
+        "tests": 25,
+        "suites": 0,
+        "pass": 25,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 123.502334,
+        "command": "node --test tests/unit/s31-client.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s31-domain"
+        ]
+      },
+      {
+        "index": 4,
+        "logStartLine": 164,
+        "logEndLine": 171,
+        "tests": 14,
+        "suites": 0,
+        "pass": 14,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 138.075666,
+        "command": "node --test --test-timeout=15000 tests/unit/layout-domain.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:layout-domain"
+        ]
+      },
+      {
+        "index": 5,
+        "logStartLine": 202,
+        "logEndLine": 209,
+        "tests": 28,
+        "suites": 0,
+        "pass": 28,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 13701.096541,
+        "command": "node --test --test-timeout=20000 tests/unit/s32-skills.test.mjs tests/unit/s32-client.test.mjs tests/unit/s32-read.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s32-domain"
+        ]
+      },
+      {
+        "index": 6,
+        "logStartLine": 245,
+        "logEndLine": 252,
+        "tests": 33,
+        "suites": 0,
+        "pass": 33,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 117.903708,
+        "command": "node --test --test-timeout=15000 tests/unit/s33-config.test.mjs tests/unit/s33-json.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s33-config-domain"
+        ]
+      },
+      {
+        "index": 7,
+        "logStartLine": 262,
+        "logEndLine": 269,
+        "tests": 7,
+        "suites": 0,
+        "pass": 7,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 113.476667,
+        "command": "node --test --test-timeout=15000 tests/unit/s33-security.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s33-security-domain"
+        ]
+      },
+      {
+        "index": 8,
+        "logStartLine": 290,
+        "logEndLine": 297,
+        "tests": 18,
+        "suites": 0,
+        "pass": 18,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 119.345167,
+        "command": "node --test --test-timeout=15000 tests/unit/s33-ui-state.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s33-ui-domain"
+        ]
+      },
+      {
+        "index": 9,
+        "logStartLine": 308,
+        "logEndLine": 315,
+        "tests": 8,
+        "suites": 0,
+        "pass": 8,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 108.986292,
+        "command": "node --test --test-timeout=15000 tests/unit/s33-upgrade.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s33-upgrade-domain"
+        ]
+      },
+      {
+        "index": 10,
+        "logStartLine": 325,
+        "logEndLine": 332,
+        "tests": 7,
+        "suites": 0,
+        "pass": 7,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 103.06875,
+        "command": "node --test --test-timeout=15000 tests/unit/mcp-trial.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:mcp-contract"
+        ]
+      },
+      {
+        "index": 11,
+        "logStartLine": 350,
+        "logEndLine": 357,
+        "tests": 14,
+        "suites": 0,
+        "pass": 14,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 5585.54075,
+        "command": "node --test --test-timeout=15000 tests/integration/mcp-recovery.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:mcp-recovery"
+        ]
+      },
+      {
+        "index": 12,
+        "logStartLine": 475,
+        "logEndLine": 482,
+        "tests": 100,
+        "suites": 0,
+        "pass": 100,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 12573.468583,
+        "command": "node --test --test-timeout=30000 tests/integration/model-budget.test.mjs tests/integration/mcp-launcher.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:model-budget"
+        ]
+      },
+      {
+        "index": 13,
+        "logStartLine": 511,
+        "logEndLine": 518,
+        "tests": 26,
+        "suites": 0,
+        "pass": 26,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 4449.7815,
+        "command": "node --test --test-timeout=15000 tests/integration/native-model-fetch.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:mcp-native-fetch"
+        ]
+      },
+      {
+        "index": 14,
+        "logStartLine": 540,
+        "logEndLine": 547,
+        "tests": 5,
+        "suites": 0,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 1184.491625,
+        "command": "node --test --test-timeout=15000 tests/integration/s33-ui-safety.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "check:s33-p2-runtime",
+          "test:s33-ui-safety"
+        ]
+      },
+      {
+        "index": 15,
+        "logStartLine": 679,
+        "logEndLine": 686,
+        "tests": 66,
+        "suites": 0,
+        "pass": 66,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 52262.184625,
+        "command": "node --test --test-concurrency=1 --test-timeout=25000 tests/unit/s33-catalog.test.mjs tests/integration/s33-discovery.test.mjs tests/integration/s33-native-fd.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "check:s33-p2-runtime",
+          "test:s33-discovery"
+        ]
+      },
+      {
+        "index": 16,
+        "logStartLine": 761,
+        "logEndLine": 768,
+        "tests": 12,
+        "suites": 0,
+        "pass": 12,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 5815.326958,
+        "command": "node --test --test-timeout=20000 tests/integration/s33-lifecycle.test.mjs build/s33-lifecycle/ownership.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s33-lifecycle"
+        ]
+      },
+      {
+        "index": 17,
+        "logStartLine": 782,
+        "logEndLine": 789,
+        "tests": 9,
+        "suites": 0,
+        "pass": 9,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 1703.180375,
+        "command": "node --test --test-timeout=30000 runtime.test.mjs",
+        "directory": "tests/probes",
+        "scriptChain": [
+          "check",
+          "probe:runtime",
+          "test:runtime"
+        ]
+      },
+      {
+        "index": 18,
+        "logStartLine": 798,
+        "logEndLine": 805,
+        "tests": 4,
+        "suites": 0,
+        "pass": 4,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 42.725667,
+        "command": "node --test card-state.test.mjs",
+        "directory": "tests/probes",
+        "scriptChain": [
+          "check",
+          "probe:card",
+          "test:card"
+        ]
+      },
+      {
+        "index": 19,
+        "logStartLine": 816,
+        "logEndLine": 823,
+        "tests": 6,
+        "suites": 0,
+        "pass": 6,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 2135.638458,
+        "command": "node --test probe-contract.test.mjs listener-lifecycle.test.mjs",
+        "directory": "tests/probes",
+        "scriptChain": [
+          "check",
+          "probe:contracts",
+          "test:contracts"
+        ]
+      },
+      {
+        "index": 20,
+        "logStartLine": 1062,
+        "logEndLine": 1069,
+        "tests": 7,
+        "suites": 0,
+        "pass": 7,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 2663.662459,
+        "command": "node --test --test-timeout=15000 tests/integration/s2-runtime.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:s2-runtime"
+        ]
+      },
+      {
+        "index": 21,
+        "logStartLine": 1072,
+        "logEndLine": 1079,
+        "tests": 2,
+        "suites": 0,
+        "pass": 2,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 280.71975,
+        "command": "node --test --test-timeout=15000 tests/integration/s31-runtime.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check"
+        ]
+      },
+      {
+        "index": 22,
+        "logStartLine": 1082,
+        "logEndLine": 1089,
+        "tests": 2,
+        "suites": 0,
+        "pass": 2,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 905.764291,
+        "command": "node --test --test-timeout=20000 tests/integration/layout-runtime.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check"
+        ]
+      },
+      {
+        "index": 23,
+        "logStartLine": 1093,
+        "logEndLine": 1100,
+        "tests": 3,
+        "suites": 0,
+        "pass": 3,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 1012.812666,
+        "command": "node --test --test-timeout=20000 tests/integration/s32-runtime.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check"
+        ]
+      },
+      {
+        "index": 24,
+        "logStartLine": 1230,
+        "logEndLine": 1237,
+        "tests": 2,
+        "suites": 0,
+        "pass": 2,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 1412.878709,
+        "command": "node --test --test-timeout=15000 tests/integration/s33-ui-artifacts.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "check:s33-p2-package",
+          "test:s33-ui-artifacts"
+        ]
+      },
+      {
+        "index": 25,
+        "logStartLine": 1273,
+        "logEndLine": 1280,
+        "tests": 33,
+        "suites": 0,
+        "pass": 33,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 7585.801333,
+        "command": "node --test --test-concurrency=1 --test-timeout=15000 tests/integration/native-launcher.test.mjs",
+        "directory": ".",
+        "scriptChain": [
+          "check",
+          "test:mcp-native-launcher"
+        ]
+      }
+    ],
+    "rustSummaries": [
+      {
+        "logLine": 712,
+        "status": "ok",
+        "passed": 17,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 194,
+        "seconds": 34.75,
+        "raw": "test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 194 filtered out; finished in 34.75s"
+      },
+      {
+        "logLine": 1026,
+        "status": "ok",
+        "passed": 192,
+        "failed": 0,
+        "ignored": 2,
+        "measured": 0,
+        "filtered": 0,
+        "seconds": 184.53,
+        "raw": "test result: ok. 192 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 184.53s"
+      }
+    ],
+    "rustIgnoredActualLines": [
+      "test runtime_host::tests::s2_live_text_preview_sign_and_restart ... ignored, explicit real model integration using the owner-selected private file",
+      "test runtime_host::tests::s31_live_isolated_organizer_trial_and_configuration_reopen ... ignored, explicit real model trial using the owner-selected private file"
+    ],
+    "syntheticKeychainActualLogLines": [
+      {
+        "line": 1022,
+        "text": "test storage_probe::tests::keychain_synthetic_roundtrip ... ok"
+      }
+    ],
+    "syntheticBudgetedRun": {
+      "layer": "synthetic-budgeted",
+      "conclusion": "pass",
+      "occupiedSlots": 6,
+      "possiblyForwarded": 6,
+      "completed": 6,
+      "remaining": 4,
+      "realModelRequests": 0,
+      "realModelRequestUpperBound": 0,
+      "evidence": "build/p5-formal-20261101/synthetic-budgeted-1793489688916893000",
+      "summaryPath": "build/p5-formal-20261101/synthetic-budgeted-1793489688916893000/summary.json",
+      "summarySha256": "cefe6a50dbcd0dc37df9677479c4233f126f8ba7855cd0e470aae19ce07be092",
+      "summaryExitCode": 0,
+      "naturalCleanup": true,
+      "native": {
+        "businessCounts": {
+          "todoEvents": 1,
+          "todoSources": 1,
+          "todos": 1
+        },
+        "calls": [
+          {
+            "argsSHA": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+            "callId": "e5876819-9183-4774-96e1-8995b91a99e2",
+            "category": "success",
+            "runId": "e362779030b8f42384d2ecf7e9d7bef6",
+            "schema": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a"
+          },
+          {
+            "argsSHA": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+            "callId": "23b443ee-3b1d-4271-aed2-b3f4d90fdbfc",
+            "category": "success",
+            "runId": "2947a358e9688a6412805a4cd3a51322",
+            "schema": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a"
+          },
+          {
+            "argsSHA": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+            "callId": "61d5ba86-b170-4c58-9860-3500a1ab6f5f",
+            "category": "success",
+            "runId": "trial-38401-1793489692525147000",
+            "schema": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a"
+          }
+        ],
+        "serviceCounts": {
+          "lookup": 3
+        },
+        "trialBusinessUnchanged": true
+      }
+    },
+    "probeBundleExecutions": 6,
+    "packageBuildOrder": [
+      "build:s33-ui-verify",
+      "probe:app"
+    ],
+    "warnings": {
+      "baseline": "docs/engineering/verification.md known nonblocking outputs",
+      "counts": {
+        "esbuild_runtime_size": 12,
+        "vite_chunk_size": 2,
+        "notarization_skipped": 2,
+        "warning_continuation": 2,
+        "test_title_mentions_warning": 2,
+        "command_warnings_flag": 2,
+        "unclassified": 0
+      },
+      "newUnclassifiedCount": 0,
+      "pass": true
+    },
+    "workspace": {
+      "allCapturedFieldsIdentical": false,
+      "fields": {
+        "head": true,
+        "indexSha256": true,
+        "fileCount": true,
+        "files": true,
+        "fileManifestSha256": true,
+        "sourceFreezeCount": true,
+        "sourceFreezeSha256": true,
+        "sourceMismatches": true,
+        "coreSha256": true,
+        "before-cached-name-status.nul": true,
+        "before-cached-stat.txt": true,
+        "before-diff-name-status.nul": true,
+        "before-diff-stat.txt": true,
+        "before-index-debug.nul": false,
+        "before-index-flags.nul": true,
+        "before-index-stage.nul": true,
+        "before-status.nul": true
+      },
+      "before": {
+        "phase": "before",
+        "capturedEpoch": 1793489335.811125,
+        "head": "514eb3a8fe9796002ee651ecae4943934c13b92a",
+        "indexSha256": "91e624873257fe4da1a30a3a7cf7372d7f784de6fa258b35b4c2b8c51d1857f0",
+        "rawIndexCopy": "before-index.raw",
+        "captureDidNotMutateIndex": true,
+        "fileCount": 4196,
+        "fileManifestSha256": "e56c5849b2490ec474d32e1dd3170fa652ffbc93e2af036ef9cfc486103f970b",
+        "sourceFreezeCount": 229,
+        "sourceFreezeSha256": "21738487a529d29771970ed883b38e2ff79869f9fc27ec1e67b2a2dfbe1ee410",
+        "sourceMismatches": [],
+        "coreSha256": "c1a5b043b546297f5200338f5ae6bed2a86a9c81befb750df40c41bc45022925"
+      },
+      "after": {
+        "phase": "after",
+        "capturedEpoch": 1793489765.7519412,
+        "head": "514eb3a8fe9796002ee651ecae4943934c13b92a",
+        "indexSha256": "91e624873257fe4da1a30a3a7cf7372d7f784de6fa258b35b4c2b8c51d1857f0",
+        "rawIndexCopy": "after-index.raw",
+        "captureDidNotMutateIndex": false,
+        "fileCount": 4196,
+        "fileManifestSha256": "e56c5849b2490ec474d32e1dd3170fa652ffbc93e2af036ef9cfc486103f970b",
+        "sourceFreezeCount": 229,
+        "sourceFreezeSha256": "21738487a529d29771970ed883b38e2ff79869f9fc27ec1e67b2a2dfbe1ee410",
+        "sourceMismatches": [],
+        "coreSha256": "c1a5b043b546297f5200338f5ae6bed2a86a9c81befb750df40c41bc45022925"
+      }
+    },
+    "index": {
+      "extensionPayloadByteComparisons": [
+        {
+          "index": 0,
+          "beforeSignature": "TREE",
+          "afterSignature": "TREE",
+          "beforePayloadFile": "before-extension-00-TREE.bin",
+          "afterPayloadFile": "after-extension-00-TREE.bin",
+          "payloadBytesIdentical": true
+        }
+      ],
+      "entryOrderIdentical": true,
+      "nonStatEntryByteDifferences": [],
+      "headerVersionAndCountIdentical": true,
+      "rawBytesIdentical": true,
+      "beforeSha256": "91e624873257fe4da1a30a3a7cf7372d7f784de6fa258b35b4c2b8c51d1857f0",
+      "afterSha256": "91e624873257fe4da1a30a3a7cf7372d7f784de6fa258b35b4c2b8c51d1857f0",
+      "beforeEntryCount": 4185,
+      "afterEntryCount": 4185,
+      "beforeVersion": 2,
+      "afterVersion": 2,
+      "checksumsValid": true,
+      "logicalDifferences": [],
+      "flagDifferences": [],
+      "statDifferences": [],
+      "extensionDifferences": [],
+      "beforeExtensions": [
+        {
+          "signature": "TREE",
+          "size": 13225,
+          "sha256": "2ebf1a8220d14498a5b7272868464a1b0bb26a1d1d99d69c607863d465b1e37a",
+          "byteStart": 519636,
+          "payloadStart": 519644,
+          "byteEnd": 532869,
+          "payloadFile": "before-extension-00-TREE.bin"
+        }
+      ],
+      "afterExtensions": [
+        {
+          "signature": "TREE",
+          "size": 13225,
+          "sha256": "2ebf1a8220d14498a5b7272868464a1b0bb26a1d1d99d69c607863d465b1e37a",
+          "byteStart": 519636,
+          "payloadStart": 519644,
+          "byteEnd": 532869,
+          "payloadFile": "after-extension-00-TREE.bin"
+        }
+      ],
+      "byteDifferenceRuns": [],
+      "allModeBlobStagePathAndFlagsIdentical": true,
+      "interpretation": "Compared actual before/after raw byte copies and parsed each entry, flags, stat cache field, extension payload and checksum. No inference from chmod is used."
+    },
+    "postCollectionIndex": {
+      "extensionPayloadByteComparisons": [
+        {
+          "index": 0,
+          "beforeSignature": "TREE",
+          "afterSignature": "TREE",
+          "beforePayloadFile": "after-extension-00-TREE.bin",
+          "afterPayloadFile": "after-collection-extension-00-TREE.bin",
+          "payloadBytesIdentical": true
+        }
+      ],
+      "entryOrderIdentical": true,
+      "nonStatEntryByteDifferences": [],
+      "headerVersionAndCountIdentical": true,
+      "rawBytesIdentical": false,
+      "beforeSha256": "91e624873257fe4da1a30a3a7cf7372d7f784de6fa258b35b4c2b8c51d1857f0",
+      "afterSha256": "d31b7fc3062f2cd6de4300d2c1a77f754b274c7c41992a23b789f8ddac42f7c7",
+      "beforeEntryCount": 4185,
+      "afterEntryCount": 4185,
+      "beforeVersion": 2,
+      "afterVersion": 2,
+      "checksumsValid": true,
+      "logicalDifferences": [],
+      "flagDifferences": [],
+      "statDifferences": [
+        {
+          "path": "scripts/probes/rustc-host-macro.py",
+          "field": "ctimeSeconds",
+          "before": 1793488904,
+          "after": 1793489728,
+          "beforeByteOffset": 204236,
+          "afterByteOffset": 204236
+        },
+        {
+          "path": "scripts/probes/rustc-host-macro.py",
+          "field": "ctimeNanoseconds",
+          "before": 967456065,
+          "after": 22651657,
+          "beforeByteOffset": 204240,
+          "afterByteOffset": 204240
+        }
+      ],
+      "extensionDifferences": [],
+      "beforeExtensions": [
+        {
+          "signature": "TREE",
+          "size": 13225,
+          "sha256": "2ebf1a8220d14498a5b7272868464a1b0bb26a1d1d99d69c607863d465b1e37a",
+          "byteStart": 519636,
+          "payloadStart": 519644,
+          "byteEnd": 532869,
+          "payloadFile": "after-extension-00-TREE.bin"
+        }
+      ],
+      "afterExtensions": [
+        {
+          "signature": "TREE",
+          "size": 13225,
+          "sha256": "2ebf1a8220d14498a5b7272868464a1b0bb26a1d1d99d69c607863d465b1e37a",
+          "byteStart": 519636,
+          "payloadStart": 519644,
+          "byteEnd": 532869,
+          "payloadFile": "after-collection-extension-00-TREE.bin"
+        }
+      ],
+      "byteDifferenceRuns": [
+        {
+          "offset": 204238,
+          "length": 6,
+          "beforeHex": "780839aa3541",
+          "afterHex": "7b400159a309"
+        },
+        {
+          "offset": 532869,
+          "length": 20,
+          "beforeHex": "340648e0481d1f580c83a01c7e715c937f70d5c4",
+          "afterHex": "3375db096e78873aae22c0835e2d3b0879608878"
+        }
+      ],
+      "allModeBlobStagePathAndFlagsIdentical": true,
+      "interpretation": "Compared actual before/after raw byte copies and parsed each entry, flags, stat cache field, extension payload and checksum. No inference from chmod is used."
+    },
+    "postCollectionOnlyProvenStatCacheAndChecksumChanges": true,
+    "indexCaptureSequence": "At each phase raw index was copied first. The complete check before/after raw copies are byte-identical. All subsequent Git collection used --no-optional-locks. During the after collection interval the index changed, so a third full raw copy was preserved and parsed with the same comparator. Only the wrapper entry ctime seconds/nanoseconds and the trailing checksum differ; logical fields, flags, non-stat entry bytes and every TREE payload byte remain identical. The writer causing this update is not identified, and no reset was performed.",
+    "sourceFreezeSha256": "21738487a529d29771970ed883b38e2ff79869f9fc27ec1e67b2a2dfbe1ee410",
+    "coreSha256": "c1a5b043b546297f5200338f5ae6bed2a86a9c81befb750df40c41bc45022925",
+    "bundles": [
+      {
+        "name": "Sidekick MCP Verify.app",
+        "appId": "com.sidekick.s33.ui.verify",
+        "resourceEntryCount": 559,
+        "controlledResourceEntries": [
+          "s33-ui",
+          "s33-ui/mcp-trial.mjs",
+          "s33-ui/service.mjs"
+        ],
+        "executableSha256": "61ad938e6bd782cbb62c182a47b832b0a40611c2900d20e0a27b840d4a20bbdb",
+        "signatureVerifyExitCode": 0,
+        "adHoc": true
+      },
+      {
+        "name": "Sidekick.app",
+        "appId": "com.sidekick.s0",
+        "resourceEntryCount": 556,
+        "controlledResourceEntries": [],
+        "executableSha256": "d86f75b29bdd75a877f0186ed468ff1e2ca402c40eccc8b0583b6a071ce4b0ad",
+        "signatureVerifyExitCode": 0,
+        "adHoc": true
+      }
+    ],
+    "keyArtifacts": [
+      {
+        "path": "build/s0-runtime/organizer.mjs",
+        "beforeSha256": "8db408822271bc96b88cd4ead4ff7c5285f792c7391b6830becaa37664b5f9ed",
+        "afterSha256": "8db408822271bc96b88cd4ead4ff7c5285f792c7391b6830becaa37664b5f9ed",
+        "sameBytes": true,
+        "bytes": 2448410
+      },
+      {
+        "path": "build/s0-runtime/probe.mjs",
+        "beforeSha256": "b5f0b50b12f946024f72d0bf9fb55d3f078cac1e0ac82b9ff9ceae4b01159178",
+        "afterSha256": "b5f0b50b12f946024f72d0bf9fb55d3f078cac1e0ac82b9ff9ceae4b01159178",
+        "sameBytes": true,
+        "bytes": 2429006
+      },
+      {
+        "path": "build/s0-runtime/mcp-probe.mjs",
+        "beforeSha256": "05e3b85b75de2e684e04ba13c44f47e912f90a72aaf5a61bd4693b5914a8d976",
+        "afterSha256": "05e3b85b75de2e684e04ba13c44f47e912f90a72aaf5a61bd4693b5914a8d976",
+        "sameBytes": true,
+        "bytes": 36810
+      },
+      {
+        "path": "build/s0-runtime/skills-manager.mjs",
+        "beforeSha256": "cbb8a425695cb4e97719a8f34b7336ff5303c1ff129c35daa7c929edad647504",
+        "afterSha256": "cbb8a425695cb4e97719a8f34b7336ff5303c1ff129c35daa7c929edad647504",
+        "sameBytes": true,
+        "bytes": 355093
+      },
+      {
+        "path": "tests/fixtures/mcp-trial.mjs",
+        "beforeSha256": "64a4b217691876f71ebca8b17d249bb90c1eac5aa64e6079d17349bfeaec26de",
+        "afterSha256": "64a4b217691876f71ebca8b17d249bb90c1eac5aa64e6079d17349bfeaec26de",
+        "sameBytes": true,
+        "bytes": 8885
+      },
+      {
+        "path": "src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/MacOS/sidekick",
+        "beforeSha256": "6897e86020fa76edc2f8eae652a65076548108985cc8b939c1ebc18013659648",
+        "afterSha256": "61ad938e6bd782cbb62c182a47b832b0a40611c2900d20e0a27b840d4a20bbdb",
+        "sameBytes": false,
+        "bytes": 17001120
+      },
+      {
+        "path": "src-tauri/target/release/bundle/macos/Sidekick.app/Contents/MacOS/sidekick",
+        "beforeSha256": "ffa0906fda2e5126d8cdfb8cc79905e5fa1c165b7f95ef425038458522dd2f7e",
+        "afterSha256": "d86f75b29bdd75a877f0186ed468ff1e2ca402c40eccc8b0583b6a071ce4b0ad",
+        "sameBytes": false,
+        "bytes": 16963024
+      },
+      {
+        "path": "build/p6-native-20261101/native/actions-final-indexed.json",
+        "beforeSha256": "ac098a1bda446e7ec81271bc123c9cf07b1c1579d6840b8bda363b5f54ed24d5",
+        "afterSha256": "ac098a1bda446e7ec81271bc123c9cf07b1c1579d6840b8bda363b5f54ed24d5",
+        "sameBytes": true,
+        "bytes": 444835
+      },
+      {
+        "path": "build/p6-native-20261101/native/30-owned-cleanup.json",
+        "beforeSha256": "488701b5c3dc91d9e74b59e87dad28f0ffcf11a1b5b011a036bbc84e6e7e05f5",
+        "afterSha256": "488701b5c3dc91d9e74b59e87dad28f0ffcf11a1b5b011a036bbc84e6e7e05f5",
+        "sameBytes": true,
+        "bytes": 337
+      },
+      {
+        "path": "build/p6-native-20261101/core.md",
+        "beforeSha256": "c1a5b043b546297f5200338f5ae6bed2a86a9c81befb750df40c41bc45022925",
+        "afterSha256": "c1a5b043b546297f5200338f5ae6bed2a86a9c81befb750df40c41bc45022925",
+        "sameBytes": true,
+        "bytes": 7576
+      }
+    ],
+    "artifactSnapshotTiming": "Captured before the second original complete npm run check, including before its first Runtime bundle.",
+    "priorGuiEvidenceExecutableSha256": "61ad938e6bd782cbb62c182a47b832b0a40611c2900d20e0a27b840d4a20bbdb",
+    "nativeGuiBoundary": "This verifier did not run fresh GUI acceptance on the rebuilt executable. Prior GUI evidence and current package hashes are separately identified.",
+    "firstRoundPreservation": {
+      "summarySha256": "ef5900ce0847000001d22c5371125ff202985e25600d40bc10d671458dba410a",
+      "manifestComparedFiles": 37,
+      "changedEvidenceFiles": []
+    },
+    "sameNodeCountersAsFirst": true,
+    "notPerformed": [
+      "No source/docs edits, staging, index reset, commit or push.",
+      "No ordinary App real-root startup; only the configured ordinary negative verification-flag entry test.",
+      "No fresh GUI interaction by this verifier.",
+      "No owner real .env/private_model or nightly real-request budget database access, no real model requests, production MCP Keychain, real user root or real Feishu use.",
+      "No clean-clone, CI or notarized distribution verification."
+    ],
+    "evidence": {
+      "log": "check.log",
+      "logSha256": "5e6ef74c0a844fd9450b2418aa60ec10c375153127656394ebb83dc28049d736",
+      "perScriptExitCodes": "script-events.jsonl",
+      "parsed": "parsed-check.json",
+      "beforeIndexRaw": "before-index.raw",
+      "afterIndexRaw": "after-index.raw",
+      "indexComparison": "index-comparison.json",
+      "postCollectionIndexRaw": "after-collection-index.raw",
+      "postCollectionIndexComparison": "after-collection-comparison.json",
+      "beforeIndexParsed": "before-index-parsed.json",
+      "afterIndexParsed": "after-index-parsed.json",
+      "workspace": "workspace-comparison.json",
+      "packages": "artifacts.json",
+      "warnings": "warnings.json",
+      "syntheticBudgeted": "synthetic-budgeted.json"
+    }
+  },
+  "firstSummarySha256": "ef5900ce0847000001d22c5371125ff202985e25600d40bc10d671458dba410a",
+  "repeatSummarySha256": "ed011eac9585a3f905fb104139e615d0c11963a5f170ca3060ca8bd68aaeccad"
+}

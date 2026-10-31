@@ -403,6 +403,12 @@ impl AppStore {
     }
     fn recover_model_config(&self) -> Result<()> {
         let journal = self.model_path(".llm-journal.json")?;
+        if cfg!(feature = "s33-mcp-ui-verification") && journal.exists() {
+            return Err(StoreError::new(
+                "VERIFY_MODELS_DISABLED",
+                "MCP隔离验收包禁止模型恢复。",
+            ));
+        }
         if !journal.exists() {
             return Ok(());
         }
@@ -421,6 +427,14 @@ impl AppStore {
         Ok(())
     }
     pub fn read_models(&self) -> Result<Option<ModelConfiguration>> {
+        #[cfg(feature = "s33-mcp-ui-verification")]
+        if cfg!(feature = "s33-mcp-ui-verification") {
+            if let Some(validate) = &self.verification_validate {
+                validate()?;
+            }
+            self.recover_model_config()?;
+            return Ok(self.verification_model.clone());
+        }
         self.recover_model_config()?;
         let providers = self.model_path("providers.json")?;
         let models = self.model_path("models.json")?;
@@ -634,7 +648,13 @@ impl AppStore {
             return Err(config_error());
         }
         let auth = &provider["auth"];
-        let api_key = if let Some(variable) = auth["apiKeyEnv"].as_str() {
+        #[cfg(feature = "s33-mcp-ui-verification")]
+        let synthetic = self.verification_model.is_some();
+        #[cfg(not(feature = "s33-mcp-ui-verification"))]
+        let synthetic = false;
+        let api_key = if synthetic {
+            "p6-synthetic-token".into()
+        } else if let Some(variable) = auth["apiKeyEnv"].as_str() {
             std::env::var(variable)
                 .ok()
                 .filter(|s| !s.is_empty())
@@ -678,5 +698,20 @@ mod verification_tests {
                 .code,
             "VERIFY_MODELS_DISABLED"
         );
+    }
+    #[test]
+    fn verification_journal_entry_never_recovers_even_without_outer_guard() {
+        let f = crate::local_store::tests::Fixture::new();
+        let mut store = f.store();
+        store.initialize(None, "UTC").unwrap();
+        let path = store.root().unwrap().join("config/.llm-journal.json");
+        let bytes = br#"{"version":1,"providers":{"providers":[]},"models":{}}"#;
+        std::fs::write(&path, bytes).unwrap();
+        assert_eq!(
+            store.recover_model_config().unwrap_err().code,
+            "VERIFY_MODELS_DISABLED"
+        );
+        assert_eq!(std::fs::read(&path).unwrap(), bytes);
+        assert!(!store.root().unwrap().join("config/providers.json").exists());
     }
 }

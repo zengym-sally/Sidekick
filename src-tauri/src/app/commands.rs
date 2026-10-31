@@ -31,6 +31,12 @@ impl LocalState {
         self.verification = Some(guard);
         self
     }
+    #[cfg(feature = "s33-mcp-ui-verification")]
+    pub(crate) fn native_model_pin(&self) -> Option<serde_json::Value> {
+        self.verification
+            .as_ref()
+            .and_then(|guard| guard.native_pin())
+    }
     pub(crate) fn access<T>(
         &self,
         action: impl FnOnce(&mut AppStore) -> Result<T, StoreError>,
@@ -42,6 +48,14 @@ impl LocalState {
         #[cfg(any(feature = "s33-mcp-verification", feature = "s33-mcp-ui-verification"))]
         if let Some(verification) = &self.verification {
             verification.validate()?;
+        }
+        #[cfg(feature = "s33-mcp-ui-verification")]
+        if let Some(verification) = self
+            .verification
+            .as_ref()
+            .filter(|verification| guard.is_none() && verification.native_pin().is_some())
+        {
+            *guard = Some(verification.open_native_store()?);
         }
         if guard.is_none() {
             *guard = Some(AppStore::open(self.app_dir.clone())?);

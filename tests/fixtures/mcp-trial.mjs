@@ -3,7 +3,7 @@ import { createServer } from 'node:http';
 import { createInterface } from 'node:readline';
 import { spawn } from 'node:child_process';
 
-const [role, record, mode = 'normal', marker = ''] = process.argv.slice(2);
+const [role, record, mode = 'normal', marker = '', nativeNonce = ''] = process.argv.slice(2);
 const note = value => appendFileSync(record, JSON.stringify(value) + '\n', { mode: 0o600 });
 if (role === 'model') {
   let requests = 0;
@@ -14,6 +14,7 @@ if (role === 'model') {
   };
   const server = createServer(async (request, response) => {
     try {
+      if (nativeNonce && (request.headers.authorization !== 'Bearer p6-synthetic-token' || request.headers['x-sidekick-native-nonce'] !== nativeNonce)) { response.writeHead(403); response.end('{}'); return; }
       let raw = ''; for await (const bytes of request) { raw += bytes; if (Buffer.byteLength(raw) > 2000000) throw new Error(); }
       const body = JSON.parse(raw), results = body.messages.filter(message => message.role === 'tool');
       const user = body.messages.findLast(message => message.role === 'user');
@@ -50,7 +51,7 @@ if (role === 'model') {
   server.listen(0, '127.0.0.1', () => process.stdout.write(`http://127.0.0.1:${server.address().port}/v1\n`));
   process.on('SIGTERM', () => { server.closeAllConnections(); server.close(() => process.exit(0)); });
 } else {
-  note({ type: 'pid', role, pid: process.pid, modelKeyPresent: Object.values(process.env).some(value => ['p3-synthetic-token', 'p4-synthetic-token'].includes(value) || value.startsWith('sidekick-p5-relay-')) });
+  note({ type: 'pid', role, pid: process.pid, cwd: process.cwd(), p6Label: process.env.P6_LABEL ?? null, modelKeyPresent: Object.values(process.env).some(value => ['p3-synthetic-token', 'p4-synthetic-token', 'p6-synthetic-token'].includes(value) || value.startsWith('sidekick-p5-relay-')) });
   process.on('SIGTERM', () => {}); setInterval(() => {}, 1000);
   if (role === 'service') {
     const waiting = new Map(); let calls = 0;

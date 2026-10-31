@@ -1,0 +1,62 @@
+{
+  "scope": "RootB initial-entry positive only; does not replace RootA full GUI matrix",
+  "nativeSha256": "61ad938e6bd782cbb62c182a47b832b0a40611c2900d20e0a27b840d4a20bbdb",
+  "runnerSourceSha256": "417d4e45d91e927f31d27c567801205dacf86630bac50bd831af74a364e59acc",
+  "countsBefore": {
+    "sources": 0,
+    "candidates": 0,
+    "todos": 0,
+    "todo_events": 0,
+    "todo_sources": 0,
+    "runs": 0,
+    "agent_runs": 0,
+    "tool_calls": 0
+  },
+  "countsAfterSave": {
+    "sources": 0,
+    "candidates": 0,
+    "todos": 0,
+    "todo_events": 0,
+    "todo_sources": 0,
+    "runs": 0,
+    "agent_runs": 0,
+    "tool_calls": 0
+  },
+  "countsAfterDiagnostic": {
+    "sources": 0,
+    "candidates": 0,
+    "todos": 0,
+    "todo_events": 0,
+    "todo_sources": 0,
+    "runs": 0,
+    "agent_runs": 1,
+    "tool_calls": 0
+  },
+  "syntheticModelHttp": 0,
+  "serviceCalls": 0,
+  "schemaVersion": 4,
+  "quickCheck": "ok",
+  "foreignKeyViolations": [],
+  "requested": {
+    "height": 1000,
+    "width": 1440
+  },
+  "actual": {
+    "height": 1000,
+    "width": 1440
+  },
+  "outerRect": {
+    "height": 1000,
+    "width": 1440,
+    "x": 560,
+    "y": 220
+  },
+  "appPid": 56700,
+  "modelPid": 56435,
+  "runnerPid": 56269,
+  "stopModelCommandExit": 0,
+  "appAbsent": true,
+  "modelAbsent": true,
+  "runnerAbsent": true,
+  "listenerAbsent": true
+}

@@ -1,0 +1,345 @@
+{
+  "scope": "P6 RootA real native GUI/Tauri/Pi/stdio/SQLite with a synthetic local model; zero new real model HTTP",
+  "sourceAggregate": "21738487a529d29771970ed883b38e2ff79869f9fc27ec1e67b2a2dfbe1ee410",
+  "coreSha256": "c1a5b043b546297f5200338f5ae6bed2a86a9c81befb750df40c41bc45022925",
+  "nativeSha256": "61ad938e6bd782cbb62c182a47b832b0a40611c2900d20e0a27b840d4a20bbdb",
+  "counts": {
+    "sources": 0,
+    "candidates": 0,
+    "todos": 0,
+    "todo_events": 0,
+    "todo_sources": 0,
+    "runs": 0,
+    "agent_runs": 12,
+    "tool_calls": 8
+  },
+  "schemaVersion": 4,
+  "quickCheck": "ok",
+  "foreignKeyViolations": [],
+  "syntheticModelHttp": 12,
+  "serviceCalls": 8,
+  "modelTools": "only controlled MCP; no Read/Bash/Skills metadata",
+  "serviceModelKeyPresent": false,
+  "coldReopenComparisons": [
+    {
+      "before": "10-explicit-cancel",
+      "after": "12-cold-narrow-open",
+      "unchanged": true,
+      "toolCalls": 4,
+      "syntheticModelHttp": 6
+    },
+    {
+      "before": "23-frozen-wide-closed",
+      "after": "24-frozen-narrow-cold",
+      "unchanged": true,
+      "toolCalls": 8,
+      "syntheticModelHttp": 12
+    },
+    {
+      "before": "27-frozen-narrow-closed",
+      "after": "29-frozen-final-closed",
+      "unchanged": true,
+      "toolCalls": 8,
+      "syntheticModelHttp": 12
+    }
+  ],
+  "finalNativeLaunches": [
+    {
+      "pid": 47640,
+      "requested": {
+        "width": 1440,
+        "height": 1000
+      },
+      "actual": {
+        "height": 1000,
+        "width": 1440
+      },
+      "outerRect": {
+        "height": 1000,
+        "width": 1440,
+        "x": 560,
+        "y": 220
+      },
+      "monitor": {
+        "height": 1440,
+        "width": 2560,
+        "x": 0,
+        "y": 0
+      },
+      "geometryConfirmed": true,
+      "nativeSha256": "61ad938e6bd782cbb62c182a47b832b0a40611c2900d20e0a27b840d4a20bbdb"
+    },
+    {
+      "pid": 98488,
+      "requested": {
+        "width": 640,
+        "height": 900
+      },
+      "actual": {
+        "height": 900,
+        "width": 640
+      },
+      "outerRect": {
+        "height": 900,
+        "width": 640,
+        "x": 960,
+        "y": 270
+      },
+      "monitor": {
+        "height": 1440,
+        "width": 2560,
+        "x": 0,
+        "y": 0
+      },
+      "geometryConfirmed": true,
+      "nativeSha256": "61ad938e6bd782cbb62c182a47b832b0a40611c2900d20e0a27b840d4a20bbdb"
+    },
+    {
+      "pid": 82227,
+      "requested": {
+        "width": 1440,
+        "height": 1000
+      },
+      "actual": {
+        "height": 1000,
+        "width": 1440
+      },
+      "outerRect": {
+        "height": 1000,
+        "width": 1440,
+        "x": 560,
+        "y": 220
+      },
+      "monitor": {
+        "height": 1440,
+        "width": 2560,
+        "x": 0,
+        "y": 0
+      },
+      "geometryConfirmed": true,
+      "nativeSha256": "61ad938e6bd782cbb62c182a47b832b0a40611c2900d20e0a27b840d4a20bbdb"
+    }
+  ],
+  "agentRuns": [
+    {
+      "id": "mcp-probe-94775-1793486481019853000",
+      "purpose": "mcp_probe",
+      "status": "succeeded",
+      "errorCode": null
+    },
+    {
+      "id": "mcp-probe-94775-1793486525165211000",
+      "purpose": "mcp_probe",
+      "status": "succeeded",
+      "errorCode": null
+    },
+    {
+      "id": "trial-94775-1793486530933473000",
+      "purpose": "role_trial",
+      "status": "succeeded",
+      "errorCode": null
+    },
+    {
+      "id": "trial-94775-1793486554171717000",
+      "purpose": "role_trial",
+      "status": "succeeded",
+      "errorCode": null
+    },
+    {
+      "id": "trial-94775-1793486586636983000",
+      "purpose": "role_trial",
+      "status": "failed",
+      "errorCode": "MCP_RESULT_UNKNOWN"
+    },
+    {
+      "id": "trial-94775-1793486624108589000",
+      "purpose": "role_trial",
+      "status": "failed",
+      "errorCode": "MCP_RESULT_UNKNOWN"
+    },
+    {
+      "id": "mcp-probe-96204-1793487011563937000",
+      "purpose": "mcp_probe",
+      "status": "succeeded",
+      "errorCode": null
+    },
+    {
+      "id": "trial-47640-1793487332887318000",
+      "purpose": "role_trial",
+      "status": "succeeded",
+      "errorCode": null
+    },
+    {
+      "id": "trial-47640-1793487355603972000",
+      "purpose": "role_trial",
+      "status": "succeeded",
+      "errorCode": null
+    },
+    {
+      "id": "trial-47640-1793487389977963000",
+      "purpose": "role_trial",
+      "status": "failed",
+      "errorCode": "MCP_RESULT_UNKNOWN"
+    },
+    {
+      "id": "trial-47640-1793487444096873000",
+      "purpose": "role_trial",
+      "status": "failed",
+      "errorCode": "MCP_RESULT_UNKNOWN"
+    },
+    {
+      "id": "mcp-probe-98488-1793487626661777000",
+      "purpose": "mcp_probe",
+      "status": "succeeded",
+      "errorCode": null
+    }
+  ],
+  "toolCalls": [
+    {
+      "id": "5756bdaa-c50b-4d3b-8827-eef9f1537989",
+      "run_id": null,
+      "agent_run_id": "trial-94775-1793486530933473000",
+      "model_call_id": "synthetic-call-0",
+      "configuration_revision": "rev-63196c50d102666eaa4632774207aadb02ec3ae908217247ae28f1719dffb4d9",
+      "schema_sha256": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a",
+      "server_id": "mcp-386520b20c4fb6776088c248",
+      "tool_name": "lookup",
+      "arguments_sha256": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+      "send_state": "responded",
+      "response_category": "success",
+      "response_summary": null,
+      "created_at_ms": 1793486531880,
+      "finished_at_ms": 1793486531890
+    },
+    {
+      "id": "b399ae02-e020-4387-8dd9-8d611863c7e7",
+      "run_id": null,
+      "agent_run_id": "trial-94775-1793486554171717000",
+      "model_call_id": "synthetic-call-0",
+      "configuration_revision": "rev-4566131396bc2cf4184bc34691a5efda864c42d26cd5e3b1155b8e93d435cecf",
+      "schema_sha256": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a",
+      "server_id": "mcp-386520b20c4fb6776088c248",
+      "tool_name": "lookup",
+      "arguments_sha256": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+      "send_state": "responded",
+      "response_category": "tool_error",
+      "response_summary": null,
+      "created_at_ms": 1793486555117,
+      "finished_at_ms": 1793486555126
+    },
+    {
+      "id": "e5397dba-3c99-4c5f-aa6b-3ff3cc8ce9f0",
+      "run_id": null,
+      "agent_run_id": "trial-94775-1793486586636983000",
+      "model_call_id": "synthetic-call-0",
+      "configuration_revision": "rev-fae204a631e38217e88a99bef10e959a7d820444172f5c4844d1cd460b65fc17",
+      "schema_sha256": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a",
+      "server_id": "mcp-386520b20c4fb6776088c248",
+      "tool_name": "lookup",
+      "arguments_sha256": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+      "send_state": "unknown",
+      "response_category": null,
+      "response_summary": null,
+      "created_at_ms": 1793486587625,
+      "finished_at_ms": 1793486588758
+    },
+    {
+      "id": "4a768bbe-311a-4207-9b9b-2b54f0d31b95",
+      "run_id": null,
+      "agent_run_id": "trial-94775-1793486624108589000",
+      "model_call_id": "synthetic-call-0",
+      "configuration_revision": "rev-07da5686b7156218b092649efe0d128f264b0f57dca0fc921961635b2f9f8502",
+      "schema_sha256": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a",
+      "server_id": "mcp-386520b20c4fb6776088c248",
+      "tool_name": "lookup",
+      "arguments_sha256": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+      "send_state": "unknown",
+      "response_category": null,
+      "response_summary": null,
+      "created_at_ms": 1793486625034,
+      "finished_at_ms": 1793486631704
+    },
+    {
+      "id": "17407dd4-980e-4583-8264-88103fef0976",
+      "run_id": null,
+      "agent_run_id": "trial-47640-1793487332887318000",
+      "model_call_id": "synthetic-call-0",
+      "configuration_revision": "rev-bae544ee5eb8d2e53d62efe7ff07b225ce0d71ce70965dceb4e354d7962f8e72",
+      "schema_sha256": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a",
+      "server_id": "mcp-386520b20c4fb6776088c248",
+      "tool_name": "lookup",
+      "arguments_sha256": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+      "send_state": "responded",
+      "response_category": "success",
+      "response_summary": null,
+      "created_at_ms": 1793487333847,
+      "finished_at_ms": 1793487333856
+    },
+    {
+      "id": "4e360a18-6999-42ab-b652-7920cb893a63",
+      "run_id": null,
+      "agent_run_id": "trial-47640-1793487355603972000",
+      "model_call_id": "synthetic-call-0",
+      "configuration_revision": "rev-9a56446b324fdc7ca13ed2d1960521e971ff2eb0913b32fd26d95c210c16cd52",
+      "schema_sha256": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a",
+      "server_id": "mcp-386520b20c4fb6776088c248",
+      "tool_name": "lookup",
+      "arguments_sha256": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+      "send_state": "responded",
+      "response_category": "tool_error",
+      "response_summary": null,
+      "created_at_ms": 1793487356542,
+      "finished_at_ms": 1793487356552
+    },
+    {
+      "id": "e2ac4a1c-7fdf-4480-b6a9-3fd11415efa2",
+      "run_id": null,
+      "agent_run_id": "trial-47640-1793487389977963000",
+      "model_call_id": "synthetic-call-0",
+      "configuration_revision": "rev-5a8734e61d3cf0dafa4068528301bdc770f7b8705bdf1cbce8409cca6c9465ca",
+      "schema_sha256": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a",
+      "server_id": "mcp-386520b20c4fb6776088c248",
+      "tool_name": "lookup",
+      "arguments_sha256": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+      "send_state": "unknown",
+      "response_category": null,
+      "response_summary": null,
+      "created_at_ms": 1793487390933,
+      "finished_at_ms": 1793487392094
+    },
+    {
+      "id": "9ec6ed8b-199e-4529-b304-1bceeec12435",
+      "run_id": null,
+      "agent_run_id": "trial-47640-1793487444096873000",
+      "model_call_id": "synthetic-call-0",
+      "configuration_revision": "rev-6acc05c3e4597c9b26e336cdbf20e97b00c160d4922d389188d244e51c617d85",
+      "schema_sha256": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a",
+      "server_id": "mcp-386520b20c4fb6776088c248",
+      "tool_name": "lookup",
+      "arguments_sha256": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+      "send_state": "unknown",
+      "response_category": null,
+      "response_summary": null,
+      "created_at_ms": 1793487445090,
+      "finished_at_ms": 1793487453127
+    }
+  ],
+  "officialCuaActions": 34,
+  "cleanup": {
+    "appPid": 82227,
+    "appAbsent": true,
+    "runnerPid": 93047,
+    "modelPid": 93221,
+    "modelParent": 93047,
+    "modelCommandConfirmed": true,
+    "signal": "SIGTERM to owned runner; its Child cleanup handler",
+    "runnerAfter": "",
+    "modelAfter": "",
+    "listenerAfterExit": 1
+  },
+  "openResiduals": [
+    "existing P3 saved notice remains after successful diagnostic",
+    "P5 real revise failure and real trial unverified",
+    "production MCP Keychain/real credentials/Feishu/user root/historical native and visual/clean clone/CI remain open"
+  ]
+}
