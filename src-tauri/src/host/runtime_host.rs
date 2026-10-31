@@ -177,11 +177,14 @@ impl RuntimeState {
             let prepared=match store.prepare_model(){Ok(p)=>p,Err(e)=>return Ok((store.finish_run_error(&run.id,e.code)?,None))};
             let mut snapshot=prepared.snapshot;let cwd=store.run_directory(&run.id)?;if snapshot["model"]["capabilities"]["toolCall"]!=false {match crate::skills_host::freeze(&directory,&store.root()?,&cwd){Ok(skills)=>snapshot["skills"]=skills,Err(e)=>return Ok((store.finish_run_error(&run.id,e.code)?,None))};}snapshot["context"]=json!({"timeZone":zone,"instructionAtMs":run.created_at_ms});
             let run=store.bind_run_snapshot(&run.id,snapshot.clone())?;
+            let mcp=match crate::mcp_trial::prepare_business(store,&run.id,&directory){Ok(value)=>value,Err(error)=>return Ok((store.finish_run_error(&run.id,error.code)?,None))};
+            let run=store.model_run(&run.id)?;
+            let snapshot=run.snapshot.clone();
             let source=store.batch(run.source_id.as_deref().ok_or_else(||error("SOURCE_UNAVAILABLE","来源不存在。"))?)?.source;
             let candidate=run.candidate_id.as_ref().map(|id|store.candidate(id)).transpose()?;
             let anchor=if run.kind=="revise"{run.created_at_ms}else{source.anchor_at_ms};
             let cwd=store.run_directory(&run.id)?;
-            let payload=json!({"runId":run.id,"kind":run.kind,"snapshot":snapshot,"apiKey":prepared.api_key,"cwd":cwd,"runLimitMs":120000_u64.saturating_sub(preparation_started.elapsed().as_millis() as u64).max(1),"anchorAtMs":anchor,"source":{"rawText":source.raw_text,"timeZone":zone},"candidate":candidate,"instruction":run.input["instruction"]});
+            let payload=json!({"runId":run.id,"kind":run.kind,"snapshot":snapshot,"mcp":mcp,"apiKey":prepared.api_key,"cwd":cwd,"runLimitMs":120000_u64.saturating_sub(preparation_started.elapsed().as_millis() as u64).max(1),"anchorAtMs":anchor,"source":{"rawText":source.raw_text,"timeZone":zone},"candidate":candidate,"instruction":run.input["instruction"]});
             Ok((run,Some(payload)))
         })?;
         let Some(payload) = payload else {
@@ -195,7 +198,9 @@ impl RuntimeState {
             server_id: None,
             mcp_owner: Arc::new(Mutex::new(None)),
             mcp_intent: Arc::new(Mutex::new(None)),
-            mcp_trial: Default::default(),
+            mcp_trial: Arc::new(Mutex::new(crate::mcp_trial::TrialState::from_payload(
+                &payload,
+            ))),
             cancel: Arc::new(AtomicBool::new(false)),
             pid: Arc::new(AtomicU32::new(0)),
             workers: Arc::new(Mutex::new(BTreeMap::new())),
@@ -390,6 +395,10 @@ fn execute(
     #[cfg(test)]
     if *state.trial_policy.lock().map_err(|_| "RUNTIME_PROTOCOL")? == Some("short-io") {
         payload["runLimitMs"] = 1000.into();
+    }
+    #[cfg(test)]
+    if *state.trial_policy.lock().map_err(|_| "RUNTIME_PROTOCOL")? == Some("mcp-only") {
+        payload["verificationMcpOnly"] = true.into();
     }
     payload["hostNonce"] = job.nonce.clone().into();
     let mut mcp = crate::mcp_trial::TrialControl::new(job, directory, local, &payload);
@@ -694,6 +703,10 @@ pub async fn active_agent_trial(runtime: State<'_, RuntimeState>) -> Result<Opti
 #[cfg(test)]
 #[path = "mcp_recovery_tests.rs"]
 mod mcp_recovery_tests;
+
+#[cfg(test)]
+#[path = "mcp_formal_tests.rs"]
+mod mcp_formal_tests;
 
 #[cfg(test)]
 #[path = "mcp_trial_tests.rs"]

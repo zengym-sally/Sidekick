@@ -774,6 +774,30 @@ fn mcp_calls_unknown_terminal_timestamp_is_absorbing() {
 fn mcp_calls_trial_lifecycle_does_not_change_business_tables_or_runs() {
     let (_f, mut store, id, tool) = prepared();
     let todo = store.create(input(), "mcp-calls-existing").unwrap();
+    let batch = store
+        .begin_import(
+            TextInput {
+                text: "Synthetic material".into(),
+                source_at_ms: None,
+                time_zone: "UTC".into(),
+            },
+            json!({}),
+            false,
+        )
+        .unwrap();
+    store
+        .publish_candidates(
+            &batch.run.unwrap().id,
+            vec![CandidateDraft {
+                fields: input(),
+                evidence: "Synthetic material".into(),
+                due_expression: None,
+                followup_expression: None,
+                warnings: vec![],
+                unresolved: false,
+            }],
+        )
+        .unwrap();
     let before: Vec<_> = ["sources", "candidates", "todos", "todo_events", "runs"]
         .iter()
         .map(|table| {

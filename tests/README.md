@@ -22,7 +22,7 @@
 | `s1-profile.test.mjs` | unit | 个人资料模型 |
 | `s2-dates.test.mjs` | unit | 日期表达式解析与时区（`shared/dates.mjs`） |
 | `s2-contract.test.mjs` | unit | 模型输出契约（`runtime/lib/organizer-contract.mjs`） |
-| `s2-client.test.mjs` | unit | 文本整理客户端与模型设置 |
+| `s2-client.test.mjs` | unit | 文本整理客户端、正式任务unknown／迟到接收与模型设置 |
 | `s2-bash.test.mjs` | integration | managed Bash worker 生命周期与凭据脱敏 |
 | `s2-runtime.test.mjs` | integration | 打包 organizer Runtime 的提取流程 |
 | `s31-client.test.mjs` | unit | 智能体偏好配置、同run未知结果／终态吸收及真实Pinia store |
@@ -47,10 +47,16 @@
 | `s33-ui-artifacts.test.mjs` | integration | 打包产物内容与签名边界 |
 | `mcp-trial.test.mjs` | unit | MCP隔离调用的命名、参数、结果预算、ACK归属及unknown提示 |
 | `mcp-recovery.test.mjs` | integration | 真实Pi／Runtime取消、迟到、progress硬期限、ACK身份与拥塞下绝对期限；受控ACK替身 |
+| `model-budget.test.mjs` | integration | 独立临时SQLite／假上游的跨进程额度、锁、故障、SSE及MCP-only边界 |
+| `mcp-launcher.test.mjs` | integration | 真实验收launcher准入、异常收尾、进程退出竞态；替身与自有OS进程分层 |
 
 Rust的`store/mcp_calls_tests.rs`覆盖调用台账、冻结和终态优先级，聚焦入口为`npm run test:mcp-calls`；`host/mcp_trial_tests.rs`通过真实Rust宿主、随包Runtime／Pi、本机合成模型和stdio服务做整链集成，使用`npm run test:mcp-trial`（先打包）。两者也随既有`probe:native`进入完整`check`，不需要真实模型或用户根。合成模型／服务输入在`fixtures/mcp-trial.mjs`；不能用这些结果替代原生验收。
 
 P4恢复矩阵在`host/mcp_recovery_tests.rs`及嵌套的`mcp_host_recovery_tests.rs`，入口`npm run test:mcp-recovery-host`：实际事务故障、精确累计预算、禁止重试、真实宿主强杀／冷启、进程组回收和OS管道限额；随`probe:native`进入完整门禁。Node接缝入口`npm run test:mcp-recovery`先由纳管脚本`prepare-mcp-recovery.mjs`从固定Pi源码构建，再运行14项集成测试；只把ACK作为受控替身，持久化由Rust矩阵另证。停读／畸形输出／累计字节超限及槽恢复输入在`fixtures/mcp-runtime-fault.mjs`，不冒充真实Pi。所有输入仅合成，均不调用真实模型、生产钥匙串或真实用户根。
+
+P5正式任务矩阵在`host/mcp_formal_tests.rs`，聚焦`npm run test:mcp-formal`，存储扩展在`store/mcp_formal_calls_tests.rs`并由原`test:mcp-calls`带入。`npm run test:model-budget`聚合两份预算／launcher测试；故障接缝`probes/model-budget-faults.py`纳管，只用新临时库和假上游，不能把mock fsync／commit冒充真实断电或SQLite VFS验证。`npm run test:mcp-budgeted`通过受控代理、真实Pi／stdio与Rust闭环，但上游仍合成，不读真实env；需要先有`probe:bundle`产物，runner按`probe:mcp-live:prepare`编译验收test。上述均随完整门禁执行。
+
+显式`npm run probe:mcp-live`仅供owner已授权的有界真实验收：先核独立双面交付及预算验证的私有、冻结证据，再打开已有本夜预算库，所有真实HTTP先持久占槽；不自动初始化／重置、不会运行旧unbudgeted live用例。真实key只进可信代理内存，Runtime／App只拿合成relay凭据；真实与合成结果分别署名，原生验收仍需单独证据。
 
 ## 新测试命名约定
 

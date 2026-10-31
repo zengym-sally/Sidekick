@@ -797,6 +797,7 @@ impl AppStore {
                 )
             })?;
         }
+        mcp_calls::recover_business_mcp(&db)?;
         mcp_calls::recover_trial_mcp(&db, None)?;
         db.execute("UPDATE runs SET status='interrupted',error_code='INTERRUPTED',finished_at_ms=?1 WHERE status IN ('queued','running')",[now_ms()?]).map_err(db_error)?;
         db.execute("UPDATE agent_runs SET status='interrupted',error_code='INTERRUPTED',finished_at_ms=?1 WHERE status='running'",[now_ms()?]).map_err(db_error)?;

@@ -286,10 +286,12 @@ impl AppStore {
         Ok(rows)
     }
     pub fn interrupt_model_run(&self, id: &str) -> Result<ModelRun> {
+        self.settle_mcp_task(mcp_calls::McpTaskOwner::Business, id)?;
         self.db()?.execute("UPDATE runs SET status='interrupted',error_code='INTERRUPTED',finished_at_ms=?2 WHERE id=?1 AND status IN ('running','queued')",params![id,now_ms()?]).map_err(db_error)?;
         self.model_run(id)
     }
     pub fn interrupt_unowned_runs(&self) -> Result<()> {
+        mcp_calls::recover_business_mcp(self.db()?)?;
         self.db()?.execute("UPDATE runs SET status='interrupted',error_code='INTERRUPTED',finished_at_ms=?1 WHERE status IN ('running','queued')",[now_ms()?]).map_err(db_error)?;
         Ok(())
     }
@@ -440,6 +442,7 @@ impl AppStore {
         run_id: &str,
         drafts: Vec<CandidateDraft>,
     ) -> Result<ImportBatch> {
+        self.settle_mcp_task(mcp_calls::McpTaskOwner::Business, run_id)?;
         if drafts.len() > 50 {
             return Err(invalid());
         }
@@ -475,6 +478,7 @@ impl AppStore {
         self.batch(&source.id)
     }
     pub fn finish_run_error(&mut self, id: &str, code: &str) -> Result<ModelRun> {
+        self.settle_mcp_task(mcp_calls::McpTaskOwner::Business, id)?;
         if code.len() > 64 || !code.bytes().all(|b| b.is_ascii_uppercase() || b == b'_') {
             return Err(invalid());
         }
@@ -482,6 +486,7 @@ impl AppStore {
         self.model_run(id)
     }
     pub fn cancel_run(&mut self, id: &str) -> Result<ModelRun> {
+        self.settle_mcp_task(mcp_calls::McpTaskOwner::Business, id)?;
         self.db()?.execute("UPDATE runs SET status='cancelled',error_code='CANCELLED',finished_at_ms=?2 WHERE id=?1 AND status IN ('running','queued')",params![id,now_ms()?]).map_err(db_error)?;
         self.model_run(id)
     }
@@ -573,6 +578,7 @@ impl AppStore {
         Ok(run)
     }
     pub fn publish_revision(&mut self, id: &str, preview: CandidateDraft) -> Result<ModelRun> {
+        self.settle_mcp_task(mcp_calls::McpTaskOwner::Business, id)?;
         let tx = self.db_mut()?.transaction().map_err(db_error)?;
         let run = load_run(&tx, id)?;
         if run.kind != "revise" || run.status != "running" {

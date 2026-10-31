@@ -7,8 +7,8 @@ const [role, record, mode = 'normal', marker = ''] = process.argv.slice(2);
 const note = value => appendFileSync(record, JSON.stringify(value) + '\n', { mode: 0o600 });
 if (role === 'model') {
   let requests = 0;
-  const stream = (response, tools, prefix = 'synthetic-call-') => {
-    const delta = tools ? { role: 'assistant', tool_calls: tools.map((tool, index) => ({ index, id: `${prefix}${index}`, type: 'function', function: { name: tool.name, arguments: JSON.stringify(tool.args) } })) } : { role: 'assistant', content: JSON.stringify({ candidates: [{ title: '整理合成清单', kind: 'action', owner: '我', priority: 'medium', tags: [], evidence: '我整理合成清单。', dueExpression: null, followupExpression: null }] }) };
+  const stream = (response, tools, prefix = 'synthetic-call-', finalData = null) => {
+    const delta = tools ? { role: 'assistant', tool_calls: tools.map((tool, index) => ({ index, id: `${prefix}${index}`, type: 'function', function: { name: tool.name, arguments: JSON.stringify(tool.args) } })) } : { role: 'assistant', content: JSON.stringify(finalData || { candidates: [{ title: '整理合成清单', kind: 'action', owner: '我', priority: 'medium', tags: [], evidence: mode === 'short-evidence' ? '我整理合成清单' : '我整理合成清单。', dueExpression: null, followupExpression: null }] }) };
     response.writeHead(200, { 'content-type': 'text/event-stream' });
     response.end(`data: ${JSON.stringify({ choices: [{ index: 0, delta, finish_reason: null }] })}\n\ndata: ${JSON.stringify({ choices: [{ index: 0, delta: {}, finish_reason: tools ? 'tool_calls' : 'stop' }] })}\n\ndata: [DONE]\n\n`);
   };
@@ -16,11 +16,15 @@ if (role === 'model') {
     try {
       let raw = ''; for await (const bytes of request) { raw += bytes; if (Buffer.byteLength(raw) > 2000000) throw new Error(); }
       const body = JSON.parse(raw), results = body.messages.filter(message => message.role === 'tool');
+      const user = body.messages.findLast(message => message.role === 'user');
+      const userText = typeof user?.content === 'string' ? user.content : (user?.content || []).filter(block => block.type === 'text').map(block => block.text).join('');
+      const context = JSON.parse(userText || '{}');
+      const finalData = context.task === 'connection test' ? { ok: true } : context.instruction ? { changes: { title: '核对合成清单' } } : null;
       const names = (body.tools || []).map(tool => tool.function.name).filter(name => name.startsWith('mcp_'));
       requests++;
       const readPath = ['recovery-retry', 'recovery-read-control'].includes(mode) ? /<location>([^<]+)<\/location>/.exec(body.messages.filter(message => message.role === 'system').map(message => message.content).join('\n'))?.[1] : undefined;
       if (['recovery-retry', 'recovery-read-control'].includes(mode) && (!readPath || !(body.tools || []).some(tool => tool.function.name === 'read'))) throw new Error('Controlled Read target unavailable.');
-      note({ type: 'model', names, request: requests, results: results.map(message => String(message.content)), ...(readPath ? { readPath } : {}) });
+      note({ type: 'model', names, allNames: (body.tools || []).map(tool => tool.function.name), hasSkills: /<available_skills>|<location>/.test(body.messages.filter(message => message.role === 'system').map(message => message.content).join('\n')), request: requests, results: results.map(message => String(message.content)), ...(readPath ? { readPath } : {}) });
       if (mode === 'recovery-read-control' && !results.length) { stream(response, [{ name: 'read', args: { path: readPath } }]); return; }
       if (mode === 'freeze' && !results.length) {
         const deadline = Date.now() + 5000;
@@ -40,13 +44,13 @@ if (role === 'model') {
         if (mode === 'recovery-budget-over') calls.splice(1, 0, { name: names[0], args: { text: 'controlled' } }, { name: names[0], args: { text: 'controlled' } });
         if (mode === 'lost') calls.splice(1, 0, { name: 'read', args: { path: `${marker}.read` } }, { name: 'bash', args: { command: `/usr/bin/touch '${marker}'` } });
         stream(response, calls);
-      } else stream(response);
+      } else stream(response, null, 'synthetic-call-', finalData);
     } catch { response.writeHead(400); response.end('{}'); }
   });
   server.listen(0, '127.0.0.1', () => process.stdout.write(`http://127.0.0.1:${server.address().port}/v1\n`));
   process.on('SIGTERM', () => { server.closeAllConnections(); server.close(() => process.exit(0)); });
 } else {
-  note({ type: 'pid', role, pid: process.pid, modelKeyPresent: Object.values(process.env).some(value => ['p3-synthetic-token', 'p4-synthetic-token'].includes(value)) });
+  note({ type: 'pid', role, pid: process.pid, modelKeyPresent: Object.values(process.env).some(value => ['p3-synthetic-token', 'p4-synthetic-token'].includes(value) || value.startsWith('sidekick-p5-relay-')) });
   process.on('SIGTERM', () => {}); setInterval(() => {}, 1000);
   if (role === 'service') {
     const waiting = new Map(); let calls = 0;

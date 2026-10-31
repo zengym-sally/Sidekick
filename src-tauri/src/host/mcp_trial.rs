@@ -1,6 +1,8 @@
 #[cfg(test)]
 use crate::local_store::McpCallFault;
-use crate::local_store::{AppStore, McpCallInput, McpDiscoveredCatalog, StoreError, TrialMcpTool};
+use crate::local_store::{
+    AppStore, McpCallInput, McpDiscoveredCatalog, McpTaskOwner, StoreError, TrialMcpTool,
+};
 use crate::mcp_host::{self, Owner};
 use crate::runtime_host::{Job, JobKind, RuntimeState};
 use crate::store_commands::LocalState;
@@ -39,7 +41,27 @@ pub(crate) fn prepare(
     run: &str,
     directory: &Path,
 ) -> Result<Value, StoreError> {
-    let prepared = store.prepare_trial_mcp(run)?;
+    prepare_task(store, McpTaskOwner::Trial, run, directory)
+}
+
+pub(crate) fn prepare_business(
+    store: &mut AppStore,
+    run: &str,
+    directory: &Path,
+) -> Result<Value, StoreError> {
+    prepare_task(store, McpTaskOwner::Business, run, directory)
+}
+
+fn prepare_task(
+    store: &mut AppStore,
+    owner: McpTaskOwner,
+    run: &str,
+    directory: &Path,
+) -> Result<Value, StoreError> {
+    let prepared = match owner {
+        McpTaskOwner::Trial => store.prepare_trial_mcp(run)?,
+        McpTaskOwner::Business => store.prepare_mcp_task(owner, run)?,
+    };
     let mut servers = Vec::new();
     for server in prepared.servers {
         if !["node", "organizer.mjs", "mcp-guardian.mjs"]
@@ -48,7 +70,7 @@ pub(crate) fn prepare(
         {
             return Err(StoreError {
                 code: "MCP_DEPENDENCY_MISSING",
-                message: "随包工具依赖缺失，未启动MCP试跑。",
+                message: "随包工具依赖缺失，未启动MCP任务。",
             });
         }
         let p = mcp_host::resolve_command(server.prepared, directory)?;
@@ -173,12 +195,17 @@ impl<'a> TrialControl<'a> {
         if !slot
             .as_ref()
             .is_some_and(|job| job.run_id == self.job.run_id && job.nonce == self.job.nonce)
-            || self.job.kind != JobKind::Trial
+            || !matches!(self.job.kind, JobKind::Trial | JobKind::Business)
             || frame["runId"] != self.job.run_id
             || frame["hostNonce"] != self.job.nonce
         {
             return Err(protocol());
         }
+        let task_owner = match self.job.kind {
+            JobKind::Trial => McpTaskOwner::Trial,
+            JobKind::Business => McpTaskOwner::Business,
+            JobKind::Probe => return Err(protocol()),
+        };
         let action = frame["action"].as_str().ok_or_else(protocol)?;
         #[cfg(test)]
         if action == "call_begin"
@@ -287,7 +314,8 @@ impl<'a> TrialControl<'a> {
                 let mapping = self
                     .local
                     .access(|store| {
-                        store.bind_trial_mcp_catalog(
+                        store.bind_mcp_task_catalog(
+                            task_owner,
                             &self.job.run_id,
                             server,
                             &catalog,
@@ -347,7 +375,7 @@ impl<'a> TrialControl<'a> {
                             }
                             _ => {}
                         }
-                        store.begin_trial_mcp_call(&self.job.run_id, input)
+                        store.begin_mcp_task_call(task_owner, &self.job.run_id, input)
                     })
                     .map_err(|error| error.code.to_string())?;
                 #[cfg(test)]
@@ -386,7 +414,7 @@ impl<'a> TrialControl<'a> {
                             }
                             _ => {}
                         }
-                        store.confirm_trial_mcp_call(&self.job.run_id, call, is_error)
+                        store.confirm_mcp_task_call(task_owner, &self.job.run_id, call, is_error)
                     })
                     .map_err(|error| error.code.to_string())?;
                 #[cfg(test)]

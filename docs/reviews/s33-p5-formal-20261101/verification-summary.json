@@ -1,0 +1,701 @@
+{
+  "version": 1,
+  "recordedAtUtc": "2026-10-31T21:37:16.401669+00:00",
+  "mechanicalDiagnosticConclusion": "pass",
+  "p5OverallConclusion": "needs_revision",
+  "realMatrixConclusion": "fail",
+  "scope": {
+    "kind": "Independent stable-source full mechanical diagnostic after authorized one-token test name correction",
+    "sourceDocsIndexWrites": false,
+    "fullAttemptsForThisNewSource": 1,
+    "rerunJustification": {
+      "source": "src-tauri/src/host/mcp_formal_tests.rs",
+      "newNameOccurrences": 1,
+      "oldNameOccurrences": 0,
+      "inverseRenameSha256": "1e49848e9cf6f4af4219305d5bed400a9059ac1f6394088809e9b0ddfd42f7fc",
+      "v3Sha256": "1e49848e9cf6f4af4219305d5bed400a9059ac1f6394088809e9b0ddfd42f7fc",
+      "inverseRenameExactlyRestoresV3": true,
+      "scope": "One test function name token only; no implementation repair performed by verifier."
+    },
+    "priorFailedFullRetained": {
+      "path": "build/p5-formal-20261101/independent-final/summary.json",
+      "sha256": "2aa27bf7563cf4b00db7e006f3027d64803a36506f6bc27a4a4249c7b53ac25a"
+    },
+    "realApiRequests": 0,
+    "realEnvFileRead": false,
+    "nightDatabaseRead": false,
+    "guiOrRealUserRootAccess": false,
+    "productionMcpKeychainAccess": false,
+    "s0SyntheticKeychainRoundtrip": [
+      "test storage_probe::tests::keychain_synthetic_roundtrip ... ok"
+    ],
+    "commit": false,
+    "push": false,
+    "c31ReviewNotPartOfThisTask": true
+  },
+  "head": "2216ccced3b4efe5d7696a2c006b603b507060ae",
+  "fullCheck": {
+    "command": [
+      "npm",
+      "run",
+      "check"
+    ],
+    "startUtc": "2026-10-31T21:28:02.637848+00:00",
+    "runnerPid": 21364,
+    "commandPid": 22369,
+    "state": "completed",
+    "log": "full-check.log",
+    "endUtc": "2026-10-31T21:34:15.824733+00:00",
+    "elapsedSeconds": 373.1866045841016,
+    "exitCode": 0
+  },
+  "resultChecks": {
+    "fullCommandExit0": true,
+    "allNodePassed": true,
+    "allMainRustResultsPassed": true,
+    "syntheticRustPassed": true,
+    "newFullSyntheticChainPassNoReal": true,
+    "twoPackagesDeepStrictAndExclusion": true,
+    "ordinaryNegativeBeforeRoot": true,
+    "allRequiredGitSourceRuntimeCoreBytesStable": true,
+    "activeOldPathsNone": true,
+    "protectedDiffEmpty": true,
+    "packageOnlyScripts": true,
+    "diffCheckPass": true,
+    "cachedEmpty": true,
+    "noUnexpectedWarningCategory": true,
+    "negativeStderrExplainedByCompleted100CaseSuite": true,
+    "priorFailureSummaryPreserved": true,
+    "newSource224Frozen": true,
+    "currentNativeMatchesExecutedSyntheticBinding": true,
+    "p4WarningCountsRetained": true,
+    "actualBundleBuildCountTwo": true
+  },
+  "node": {
+    "groups": [
+      {
+        "sequence": 1,
+        "command": "test:s1-domain",
+        "tests": 15,
+        "summaryLogLine": 48,
+        "pass": 15,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 118.204708
+      },
+      {
+        "sequence": 2,
+        "command": "test:s2-domain",
+        "tests": 47,
+        "summaryLogLine": 105,
+        "pass": 47,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 784.95475
+      },
+      {
+        "sequence": 3,
+        "command": "test:s31-domain",
+        "tests": 25,
+        "summaryLogLine": 140,
+        "pass": 25,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 131.577375
+      },
+      {
+        "sequence": 4,
+        "command": "test:layout-domain",
+        "tests": 14,
+        "summaryLogLine": 164,
+        "pass": 14,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 141.68025
+      },
+      {
+        "sequence": 5,
+        "command": "test:s32-domain",
+        "tests": 28,
+        "summaryLogLine": 202,
+        "pass": 28,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 13730.216166
+      },
+      {
+        "sequence": 6,
+        "command": "test:s33-config-domain",
+        "tests": 33,
+        "summaryLogLine": 245,
+        "pass": 33,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 115.159083
+      },
+      {
+        "sequence": 7,
+        "command": "test:s33-security-domain",
+        "tests": 7,
+        "summaryLogLine": 262,
+        "pass": 7,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 119.470709
+      },
+      {
+        "sequence": 8,
+        "command": "test:s33-ui-domain",
+        "tests": 18,
+        "summaryLogLine": 290,
+        "pass": 18,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 111.070458
+      },
+      {
+        "sequence": 9,
+        "command": "test:s33-upgrade-domain",
+        "tests": 8,
+        "summaryLogLine": 308,
+        "pass": 8,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 106.463
+      },
+      {
+        "sequence": 10,
+        "command": "test:mcp-contract",
+        "tests": 7,
+        "summaryLogLine": 325,
+        "pass": 7,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 102.941708
+      },
+      {
+        "sequence": 11,
+        "command": "test:mcp-recovery",
+        "tests": 14,
+        "summaryLogLine": 350,
+        "pass": 14,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 5587.294667
+      },
+      {
+        "sequence": 12,
+        "command": "test:model-budget",
+        "tests": 100,
+        "summaryLogLine": 475,
+        "pass": 100,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 12180.296834
+      },
+      {
+        "sequence": 13,
+        "command": "test:s33-ui-safety",
+        "tests": 5,
+        "summaryLogLine": 504,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 1221.121334
+      },
+      {
+        "sequence": 14,
+        "command": "test:s33-discovery",
+        "tests": 66,
+        "summaryLogLine": 643,
+        "pass": 66,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 52155.521625
+      },
+      {
+        "sequence": 15,
+        "command": "test:s33-lifecycle",
+        "tests": 12,
+        "summaryLogLine": 716,
+        "pass": 12,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 5836.785084
+      },
+      {
+        "sequence": 16,
+        "command": "probe:runtime",
+        "tests": 9,
+        "summaryLogLine": 737,
+        "pass": 9,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 1702.3855
+      },
+      {
+        "sequence": 17,
+        "command": "probe:card",
+        "tests": 4,
+        "summaryLogLine": 753,
+        "pass": 4,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 46.047416
+      },
+      {
+        "sequence": 18,
+        "command": "probe:contracts",
+        "tests": 6,
+        "summaryLogLine": 771,
+        "pass": 6,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 2133.830583
+      },
+      {
+        "sequence": 19,
+        "command": "test:s2-runtime",
+        "tests": 7,
+        "summaryLogLine": 1017,
+        "pass": 7,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 2639.503125
+      },
+      {
+        "sequence": 20,
+        "command": "node --test --test-timeout=15000 tests/integration/s31-runtime.test.mjs",
+        "tests": 2,
+        "summaryLogLine": 1027,
+        "pass": 2,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 290.852458
+      },
+      {
+        "sequence": 21,
+        "command": "node --test --test-timeout=20000 tests/integration/layout-runtime.test.mjs",
+        "tests": 2,
+        "summaryLogLine": 1037,
+        "pass": 2,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 920.000625
+      },
+      {
+        "sequence": 22,
+        "command": "node --test --test-timeout=20000 tests/integration/s32-runtime.test.mjs",
+        "tests": 3,
+        "summaryLogLine": 1048,
+        "pass": 3,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 1008.359583
+      },
+      {
+        "sequence": 23,
+        "command": "test:s33-ui-artifacts",
+        "tests": 2,
+        "summaryLogLine": 1185,
+        "pass": 2,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "durationMs": 1375.5165
+      }
+    ],
+    "groupCount": 23,
+    "totals": {
+      "tests": 434,
+      "pass": 434,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  },
+  "rust": {
+    "dualFeatureVerification": {
+      "result": "ok",
+      "passed": 8,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filteredOut": 194,
+      "seconds": 0.61
+    },
+    "default": {
+      "result": "ok",
+      "passed": 192,
+      "failed": 0,
+      "ignored": 2,
+      "measured": 0,
+      "filteredOut": 0,
+      "seconds": 182.58
+    },
+    "originalIgnoredCases": [
+      "test runtime_host::tests::s2_live_text_preview_sign_and_restart ... ignored, explicit real model integration using the owner-selected private file",
+      "test runtime_host::tests::s31_live_isolated_organizer_trial_and_configuration_reopen ... ignored, explicit real model trial using the owner-selected private file"
+    ],
+    "syntheticBudgetedRoundtrip": {
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filteredOut": 193,
+      "seconds": 3.79
+    }
+  },
+  "gates": {
+    "structureSelfTest": "✓ structure self-test passed (18 violation classes and 8 individual reference violations detected in a synthetic tree; clean samples stayed clean).",
+    "structure": "✓ structure check passed (153 source files scanned, 331 relative references resolved).",
+    "docs": "✓ docs link check passed (15 files, 175 local links resolved).",
+    "typecheck": "pass; three invocations in sequential full chain",
+    "defaultFmtClippy": "pass",
+    "dualFeatureClippy": "pass",
+    "runtimeBundleCount": 6,
+    "bundleBuildCount": 2,
+    "twoPackages": [
+      "Sidekick MCP Verify.app",
+      "Sidekick.app"
+    ],
+    "artifactEvidence": [
+      {
+        "logLine": 1181,
+        "data": {
+          "layer": "actual macOS bundles; no GUI or MCP launch",
+          "ordinaryResourceEntries": 556,
+          "controlledServiceExcluded": true,
+          "signatures": "both deep strict verified"
+        }
+      },
+      {
+        "logLine": 1182,
+        "data": {
+          "layer": "ordinary executable negative entry; no ordinary-root startup",
+          "exitCode": 2,
+          "stderr": "MCP UI verification is not enabled in this package"
+        }
+      }
+    ],
+    "ordinaryResourceEntries": 556,
+    "controlledServiceExcludedFromOrdinaryAndRuntime": true,
+    "deepStrictSignatures": "both verified by executed artifact test",
+    "ordinaryExecutableNegativeExit": 2,
+    "syntheticBudgeted": {
+      "logResult": {
+        "logLine": 985,
+        "data": {
+          "layer": "synthetic-budgeted",
+          "conclusion": "pass",
+          "occupiedSlots": 6,
+          "possiblyForwarded": 6,
+          "completed": 6,
+          "remaining": 4,
+          "realModelRequests": 0,
+          "realModelRequestUpperBound": 0,
+          "evidence": "build/p5-formal-20261101/synthetic-budgeted-1793482392195492000"
+        }
+      },
+      "realModelRequests": 0,
+      "rust": {
+        "result": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 193,
+        "seconds": 3.79
+      },
+      "nativeExecutable": {
+        "path": "src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1",
+        "sha256": "f921c1a5db805222231d377dd54c5587caf7e3a98110b52e9c2984dcc3f7201b"
+      },
+      "naturalCleanup": true,
+      "rawSummarySha256": "cb4397d0fa5b63c8f230041338c2ae2652b3599dcaa1854bc2d1b13aacfa5636",
+      "rawNativeLogSha256": "52a23fb3b8c7895484b3b4b93ca2298abce0e52ed480b0f5090fafea55e26d4f"
+    },
+    "actualBuiltBundleNames": [
+      "Sidekick MCP Verify.app",
+      "Sidekick.app"
+    ]
+  },
+  "warnings": {
+    "counts": {
+      "runtimeBundleSize": 12,
+      "viteChunkSize": 2,
+      "notarizationSkipped": 2,
+      "controlledLauncherNegativeStderr": 15
+    },
+    "rows": [
+      {
+        "line": 13,
+        "text": "  build/s0-runtime/probe.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 17,
+        "text": "  build/s0-runtime/organizer.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 517,
+        "text": "  build/s0-runtime/probe.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 521,
+        "text": "  build/s0-runtime/organizer.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 678,
+        "text": "  build/s0-runtime/probe.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 682,
+        "text": "  build/s0-runtime/organizer.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 994,
+        "text": "  build/s0-runtime/probe.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 998,
+        "text": "  build/s0-runtime/organizer.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 1066,
+        "text": "  build/s0-runtime/probe.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 1070,
+        "text": "  build/s0-runtime/organizer.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 1101,
+        "text": "(!) Some chunks are larger than 500 kB after minification. Consider:"
+      },
+      {
+        "line": 1116,
+        "text": "        Warn skipping app notarization, no APPLE_ID & APPLE_PASSWORD & APPLE_TEAM_ID or APPLE_API_KEY & APPLE_API_ISSUER & APPLE_API_KEY_PATH environment variables found"
+      },
+      {
+        "line": 1125,
+        "text": "  build/s0-runtime/probe.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 1129,
+        "text": "  build/s0-runtime/organizer.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 1160,
+        "text": "(!) Some chunks are larger than 500 kB after minification. Consider:"
+      },
+      {
+        "line": 1175,
+        "text": "        Warn skipping app notarization, no APPLE_ID & APPLE_PASSWORD & APPLE_TEAM_ID or APPLE_API_KEY & APPLE_API_ISSUER & APPLE_API_KEY_PATH environment variables found"
+      }
+    ],
+    "unexplainedWarningRows": [],
+    "p4Baseline": {
+      "log": "build/p4-recovery-20261101/independent/commands/full-check.log",
+      "sha256": "0205250a9bd8e93872383224116232f48e7bebf15427ecc527164e37c7d6753a",
+      "counts": {
+        "runtimeBundleSize": 12,
+        "viteChunkSize": 2,
+        "notarizationSkipped": 2,
+        "controlledLauncherNegativeStderr": 0
+      }
+    },
+    "documentedCategoryCountsEqualP4": true,
+    "addedControlledNegativeStderr": {
+      "count": 15,
+      "sameAsSealedV3BudgetLogCount": 15,
+      "classification": "Expected asserted launcher fault-injection output in the completed 100/100 model-budget suite; not a new unexplained warning or product failure."
+    },
+    "adHocAndNotarizationBoundary": "Both local app bundles are ad-hoc signed and not notarized; deep strict integrity verification passed."
+  },
+  "baselineCounts": {
+    "p4NodePassed": 306,
+    "currentNodePassed": 434,
+    "nodeDelta": 128,
+    "p4DefaultRustPassed": 164,
+    "currentDefaultRustPassed": 192,
+    "defaultRustDelta": 28
+  },
+  "freeze": {
+    "allRequiredBytesStable": true,
+    "visibleFileCountBefore": 4182,
+    "visibleFileCountAfter": 4182,
+    "workingSetPathsBefore": 24,
+    "workingSetPathsAfter": 24,
+    "sourceFileCount": 224,
+    "sourceAggregate": "c881302c4d870f5011f2a5bc4386e27ec68c50d026284f80675ea955dc9150b7",
+    "criticalInputCount": 245,
+    "criticalAggregate": "d6f2990922ef26edaa04153b25f962893e905877208cc99191e75c0979858dcc",
+    "coreSha256": "8961b453f91bc7927c2855a4bd9d9e156a2f879dfb3655aeeda72c8baa056ea9",
+    "comparison": {
+      "recordedAtUtc": "2026-10-31T21:34:35.872814+00:00",
+      "headUnchanged": true,
+      "statusUnchanged": true,
+      "indexStageEntriesUnchanged": true,
+      "indexRawBytesUnchanged": true,
+      "cachedDiffUnchanged": true,
+      "visibleFilesUnchanged": true,
+      "changedVisibleFiles": [],
+      "workingSetBytesAndModesUnchanged": true,
+      "sourceCode224Unchanged": true,
+      "critical245Unchanged": true,
+      "coreUnchanged": true,
+      "nativeBefore": {
+        "path": "src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1",
+        "sha256": "35ce0e78418631ffa47940aa132bb8e11386dec830daf9b85de1647a4898427a"
+      },
+      "nativeAfter": {
+        "path": "src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1",
+        "sha256": "f921c1a5db805222231d377dd54c5587caf7e3a98110b52e9c2984dcc3f7201b"
+      },
+      "nativeBytesUnchangedDuringThisRun": false,
+      "realLiveV3NativeSha256": "2486c68361dd52e39d5cd94d7080bbf309848060ba37be70bdc9c896a7c6b11d",
+      "postFullDiagnosticNativeSha256": "f921c1a5db805222231d377dd54c5587caf7e3a98110b52e9c2984dcc3f7201b",
+      "currentNativeEqualsRealLiveV3": false
+    },
+    "nativeQualification": "Observed before35ce, executed budgeted synthetic f921 and observed afterf921. Old real-live2486 remains the historical real binding. Native bytes changed during this full run; source224, critical245 including prepared Runtime, core and all Git-visible bytes did not. No claim of perpetual native byte equality."
+  },
+  "staticAudit": {
+    "activeOldPaths": [],
+    "expectedGuardFixtureMatches": 5,
+    "diffCheckExitCode": 0,
+    "protectedDiff": "",
+    "cachedDiff": "",
+    "packageChangedTopLevelFields": [
+      "scripts"
+    ],
+    "packageChangedScripts": [
+      "check",
+      "probe:mcp-live",
+      "probe:mcp-live:prepare",
+      "test:mcp-budgeted",
+      "test:mcp-formal",
+      "test:model-budget"
+    ]
+  },
+  "postRunProcessObservation": {
+    "command": [
+      "ps",
+      "-wwaxo",
+      "pid=,ppid=,command="
+    ],
+    "recordedAtUtc": "2026-10-31T21:35:43.807342+00:00",
+    "allRowsScanned": 1315,
+    "runnerOrNpmPidsPresent": [],
+    "cargoRustcClippyTauriOrNpmCheckPresent": [],
+    "exactRepositoryNodeFixtureModelMatches": [],
+    "unrelatedArgvRetained": false,
+    "signalsSent": false,
+    "rootsOpened": false
+  },
+  "findings": [],
+  "realAcceptanceRemainsOpen": {
+    "recordedFailureReadback": "live-readback-v3/summary.json",
+    "sha256": "40e66be757a826c91fee9b0057ad114d205db20ab36609000a929ba979d24c5b",
+    "recordedCompletedRealHttpByAttempt": [
+      2,
+      4
+    ],
+    "recordedNightTotal": 6,
+    "recordedRemainingSlots": 4,
+    "secondRevise": "MODEL_INVALID_OUTPUT; preview absent",
+    "preciseInvalidField": "unknown; rejected raw model answer not retained",
+    "applySignTrialRealAcceptance": "not completed",
+    "mechanicalPassDoesNotCloseRealFailure": true,
+    "p5CommitOrP6Start": false
+  },
+  "limitations": [
+    "No new real provider, real credential, production MCP Keychain, GUI or real user-root acceptance was performed.",
+    "Two local bundles and synthetic system layers passing do not close P5 real preview/apply/sign/trial, P6 or historical clean-clone/CI/installation items.",
+    "Native binary bytes changed during legitimate builds. Any later native-binding-dependent operation must use its normal fresh binding/admission; earlier live pins are historical evidence."
+  ],
+  "artifacts": [
+    {
+      "path": "after.json",
+      "sha256": "a5ed44ab85f745af2886c28f9e44a3ae769f5b7edcb459dc0a69ad234836d3cb"
+    },
+    {
+      "path": "before.json",
+      "sha256": "1474dc2a7080bdc67b80126123b0c740e3ebe106685da50497b65339a4c23cc3"
+    },
+    {
+      "path": "comparison.json",
+      "sha256": "ac4764b9fbb74c44a8768f8a53b4514a2e26bf151a767db8c3b23c2ac748988a"
+    },
+    {
+      "path": "full-check-command.json",
+      "sha256": "4c85715a47e6ff8f10ac6019e336bf60b51f0d13bc6bcc8b98a033da0a1b0cf0"
+    },
+    {
+      "path": "full-check.log",
+      "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802"
+    },
+    {
+      "path": "post-run-process.log",
+      "sha256": "e4982c399aca5b36be1c8e1327fb6600b892bf2961efed8384c2fc19697a065d"
+    },
+    {
+      "path": "static-after.log",
+      "sha256": "8e7fb76327e0453abde4b0522793e4144f26f6adc0077e8b3ed8a1136292814b"
+    },
+    {
+      "path": "static-before.log",
+      "sha256": "cb60a0fd408c73b3d05bdd45c660fa8bff49b5cc9cbe30b91f8ee25d902968d5"
+    },
+    {
+      "path": "summary-derive-correction.log",
+      "sha256": "025d9c4c2b9db59adcfd788a8a144dd71e8ec4321c9a16068ca27ed02d74ee43"
+    }
+  ]
+}

@@ -1,0 +1,2245 @@
+{
+  "version": 1,
+  "recordedAtUtc": "2026-10-31T21:58:04.047433+00:00",
+  "conclusion": "ready-for-G06-closure",
+  "readyToCommit": false,
+  "p5Complete": false,
+  "p6MayStart": false,
+  "currentP5State": "尚未完成；30项执行/验证条件已证，G06实际执行待闭合；原更强真实矩阵fail开放。",
+  "scope": {
+    "mode": "Independent zero-new-real-request coverage audit, not a fourth R3 source review",
+    "oldStatusesCopied": false,
+    "planApprovalUsedAsTestProof": false,
+    "newRealRequests": 0,
+    "envPrivateModelNightOwnedLiveRootAccess": false,
+    "sourceDocsIndexOldReportWrites": false,
+    "stageCommitPush": false,
+    "cargoBundleFullRerunsByThisCTask": 0,
+    "newFocusedExecution": "Only explicitly authorized pure-fake HTTP/SSE probe under ignored build evidence."
+  },
+  "contractBasis": {
+    "originalMinimum": "plan16.4:至少一次真实模型自行选中并调用指定MCP；core26为初步安排且只要求至少一次；core34明确合成整链、core25旧能力默认合成回归。",
+    "allRealPositiveMatrixIsNotExplicitMinimum": true,
+    "notInferredFromRemainingBudget": true,
+    "noRequiredConditionRemoved": true,
+    "G06Accounting": "31 required中30 proven、G06 incomplete；ready-for-G06-closure仅进入尚待执行的收口，不宣称全部31完成。"
+  },
+  "coverageCounts": {
+    "all35": {
+      "proven": 30,
+      "weak": 0,
+      "incomplete": 4,
+      "contradicted": 1
+    },
+    "requiredTotal": 31,
+    "requiredByStatus": {
+      "proven": 30,
+      "weak": 0,
+      "incomplete": 1,
+      "contradicted": 0
+    },
+    "verificationRequiredBeforeG06": 30,
+    "verificationProvenBeforeG06": 30,
+    "remainingRequired": [
+      "G-06"
+    ],
+    "normativeCounterevidenceFound": [],
+    "confirmedProductDefectAccepted": false
+  },
+  "requirements": [
+    {
+      "id": "P5-01",
+      "requirement": "同一MCP路径接正式extract/revise与organizer试跑",
+      "normativeSource": "plan§16.4 P5;core:9-13",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "Rust/Pi/Node/SQLite合成整链＋历史真实工具边界",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/synthetic-budgeted-1793482392195492000/native-test.log",
+          "sha256": "52a23fb3b8c7895484b3b4b93ca2298abce0e52ed480b0f5090fafea55e26d4f",
+          "assertionOrObservedFact": "当前三阶段各1 responded/service3；旧真实extract/revise各1 lookup。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/synthetic-budgeted-1793480400918835000/native-test.log",
+          "sha256": "9f74f0e0172b412febcad463e757a0cdfdd9735c29d70d9054804ed96c9535cf",
+          "assertionOrObservedFact": "当前三阶段各1 responded/service3；旧真实extract/revise各1 lookup。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/owned-query.json",
+          "sha256": "59ce49a7cca0d20d2d0660703e049bc4f64763e11b5c9d6e8d3461e0b853378e",
+          "assertionOrObservedFact": "当前三阶段各1 responded/service3；旧真实extract/revise各1 lookup。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            114,
+            253
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "d1610e3cda6f7434daa76fedec25515fa12f7cf147720adf66eb9fb363c637bc",
+          "assertion": "实际Runtime extract→candidate→revise preview→apply→explicit SignChoice→trial；每阶段查询SQLite回执。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 948,
+          "text": "test runtime_host::mcp_formal_tests::formal_live_roundtrip_matrix ... ok"
+        },
+        {
+          "line": 941,
+          "text": "test runtime_host::mcp_formal_tests::formal_business_mcp_prepares_catalog_and_durable_receipts ... ok"
+        }
+      ],
+      "limits": "当前c881/f921与旧840f/2486非同字节，仅窄标签等价链承接；真实修改正向另列。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "P5-02",
+      "requirement": "仅临时根、固定合成文本、受控stdio服务及授权模型配置",
+      "normativeSource": "plan§16.4 P5;core:3,22,24-25",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "隔离实际运行＋guard",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/owned-query.json",
+          "sha256": "59ce49a7cca0d20d2d0660703e049bc4f64763e11b5c9d6e8d3461e0b853378e",
+          "assertionOrObservedFact": "固定合成source/profile/instruction、受控stdio、私有base；实际0真实用户根。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "固定合成source/profile/instruction、受控stdio、私有base；实际0真实用户根。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            802,
+            929
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "1907bd97674a9e06b52916e185f03b42087f7fcb19bb498569da7bcddf523bd0",
+          "assertion": "owner/0600/单链接/nonce/port/exe/parent/case/canonical新根，AppStore前拒绝，不回退。"
+        },
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            931,
+            966
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "a7541aafefb4568ce1825fecdadf078bd92214e71568ae2c6d7962e24f1b6ef7",
+          "assertion": "固定serverID派生allow、create_new0600并同步文件/目录。"
+        },
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            1034,
+            1078
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "2147a2873ae152f4deccbb4f00464bdce39115fe176f285ea641a0cd28ed2d2a",
+          "assertion": "坏info/guard不创建app/workspace。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 947,
+          "text": "test runtime_host::mcp_formal_tests::formal_live_guard_rejects_before_store_or_workspace_creation ... ok"
+        },
+        {
+          "line": 946,
+          "text": "test runtime_host::mcp_formal_tests::formal_live_foreign_parent_is_rejected_before_store ... ok"
+        }
+      ],
+      "limits": "不外推任意MCP或真实资料。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "P5-03",
+      "requirement": "至少一次真实模型自行选中并调用指定MCP；不强制tool_choice",
+      "normativeSource": "plan§16.4 P5;core:26",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "既有真实自主MCP/持久回执/继续轮次",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/owned-query.json",
+          "sha256": "59ce49a7cca0d20d2d0660703e049bc4f64763e11b5c9d6e8d3461e0b853378e",
+          "assertionOrObservedFact": "真实两个不同modelCallId，service2、schema/argsSHA匹配；extract工具后继续产生candidate1。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/night-query.json",
+          "sha256": "704926b521e29fd3ec3060011729fb53842baf2fba28a236be8dbfe7ec22d045",
+          "assertionOrObservedFact": "真实两个不同modelCallId，service2、schema/argsSHA匹配；extract工具后继续产生candidate1。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/live-execution-v3/command.json",
+          "sha256": "b7a45cf4a50fcc3e55bc1567ea5ed594cb12b5644e21ac0a18a2c8f997759f0d",
+          "assertionOrObservedFact": "真实两个不同modelCallId，service2、schema/argsSHA匹配；extract工具后继续产生candidate1。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "scripts/probes/model_budget.py",
+          "lines": [
+            440,
+            491
+          ],
+          "sha256": "4b8933563abc6193999a8dba535c574c99bcc215d97664197eb0057d7d28f305",
+          "excerptSha256": "96c2d4bded9dfa988887c5001b7d2fab272c2677a162797f94eb32a5ba43cef4",
+          "assertion": "只允许None/auto tool_choice；源/指令/schema固定；后续history需匹配已实际SSE调用及精确工具输出。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 442,
+          "text": "✔ PF02 unapproved forced payload is rejected before any reservation or upstream effect (224.31075ms)"
+        }
+      ],
+      "limits": "只关闭至少1次真实最低条件；两次whole probe exit1不改写成功。",
+      "counterevidence": [
+        "两个整体probe均exit1；仅满足至少一次真实工具调用，不能外推完整真实矩阵成功。"
+      ],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "P5-04",
+      "requirement": "工具回执、输入/输出摘要及调用ID可核对",
+      "normativeSource": "plan§16.4 P5;plan§16.3 M03",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "真实回执/参数与输出摘要核对",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/owned-query.json",
+          "sha256": "59ce49a7cca0d20d2d0660703e049bc4f64763e11b5c9d6e8d3461e0b853378e",
+          "assertionOrObservedFact": "callId/modelCallId、argsSHA/schemaSHA、category/sent-state与service核对；继续轮次精确工具输出契约。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/night-query.json",
+          "sha256": "704926b521e29fd3ec3060011729fb53842baf2fba28a236be8dbfe7ec22d045",
+          "assertionOrObservedFact": "callId/modelCallId、argsSHA/schemaSHA、category/sent-state与service核对；继续轮次精确工具输出契约。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "scripts/probes/model_budget.py",
+          "lines": [
+            440,
+            491
+          ],
+          "sha256": "4b8933563abc6193999a8dba535c574c99bcc215d97664197eb0057d7d28f305",
+          "excerptSha256": "96c2d4bded9dfa988887c5001b7d2fab272c2677a162797f94eb32a5ba43cef4",
+          "assertion": "只允许None/auto tool_choice；源/指令/schema固定；后续history需匹配已实际SSE调用及精确工具输出。"
+        },
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            213,
+            253
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "e2d36b7a4fb9e64b10b1d549cb02bcb1691d3587d6360e5246ed15a5d85b957d",
+          "assertion": "五表sources/candidates/todos/todo_events/runs先确认非空，trial后完整快照相等；回执按business/agent列分别核对。"
+        }
+      ],
+      "currentExecutedWitnesses": [],
+      "limits": "原参数/认证/原工具输出不作调用台账；类别与固定返回契约为摘要，未保存被拒模型原回答。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "P5-05",
+      "requirement": "正式提取只生成候选，签前无正式事项",
+      "normativeSource": "plan§16.4 P5;core:13,34",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "当前合成生产链＋真实候选",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/synthetic-budgeted-1793482392195492000/native-test.log",
+          "sha256": "52a23fb3b8c7895484b3b4b93ca2298abce0e52ed480b0f5090fafea55e26d4f",
+          "assertionOrObservedFact": "真实candidate1 pending/v1，todo/event/link0；合成链签前基线。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/owned-query.json",
+          "sha256": "59ce49a7cca0d20d2d0660703e049bc4f64763e11b5c9d6e8d3461e0b853378e",
+          "assertionOrObservedFact": "真实candidate1 pending/v1，todo/event/link0；合成链签前基线。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            131,
+            149
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "48e65d0ef1997c8d20e636f2b6930bdb6091c7c0a7d8ee7ff7b310c0150e7d1f",
+          "assertion": "提取后candidate1，签收前todo/events保持基线。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 948,
+          "text": "test runtime_host::mcp_formal_tests::formal_live_roundtrip_matrix ... ok"
+        }
+      ],
+      "limits": "不以真实提取子证据关闭真实预览。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "P5-06",
+      "requirement": "修改只产预览；应用后仍是候选且不改来源证据",
+      "normativeSource": "core:13,34;product02:45",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "实际合成预览与应用",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/synthetic-budgeted-1793482392195492000/native-test.log",
+          "sha256": "52a23fb3b8c7895484b3b4b93ca2298abce0e52ed480b0f5090fafea55e26d4f",
+          "assertionOrObservedFact": "preview不直接改candidate，apply仍候选且保留原evidence；短证据保留。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/test-name-fix/review/01-test-mcp-formal.log",
+          "sha256": "a2f652cd28d199060153b293a1d138f248632d718bbbb5d693379a6befb5011f",
+          "assertionOrObservedFact": "preview不直接改candidate，apply仍候选且保留原evidence；短证据保留。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            150,
+            185
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "b118c5c28c23575262e1f7bfdf78248ce51874356e11aa0c041d5c4f9b55d9a7",
+          "assertion": "preview标题符合、原candidate draft不变；apply保留非空原文连续evidence，todo/events仍基线。"
+        },
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            285,
+            310
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "a08195c657fb9c01f4c4916c536c5d325747cb4b3e9c5924e9defa534377a7dc",
+          "assertion": "短证据在candidate与todo_sources中逐字保留。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 953,
+          "text": "test runtime_host::mcp_formal_tests::formal_roundtrip_preserves_short_source_evidence ... ok"
+        }
+      ],
+      "limits": "真实revise失败保持R-01反证。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "P5-07",
+      "requirement": "人工签收恰好一次事项/事件/来源关联；重复操作和新操作重复均不多建",
+      "normativeSource": "plan§16.4 P5;core:13,34;product02:49",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "实际显式签收SQLite幂等",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/synthetic-budgeted-1793482392195492000/native-test.log",
+          "sha256": "52a23fb3b8c7895484b3b4b93ca2298abce0e52ed480b0f5090fafea55e26d4f",
+          "assertionOrObservedFact": "同操作重复返回相同结果，新操作重复拒绝，todo/event/link各1。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            186,
+            213
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "5a2d1208cf880fbe6ef9da7af4b3b601a51f1ee36688263057cac698db6b7f2f",
+          "assertion": "同operation签收重复返回同结果，新operation重复拒绝；todo/event/link各+1。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 948,
+          "text": "test runtime_host::mcp_formal_tests::formal_live_roundtrip_matrix ... ok"
+        },
+        {
+          "line": 807,
+          "text": "test local_store::mcp_calls::formal_tests::mcp_calls_business_extract_revision_apply_sign_preserves_explicit_acceptance ... ok"
+        }
+      ],
+      "limits": "不声称外部MCP exactly-once或真实签收通过。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "P5-08",
+      "requirement": "trial不写正式四表；带非空基线且runs不变",
+      "normativeSource": "plan§16.4 P5;core:13,34",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "非空五表基线实际合成trial",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/synthetic-budgeted-1793482392195492000/native-test.log",
+          "sha256": "52a23fb3b8c7895484b3b4b93ca2298abce0e52ed480b0f5090fafea55e26d4f",
+          "assertionOrObservedFact": "sources/candidates/todos/todo_events/runs非空且完整快照不变，trial回执可核。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/budget-verification-v3/commands/readback.json",
+          "sha256": "a0a89ef5f3ccd06dba211d5b4794ed8c0c1a9d83dfcca21d5e02ad5edb8a6d74",
+          "assertionOrObservedFact": "sources/candidates/todos/todo_events/runs非空且完整快照不变，trial回执可核。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            213,
+            253
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "e2d36b7a4fb9e64b10b1d549cb02bcb1691d3587d6360e5246ed15a5d85b957d",
+          "assertion": "五表sources/candidates/todos/todo_events/runs先确认非空，trial后完整快照相等；回执按business/agent列分别核对。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 948,
+          "text": "test runtime_host::mcp_formal_tests::formal_live_roundtrip_matrix ... ok"
+        },
+        {
+          "line": 971,
+          "text": "test runtime_host::mcp_trial_tests::two_same_name_tools_use_real_pi_and_durable_receipts ... ok"
+        }
+      ],
+      "limits": "真实trial尚未执行。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "P5-09",
+      "requirement": "原Read/Skills/Bash能力不回归",
+      "normativeSource": "plan§16.4 P5;core:25",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "实际Pi/Node/Read/Skills/Bash",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "配置test:s32-runtime/probe:runtime实际通过，两Skill上下文和Bash文件proof被断言。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "tests/integration/s32-runtime.test.mjs",
+          "lines": [
+            9,
+            16
+          ],
+          "sha256": "26a47b1c5100d95d323684abd0f1ba1ba6ec5396094ec154b4bc2bbfab05f3e1",
+          "excerptSha256": "cf2d2501eb1c5e7679ff0e2ea9756d9b11356bb047809f1553b2d7a41548cbff",
+          "assertion": "实际Pi工具目录read/bash及Skills prompt；两Skill上下文、Bash文件产物/proof hash、四轮请求；text-only无tools。"
+        },
+        {
+          "path": "tests/probes/runtime.test.mjs",
+          "lines": [
+            40,
+            102
+          ],
+          "sha256": "b7a8dfaca30a08cd18df315d9801eda6c82cb329dcb81d2990b67d93e732fe29",
+          "excerptSha256": "c784907652ef7f403088141d4ac8426c9fa6c657369d13e48560f694f27240ed",
+          "assertion": "实际Bash cwd/env/stream/nonzero/超时/取消；Skill相对Read/Bash/rescan/collision。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 1045,
+          "text": "✔ bundled Agent reads two skill contexts sequentially and runs Bash (276.054208ms)"
+        },
+        {
+          "line": 732,
+          "text": "✔ Skills load explicit complete packages, relative Read/Bash, rescan and collisions (25.454666ms)"
+        },
+        {
+          "line": 729,
+          "text": "✔ Bash executes scripts with cwd, environment, streaming and nonzero status (222.637542ms)"
+        }
+      ],
+      "limits": "本机合成模型及文件，不是GUI或通用真实模型。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "P5-10",
+      "requirement": "无MCP、禁用/toolCallfalse、v3及手工路径保持",
+      "normativeSource": "plan§16.4 P5;core:10",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "无MCP/v3/禁用/手工回归",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "默认Rust及已配置Node脚本实际ok；manual字段/history冷开保持。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            602,
+            629
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "0599dcda88268bc3012825ef8e35340f0c900412c44835b7030d5126d4eb17ed",
+          "assertion": "toolCallfalse/全禁用/connection test无MCP调用/服务事件。"
+        },
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            1135,
+            1190
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "f92b6417a660aa6081f1f451d48eeb633f564a11f89565a6dfae274fb5ab5737",
+          "assertion": "v3无mcp snapshot且保持version3、candidate1/todo0、服务不启动。"
+        },
+        {
+          "path": "src-tauri/src/store/local_store_tests.rs",
+          "lines": [
+            238,
+            274
+          ],
+          "sha256": "71b8294dc853a68cd68c84b4e871846a9ccc2c365b5284819fb3da826fd20b41",
+          "excerptSha256": "a78f904beb3197aa23062fb2affbafe1820383f562a1c89dda999038c7d4e5ca",
+          "assertion": "manual create/cold reopen字段与history保留、编辑完成可逆。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 951,
+          "text": "test runtime_host::mcp_formal_tests::formal_no_mcp_disabled_tools_and_connection_tests_keep_the_old_path ... ok"
+        },
+        {
+          "line": 955,
+          "text": "test runtime_host::mcp_formal_tests::formal_v3_workspaces_keep_the_original_text_path_without_an_upgrade ... ok"
+        },
+        {
+          "line": 929,
+          "text": "test local_store::tests::manual_create_and_cold_reopen_preserve_fields_and_history ... ok"
+        },
+        {
+          "line": 814,
+          "text": "test local_store::mcp_calls::formal_tests::mcp_calls_business_v3_empty_disabled_and_no_tools_preserve_text_paths ... ok"
+        }
+      ],
+      "limits": "不关闭GUI手工录入视觉。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "M03-01",
+      "requirement": "业务run/agent run封闭scope与runId核对，不允许模型扩scope/其他角色/test",
+      "normativeSource": "plan§16.3 M03;core:9,11,32",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "真实SQLite封闭scope反例",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "当前默认Rust实际执行35个mcp_calls；同ID跨表与伪scope不越权。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "src-tauri/src/store/mcp_formal_calls_tests.rs",
+          "lines": [
+            251,
+            385
+          ],
+          "sha256": "333e66b84c229ecea0fe34bb09e79df076bb084ec14c1bfd5909f57f2a0ebe1b",
+          "excerptSha256": "ad030a9c9e4596ade77f0462ad51d87cb60c71ebb4ddc55259ccb1e7acf94ca1",
+          "assertion": "test/其他角色/模型伪scope拒绝；同ID跨business/trial不串确认、不串unknown和重放状态。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 812,
+          "text": "test local_store::mcp_calls::formal_tests::mcp_calls_business_scope_rejects_test_other_roles_and_model_supplied_scope ... ok"
+        },
+        {
+          "line": 803,
+          "text": "test local_store::mcp_calls::formal_tests::mcp_calls_business_and_trial_same_id_keep_separate_ownership_and_replay_guards ... ok"
+        }
+      ],
+      "limits": "scope由可信job推导。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "M03-02",
+      "requirement": "冻结配置/schema/Skills和映射；活动编辑不热换，删除保护；准备失败不静默降级",
+      "normativeSource": "core:10,32,38",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "配置/Skills冻结、删除保护、准备失败",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "旧活动snapshot不热换，删除被拒，缺命令明确失败不降级。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            556,
+            601
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "bfe10b3e98df84d1fc516e55527ad50a623c97a4ad9ba933a7752e62807577c1",
+          "assertion": "活动配置编辑不热换旧snapshot，活跃删除拒绝；仍调用冻结服务。"
+        },
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            1193,
+            1223
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "7c56cbcb8c15210d8227af3693a96a7c464e4fb99f87ba65a23ac1626cb9cc44",
+          "assertion": "缺命令明确MCP_COMMAND_MISSING，模型/服务/calls/candidate全0。"
+        },
+        {
+          "path": "tests/unit/s32-skills.test.mjs",
+          "lines": [
+            16,
+            16
+          ],
+          "sha256": "6a090accca28288b39c1dcc3eb92ef45ff4790f808d4a483b7f018c0a76851d6",
+          "excerptSha256": "5f84dd5328db269fc14df528c17084e2df6c744021d6899e9540910e8d53460e",
+          "assertion": "冻结任务保留旧Skill完整内容，新任务需rescan。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 943,
+          "text": "test runtime_host::mcp_formal_tests::formal_configuration_snapshot_survives_edits_and_active_delete_is_blocked ... ok"
+        },
+        {
+          "line": 944,
+          "text": "test runtime_host::mcp_formal_tests::formal_enabled_mcp_preparation_failure_does_not_silently_skip_the_service ... ok"
+        },
+        {
+          "line": 182,
+          "text": "✔ a frozen task retains complete content while edits require rescan for new tasks (92.231ms)"
+        }
+      ],
+      "limits": "新run仍须重新准备，不复用旧发现替代。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "M03-03",
+      "requirement": "登记ACK前不发、响应持久ACK后才给模型；调用ID/规范参数SHA/响应类别可核",
+      "normativeSource": "plan§16.3 M03;core:11,32",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "持久ACK与实际发送边界",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "四commit边界实际0/1effect；迟到确认不能解锁，真实持久SHA/ID可核。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/owned-query.json",
+          "sha256": "59ce49a7cca0d20d2d0660703e049bc4f64763e11b5c9d6e8d3461e0b853378e",
+          "assertionOrObservedFact": "四commit边界实际0/1effect；迟到确认不能解锁，真实持久SHA/ID可核。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            373,
+            463
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "2ee284ea3f8f18433d1608302081ed28ded471aaa10d0d51bb2e7ab27815af0a",
+          "assertion": "四commit边界核实际服务0/1、第二服务0，迟到确认拒绝，responded不降级。"
+        },
+        {
+          "path": "src-tauri/src/host/mcp_trial_tests.rs",
+          "lines": [
+            324,
+            371
+          ],
+          "sha256": "a548f0a8f4b5db51e6e7177b41986cc6da9ef428e8e515f465364f995574d740",
+          "excerptSha256": "b1edbb2735b2ac1a37661862f85e99410c884165a2196d42b5ae6a4731f9ccb0",
+          "assertion": "未确认ACK不释放，不重放已确认响应。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 942,
+          "text": "test runtime_host::mcp_formal_tests::formal_commit_faults_keep_unknown_and_reject_late_publication ... ok"
+        },
+        {
+          "line": 962,
+          "text": "test runtime_host::mcp_trial_tests::ack_boundaries_never_release_unconfirmed_work_or_replay_known_responses ... ok"
+        }
+      ],
+      "limits": "cfg(test)故障注入，不是真断电/VFS。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "M03-04",
+      "requirement": "未确认先unknown，吸收迟到发布/普通终态/冷开interrupted，responded不降级且不重放",
+      "normativeSource": "plan§16.3 M03;core:12-13,33",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "unknown优先/冷开/迟到吸收",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "lost/cancel/kill及查询只读故障不误发布、不重放；responded不降级。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            465,
+            540
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "1c04ea82de8a7e4396ec9238734345557c2a75a89ebf867aca533cff0c9b6435",
+          "assertion": "lost/cancel/Runtime kill均unknown，cold reopen保留timestamp且不重放。"
+        },
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            704,
+            749
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "01ad2cae00e0a3a4360f37a10db8794a84f4842cbbc0213ccea3910b88a85833",
+          "assertion": "修改unknown保留candidate，拒绝late preview，todo/event0。"
+        },
+        {
+          "path": "src-tauri/src/store/mcp_formal_calls_tests.rs",
+          "lines": [
+            518,
+            670
+          ],
+          "sha256": "333e66b84c229ecea0fe34bb09e79df076bb084ec14c1bfd5909f57f2a0ebe1b",
+          "excerptSha256": "1514602a5a7951397fb231a42e211e56f689a53239d525c92d31d5fd43726e8d",
+          "assertion": "unknown吸收普通终态/迟到预览/时间戳，responded取消和冷开不降级。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 949,
+          "text": "test runtime_host::mcp_formal_tests::formal_lost_cancel_and_runtime_kill_never_replay_on_cold_open ... ok"
+        },
+        {
+          "line": 952,
+          "text": "test runtime_host::mcp_formal_tests::formal_revision_unknown_keeps_the_candidate_and_rejects_late_preview ... ok"
+        },
+        {
+          "line": 813,
+          "text": "test local_store::mcp_calls::formal_tests::mcp_calls_business_unknown_absorbs_preview_ordinary_terminals_and_timestamps ... ok"
+        },
+        {
+          "line": 808,
+          "text": "test local_store::mcp_calls::formal_tests::mcp_calls_business_known_response_survives_cancel_and_reopen ... ok"
+        }
+      ],
+      "limits": "显式新run允许，不宣称撤销外部效果。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "M04-01",
+      "requirement": "拥有组与普通子孙清理、只回收所属run；失败保槽；无关服务存活",
+      "normativeSource": "plan§16.3 M04;core:10,38",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "实际拥有组/普通子孙/无关进程及保槽",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "4类强杀按run/nonce/argv/PGID核身份，两拥有组消失；成功synthetic自然清理true。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/synthetic-budgeted-1793482392195492000/native-test.log",
+          "sha256": "52a23fb3b8c7895484b3b4b93ca2298abce0e52ed480b0f5090fafea55e26d4f",
+          "assertionOrObservedFact": "4类强杀按run/nonce/argv/PGID核身份，两拥有组消失；成功synthetic自然清理true。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "src-tauri/src/host/mcp_recovery_tests.rs",
+          "lines": [
+            91,
+            107
+          ],
+          "sha256": "2b3edefff68418063a5507b79dc1e839a488053a3bfe2af46745de09b7442fa3",
+          "excerptSha256": "a351bbcf3e00094aa3b051f6c2ae37f774abbb7f34e4b847b1fa2009789972b9",
+          "assertion": "Runtime/guardian/keeper/普通子孙退出，拥有组消失，未受控模型canary仍活。"
+        },
+        {
+          "path": "src-tauri/src/host/mcp_recovery_tests.rs",
+          "lines": [
+            360,
+            473
+          ],
+          "sha256": "2b3edefff68418063a5507b79dc1e839a488053a3bfe2af46745de09b7442fa3",
+          "excerptSha256": "75253af33a3a8265868af8238a6e7b26ce839c3e40067cf8eda3e763f78e3162",
+          "assertion": "按run/nonce/argv/PGID定位四类强杀，两组回收、非空业务快照不变、无重放。"
+        },
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            631,
+            700
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "7b05c4dc8563da0e5de8897419a38ead198cffbb6837828c41a92b0c3f7ddb03",
+          "assertion": "终态SQLite写失败保留活跃槽/RUNTIME_BUSY，冷开恢复unknown。"
+        },
+        {
+          "path": "tests/integration/mcp-launcher.test.mjs",
+          "lines": [
+            428,
+            460
+          ],
+          "sha256": "cd4edc8fdcf072d9ff0c2529122e1b9fb0b9c43a4f807b3d01fab269571419d0",
+          "excerptSha256": "9bb60bd04c3c42ccac44b719158c5e02705fd12df8702f7e65198fa6f9bc504c",
+          "assertion": "只回收owned组，unrelated canary存活。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 960,
+          "text": "test runtime_host::mcp_recovery_tests::registered_guardian_keeper_and_service_kills_reap_both_groups ... ok"
+        },
+        {
+          "line": 954,
+          "text": "test runtime_host::mcp_formal_tests::formal_terminal_write_failure_retains_the_slot_until_reopen ... ok"
+        },
+        {
+          "line": 398,
+          "text": "✔ cleanup reaps only owned process groups and preserves an unrelated canary (575.383167ms)"
+        }
+      ],
+      "limits": "失败真实善后不补签成功自然清理；恶意主动脱组不承诺。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "UI-01",
+      "requirement": "unknown同run吸收，保留新run/选择；仅必要中文文案，不新增审批/样式",
+      "normativeSource": "core:14,39",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "真实factory/Pinia＋合成IPC",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "47项S2域通过，未知同run吸收、newrun/选择保持，中文任务/核对后重整。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "tests/unit/s2-client.test.mjs",
+          "lines": [
+            59,
+            150
+          ],
+          "sha256": "b72f055b6c9b856f4bf1465ba6b40dd0d71636ae9ad57246349626f69076741b",
+          "excerptSha256": "c962f67c59a60323a3342016505c6e0dffb4308ca6c49dfb2bbbbde6257d93a0",
+          "assertion": "实际factory/Pinia下unknown/终态吸收late refresh/cancel/start，candidate/preview抑制，new run/选择保持。"
+        },
+        {
+          "path": "src/components/InboxView.vue",
+          "lines": [
+            27,
+            27
+          ],
+          "sha256": "32900283dd06e4e6a9194eb2f0b44da6c75ccd15abd4f27e31cbb7964a06db2b",
+          "excerptSha256": "e1e3440b33a9763b1a9f26aa907f3d8094ab2f7ee0cd3b62be6ca621cfd2ce31",
+          "assertion": "unknown按钮明确核对外部结果后重新整理。"
+        },
+        {
+          "path": "src/domain/organizer.ts",
+          "lines": [
+            14,
+            14
+          ],
+          "sha256": "a3f6b506f27ceca08bf6927c44be575162ef9b90eb122c09d6d715981dfbe9f2",
+          "excerptSha256": "35afd110b7ea5622eefbabd6be9b143899763d97180a5d377c9404009d8a849e",
+          "assertion": "MCP停止文案用任务，未声称系统核对。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 70,
+          "text": "✔ a refresh cannot replace persisted unknown in the current run, batch or preview with running/ordinary (0.386ms)"
+        },
+        {
+          "line": 71,
+          "text": "✔ a refresh cannot replace persisted unknown in the current run, batch or preview with queued/ordinary (0.224292ms)"
+        },
+        {
+          "line": 72,
+          "text": "✔ a refresh cannot replace persisted unknown in the current run, batch or preview with succeeded/ordinary (0.2115ms)"
+        },
+        {
+          "line": 73,
+          "text": "✔ a refresh cannot replace persisted unknown in the current run, batch or preview with cancelled/ordinary (0.160458ms)"
+        },
+        {
+          "line": 74,
+          "text": "✔ a refresh cannot replace persisted unknown in the current run, batch or preview with interrupted/ordinary (0.171667ms)"
+        },
+        {
+          "line": 75,
+          "text": "✔ a refresh cannot replace persisted unknown in the current run, batch or preview with failed/MODEL_SERVICE (0.134583ms)"
+        },
+        {
+          "line": 76,
+          "text": "✔ a refresh cannot replace persisted unknown in the current run, batch or preview with failed/MCP_RESULT_UNKNOWN (0.115125ms)"
+        },
+        {
+          "line": 85,
+          "text": "✔ a late cancellation cannot replace a newer run or restart reads for the previous source (0.222833ms)"
+        },
+        {
+          "line": 97,
+          "text": "✔ the process-isolated Pinia organizer keeps unknown when a Tauri cancellation response arrives late (1.403875ms)"
+        }
+      ],
+      "limits": "无GUI/布局视觉验收声明。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "B-01",
+      "requirement": "固定10槽/截止、enrollment/身份/权限/收据持久，不自动再初始化/复位",
+      "normativeSource": "core:20,35",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "当前多进程fake＋故障/身份＋历史Night事实",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "4进程12请求最多10槽/效果；16初始化故障拒重初、坏身份拒绝。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/night-query.json",
+          "sha256": "704926b521e29fd3ec3060011729fb53842baf2fba28a236be8dbfe7ec22d045",
+          "assertionOrObservedFact": "4进程12请求最多10槽/效果；16初始化故障拒重初、坏身份拒绝。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "scripts/probes/model_budget.py",
+          "lines": [
+            140,
+            263
+          ],
+          "sha256": "4b8933563abc6193999a8dba535c574c99bcc215d97664197eb0057d7d28f305",
+          "excerptSha256": "6f5ba43bf9554bd6bb935fc41a29324cf729dad8b145cdeeedf548ce52078783",
+          "assertion": "receipt/database create_new/FULL/fsync；固定身份/限额/截止；BEGIN IMMEDIATE预留COMMIT后再forwarded，无退款。"
+        },
+        {
+          "path": "tests/integration/model-budget.test.mjs",
+          "lines": [
+            92,
+            127
+          ],
+          "sha256": "3ad99991a2f3e85e5130f84025b4e97ef6044d7cfbd723de099db945b45bd89e",
+          "excerptSha256": "ef696b4706351a7a891f9b460b77b000a5a1928be78683667e33d02610925e6a",
+          "assertion": "四真实relay进程12HTTP最多10effect/10槽，16初始化故障拒重初。"
+        },
+        {
+          "path": "tests/integration/model-budget.test.mjs",
+          "lines": [
+            171,
+            224
+          ],
+          "sha256": "3ad99991a2f3e85e5130f84025b4e97ef6044d7cfbd723de099db945b45bd89e",
+          "excerptSha256": "50afc957d172024ed9594a4e5e56bcc4a457c7cc20e364d5d392b3c349b70ca1",
+          "assertion": "持久点/重启/缺失/替换/损坏/权限/链接/收据拒绝，不释放额度。"
+        },
+        {
+          "path": "tests/integration/model-budget.test.mjs",
+          "lines": [
+            240,
+            256
+          ],
+          "sha256": "3ad99991a2f3e85e5130f84025b4e97ef6044d7cfbd723de099db945b45bd89e",
+          "excerptSha256": "6fc41f59b6f88a974187e73db94d0fbe1a144c621b47d5230019eee4f84a81bd",
+          "assertion": "SIGKILL后已forward槽仍占，最多10。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 436,
+          "text": "✔ PF00 four independent relay processes share ten durable slots for twelve HTTP attempts (546.642584ms)"
+        },
+        {
+          "line": 439,
+          "text": "✔ initialization write, sync and commit faults retain enrollment and refuse reinitialization (135.483958ms)"
+        },
+        {
+          "line": 458,
+          "text": "✔ invalid permissions cannot release an upstream request (284.26375ms)"
+        }
+      ],
+      "limits": "同步为受控mock，不是真断电；C未重开Night。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "B-02",
+      "requirement": "每HTTP尝试先原子保留再forward；FULL持久；提交不明/未知/终止不退额",
+      "normativeSource": "core:21,35",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "逐HTTP原子槽/commit/kill/restart",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "6提交故障和三持久点/kill不退款，当前6 fake HTTP各计；真实2+4槽保留。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/night-query.json",
+          "sha256": "704926b521e29fd3ec3060011729fb53842baf2fba28a236be8dbfe7ec22d045",
+          "assertionOrObservedFact": "6提交故障和三持久点/kill不退款，当前6 fake HTTP各计；真实2+4槽保留。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/synthetic-budgeted-1793482392195492000/native-test.log",
+          "sha256": "52a23fb3b8c7895484b3b4b93ca2298abce0e52ed480b0f5090fafea55e26d4f",
+          "assertionOrObservedFact": "6提交故障和三持久点/kill不退款，当前6 fake HTTP各计；真实2+4槽保留。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "scripts/probes/model_budget.py",
+          "lines": [
+            140,
+            263
+          ],
+          "sha256": "4b8933563abc6193999a8dba535c574c99bcc215d97664197eb0057d7d28f305",
+          "excerptSha256": "6f5ba43bf9554bd6bb935fc41a29324cf729dad8b145cdeeedf548ce52078783",
+          "assertion": "receipt/database create_new/FULL/fsync；固定身份/限额/截止；BEGIN IMMEDIATE预留COMMIT后再forwarded，无退款。"
+        },
+        {
+          "path": "tests/integration/model-budget.test.mjs",
+          "lines": [
+            92,
+            127
+          ],
+          "sha256": "3ad99991a2f3e85e5130f84025b4e97ef6044d7cfbd723de099db945b45bd89e",
+          "excerptSha256": "ef696b4706351a7a891f9b460b77b000a5a1928be78683667e33d02610925e6a",
+          "assertion": "四真实relay进程12HTTP最多10effect/10槽，16初始化故障拒重初。"
+        },
+        {
+          "path": "tests/integration/model-budget.test.mjs",
+          "lines": [
+            171,
+            224
+          ],
+          "sha256": "3ad99991a2f3e85e5130f84025b4e97ef6044d7cfbd723de099db945b45bd89e",
+          "excerptSha256": "50afc957d172024ed9594a4e5e56bcc4a457c7cc20e364d5d392b3c349b70ca1",
+          "assertion": "持久点/重启/缺失/替换/损坏/权限/链接/收据拒绝，不释放额度。"
+        },
+        {
+          "path": "tests/integration/model-budget.test.mjs",
+          "lines": [
+            240,
+            256
+          ],
+          "sha256": "3ad99991a2f3e85e5130f84025b4e97ef6044d7cfbd723de099db945b45bd89e",
+          "excerptSha256": "6fc41f59b6f88a974187e73db94d0fbe1a144c621b47d5230019eee4f84a81bd",
+          "assertion": "SIGKILL后已forward槽仍占，最多10。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 440,
+          "text": "✔ reservation and status commits refuse before and ambiguous failures without refund (184.869708ms)"
+        },
+        {
+          "line": 463,
+          "text": "✔ a killed owned relay leaves its forwarded slot charged after reopening (542.394416ms)"
+        }
+      ],
+      "limits": "completed仅HTTP/SSE完成，非业务成功。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "B-03",
+      "requirement": "loopback精确路径/方法/Content-Length/JSON/私有授权/固定source+instruction+tools",
+      "normativeSource": "core:22,24",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "当前socket/HTTP假上游正反例",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/evidence-coverage/probes/framing-sse-result.json",
+          "sha256": "f9beceda2657a6a93bd99b0733da651e78205a043c6ad4384efce244387ce75d",
+          "assertionOrObservedFact": "新补证18输入负项均0槽/0effect；前后合法POST200；payload/schema/source等100套件通过。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "新补证18输入负项均0槽/0effect；前后合法POST200；payload/schema/source等100套件通过。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "scripts/probes/model_budget.py",
+          "lines": [
+            657,
+            702
+          ],
+          "sha256": "4b8933563abc6193999a8dba535c574c99bcc215d97664197eb0057d7d28f305",
+          "excerptSha256": "cfa7fc43de0504f71b31cf5352264977d66c6d680068dace82f60120935f82ef",
+          "assertion": "path/auth/TE/Content-Length/JSON/payload先校验后reserve；只POST，其余方法拒绝。"
+        },
+        {
+          "path": "tests/integration/model-budget.test.mjs",
+          "lines": [
+            129,
+            146
+          ],
+          "sha256": "3ad99991a2f3e85e5130f84025b4e97ef6044d7cfbd723de099db945b45bd89e",
+          "excerptSha256": "6a8b036bc4a3dc61b9fda109f55e6d6081d76af30c516079e5c88af04d09786c",
+          "assertion": "8种未批准payload拒绝0slot/0effect。"
+        },
+        {
+          "path": "scripts/probes/model_budget.py",
+          "lines": [
+            440,
+            491
+          ],
+          "sha256": "4b8933563abc6193999a8dba535c574c99bcc215d97664197eb0057d7d28f305",
+          "excerptSha256": "96c2d4bded9dfa988887c5001b7d2fab272c2677a162797f94eb32a5ba43cef4",
+          "assertion": "只允许None/auto tool_choice；源/指令/schema固定；后续history需匹配已实际SSE调用及精确工具输出。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 442,
+          "text": "✔ PF02 unapproved forced payload is rejected before any reservation or upstream effect (224.31075ms)"
+        },
+        {
+          "line": 461,
+          "text": "✔ invalid tools, source, auth, path and deadline fail before reservation (344.65425ms)"
+        }
+      ],
+      "limits": "首probe执行器过期anchor导致正控先拒绝、0槽，未跑负项；原失败保留后仅修ignored执行器。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "B-04",
+      "requirement": "真实凭据仅可信代理内存；不交Rust/Runtime/MCP；TLS不重定向不继承代理",
+      "normativeSource": "core:23",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "源码私有凭据/TLS边界＋mock及真实服务事实",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "三个private metadata mock反例/安全正控、redirect不跟随；真实service modelKeyAbsent。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/owned-query.json",
+          "sha256": "59ce49a7cca0d20d2d0660703e049bc4f64763e11b5c9d6e8d3461e0b853378e",
+          "assertionOrObservedFact": "三个private metadata mock反例/安全正控、redirect不跟随；真实service modelKeyAbsent。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "scripts/probes/model_budget.py",
+          "lines": [
+            592,
+            629
+          ],
+          "sha256": "4b8933563abc6193999a8dba535c574c99bcc215d97664197eb0057d7d28f305",
+          "excerptSha256": "ac398c1a6129c4ddfef05eddd8befed066eddb98d947d0b7cdc1891bcbd33a68",
+          "assertion": "真实仅HTTPSConnection/默认SSL context，不继承代理、不重定向/隐藏重试，原始上游错误不透出。"
+        },
+        {
+          "path": "scripts/probes/model_budget.py",
+          "lines": [
+            705,
+            716
+          ],
+          "sha256": "4b8933563abc6193999a8dba535c574c99bcc215d97664197eb0057d7d28f305",
+          "excerptSha256": "bd51e073f03cd4c879dd0976295303161a7fce2480a051be355a22a5a869cec9",
+          "assertion": "仅固定Node私有pipe加载owner env，stderr丢弃，元数据/头有限拒绝。"
+        },
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            972,
+            1022
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "000ec1b1416f98ce7e31e4d4059e138877180d4e2d70437432615b739b5620a9",
+          "assertion": "Rust仅loopback/合成relay token；受控service无真实模型key。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 433,
+          "text": "✔ private model credentials cannot escape through model metadata or malformed headers (117.640834ms)"
+        },
+        {
+          "line": 462,
+          "text": "✔ a redirect is one charged request and is never followed (273.305375ms)"
+        }
+      ],
+      "limits": "默认SSL策略静态核对＋实际HTTPS，不是全面恶意TLS服务器实验；C未读key/env。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "B-05",
+      "requirement": "完整有界SSE/UTF8/JSON重组及秘密扫描；异常不透传/不补发；正控",
+      "normativeSource": "core:23,36",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "当前完整SSE/秘密扫描正负控",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "五canary及变异可证伪；坏UTF8/2,000,001B各占1转发槽且complete0；精确2MB正控200。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/evidence-coverage/probes/framing-sse-result.json",
+          "sha256": "f9beceda2657a6a93bd99b0733da651e78205a043c6ad4384efce244387ce75d",
+          "assertionOrObservedFact": "五canary及变异可证伪；坏UTF8/2,000,001B各占1转发槽且complete0；精确2MB正控200。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "scripts/probes/model_budget.py",
+          "lines": [
+            266,
+            399
+          ],
+          "sha256": "4b8933563abc6193999a8dba535c574c99bcc215d97664197eb0057d7d28f305",
+          "excerptSha256": "bba5b40c0e80ab21702db1846dd3bfa46014cc265c4a88782a44c23af7834a0c",
+          "assertion": "严格UTF8/SSE/JSON/未知字段；content/reasoning/tool index重组后再次扫描，业务JSON二次解码。"
+        },
+        {
+          "path": "tests/integration/model-budget.test.mjs",
+          "lines": [
+            258,
+            293
+          ],
+          "sha256": "3ad99991a2f3e85e5130f84025b4e97ef6044d7cfbd723de099db945b45bd89e",
+          "excerptSha256": "9bc1ed54a197e59065d877821e7f58667bbe0a4e0e8d70d9cf79f057269996a1",
+          "assertion": "五canary/数据库不泄漏；移除scanner暴露5类，正常分片正控与截断拒绝。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 465,
+          "text": "✔ decoded unicode canary cannot reach the client or evidence (242.7575ms)"
+        },
+        {
+          "line": 469,
+          "text": "✔ PF06 removing only secret_scan exposes each otherwise valid canary and safe controls pass (114.060583ms)"
+        },
+        {
+          "line": 474,
+          "text": "✔ normal split SSE survives transport chunks while truncated streams fail closed (547.649875ms)"
+        }
+      ],
+      "limits": "只fake keys/受控流，不声称识别任意秘密。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "B-06",
+      "requirement": "显式live且默认check无真实env/API；可信cfg(test)MCP-only，不开放生产开关",
+      "normativeSource": "core:24-25",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "默认pure fake/可信cfg(test)MCP-only",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "当前默认矩阵实际Rust1，目录仅mcp/noSkills；原两个真实用例仍ignored。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/synthetic-budgeted-1793482392195492000/native-test.log",
+          "sha256": "52a23fb3b8c7895484b3b4b93ca2298abce0e52ed480b0f5090fafea55e26d4f",
+          "assertionOrObservedFact": "当前默认矩阵实际Rust1，目录仅mcp/noSkills；原两个真实用例仍ignored。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            257,
+            281
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "0f0b17e4f9134e3af00414167be23c47fa8cd2f60dba0814c857b13aed47db96",
+          "assertion": "同一有断言test：显式info进guard，否则完整实际合成矩阵。"
+        },
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            1081,
+            1103
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "618553bb1ec62eba9029983be21d64211c576868eb38d11f50fb01c19fa7726d",
+          "assertion": "可信cfg(test)runtime MCP-only后真实Pi只有mcp工具、hasSkills false且6调用。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 950,
+          "text": "test runtime_host::mcp_formal_tests::formal_mcp_only_trial_has_only_mcp_tools_and_no_skill_metadata ... ok"
+        },
+        {
+          "line": 948,
+          "text": "test runtime_host::mcp_formal_tests::formal_live_roundtrip_matrix ... ok"
+        }
+      ],
+      "limits": "验收接缝非公开IPC；原生产工具未删除。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "B-07",
+      "requirement": "真实模式固定私有新root/nonce/info/allow/父进程/exe/case，拒绝不降级",
+      "normativeSource": "core:24",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "私有info/allow/父/exe/root实际guard反例",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "formal15和launcher58实际通过，坏guard在AppStore前硬拒。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            802,
+            929
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "1907bd97674a9e06b52916e185f03b42087f7fcb19bb498569da7bcddf523bd0",
+          "assertion": "owner/0600/单链接/nonce/port/exe/parent/case/canonical新根，AppStore前拒绝，不回退。"
+        },
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            931,
+            966
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "a7541aafefb4568ce1825fecdadf078bd92214e71568ae2c6d7962e24f1b6ef7",
+          "assertion": "固定serverID派生allow、create_new0600并同步文件/目录。"
+        },
+        {
+          "path": "src-tauri/src/host/mcp_formal_tests.rs",
+          "lines": [
+            1034,
+            1078
+          ],
+          "sha256": "d17118c59007228d439748ecd32777e9285e50e4ea83e338b6f61cb4f0ee909a",
+          "excerptSha256": "2147a2873ae152f4deccbb4f00464bdce39115fe176f285ea641a0cd28ed2d2a",
+          "assertion": "坏info/guard不创建app/workspace。"
+        }
+      ],
+      "currentExecutedWitnesses": [
+        {
+          "line": 947,
+          "text": "test runtime_host::mcp_formal_tests::formal_live_guard_rejects_before_store_or_workspace_creation ... ok"
+        },
+        {
+          "line": 946,
+          "text": "test runtime_host::mcp_formal_tests::formal_live_foreign_parent_is_rejected_before_store ... ok"
+        },
+        {
+          "line": 421,
+          "text": "✔ admission rejects native-drift evidence before any real-mode resource access (66.931708ms)"
+        }
+      ],
+      "limits": "不扩大verificationRoot或任意根权限。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "B-08",
+      "requirement": "至少1真实选工具，不强制；所有尝试<=10；失败与未验保留",
+      "normativeSource": "core:26,41",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "原真实自主MCP及不可退款限额",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/live-execution/command.json",
+          "sha256": "4fbd6e68e03e3d0d075a7a49fe04f4cfe65919a12fe0b999f6696619b3b5b4c6",
+          "assertionOrObservedFact": "两个probe exit1，HTTP2+4、共6余4；自主lookup满足最低条件，原null不当0。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/live-execution-v3/command.json",
+          "sha256": "b7a45cf4a50fcc3e55bc1567ea5ed594cb12b5644e21ac0a18a2c8f997759f0d",
+          "assertionOrObservedFact": "两个probe exit1，HTTP2+4、共6余4；自主lookup满足最低条件，原null不当0。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/night-query.json",
+          "sha256": "704926b521e29fd3ec3060011729fb53842baf2fba28a236be8dbfe7ec22d045",
+          "assertionOrObservedFact": "两个probe exit1，HTTP2+4、共6余4；自主lookup满足最低条件，原null不当0。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/owned-query.json",
+          "sha256": "59ce49a7cca0d20d2d0660703e049bc4f64763e11b5c9d6e8d3461e0b853378e",
+          "assertionOrObservedFact": "两个probe exit1，HTTP2+4、共6余4；自主lookup满足最低条件，原null不当0。"
+        }
+      ],
+      "sourceAsserts": [
+        {
+          "path": "scripts/probes/model_budget.py",
+          "lines": [
+            440,
+            491
+          ],
+          "sha256": "4b8933563abc6193999a8dba535c574c99bcc215d97664197eb0057d7d28f305",
+          "excerptSha256": "96c2d4bded9dfa988887c5001b7d2fab272c2677a162797f94eb32a5ba43cef4",
+          "assertion": "只允许None/auto tool_choice；源/指令/schema固定；后续history需匹配已实际SSE调用及精确工具输出。"
+        }
+      ],
+      "currentExecutedWitnesses": [],
+      "limits": "不新请求、提额、复位或造分段入口；真实完整矩阵仍fail。",
+      "counterevidence": [
+        "两个整体probe均exit1；仅满足至少一次真实工具调用，不能外推完整真实矩阵成功。"
+      ],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "G-01",
+      "requirement": "不改schema/migrations/Cargo/identifier/vendor/resources/生产依赖与真实边界",
+      "normativeSource": "core:3;AGENTS§4",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "当前字节/保护区/Git卫生",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/static-after.log",
+          "sha256": "8e7fb76327e0453abde4b0522793e4144f26f6adc0077e8b3ed8a1136292814b",
+          "assertionOrObservedFact": "当前保护区diff空，package仅scripts；224/245相对v3仅fn标签文件变化。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/freeze-name-fix/code-hashes.json",
+          "sha256": "6e45fc7cd39ad73c6660254ff2bc56e3b528d2335b5a9574446c376246f31ea8",
+          "assertionOrObservedFact": "当前保护区diff空，package仅scripts；224/245相对v3仅fn标签文件变化。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/test-name-fix/one-line.diff",
+          "sha256": "1ecf725f9e17f3f206f2b949c842d5078e50054b425814f940deb6a49f434b8d",
+          "assertionOrObservedFact": "当前保护区diff空，package仅scripts；224/245相对v3仅fn标签文件变化。"
+        }
+      ],
+      "sourceAsserts": [],
+      "currentExecutedWitnesses": [],
+      "limits": "无schema/Cargo/vendor/resources/identifier/生产依赖变化。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "G-02",
+      "requirement": "先红后绿、聚焦回归、类型及双特性Clippy",
+      "normativeSource": "core:43",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "实际红证＋修后聚焦/全量",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/store/red-existing-terminals.log",
+          "sha256": "262aa08cde8262b1184d2def46c5fe4d9c455f253822c6e153797b6f6823fe50",
+          "assertionOrObservedFact": "store22/2红、host0/1红、factory45中21/24红、budget40中21/19红、binding3红；当前434/192绿及类型/两Clippy。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/host/formal-red.log",
+          "sha256": "f9fc5354b9d52b05963b4366b73196560fc9fb6064b3c159fc4d0386485db9ed",
+          "assertionOrObservedFact": "store22/2红、host0/1红、factory45中21/24红、budget40中21/19红、binding3红；当前434/192绿及类型/两Clippy。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/frontend/red-reproduction-s2-domain.log",
+          "sha256": "4c8d86565c76418b981cd0c7d3e830f81b87fe70b83e90b7c04abf1c919031ac",
+          "assertionOrObservedFact": "store22/2红、host0/1红、factory45中21/24红、budget40中21/19红、binding3红；当前434/192绿及类型/两Clippy。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/budget-regressions/expanded-red.log",
+          "sha256": "e1640bf52cdc12bad312745ee3d196c3f7535e9adb0f7c0ffe2f837c453ff306",
+          "assertionOrObservedFact": "store22/2红、host0/1红、factory45中21/24红、budget40中21/19红、binding3红；当前434/192绿及类型/两Clippy。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/launcher/input-binding-red.log",
+          "sha256": "de6951fe332de9c02b5e319994ef3f04b4b6c800fcef212151f4ad33914ccd17",
+          "assertionOrObservedFact": "store22/2红、host0/1红、factory45中21/24红、budget40中21/19红、binding3红；当前434/192绿及类型/两Clippy。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "store22/2红、host0/1红、factory45中21/24红、budget40中21/19红、binding3红；当前434/192绿及类型/两Clippy。"
+        }
+      ],
+      "sourceAsserts": [],
+      "currentExecutedWitnesses": [
+        {
+          "line": 942,
+          "text": "test runtime_host::mcp_formal_tests::formal_commit_faults_keep_unknown_and_reject_late_publication ... ok"
+        },
+        {
+          "line": 809,
+          "text": "test local_store::mcp_calls::formal_tests::mcp_calls_business_pending_precedes_ordinary_terminal_and_publication ... ok"
+        }
+      ],
+      "limits": "保留fixture错误及所有旧失败；C新执行器失败不算产品失败。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "G-03",
+      "requirement": "设计双面/交付双面/独立fake准入及源码/设计/native冻结",
+      "normativeSource": "core:43",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "历史签章身份＋实际fake准入＋R1窄血缘",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/design/correctness-v2.json",
+          "sha256": "31e35fe0f84e65fba0a527439685714d9665e7f18f846a3313ddbbf1f780ac16",
+          "assertionOrObservedFact": "设计core8961双APPROVE；交付840f/2486双APPROVE仅核身份；fake100/1实际、R1实际15/8及两Clippy，seal全匹配。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/design/safety-v2.json",
+          "sha256": "e48c010075f8dc7e34502fb234467a020f02cd436c0e8565932d9f43127bbdb2",
+          "assertionOrObservedFact": "设计core8961双APPROVE；交付840f/2486双APPROVE仅核身份；fake100/1实际、R1实际15/8及两Clippy，seal全匹配。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/delivery/correctness-v3.json",
+          "sha256": "7d3dd2fada9bdd9a2eba5e95d114c4a74dc496d865b4a5974bb971cc438bbc7b",
+          "assertionOrObservedFact": "设计core8961双APPROVE；交付840f/2486双APPROVE仅核身份；fake100/1实际、R1实际15/8及两Clippy，seal全匹配。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/delivery/safety-v3.json",
+          "sha256": "95b78814e110c3ae6fd3833a37da282cc8295ffe2c36fef2ff3a152464590862",
+          "assertionOrObservedFact": "设计core8961双APPROVE；交付840f/2486双APPROVE仅核身份；fake100/1实际、R1实际15/8及两Clippy，seal全匹配。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/budget-verification-v3/commands/readback.json",
+          "sha256": "a0a89ef5f3ccd06dba211d5b4794ed8c0c1a9d83dfcca21d5e02ad5edb8a6d74",
+          "assertionOrObservedFact": "设计core8961双APPROVE；交付840f/2486双APPROVE仅核身份；fake100/1实际、R1实际15/8及两Clippy，seal全匹配。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/test-name-fix/review/summary.json",
+          "sha256": "b39c2fb803095db163db5f9cdfdedb78458978d6a129f07f9b5135f77a5263a7",
+          "assertionOrObservedFact": "设计core8961双APPROVE；交付840f/2486双APPROVE仅核身份；fake100/1实际、R1实际15/8及两Clippy，seal全匹配。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/test-name-fix/review/seal.json",
+          "sha256": "b2d511ae290ef7c2dc442d0996f14a8851e086aa6b94194e77889df33f50d2c3",
+          "assertionOrObservedFact": "设计core8961双APPROVE；交付840f/2486双APPROVE仅核身份；fake100/1实际、R1实际15/8及两Clippy，seal全匹配。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/test-name-fix/review/01-test-mcp-formal.log",
+          "sha256": "a2f652cd28d199060153b293a1d138f248632d718bbbb5d693379a6befb5011f",
+          "assertionOrObservedFact": "设计core8961双APPROVE；交付840f/2486双APPROVE仅核身份；fake100/1实际、R1实际15/8及两Clippy，seal全匹配。"
+        }
+      ],
+      "sourceAsserts": [],
+      "currentExecutedWitnesses": [],
+      "limits": "不把签章代替测试，不改签历史R3到c881/f921，不称第四轮大范围R3。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "G-04",
+      "requirement": "真实请求/service/SQLite实际独立读回，保留失败，代码变化重回归",
+      "normativeSource": "core:41,43",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "原真实SQL/service/Night独立读回＋修后回归",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/owned-query.json",
+          "sha256": "59ce49a7cca0d20d2d0660703e049bc4f64763e11b5c9d6e8d3461e0b853378e",
+          "assertionOrObservedFact": "原mode=ro/query_only读回、0写0请求，40e66仅事实pass/real fail；新标签actual回归及完整机械通过。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/night-query.json",
+          "sha256": "704926b521e29fd3ec3060011729fb53842baf2fba28a236be8dbfe7ec22d045",
+          "assertionOrObservedFact": "原mode=ro/query_only读回、0写0请求，40e66仅事实pass/real fail；新标签actual回归及完整机械通过。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/summary.json",
+          "sha256": "40e66be757a826c91fee9b0057ad114d205db20ab36609000a929ba979d24c5b",
+          "assertionOrObservedFact": "原mode=ro/query_only读回、0写0请求，40e66仅事实pass/real fail；新标签actual回归及完整机械通过。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/test-name-fix/review/summary.json",
+          "sha256": "b39c2fb803095db163db5f9cdfdedb78458978d6a129f07f9b5135f77a5263a7",
+          "assertionOrObservedFact": "原mode=ro/query_only读回、0写0请求，40e66仅事实pass/real fail；新标签actual回归及完整机械通过。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "原mode=ro/query_only读回、0写0请求，40e66仅事实pass/real fail；新标签actual回归及完整机械通过。"
+        }
+      ],
+      "sourceAsserts": [],
+      "currentExecutedWitnesses": [],
+      "limits": "C不重开Night/live根，不说当前binary和旧real同字节。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "G-05",
+      "requirement": "稳定源码完整check、两包/资源/验签/警告/冻结由独立方实跑",
+      "normativeSource": "core:43;verification§1,5",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "本验证方实际独立完整机械门禁",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check-command.json",
+          "sha256": "4c85715a47e6ff8f10ac6019e336bf60b51f0d13bc6bcc8b98a033da0a1b0cf0",
+          "assertionOrObservedFact": "373.1866秒exit0；Node434/23组、Rust192+2原ignored/dual8、6Runtime/2Apps/strict签名/资源556，4182/24/index/224/245/core稳定。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+          "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802",
+          "assertionOrObservedFact": "373.1866秒exit0；Node434/23组、Rust192+2原ignored/dual8、6Runtime/2Apps/strict签名/资源556，4182/24/index/224/245/core稳定。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/summary.json",
+          "sha256": "ca2dd0acbc84479b2844c3187f54f6a00bdaf8f75529d47c0952d6d8010798a3",
+          "assertionOrObservedFact": "373.1866秒exit0；Node434/23组、Rust192+2原ignored/dual8、6Runtime/2Apps/strict签名/资源556，4182/24/index/224/245/core稳定。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/independent-final/summary.json",
+          "sha256": "2aa27bf7563cf4b00db7e006f3027d64803a36506f6bc27a4a4249c7b53ac25a",
+          "assertionOrObservedFact": "373.1866秒exit0；Node434/23组、Rust192+2原ignored/dual8、6Runtime/2Apps/strict签名/资源556，4182/24/index/224/245/core稳定。"
+        }
+      ],
+      "sourceAsserts": [],
+      "currentExecutedWitnesses": [],
+      "limits": "首full101原样，源码标签修正是重跑依据；native35ce→f921分列。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "G-06",
+      "requirement": "精选证据/状态同步、cached卫生、本地commit后才P6；不push；08暂停",
+      "normativeSource": "core:3,43;owner原文",
+      "requiredForP5": true,
+      "status": "incomplete",
+      "provenLayer": "尚待主执行者/Root实际执行闭合",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/static-after.log",
+          "sha256": "8e7fb76327e0453abde4b0522793e4144f26f6adc0077e8b3ed8a1136292814b",
+          "assertionOrObservedFact": "当前cached为空、HEAD仍P4，只说明尚未stage/commit；不是已审cached或完成提交。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/summary.json",
+          "sha256": "ca2dd0acbc84479b2844c3187f54f6a00bdaf8f75529d47c0952d6d8010798a3",
+          "assertionOrObservedFact": "当前cached为空、HEAD仍P4，只说明尚未stage/commit；不是已审cached或完成提交。"
+        }
+      ],
+      "sourceAsserts": [],
+      "currentExecutedWitnesses": [],
+      "limits": "状态/精选/cached审核/Root本地commit/postcheck尚未发生，08:00规则保留；不push，不提前P6。",
+      "counterevidence": [],
+      "minimumNextVerification": "主执行者同步状态/精选证据→actual scoped cached清单/内容/卫生独立审核→Root实际local commit和HEAD/parent/status/index/source freeze核对；不push，之后才考虑P6。"
+    },
+    {
+      "id": "R-01",
+      "requirement": "真实revise成功产生可应用预览",
+      "normativeSource": "真实代表场景原安排；不是原§16.4或core:26的显式最低真实条件",
+      "requiredForP5": false,
+      "status": "contradicted",
+      "provenLayer": "真实revise正向反证",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/owned-query.json",
+          "sha256": "59ce49a7cca0d20d2d0660703e049bc4f64763e11b5c9d6e8d3461e0b853378e",
+          "assertionOrObservedFact": "真实revise failed/MODEL_INVALID_OUTPUT、previewNULL；正向succeeded断言失败。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/real-budgeted-1793480516912734000/native-test.log",
+          "sha256": "b07318ca97a3774aa4692f893e1d62d0d844326b09099b10ffae816aa6a4669c",
+          "assertionOrObservedFact": "真实revise failed/MODEL_INVALID_OUTPUT、previewNULL；正向succeeded断言失败。"
+        }
+      ],
+      "sourceAsserts": [],
+      "currentExecutedWitnesses": [],
+      "limits": "不改写为预期非法输出已过；无原回答不能确认有效输出被错误拒绝。",
+      "counterevidence": [
+        "实际真实revise failed/MODEL_INVALID_OUTPUT、previewNULL，正向结果未取得。"
+      ],
+      "minimumNextVerification": "以后如需该真实强正向层，另获授权窗口/预算；不动既有槽、不新增分段入口。"
+    },
+    {
+      "id": "R-02",
+      "requirement": "真实trial正向及真实完整extract→revise→sign→trial矩阵",
+      "normativeSource": "实现runner的更强矩阵，不是原P5最低明确要求",
+      "requiredForP5": false,
+      "status": "incomplete",
+      "provenLayer": "真实trial/全真实强矩阵未完成",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/owned-query.json",
+          "sha256": "59ce49a7cca0d20d2d0660703e049bc4f64763e11b5c9d6e8d3461e0b853378e",
+          "assertionOrObservedFact": "apply/sign/trial真实未执行，两个probe均exit1。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/live-execution/command.json",
+          "sha256": "4fbd6e68e03e3d0d075a7a49fe04f4cfe65919a12fe0b999f6696619b3b5b4c6",
+          "assertionOrObservedFact": "apply/sign/trial真实未执行，两个probe均exit1。"
+        },
+        {
+          "ref": "build/p5-formal-20261101/live-execution-v3/command.json",
+          "sha256": "b7a45cf4a50fcc3e55bc1567ea5ed594cb12b5644e21ac0a18a2c8f997759f0d",
+          "assertionOrObservedFact": "apply/sign/trial真实未执行，两个probe均exit1。"
+        }
+      ],
+      "sourceAsserts": [],
+      "currentExecutedWitnesses": [],
+      "limits": "合成试跑不等于真实；余4不允许新root最低6盲跑或分段降验收。",
+      "counterevidence": [],
+      "minimumNextVerification": "以后如需该真实强正向层，另获授权窗口/预算；不动既有槽、不新增分段入口。"
+    },
+    {
+      "id": "R-03",
+      "requirement": "MODEL_INVALID_OUTPUT具体违反哪条规则及是否模型回答本身有误",
+      "normativeSource": "诊断事实；不可由统一错误码推断",
+      "requiredForP5": false,
+      "status": "incomplete",
+      "provenLayer": "具体拒绝字段/层级未知",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/owned-query.json",
+          "sha256": "59ce49a7cca0d20d2d0660703e049bc4f64763e11b5c9d6e8d3461e0b853378e",
+          "assertionOrObservedFact": "仅空skills-proof、未留拒绝原回答/结果帧；同码可来自Node解析/Rust预览边界。"
+        }
+      ],
+      "sourceAsserts": [],
+      "currentExecutedWitnesses": [],
+      "limits": "不猜字段、不归网络，不接受已确认产品缺陷。",
+      "counterevidence": [],
+      "minimumNextVerification": "可另做零请求诊断；缺原回答不能定位具体字段，不假定模型或解析器谁错。"
+    },
+    {
+      "id": "R-04",
+      "requirement": "真实revise失败没有发布预览/签收/污染，候选保留pending/version1",
+      "normativeSource": "core:13及产品错误恢复边界",
+      "requiredForP5": true,
+      "status": "proven",
+      "provenLayer": "真实失败发布隔离事实",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/live-readback-v3/commands/owned-query.json",
+          "sha256": "59ce49a7cca0d20d2d0660703e049bc4f64763e11b5c9d6e8d3461e0b853378e",
+          "assertionOrObservedFact": "candidate1 pending/v1，revise失败previewNULL；todo/event/link/agent_runs/operations0。"
+        }
+      ],
+      "sourceAsserts": [],
+      "currentExecutedWitnesses": [],
+      "limits": "这是失败保护子证据，不将真实预览失败本身算成功。",
+      "counterevidence": [],
+      "minimumNextVerification": ""
+    },
+    {
+      "id": "P6-01",
+      "requirement": "Finder原生GUI/屏幕/键盘/焦点/滚动/重开验收",
+      "normativeSource": "plan§16.4 P6",
+      "requiredForP5": false,
+      "status": "incomplete",
+      "provenLayer": "原生GUI验收未执行",
+      "actualEvidence": [
+        {
+          "ref": "build/p5-formal-20261101/independent-final-r1/summary.json",
+          "sha256": "ca2dd0acbc84479b2844c3187f54f6a00bdaf8f75529d47c0952d6d8010798a3",
+          "assertionOrObservedFact": "两个包只构建/验签/负入口，非Finder/双尺寸/键盘焦点滚动/重开。"
+        }
+      ],
+      "sourceAsserts": [],
+      "currentExecutedWitnesses": [],
+      "limits": "P6及所有历史未验维持开放。",
+      "counterevidence": [],
+      "minimumNextVerification": "G06实际闭合后按原P6授权/截止执行；C不提前许可。"
+    }
+  ],
+  "evidenceCatalog": {
+    "full": {
+      "ref": "build/p5-formal-20261101/independent-final-r1/full-check.log",
+      "sha256": "1982cc5d0721cc8f01b503c8c954cb70d923d9a19792e340c1aaa684909fc802"
+    },
+    "fullmeta": {
+      "ref": "build/p5-formal-20261101/independent-final-r1/full-check-command.json",
+      "sha256": "4c85715a47e6ff8f10ac6019e336bf60b51f0d13bc6bcc8b98a033da0a1b0cf0"
+    },
+    "mechanical": {
+      "ref": "build/p5-formal-20261101/independent-final-r1/summary.json",
+      "sha256": "ca2dd0acbc84479b2844c3187f54f6a00bdaf8f75529d47c0952d6d8010798a3"
+    },
+    "formal15": {
+      "ref": "build/p5-formal-20261101/test-name-fix/review/01-test-mcp-formal.log",
+      "sha256": "a2f652cd28d199060153b293a1d138f248632d718bbbb5d693379a6befb5011f"
+    },
+    "oldSynth": {
+      "ref": "build/p5-formal-20261101/synthetic-budgeted-1793480400918835000/native-test.log",
+      "sha256": "9f74f0e0172b412febcad463e757a0cdfdd9735c29d70d9054804ed96c9535cf"
+    },
+    "oldSynthSummary": {
+      "ref": "build/p5-formal-20261101/synthetic-budgeted-1793480400918835000/summary.json",
+      "sha256": "6041328704647736712d15e5a485eb5b3469c7a9803e3eafe0ea43016fe8879f"
+    },
+    "newSynth": {
+      "ref": "build/p5-formal-20261101/synthetic-budgeted-1793482392195492000/native-test.log",
+      "sha256": "52a23fb3b8c7895484b3b4b93ca2298abce0e52ed480b0f5090fafea55e26d4f"
+    },
+    "newSynthSummary": {
+      "ref": "build/p5-formal-20261101/synthetic-budgeted-1793482392195492000/summary.json",
+      "sha256": "cb4397d0fa5b63c8f230041338c2ae2652b3599dcaa1854bc2d1b13aacfa5636"
+    },
+    "real1": {
+      "ref": "build/p5-formal-20261101/real-budgeted-1793479056826993000/summary.json",
+      "sha256": "da4f7cdd0a9fccbd468e7a8995fab43ca7a63a7736b3ac40a13c2af627976b37"
+    },
+    "real1log": {
+      "ref": "build/p5-formal-20261101/real-budgeted-1793479056826993000/native-test.log",
+      "sha256": "f4001f45c9807f26fc6cf93fc5511b4a1499212fbeea3077a8111a45565eabf1"
+    },
+    "command1": {
+      "ref": "build/p5-formal-20261101/live-execution/command.json",
+      "sha256": "4fbd6e68e03e3d0d075a7a49fe04f4cfe65919a12fe0b999f6696619b3b5b4c6"
+    },
+    "real2": {
+      "ref": "build/p5-formal-20261101/real-budgeted-1793480516912734000/summary.json",
+      "sha256": "72c1e93953f6b80faf3837b77ff8a951393a2022dcaf45ab9f2d540b9c2e5d7f"
+    },
+    "real2log": {
+      "ref": "build/p5-formal-20261101/real-budgeted-1793480516912734000/native-test.log",
+      "sha256": "b07318ca97a3774aa4692f893e1d62d0d844326b09099b10ffae816aa6a4669c"
+    },
+    "command2": {
+      "ref": "build/p5-formal-20261101/live-execution-v3/command.json",
+      "sha256": "b7a45cf4a50fcc3e55bc1567ea5ed594cb12b5644e21ac0a18a2c8f997759f0d"
+    },
+    "owned": {
+      "ref": "build/p5-formal-20261101/live-readback-v3/commands/owned-query.json",
+      "sha256": "59ce49a7cca0d20d2d0660703e049bc4f64763e11b5c9d6e8d3461e0b853378e"
+    },
+    "night": {
+      "ref": "build/p5-formal-20261101/live-readback-v3/commands/night-query.json",
+      "sha256": "704926b521e29fd3ec3060011729fb53842baf2fba28a236be8dbfe7ec22d045"
+    },
+    "readback": {
+      "ref": "build/p5-formal-20261101/live-readback-v3/summary.json",
+      "sha256": "40e66be757a826c91fee9b0057ad114d205db20ab36609000a929ba979d24c5b"
+    },
+    "budgetRead": {
+      "ref": "build/p5-formal-20261101/budget-verification-v3/commands/readback.json",
+      "sha256": "a0a89ef5f3ccd06dba211d5b4794ed8c0c1a9d83dfcca21d5e02ad5edb8a6d74"
+    },
+    "budgetRaw": {
+      "ref": "build/p5-formal-20261101/budget-verification-v3/commands/test-model-budget.log",
+      "sha256": "56a4c3a881bcb07a2dde7ecb2381be540c750b1c1fecca5a2e3e5b8aa4928465"
+    },
+    "probe": {
+      "ref": "build/p5-formal-20261101/evidence-coverage/probes/framing-sse-result.json",
+      "sha256": "f9beceda2657a6a93bd99b0733da651e78205a043c6ad4384efce244387ce75d"
+    },
+    "probeSource": {
+      "ref": "build/p5-formal-20261101/evidence-coverage/probes/framing_sse.py",
+      "sha256": "aace91c07b1ce1f041ca2ce01a57a5b528eda7ab777745b6dc90b3a3275b3bbb"
+    },
+    "probeFirst": {
+      "ref": "build/p5-formal-20261101/evidence-coverage/probes/framing-sse-result-attempt1.json",
+      "sha256": "a9ec37c8a2113da3c854ca575d079efbd9a0c5afd18dcbe23f46c91ac455df25"
+    },
+    "designA": {
+      "ref": "build/p5-formal-20261101/design/correctness-v2.json",
+      "sha256": "31e35fe0f84e65fba0a527439685714d9665e7f18f846a3313ddbbf1f780ac16"
+    },
+    "designB": {
+      "ref": "build/p5-formal-20261101/design/safety-v2.json",
+      "sha256": "e48c010075f8dc7e34502fb234467a020f02cd436c0e8565932d9f43127bbdb2"
+    },
+    "deliveryA": {
+      "ref": "build/p5-formal-20261101/delivery/correctness-v3.json",
+      "sha256": "7d3dd2fada9bdd9a2eba5e95d114c4a74dc496d865b4a5974bb971cc438bbc7b"
+    },
+    "deliveryB": {
+      "ref": "build/p5-formal-20261101/delivery/safety-v3.json",
+      "sha256": "95b78814e110c3ae6fd3833a37da282cc8295ffe2c36fef2ff3a152464590862"
+    },
+    "r1": {
+      "ref": "build/p5-formal-20261101/test-name-fix/review/summary.json",
+      "sha256": "b39c2fb803095db163db5f9cdfdedb78458978d6a129f07f9b5135f77a5263a7"
+    },
+    "r1seal": {
+      "ref": "build/p5-formal-20261101/test-name-fix/review/seal.json",
+      "sha256": "b2d511ae290ef7c2dc442d0996f14a8851e086aa6b94194e77889df33f50d2c3"
+    },
+    "r1diff": {
+      "ref": "build/p5-formal-20261101/test-name-fix/one-line.diff",
+      "sha256": "1ecf725f9e17f3f206f2b949c842d5078e50054b425814f940deb6a49f434b8d"
+    },
+    "redStore": {
+      "ref": "build/p5-formal-20261101/store/red-existing-terminals.log",
+      "sha256": "262aa08cde8262b1184d2def46c5fe4d9c455f253822c6e153797b6f6823fe50"
+    },
+    "redHost": {
+      "ref": "build/p5-formal-20261101/host/formal-red.log",
+      "sha256": "f9fc5354b9d52b05963b4366b73196560fc9fb6064b3c159fc4d0386485db9ed"
+    },
+    "redClient": {
+      "ref": "build/p5-formal-20261101/frontend/red-reproduction-s2-domain.log",
+      "sha256": "4c8d86565c76418b981cd0c7d3e830f81b87fe70b83e90b7c04abf1c919031ac"
+    },
+    "redBudget": {
+      "ref": "build/p5-formal-20261101/budget-regressions/expanded-red.log",
+      "sha256": "e1640bf52cdc12bad312745ee3d196c3f7535e9adb0f7c0ffe2f837c453ff306"
+    },
+    "redLauncher": {
+      "ref": "build/p5-formal-20261101/launcher/input-binding-red.log",
+      "sha256": "de6951fe332de9c02b5e319994ef3f04b4b6c800fcef212151f4ad33914ccd17"
+    },
+    "firstFull": {
+      "ref": "build/p5-formal-20261101/independent-final/summary.json",
+      "sha256": "2aa27bf7563cf4b00db7e006f3027d64803a36506f6bc27a4a4249c7b53ac25a"
+    },
+    "firstFullLog": {
+      "ref": "build/p5-formal-20261101/independent-final/full-check.log",
+      "sha256": "7bb866b602e3f42dd5d2f44b3ea44730d59f23a8fd7ab0f3d6cd0d9437485302"
+    },
+    "static": {
+      "ref": "build/p5-formal-20261101/independent-final-r1/static-after.log",
+      "sha256": "8e7fb76327e0453abde4b0522793e4144f26f6adc0077e8b3ed8a1136292814b"
+    },
+    "freeze": {
+      "ref": "build/p5-formal-20261101/freeze-name-fix/code-hashes.json",
+      "sha256": "6e45fc7cd39ad73c6660254ff2bc56e3b528d2335b5a9574446c376246f31ea8"
+    },
+    "core": {
+      "ref": "build/p5-formal-20261101/design/core-v2.md",
+      "sha256": "8961b453f91bc7927c2855a4bd9d9e156a2f879dfb3655aeeda72c8baa056ea9"
+    },
+    "plan": {
+      "ref": "build/p5-formal-20261101/evidence-plan/c-execution-v2.md",
+      "sha256": "2e03c0fef09ebed0815fa8bbf10085515b79c5b2f796fdf0ddeefb61fe12f932"
+    },
+    "planReview": {
+      "ref": "build/p5-formal-20261101/evidence-plan-review/report.json",
+      "sha256": "be93ee8e44119488cfbb0ff8443e17be9711cc7056595a28bc4404dff6c95860"
+    }
+  },
+  "sourceLineage": {
+    "coreSha256": "8961b453f91bc7927c2855a4bd9d9e156a2f879dfb3655aeeda72c8baa056ea9",
+    "currentSourceFiles": 224,
+    "currentSourceAggregate": "c881302c4d870f5011f2a5bc4386e27ec68c50d026284f80675ea955dc9150b7",
+    "currentCriticalInputs": 245,
+    "currentCriticalAggregate": "d6f2990922ef26edaa04153b25f962893e905877208cc99191e75c0979858dcc",
+    "currentNative": {
+      "path": "src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1",
+      "sha256": "f921c1a5db805222231d377dd54c5587caf7e3a98110b52e9c2984dcc3f7201b"
+    },
+    "beforeFullNativeSha256": "35ce0e78418631ffa47940aa132bb8e11386dec830daf9b85de1647a4898427a",
+    "historicalFirstReal": {
+      "sourceAggregate": "385f6e081eb7d19558caf382c93e666e1cb8ab8b0b2c97240f0e5c953b09532c",
+      "native": {
+        "path": "src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1",
+        "sha256": "f7f12382bd265c1aa3f4be7031729378287a4b83612442133c84eb89a2b640f8"
+      },
+      "wholeRun": "fail",
+      "completedHttp": 2
+    },
+    "historicalSecondRealAndOldSynthetic": {
+      "sourceAggregate": "840f825d42e578723bdcf219aa7541a84a1a511dc284aad73445c18ed7ead3b5",
+      "native": {
+        "path": "src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1",
+        "sha256": "2486c68361dd52e39d5cd94d7080bbf309848060ba37be70bdc9c896a7c6b11d"
+      },
+      "sameSourcesCoreNative": true,
+      "realWholeRun": "fail",
+      "syntheticWholeRun": "pass",
+      "completedRealHttp": 4
+    },
+    "currentExactDelta": {
+      "source224Changed": [
+        "src-tauri/src/host/mcp_formal_tests.rs"
+      ],
+      "critical245Changed": [
+        "src-tauri/src/host/mcp_formal_tests.rs"
+      ],
+      "inverseLabelRestoresV3Exact": true,
+      "testAttributesBeforeAfter": [
+        15,
+        15
+      ],
+      "productionGuardCfgSkipFilterOrBodyChanged": false,
+      "r1Report": {
+        "ref": "build/p5-formal-20261101/test-name-fix/review/summary.json",
+        "sha256": "b39c2fb803095db163db5f9cdfdedb78458978d6a129f07f9b5135f77a5263a7"
+      },
+      "r1Seal": {
+        "ref": "build/p5-formal-20261101/test-name-fix/review/seal.json",
+        "sha256": "b2d511ae290ef7c2dc442d0996f14a8851e086aa6b94194e77889df33f50d2c3"
+      },
+      "historicalR3ReSigned": false
+    },
+    "qualification": "same-bytes仅旧840f/2486 synthetic与第二real历史事实；当前c881/f921非旧real同字节，只由精确标签等价链及新actual回归承接。"
+  },
+  "mechanicalEvidence": {
+    "summary": {
+      "ref": "build/p5-formal-20261101/independent-final-r1/summary.json",
+      "sha256": "ca2dd0acbc84479b2844c3187f54f6a00bdaf8f75529d47c0952d6d8010798a3"
+    },
+    "node": {
+      "tests": 434,
+      "pass": 434,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "defaultRust": {
+      "result": "ok",
+      "passed": 192,
+      "failed": 0,
+      "ignored": 2,
+      "measured": 0,
+      "filteredOut": 0,
+      "seconds": 182.58
+    },
+    "dualRust": {
+      "result": "ok",
+      "passed": 8,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filteredOut": 194,
+      "seconds": 0.61
+    },
+    "twoPackages": [
+      "Sidekick MCP Verify.app",
+      "Sidekick.app"
+    ],
+    "resourceEntries": 556,
+    "warnings": {
+      "runtimeBundleSize": 12,
+      "viteChunkSize": 2,
+      "notarizationSkipped": 2,
+      "controlledLauncherNegativeStderr": 15
+    },
+    "allGitVisibleAndIndexBytesStable": true,
+    "firstFullFailurePreserved": {
+      "ref": "build/p5-formal-20261101/independent-final/summary.json",
+      "sha256": "2aa27bf7563cf4b00db7e006f3027d64803a36506f6bc27a4a4249c7b53ac25a"
+    }
+  },
+  "pureFakeSupplement": {
+    "command": "python3 -B build/p5-formal-20261101/evidence-coverage/probes/framing_sse.py",
+    "startUtc": "2026-10-31T21:45:46.623464+00:00",
+    "endUtc": "2026-10-31T21:45:59.077925+00:00",
+    "elapsedSeconds": 12.453210667008534,
+    "exitCode": 0,
+    "caseCount": 25,
+    "result": {
+      "ref": "build/p5-formal-20261101/evidence-coverage/probes/framing-sse-result.json",
+      "sha256": "f9beceda2657a6a93bd99b0733da651e78205a043c6ad4384efce244387ce75d"
+    },
+    "executor": {
+      "ref": "build/p5-formal-20261101/evidence-coverage/probes/framing_sse.py",
+      "sha256": "aace91c07b1ce1f041ca2ce01a57a5b528eda7ab777745b6dc90b3a3275b3bbb"
+    },
+    "sourceCoreNativeUnchanged": true,
+    "currentBudgetModuleSha256": "4b8933563abc6193999a8dba535c574c99bcc215d97664197eb0057d7d28f305",
+    "independentFakeCounterReadOnlyRows": [
+      {
+        "counter": "attempt2-http-framing",
+        "rows": [
+          [
+            1,
+            "completed"
+          ],
+          [
+            2,
+            "completed"
+          ]
+        ]
+      },
+      {
+        "counter": "attempt2-invalid-utf8",
+        "rows": [
+          [
+            1,
+            "completed"
+          ],
+          [
+            2,
+            "failed_unknown"
+          ]
+        ]
+      },
+      {
+        "counter": "attempt2-response-exact-max-positive",
+        "rows": [
+          [
+            1,
+            "completed"
+          ]
+        ]
+      },
+      {
+        "counter": "attempt2-response-over-max",
+        "rows": [
+          [
+            1,
+            "completed"
+          ],
+          [
+            2,
+            "failed_unknown"
+          ]
+        ]
+      },
+      {
+        "counter": "http-framing",
+        "rows": []
+      }
+    ],
+    "realRequests": 0,
+    "firstExecutorFailure": {
+      "result": {
+        "ref": "build/p5-formal-20261101/evidence-coverage/probes/framing-sse-result-attempt1.json",
+        "sha256": "a9ec37c8a2113da3c854ca575d079efbd9a0c5afd18dcbe23f46c91ac455df25"
+      },
+      "reason": "本审计新执行器anchor固定且已过期，合法正控被现有600秒守卫正确拒绝、0fake槽，未执行负项；保留后仅修ignored runner为当前时间并使用全新attempt2假计数。",
+      "notProductFailure": true
+    }
+  },
+  "realFactsRetained": {
+    "probeExitCodes": [
+      1,
+      1
+    ],
+    "originalRealModelRequests": [
+      null,
+      null
+    ],
+    "confirmedCompletedHttpByAttempt": [
+      2,
+      4
+    ],
+    "reservedForwardedCompleted": [
+      6,
+      6,
+      6
+    ],
+    "remaining": 4,
+    "nightDataFromSealedReadOnlyQueryNotFreshOpenByC": true,
+    "secondRevise": "failed/MODEL_INVALID_OUTPUT;previewNULL",
+    "secondCandidate": "pending/version1/unaccepted",
+    "realApplySignTrialExecuted": false,
+    "rejectedRawAnswerRetained": false,
+    "exactRejectedRuleUnknown": true,
+    "failureRelabeledAsExpectedInvalidOutputPass": false
+  },
+  "currentReadback": {
+    "head": "2216ccced3b4efe5d7696a2c006b603b507060ae",
+    "statusPathCount": 24,
+    "cachedEmpty": true,
+    "protectedDiffEmpty": true,
+    "sourceCriticalCoreNativeStable": true,
+    "sealedEvidenceDigestsStillMatch": true
+  },
+  "pendingG06": [
+    {
+      "owner": "主执行者",
+      "action": "按C事实同步实施状态/记录与精选证据，保留两次真实fail、未知原因、可选真实层；不预写P5完成。",
+      "status": "not performed by C"
+    },
+    {
+      "owner": "主执行者/独立缓存审核",
+      "action": "范围化暂存后actual cached name-status/stat/内容/卫生、保护区、证据SHA和freeze核对；文档守卫按配置跑。",
+      "status": "not performed; index currently empty"
+    },
+    {
+      "owner": "Root",
+      "action": "以上实际闭合后按原授权local commit，实际核HEAD/parent/剩余status/index/source freeze，不push/amend/force。",
+      "status": "not performed; HEAD remains P4"
+    },
+    {
+      "owner": "Root",
+      "action": "只有G06实际闭合后再判断P6；08:00停止新项/请求并安全收尾暂停。",
+      "status": "future conditional action, not granted by C"
+    }
+  ],
+  "unverifiedLayers": [
+    "真实revise有效预览正向",
+    "真实apply/sign/trial及全真实强矩阵",
+    "MODEL_INVALID_OUTPUT具体字段/层级原因",
+    "P6 Finder/双尺寸/键盘焦点滚动/重开",
+    "生产MCP钥匙串/真实业务服务/真实用户根及历史clean clone/CI/安装验收"
+  ],
+  "limitations": [
+    "当前合成生产整链与历史真实自主MCP分别署名，不能互称；机械pass与计划APPROVE都不单独签总体。",
+    "真实失败与原因未知保留；不能确定有效回答被错误拒绝，也不能断言模型必错。以后若证实规范反证应回缺陷流程，不以optional掩盖。",
+    "G06 remains incomplete；C未执行状态/精选/cached/提交后核实，因此无P5complete或P6许可。"
+  ],
+  "assemblyNote": "报告组装器的源码范围检查拒绝两处超出EOF的行号；最终引用已按实际1223／293行修正，未修改产品源码或任何既有验证结论。"
+}

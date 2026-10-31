@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "typecheck": "vue-tsc --noEmit",
-    "check": "npm run check:structure && npm run check:docs && npm run probe:bundle && npm run typecheck && npm run test:s1-domain && npm run test:s2-domain && npm run test:s31-domain && npm run test:layout-domain && npm run test:s32-domain && npm run test:s33-config-domain && npm run test:s33-security-domain && npm run test:s33-ui-domain && npm run test:s33-upgrade-domain && npm run test:mcp-contract && npm run test:mcp-recovery && npm run check:rust && npm run check:s33-p2-runtime && npm run test:s33-lifecycle && npm run probe:runtime && npm run probe:card && npm run probe:contracts && npm run probe:native && npm run probe:toolchain && npm run test:s2-runtime && node --test --test-timeout=15000 tests/integration/s31-runtime.test.mjs && node --test --test-timeout=20000 tests/integration/layout-runtime.test.mjs && node --test --test-timeout=20000 tests/integration/s32-runtime.test.mjs && npm run probe:bundle-smoke && npm run check:s33-p2-package",
+    "check": "npm run check:structure && npm run check:docs && npm run probe:bundle && npm run typecheck && npm run test:s1-domain && npm run test:s2-domain && npm run test:s31-domain && npm run test:layout-domain && npm run test:s32-domain && npm run test:s33-config-domain && npm run test:s33-security-domain && npm run test:s33-ui-domain && npm run test:s33-upgrade-domain && npm run test:mcp-contract && npm run test:mcp-recovery && npm run test:model-budget && npm run check:rust && npm run check:s33-p2-runtime && npm run test:s33-lifecycle && npm run probe:runtime && npm run probe:card && npm run probe:contracts && npm run probe:native && npm run test:mcp-budgeted && npm run probe:toolchain && npm run test:s2-runtime && node --test --test-timeout=15000 tests/integration/s31-runtime.test.mjs && node --test --test-timeout=20000 tests/integration/layout-runtime.test.mjs && node --test --test-timeout=20000 tests/integration/s32-runtime.test.mjs && npm run probe:bundle-smoke && npm run check:s33-p2-package",
     "check:structure": "node scripts/checks/check-structure.mjs --self-test && node scripts/checks/check-structure.mjs",
     "check:docs": "node scripts/checks/check-docs.mjs",
     "build": "npm run typecheck && vite build",
@@ -78,7 +78,12 @@
     "test:mcp-contract": "node --test --test-timeout=15000 tests/unit/mcp-trial.test.mjs",
     "test:mcp-trial": "npm run probe:bundle && cargo test --manifest-path src-tauri/Cargo.toml --lib runtime_host::mcp_trial_tests -- --test-threads=1",
     "test:mcp-recovery": "node scripts/probes/prepare-mcp-recovery.mjs && node --test --test-timeout=15000 tests/integration/mcp-recovery.test.mjs",
-    "test:mcp-recovery-host": "npm run probe:bundle && cargo test --manifest-path src-tauri/Cargo.toml --lib runtime_host::mcp_recovery_tests -- --test-threads=1"
+    "test:mcp-recovery-host": "npm run probe:bundle && cargo test --manifest-path src-tauri/Cargo.toml --lib runtime_host::mcp_recovery_tests -- --test-threads=1",
+    "test:model-budget": "node --test --test-timeout=30000 tests/integration/model-budget.test.mjs tests/integration/mcp-launcher.test.mjs",
+    "test:mcp-formal": "npm run probe:bundle && cargo test --manifest-path src-tauri/Cargo.toml --lib runtime_host::mcp_formal_tests -- --test-threads=1",
+    "probe:mcp-live:prepare": "cargo test --manifest-path src-tauri/Cargo.toml --lib --no-run --message-format=json",
+    "probe:mcp-live": "python3 scripts/probes/run-mcp-live.py --real",
+    "test:mcp-budgeted": "python3 scripts/probes/run-mcp-live.py --synthetic"
   },
   "dependencies": {
     "@larksuite/cli": "1.0.98",
