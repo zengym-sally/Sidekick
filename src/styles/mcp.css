@@ -1,0 +1,29 @@
+.mcp-page .mcp-storage{margin:0 0 24px;padding:12px 16px;background:var(--soft-ink);border:0;border-radius:8px}
+.mcp-page .mcp-storage .catalog-section-heading{margin-bottom:4px}
+.mcp-page .mcp-storage p{margin:4px 0;font-size:11px}
+.mcp-page .mcp-storage>.sk-button{min-height:30px;margin-top:4px;padding:4px 0;font-size:11px}
+.mcp-editor-heading{align-items:center}
+.mcp-editor-actions{display:flex;gap:8px;align-items:center;flex:none}
+.mcp-editor-actions>.sk-button{min-height:30px;padding:4px 8px;font-size:11px}
+.mcp-mode-switch{display:flex;padding:3px;gap:2px;background:var(--sidebar);border-radius:8px}
+.mcp-mode-switch button{border:0;border-radius:6px;background:transparent;color:var(--muted);min-height:30px;padding:4px 12px;font:inherit;font-size:12px}
+.mcp-mode-switch button:hover{color:var(--ink)}
+.mcp-mode-switch [aria-pressed=true]{background:var(--surface);color:var(--ink);font-weight:600}
+.mcp-mode-switch button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.mcp-mode-switch button:disabled{opacity:.55;cursor:not-allowed}
+.mcp-page .mcp-arguments{margin-top:16px}
+.mcp-page .mcp-arguments .catalog-section-heading{margin-bottom:4px}
+.mcp-page .mcp-arguments .catalog-header-row{margin-top:6px}
+.mcp-page .mcp-env-row{margin:12px 0;gap:12px}
+.mcp-json-editor{min-width:0}
+.mcp-json-editor .sk-textarea textarea{min-height:280px;resize:vertical;font-family:var(--font);font-size:12px;line-height:1.65;tab-size:2}
+.mcp-json-preview{margin-top:16px;padding:12px 16px;background:var(--soft-ink);border-radius:8px}
+.mcp-json-recognition{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500}
+.mcp-json-recognition .icon{width:16px;height:16px;flex:none}
+.mcp-json-preview .sk-field{margin-top:12px}
+.mcp-json-summary{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 12px;margin:10px 0 0;font-size:11px;color:var(--muted)}
+.mcp-json-summary strong{color:var(--ink);font-size:12px;overflow-wrap:anywhere}
+.mcp-json-preview>.muted{margin:8px 0 0}
+.mcp-json-help p{max-width:72ch;line-height:1.8}
+@media(min-width:1180px){.mcp-page .mcp-env-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.2fr) 30px}}
+@media(max-width:760px){.mcp-editor-heading{align-items:flex-start;flex-direction:column;gap:12px}.mcp-editor-actions{width:100%;justify-content:space-between}.mcp-json-editor .sk-textarea textarea{min-height:260px}.mcp-page .mcp-storage{padding:12px;margin-bottom:20px}.mcp-json-preview{padding:12px}}

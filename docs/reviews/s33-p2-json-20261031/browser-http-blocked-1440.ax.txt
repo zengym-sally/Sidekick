@@ -1,0 +1,101 @@
+Browser tab: 3, Title: "Sidekick 界面验收 · 合成资料", URL: "http://127.0.0.1:1475/?mcpStorageUnavailable=1".
+0 AXWebArea Sidekick 界面验收 · 合成资料, URL: 127.0.0.1:1475/?mcpStorageUnavailable=1
+	1 container app
+		2 container 主导航
+			3 button 跟班 Sidekick，打开今日工作台
+				4 text sidekick
+				5 text 盯着呢，老板。
+			6 container
+				7 button 今日工作台
+				8 button 待确认
+				9 button 全部事项 0, Help: 全部事项
+					10 text 全部事项
+					11 text 0
+			12 button Description: 个人信息与设置，验收同事, Help: 个人信息与设置
+				13 text 验收同事
+				14 text 个人信息与设置
+		15 container
+			21 text 设置
+			17 button 刷新清单
+			18 button 快速录入 ⌘ K, ID: quick-entry
+				19 text 快速录入
+				20 text ⌘ K
+			22 container
+				80 container
+					81 heading 工具, Value: 1
+						82 text 工具
+					83 text 管理完整技能与本机 MCP 服务配置。
+				26 tab group 设置分类
+					27 tab (selectable, settable, boolean) 个人信息, Value: 0, ID: settings-tab-profile
+					28 tab (selectable, settable, boolean) 通用, Value: 0, ID: settings-tab-general
+					29 tab (selectable, settable, boolean) 模型服务, Value: 0, ID: settings-tab-models
+					30 tab (selectable, settable, boolean) 智能体, Value: 0, ID: settings-tab-agents
+					31 tab (selected, settable, boolean) 工具, Value: 1, ID: settings-tab-tools
+					32 tab (selectable, settable, boolean) 关于, Value: 0, ID: settings-tab-about
+				35 container Description: 工具, ID: settings-panel-tools
+					36 tab group 工具分类
+						37 tab (selectable, settable, boolean) Skills, Value: 0, ID: tools-tab-skills
+						38 tab (selected, settable, boolean) MCP 服务, Value: 1, ID: tools-tab-mcp
+					39 container Description: MCP 服务, ID: tools-panel-mcp
+						40 container 诊断存储
+							41 heading 诊断存储, Value: 3, ID: mcp-storage-heading
+								42 text 诊断存储
+							43 text 诊断存储已开启。可以保存诊断记录，不会自动连接服务。
+							44 text 当前工作目录：/fixture/sidekick/仅为浏览器合成工作目录/长路径用于验证确认内容与换行
+							45 button 重新核对存储状态
+						46 container MCP 服务列表
+							47 text 本机服务 0 / 20
+							51 checkbox 新服务 有未保存的修改, Value: 1
+								52 text 新服务
+								53 text 有未保存的修改
+							48 button 新增 MCP 服务
+							49 button 粘贴 JSON 配置
+						50 container MCP 服务配置
+							55 container
+								56 heading 新增 MCP 服务, Value: 2
+									57 text 新增 MCP 服务
+								58 text 保存配置后手动诊断，查看服务提供的工具。
+								59 container 配置编辑方式
+									60 checkbox 表单, Value: 0
+									61 checkbox JSON, Value: 1
+							62 container
+								63 text MCP 配置 JSON
+								64 text entry area (settable) MCP 配置 JSON, ID: field-v-13, Value: {
+  "mcpServers": {
+    "本机文档": {
+      "command": "node",
+      "args": [
+        "one argument",
+        ""
+      ],
+      "env": {
+        "REGION": "cn"
+      }
+    },
+    "远程文档": {
+      "type": "http",
+      "url": "https://example.invalid/mcp"
+    }
+  }
+}
+								96 text 已识别远程传输；HTTP / SSE 当前尚未接入，不能保存或诊断。请使用 stdio 配置。
+								85 text 已识别 mcpServers · 2 项服务 本次保存的服务
+								86 container
+									87 combo box (collapsed, settable) 本次保存的服务, Value: 远程文档, ID: field-v-14, Secondary Actions: Expand
+									88 image
+								89 text 每次只保存所选的一项，其余服务不会导入。
+								67 button (collapsed) 支持哪些配置格式？, Secondary Actions: Expand
+									68 text 支持哪些配置格式？
+							69 container 连接诊断与工具
+								70 heading 连接诊断与工具, Value: 3, ID: mcp-diagnostic-heading
+									71 text 连接诊断与工具
+								72 button (disabled) 连接诊断
+								73 text 只初始化并发现工具，不调用工具；本次完成后关闭服务进程。
+								74 text 请先保存并确认这项服务配置，再开始诊断。
+								75 button 重新核对诊断状态
+				76 container
+					77 text 有未保存的修改
+					78 button 放弃修改
+					79 button (disabled) 保存服务配置
+
+The focused UI element is 87 combo box (collapsed, settable) 本次保存的服务, Value: 远程文档, ID: field-v-14, Secondary Actions: Expand

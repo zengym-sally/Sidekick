@@ -1,0 +1,15 @@
+{
+  "serverCount": 2,
+  "selectedId": "mcp-40b330cfb6db29bb9aa36481",
+  "selectedName": "\u539f\u751f\u9694\u79bb\u9a8c\u6536",
+  "argsTail": [
+    "one argument",
+    ""
+  ],
+  "agentRuns": 17,
+  "saveDidNotStart": true,
+  "serviceLogUnchanged": true,
+  "otherServerHashes": {
+    "mcp-bb52d9b987c88bffebb239dc": "3f7ebaaf3fd3f52dcb0ec5a3c99e1e79a9f030ade3d483e18f40fb51efee52dc"
+  }
+}

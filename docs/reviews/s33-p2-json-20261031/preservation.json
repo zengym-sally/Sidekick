@@ -1,0 +1,29 @@
+{
+  "reference": "docs/reviews/s33-p2-native-20261031/readback.json",
+  "files": {
+    "native-reopen-02-exit.json": {
+      "sha256": "adee78bc4be9a41fd676a651e0adb01a7a992470c54fcc7bb6ba1fc8bce3de0a",
+      "unchanged": true
+    },
+    "native-reopen-02-launch.json": {
+      "sha256": "583f30a0d54c0abd39e6f528d56a670e1d06bbf545750924c329214aa72b4a89",
+      "unchanged": true
+    },
+    "native-reopen-03-exit.json": {
+      "sha256": "79dd9c76d917a684f97215c668039530eccf57aaa3361e5b5c72447170406bf3",
+      "unchanged": true
+    },
+    "native-reopen-03-launch.json": {
+      "sha256": "97b2a7a07784c2a2d8bf9001e81c31fad3533e202d88cdfec501580ebd5a91c7",
+      "unchanged": true
+    },
+    "native-reopen-04-exit.json": {
+      "sha256": "4be1b7a2e6dc9728cc97b06fef129bf6972b2732018bf0873de7d09d3f457370",
+      "unchanged": true
+    },
+    "native-reopen-04-launch.json": {
+      "sha256": "d6674704f9cb65c155aaa2742dc352b84f75555fb878c27e741aafcc47597c4a",
+      "unchanged": true
+    }
+  }
+}

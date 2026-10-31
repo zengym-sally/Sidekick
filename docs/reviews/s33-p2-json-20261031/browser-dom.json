@@ -1,0 +1,87 @@
+{
+  "buttons": [
+    {
+      "disabled": false,
+      "text": "重新核对存储状态"
+    },
+    {
+      "disabled": false,
+      "text": "取消"
+    },
+    {
+      "disabled": true,
+      "text": "备份并开启"
+    },
+    {
+      "disabled": false,
+      "text": "连接诊断"
+    },
+    {
+      "disabled": false,
+      "text": "重新核对诊断状态"
+    },
+    {
+      "disabled": true,
+      "text": "放弃修改"
+    },
+    {
+      "disabled": true,
+      "text": "保存服务配置"
+    }
+  ],
+  "forms": [
+    {
+      "label": null,
+      "value": "on"
+    },
+    {
+      "label": null,
+      "value": "本机文档"
+    },
+    {
+      "label": null,
+      "value": "stdio · 本机命令"
+    },
+    {
+      "label": null,
+      "value": "node"
+    },
+    {
+      "label": "参数 1",
+      "value": "one argument"
+    },
+    {
+      "label": "参数 2",
+      "value": ""
+    },
+    {
+      "label": null,
+      "value": ""
+    },
+    {
+      "label": null,
+      "value": "10"
+    },
+    {
+      "label": null,
+      "value": "30"
+    },
+    {
+      "label": null,
+      "value": "REGION"
+    },
+    {
+      "label": null,
+      "value": "普通值（非秘密）"
+    },
+    {
+      "label": null,
+      "value": "cn"
+    }
+  ],
+  "viewport": {
+    "height": 1000,
+    "width": 1440
+  },
+  "width": 1440
+}

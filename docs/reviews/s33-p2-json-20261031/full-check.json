@@ -1,0 +1,22 @@
+{
+  "command": "npm run check",
+  "startedUtc": "2026-10-31T06:53:56.115973+00:00",
+  "sourceBefore": {
+    "src/domain/mcpJson.ts": "bd7e1eb7ee34d194e3381c29f39865d2be74a2d4a8faaa657030858111a9cf84",
+    "src/stores/mcp.ts": "7904947a423317766bb44120c5fc76c34395aa25a43d07269b206d87354c0f8c",
+    "src/components/McpSettingsPanel.vue": "bcb32394d0134d02deeb40a04ca8a6bed00f981233420c376830433f74532da8",
+    "src/styles/mcp.css": "2447086e4886575930fed7ab3284ec34c214e3ba2080f725baba6a0c79097c03",
+    "tests/s33-json.test.mjs": "2e72f488f2e1a9021d12205c80af426c9fa00e8ceff837746ac99f18d0558fd3",
+    "package.json": "bb9abc29673d2fb5e038d20333e605a05fc9067764415fb77b9a5fad0a97973c"
+  },
+  "finishedUtc": "2026-10-31T06:57:13.652826+00:00",
+  "exitCode": 0,
+  "sourceAfter": {
+    "src/domain/mcpJson.ts": "bd7e1eb7ee34d194e3381c29f39865d2be74a2d4a8faaa657030858111a9cf84",
+    "src/stores/mcp.ts": "7904947a423317766bb44120c5fc76c34395aa25a43d07269b206d87354c0f8c",
+    "src/components/McpSettingsPanel.vue": "bcb32394d0134d02deeb40a04ca8a6bed00f981233420c376830433f74532da8",
+    "src/styles/mcp.css": "2447086e4886575930fed7ab3284ec34c214e3ba2080f725baba6a0c79097c03",
+    "tests/s33-json.test.mjs": "2e72f488f2e1a9021d12205c80af426c9fa00e8ceff837746ac99f18d0558fd3",
+    "package.json": "bb9abc29673d2fb5e038d20333e605a05fc9067764415fb77b9a5fad0a97973c"
+  }
+}

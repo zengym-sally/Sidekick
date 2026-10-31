@@ -47,6 +47,24 @@
         ],
         "createdAt": "2026-10-28T17:31:56.208Z",
         "reason": "user confirmed: Space Grotesk is the fixed Sidekick Latin and numeric typeface recorded in PRODUCT.md, DESIGN.md, and the approved product baseline."
+      },
+      {
+        "rule": "design-system-radius",
+        "value": "8px",
+        "files": [
+          "src/styles/mcp.css"
+        ],
+        "createdAt": "2026-10-31T06:55:19.897Z",
+        "reason": "Existing public-form section in DESIGN.md and settings.css define 8px controls; this file preserves the established design."
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "11px",
+        "files": [
+          "src/styles/mcp.css"
+        ],
+        "createdAt": "2026-10-31T06:55:19.996Z",
+        "reason": "Existing settings.css uses 11px help and metadata text; this file preserves the established settings density."
       }
     ]
   }

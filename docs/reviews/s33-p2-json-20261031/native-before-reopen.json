@@ -1,0 +1,165 @@
+{
+  "serverCount": 2,
+  "selectedId": "mcp-40b330cfb6db29bb9aa36481",
+  "args": [
+    "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs",
+    "/private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl",
+    "normal"
+  ],
+  "otherServerHashesUnchangedSinceSave": true,
+  "allRuns": [
+    [
+      "mcp-probe-29752-1793394011079698000",
+      "failed",
+      "MCP_CLEANUP"
+    ],
+    [
+      "mcp-probe-29752-1793394346436313000",
+      "failed",
+      "MCP_CLEANUP"
+    ],
+    [
+      "mcp-probe-29752-1793394459360202000",
+      "failed",
+      "MCP_CLEANUP"
+    ],
+    [
+      "mcp-probe-29752-1793394614031296000",
+      "cancelled",
+      "CANCELLED"
+    ],
+    [
+      "mcp-probe-29752-1793394821500622000",
+      "cancelled",
+      "CANCELLED"
+    ],
+    [
+      "mcp-probe-52234-1793397038215577000",
+      "succeeded",
+      null
+    ],
+    [
+      "mcp-probe-52234-1793397156288548000",
+      "failed",
+      "MCP_COMMAND_MISSING"
+    ],
+    [
+      "mcp-probe-52234-1793397199151295000",
+      "cancelled",
+      "CANCELLED"
+    ],
+    [
+      "mcp-probe-52234-1793397574092313000",
+      "succeeded",
+      null
+    ],
+    [
+      "mcp-probe-47795-1793427825240259000",
+      "failed",
+      "MCP_COMMAND_MISSING"
+    ],
+    [
+      "mcp-probe-47795-1793427833889150000",
+      "failed",
+      "MCP_COMMAND_MISSING"
+    ],
+    [
+      "mcp-probe-47795-1793427844735896000",
+      "failed",
+      "MCP_COMMAND_MISSING"
+    ],
+    [
+      "mcp-probe-47795-1793427847148444000",
+      "failed",
+      "MCP_COMMAND_MISSING"
+    ],
+    [
+      "mcp-probe-47795-1793427847770582000",
+      "failed",
+      "MCP_COMMAND_MISSING"
+    ],
+    [
+      "mcp-probe-47795-1793427847963919000",
+      "failed",
+      "MCP_COMMAND_MISSING"
+    ],
+    [
+      "mcp-probe-47795-1793427848153972000",
+      "failed",
+      "MCP_COMMAND_MISSING"
+    ],
+    [
+      "mcp-probe-47795-1793427848338751000",
+      "failed",
+      "MCP_COMMAND_MISSING"
+    ],
+    [
+      "mcp-probe-10204-1793430029156386000",
+      "failed",
+      "MCP_TIMEOUT"
+    ],
+    [
+      "mcp-probe-10204-1793430086995451000",
+      "succeeded",
+      null
+    ],
+    [
+      "mcp-probe-10204-1793430118314628000",
+      "cancelled",
+      "CANCELLED"
+    ],
+    [
+      "mcp-probe-10204-1793430158480204000",
+      "succeeded",
+      null
+    ]
+  ],
+  "newRuns": [
+    [
+      "mcp-probe-10204-1793430029156386000",
+      "failed",
+      "MCP_TIMEOUT"
+    ],
+    [
+      "mcp-probe-10204-1793430086995451000",
+      "succeeded",
+      null
+    ],
+    [
+      "mcp-probe-10204-1793430118314628000",
+      "cancelled",
+      "CANCELLED"
+    ],
+    [
+      "mcp-probe-10204-1793430158480204000",
+      "succeeded",
+      null
+    ]
+  ],
+  "tables": {
+    "sources": 0,
+    "candidates": 0,
+    "todos": 0,
+    "todo_events": 0,
+    "tool_calls": 0
+  },
+  "integrity": "ok",
+  "newServiceMethods": {
+    "initialize": 3,
+    "notifications/initialized": 3,
+    "tools/list": 5
+  },
+  "newServicePids": [
+    5436,
+    5475,
+    9801,
+    9842,
+    9878,
+    56134,
+    56172,
+    72889,
+    72927
+  ],
+  "configSha256": "4f8fd97eabf7ac902ee1f952ffa9a4e91ec3ee4626754c117e9da2256a2355a4",
+  "serviceLogSha256": "cdd0bbd71093bc8f31328f749f35e19785a613b565f517689a8cbf86d3366c1a"
+}

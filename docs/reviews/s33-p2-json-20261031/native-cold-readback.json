@@ -1,0 +1,67 @@
+{
+  "reopenPid": 63772,
+  "workspace": "/private/tmp/sidekick-s33-authorized-f889amz_/app/workspace",
+  "agentRuns": 21,
+  "rowsUnchanged": true,
+  "configurationUnchanged": true,
+  "serviceLogUnchanged": true,
+  "integrity": "ok",
+  "foreignKeyErrors": 0,
+  "selectedArgs": [
+    "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs",
+    "/private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl",
+    "normal"
+  ],
+  "noAutomaticReconnect": true,
+  "images": {
+    "native-01-form-wide.jpg": {
+      "width": 1440,
+      "height": 1000,
+      "includesTitlebar": true,
+      "sha256": "161bd1c6464d97254f32a08ca7f3ac8de143a0cd93f21ddc3a478e968c10f7e4"
+    },
+    "native-02-json-http-blocked-wide.jpg": {
+      "width": 1440,
+      "height": 1000,
+      "includesTitlebar": true,
+      "sha256": "b72221f121719e4a2f10a9029f68a2ffbac87ef0277f6dac9998d6a5fab4fc31"
+    },
+    "native-03-json-saved-success-wide.jpg": {
+      "width": 1440,
+      "height": 1000,
+      "includesTitlebar": true,
+      "sha256": "aabfc410ef123d07003a7fa7df31029e2674b517e8cfcc9e3274e6ee9ed16def"
+    },
+    "native-04-json-cancelled-wide.jpg": {
+      "width": 1440,
+      "height": 1000,
+      "includesTitlebar": true,
+      "sha256": "82ef82a7313ee004ed5ce255912f2bdb56b8490a67186bd81cfbf8d06cf57076"
+    },
+    "native-05-json-final-wide.jpg": {
+      "width": 1440,
+      "height": 1000,
+      "includesTitlebar": true,
+      "sha256": "495e29f90df9f3fc0a610d382847108acb600c98e46eece7e49a63afa613ff29"
+    },
+    "native-06-json-ready-wide.jpg": {
+      "width": 1440,
+      "height": 1000,
+      "includesTitlebar": true,
+      "sha256": "49337970dbe687a98575ab460c88e3230481352a14230f0570bdffadddf5d8ab"
+    },
+    "native-07-reopened-form-narrow.jpg": {
+      "width": 640,
+      "height": 900,
+      "includesTitlebar": true,
+      "sha256": "37c6d01ebbfdf07f640c1967f686349d2b4068e625a1a66382af36645e79200c"
+    },
+    "native-08-reopened-json-narrow.jpg": {
+      "width": 640,
+      "height": 900,
+      "includesTitlebar": true,
+      "sha256": "5e714132ce575eab45081ebf174995f2898afcec6c3eb29cb528a04ee15b17d0"
+    }
+  },
+  "historicalContentViewportSignoff": "unchanged; original window captures include titlebar, no content viewport height signoff"
+}

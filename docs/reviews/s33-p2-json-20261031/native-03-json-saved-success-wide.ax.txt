@@ -1,0 +1,104 @@
+Window: "跟班 Sidekick · MCP 隔离验收", App: Sidekick MCP Verify.
+0 standard window 跟班 Sidekick · MCP 隔离验收, Secondary Actions: Raise
+	1 scroll area
+		2 HTML content Description: 跟班 Sidekick, URL: tauri://localhost
+			3 container 主导航
+				4 button 跟班 Sidekick，打开今日工作台
+				5 container
+					6 button 今日工作台
+					7 button 待确认
+					8 button 全部事项 0, Help: 全部事项
+				9 button 个人信息与设置，小明同学, Help: 个人信息与设置
+			10 container
+				11 text 设置
+				12 button 刷新清单
+				13 button 快速录入 ⌘ K
+			14 container
+				15 heading 工具, Value: 1
+					16 text 工具
+				17 text 管理完整技能与本机 MCP 服务配置。
+				18 tab group (selectable) 设置分类
+					19 tab (selectable) 个人信息
+					20 tab (selectable) 通用
+					21 tab (selectable) 模型服务
+					22 tab (selectable) 智能体
+					23 tab (selected) 工具
+					24 tab (selectable) 关于
+				25 container 工具
+					26 tab group (selectable) 工具分类
+						27 tab (selectable) Skills
+						28 tab (selected) MCP 服务
+					29 container MCP 服务
+						30 container 诊断存储
+							31 heading 诊断存储, Value: 3
+								32 text 诊断存储
+							33 text 诊断存储已开启。可以保存诊断记录，不会自动连接服务。
+							34 text 当前工作目录：/private/tmp/sidekick-s33-authorized-f889amz_/app/workspace
+							35 button 重新核对存储状态
+						36 container MCP 服务列表
+							37 text 本机服务 2 / 20
+							38 toggle button 原生隔离验收 已启用, Value: on
+							39 toggle button zai-mcp-server 已启用, Value: off
+							40 button 新增 MCP 服务
+							41 button 粘贴 JSON 配置
+						42 container MCP 服务配置
+							43 container
+								44 heading 原生隔离验收, Value: 2
+									45 text 原生隔离验收
+								46 text 保存配置后手动诊断，查看服务提供的工具。
+								47 container 配置编辑方式
+									48 toggle button 表单, Value: off
+									49 toggle button JSON, Value: on
+								50 button 移除
+							51 container
+								52 text MCP 配置 JSON
+								53 text entry area (settable) MCP 配置 JSON, Value: [text entry area], Placeholder: {"mcpServers": {"my-server": {"command": "node", "args": []}}}
+									54 text (settable) {
+  "mcpServers": {
+    "原生隔离验收": {
+      "type": "stdio",
+      "command": "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node",
+      "args": [
+        "/Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs",
+        "/private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl",
+        "normal"
+      ],
+      "enabled": t
+								55 text 直接粘贴配置会自动识别格式；只在点击保存时写入，不会启动服务。 已识别 mcpServers · 1 项服务 原生隔离验收 stdio 3 个参数 0 个环境项 将更新当前服务「原生隔离验收」，保留服务标识；不会按名称覆盖其他服务。
+								56 summary 支持哪些配置格式？, Value: off
+									57 text 支持哪些配置格式？
+							58 container 连接诊断与工具
+								59 heading 连接诊断与工具, Value: 3
+									60 text 连接诊断与工具
+								61 button 连接诊断
+								62 text 只初始化并发现工具，不调用工具；本次完成后关闭服务进程。
+								63 button 重新核对诊断状态
+								64 text 最近一次诊断完成，进程已清理。发现 2 项工具。
+								65 text 诊断记录 · 10/31 07:01
+								66 container
+									67 container lookup
+										68 text lookup
+										69 summary 输入格式（只读）, Value: off
+											70 text 输入格式（只读）
+									71 container second
+										72 text second
+										73 summary 输入格式（只读）, Value: off
+											74 text 输入格式（只读）
+							75 summary 服务标识, Value: off
+								76 text 服务标识
+				77 text 服务配置已保存；尚未测试连接。
+				78 button (disabled) 放弃修改
+				79 button (disabled) 保存服务配置
+	80 close button
+	81 full screen button Help: this button also has an action to zoom the window, Secondary Actions: zoom the window
+	82 minimize button
+	83 text 跟班 Sidekick · MCP 隔离验收
+84 menu bar
+	85 Sidekick MCP Verify
+	86 File
+	87 Edit
+	88 View
+	89 Window
+	90 Help
+
+The focused UI element is 2 HTML content Description: 跟班 Sidekick, URL: tauri://localhost

@@ -10,6 +10,8 @@ import type {McpEnvironment} from '../domain/mcp';
 import Icon from './Icon.vue';
 import SkField from './ui/SkField.vue';import SkInput from './ui/SkInput.vue';import SkSelect from './ui/SkSelect.vue';import SkFieldset from './ui/SkFieldset.vue';import SkButton from './ui/SkButton.vue';import SkSwitch from './ui/SkSwitch.vue';import SkNumberInput from './ui/SkNumberInput.vue';import SkSaveBar from './ui/SkSaveBar.vue';
 import SkSecretInput from './ui/SkSecretInput.vue';
+import SkTextarea from './ui/SkTextarea.vue';
+import '../styles/mcp.css';
 const storage=useMcpUpgrade();
 const mcp=useMcpSettings(),draft=computed(()=>mcp.current),blocked=computed(()=>!mcp.ready||mcp.loading||mcp.saving||storage.busy||storage.unknown),form=ref<HTMLFormElement>(),confirmation=ref<HTMLDialogElement>(),deletion=ref(''),attempted=ref(false);
 const diagnostics=useMcpDiagnostics();
@@ -25,6 +27,11 @@ watch(()=>mcp.selected,()=>{if(saved.value&&storage.enabled)void diagnostics.rea
 watch(()=>storage.enabled,value=>{if(value)void reconcile();});
 const saved=computed(()=>mcp.find(mcp.selected));
 const secureAvailable=computed(()=>mcp.configuration?.secureStorageAvailable===true);
+const jsonEntry=computed(()=>mcp.jsonPreview.entries[mcp.jsonSelection]);
+const jsonError=computed(()=>mcp.jsonPreview.error||jsonEntry.value?.error||'');
+const jsonOptions=computed(()=>mcp.jsonPreview.entries.map((item,index)=>({value:index,label:item.name||'未命名服务',description:item.draft?'stdio · 可以保存':`${item.transport} · 需要处理`})));
+function mode(value:'form'|'json'){try{mcp.setMode(value);attempted.value=false;}catch(e){mcp.error=e instanceof Error?e.message:'无法切换编辑方式，草稿已保留。';}}
+function addJson(){add();mode('json');}
 function credentialState(name:string){return mcp.configuration?.credentialStatus?.[mcp.selected]?.[name]||'missing';}
 function credentialLabel(name:string){return ({stored:'已设置',missing:'缺失',unavailable:'暂不可访问'} as Record<string,string>)[credentialState(name)]||'暂不可访问';}
 function changeSource(index:number,value:McpEnvironment['source']){if(!draft.value||value==='keychain'&&!secureAvailable.value)return;const item=draft.value.env[index];mcp.clearSecret(item.name);item.source=value;item.value='';}
@@ -33,7 +40,7 @@ function removeEnvironment(index:number){if(draft.value){mcp.clearSecret(draft.v
 const nameError=computed(()=>attempted.value&&!draft.value?.name.trim()?'请填写服务名称。':'');
 const commandError=computed(()=>attempted.value&&!draft.value?.command.trim()?'请填写启动命令。':'');
 async function load(){try{await mcp.load();}catch{}}
-async function save(){attempted.value=true;await nextTick();if(nameError.value||commandError.value){form.value?.querySelector<HTMLInputElement>('[aria-invalid="true"]')?.focus();return;}if(!form.value?.reportValidity())return;try{await mcp.save();attempted.value=false;}catch{}}
+async function save(){attempted.value=true;await nextTick();if(mcp.currentMode==='form'){if(nameError.value||commandError.value){form.value?.querySelector<HTMLInputElement>('[aria-invalid="true"]')?.focus();return;}if(!form.value?.reportValidity())return;}try{await mcp.save();attempted.value=false;}catch{}}
 function select(id:string){mcp.select(id);attempted.value=false;}
 function add(){mcp.add();attempted.value=false;}
 function askRemove(){deletion.value=mcp.selected;confirmation.value?.showModal();}
@@ -52,15 +59,16 @@ onUnmounted(()=>stopObserving?.());
     <div class="catalog-rail-title"><span>本机服务</span><span>{{mcp.configuration?.servers.length||0}} / 20</span></div>
     <button v-for="item in mcp.entries" :key="item.id" class="catalog-provider" :class="{active:item.id===mcp.selected}" :aria-pressed="item.id===mcp.selected" :disabled="mcp.saving" @click="select(item.id)"><span><strong>{{item.name}}</strong><small>{{item.unsaved?'有未保存的修改':item.enabled?'已启用':'已禁用'}}</small></span></button>
     <SkButton kind="entry" :disabled="blocked||(mcp.configuration?.servers.length||0)>=20" @click="add"><Icon name="plus"/>新增 MCP 服务</SkButton>
+    <SkButton kind="quiet" :disabled="blocked||(mcp.configuration?.servers.length||0)>=20" @click="addJson">粘贴 JSON 配置</SkButton>
    </nav>
    <section class="catalog-editor" aria-label="MCP 服务配置">
     <div v-if="!draft" class="catalog-empty"><h2>添加本机工具服务</h2><p>填写一项 stdio 服务的启动方式。保存配置后可手动诊断，查看本次发现的工具；不会自动调用工具。</p></div>
     <template v-else>
-     <header class="catalog-object-heading"><div><h2>{{saved?draft.name||saved.name:'新增 MCP 服务'}}</h2><p>保存不会启动程序；请手动诊断并查看本次工具目录。</p></div><SkButton v-if="saved" kind="quiet" :disabled="blocked||mcp.dirty||diagnostics.occupant?.input.serverId===saved.id||diagnostics.starting||!!diagnostics.uncertain" @click="askRemove"><Icon name="trash"/>移除配置</SkButton></header>
-     <SkFieldset :disabled="blocked"><form ref="form" @submit.prevent="save">
+     <header class="catalog-object-heading mcp-editor-heading"><div><h2>{{saved?draft.name||saved.name:'新增 MCP 服务'}}</h2><p>保存配置后手动诊断，查看服务提供的工具。</p></div><div class="mcp-editor-actions"><div class="mcp-mode-switch" role="group" aria-label="配置编辑方式"><button type="button" :aria-pressed="mcp.currentMode==='form'" :disabled="blocked" @click="mode('form')">表单</button><button type="button" :aria-pressed="mcp.currentMode==='json'" :disabled="blocked" @click="mode('json')">JSON</button></div><SkButton v-if="saved" kind="quiet" :disabled="blocked||mcp.dirty||diagnostics.occupant?.input.serverId===saved.id||diagnostics.starting||!!diagnostics.uncertain" @click="askRemove"><Icon name="trash"/>移除</SkButton></div></header>
+     <SkFieldset v-if="mcp.currentMode==='form'" :disabled="blocked"><form ref="form" @submit.prevent="save">
       <div class="form-grid">
        <SkField label="服务名称" required :error="nameError"><SkInput v-model="draft.name" required maxlength="100" placeholder="例如：本机文档工具"/></SkField>
-       <SkField label="连接方式"><SkInput model-value="stdio · 本机进程" readonly/></SkField>
+       <SkField label="连接方式"><SkSelect model-value="stdio" :options="[{value:'stdio',label:'stdio · 本机命令'},{value:'http',label:'Streamable HTTP · 尚未接入',disabled:true}]"/></SkField>
        <SkField class="full" label="启动命令" required :error="commandError" help="填写程序路径或命令名；参数请逐项填写，认证信息不要放在命令或参数中。"><SkInput v-model="draft.command" required maxlength="4096" autocomplete="off" spellcheck="false" placeholder="程序路径或命令名"/></SkField>
       </div>
       <section class="mcp-arguments" aria-label="命令参数"><div class="catalog-section-heading"><h3>命令参数</h3><SkButton kind="quiet" :disabled="draft.args.length>=128" @click="draft.args.push('')"><Icon name="plus"/>添加参数</SkButton></div><p v-if="!draft.args.length" class="muted">没有参数。每一项会原样作为一个参数，空格不会拆分。</p><div v-for="(_arg,index) in draft.args" :key="index" class="catalog-header-row"><SkInput v-model="draft.args[index]" :aria-label="`参数 ${index+1}`" maxlength="4096" autocomplete="off" spellcheck="false" placeholder="一个完整参数，也可以留空"/><button class="icon-button" type="button" :aria-label="`移除参数 ${index+1}`" @click="draft.args.splice(index,1)"><Icon name="close"/></button></div></section>
@@ -75,6 +83,17 @@ onUnmounted(()=>stopObserving?.());
         <button class="icon-button" type="button" :aria-label="`移除环境项 ${index+1}`" @click="removeEnvironment(index)"><Icon name="close"/></button>
        </div><SkButton kind="quiet" :disabled="draft.env.length>=64" @click="draft.env.push({name:'',source:'environment',value:''})"><Icon name="plus"/>添加环境项</SkButton></details>
      </form></SkFieldset>
+     <SkFieldset v-else :disabled="blocked" class="mcp-json-editor">
+      <SkField label="MCP 配置 JSON" :error="jsonError" help="直接粘贴配置会自动识别格式；只在点击保存时写入，不会启动服务。"><SkTextarea :model-value="mcp.jsonText" rows="14" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder='{"mcpServers": {"my-server": {"command": "node", "args": []}}}' @update:model-value="mcp.setJsonText($event)"/></SkField>
+      <div v-if="mcp.jsonPreview.entries.length" class="mcp-json-preview">
+       <div class="mcp-json-recognition"><Icon name="check"/><span>已识别 {{mcp.jsonPreview.format}} · {{mcp.jsonPreview.entries.length}} 项服务</span></div>
+       <SkField v-if="mcp.jsonPreview.entries.length>1" label="本次保存的服务" help="每次只保存所选的一项，其余服务不会导入。"><SkSelect :model-value="mcp.jsonSelection" :options="jsonOptions" @update:model-value="mcp.selectJsonEntry(Number($event))"/></SkField>
+       <p v-if="jsonEntry?.draft" class="mcp-json-summary"><strong>{{jsonEntry.draft.name}}</strong><span>stdio</span><span>{{jsonEntry.draft.args.length}} 个参数</span><span>{{jsonEntry.draft.env.length}} 个环境项</span></p>
+       <p v-if="mcp.jsonPreview.format==='单个服务对象'" class="muted">没有名称时使用当前服务名或 new-server；可切换表单修改名称。</p>
+       <p v-if="saved" class="muted">将更新当前服务「{{saved.name}}」，保留服务标识；不会按名称覆盖其他服务。</p>
+      </div>
+      <details class="catalog-advanced mcp-json-help"><summary>支持哪些配置格式？</summary><p>支持 mcpServers、服务名包裹、单个服务对象，以及 mcp_servers / servers 的 JSON 表达；Codex 的 TOML 需先转为 JSON。</p><p>stdio 字段：command、args 数组、cwd、enabled、env、env_vars。超时支持 Pi 的 timeout（秒）、startup_timeout_sec / tool_timeout_sec，或明确以毫秒命名的字段。</p><p>环境引用使用整值 ${NAME}；不执行内插、!command 或交互输入。认证值请改成宿主环境引用。HTTP / SSE 和其他未支持字段会提示处理，避免静默丢失。</p><p>连接期限 1–30 秒，工具期限 1–60 秒；协议版本由 Pi 自动协商。</p></details>
+     </SkFieldset>
      <section class="mcp-diagnostics" aria-labelledby="mcp-diagnostic-heading">
       <div class="catalog-section-heading"><h3 id="mcp-diagnostic-heading">连接诊断与工具</h3><SkButton kind="entry" :disabled="!canDiagnose" :loading="diagnostics.starting" @click="diagnose">连接诊断</SkButton></div>
       <p class="muted">只初始化并发现工具，不调用工具；本次完成后关闭服务进程。</p>
@@ -98,7 +117,7 @@ onUnmounted(()=>stopObserving?.());
     </template>
    </section>
   </div>
-  <SkSaveBar v-if="draft" target="#settings-save-slot" :dirty="mcp.dirty" :busy="mcp.saving||storage.busy" :disabled="!mcp.ready||mcp.loading||storage.busy||storage.unknown" :error="mcp.error" :notice="mcp.notice" label="保存服务配置" @save="save" @discard="mcp.discard();attempted=false"/>
+  <SkSaveBar v-if="draft" target="#settings-save-slot" :dirty="mcp.dirty" :busy="mcp.saving||storage.busy" :disabled="!mcp.ready||mcp.loading||storage.busy||storage.unknown||mcp.currentMode==='json'&&!!jsonError" :error="mcp.error" :notice="mcp.notice" label="保存服务配置" @save="save" @discard="mcp.discard();attempted=false"/>
   <dialog ref="confirmation" class="dialog confirm-dialog" aria-labelledby="mcp-remove-heading" @cancel.prevent="!mcp.saving&&confirmation?.close()"><header class="dialog-header"><h2 id="mcp-remove-heading">移除这项服务配置？</h2></header><div class="dialog-body"><p>{{saved?.name}}</p><p class="muted">只移除配置，保留历史记录，不删除服务程序和运行产物。</p></div><footer class="dialog-footer"><SkButton :disabled="mcp.saving" @click="confirmation?.close()">取消</SkButton><SkButton kind="danger" :loading="mcp.saving" @click="remove">确认移除配置</SkButton></footer></dialog>
  </div>
 </template>

@@ -51,7 +51,7 @@
     "test:s32-live": "npm run probe:bundle && node tests/s32-live.mjs",
     "dev:s32-native-model": "node tests/fixtures/s32-model-server.mjs",
     "test:s33-lifecycle": "npm run probe:bundle && node scripts/probes/prepare-s33-lifecycle.mjs && node --test --test-timeout=20000 tests/s33-lifecycle.test.mjs build/s33-lifecycle/ownership.test.mjs",
-    "test:s33-config-domain": "node --test --test-timeout=15000 tests/s33-config.test.mjs",
+    "test:s33-config-domain": "node --test --test-timeout=15000 tests/s33-config.test.mjs tests/s33-json.test.mjs",
     "test:s33-config-store": "cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_config -- --test-threads=1",
     "test:s33-security-domain": "node --test --test-timeout=15000 tests/s33-security.test.mjs",
     "test:s33-security-store": "cargo test --manifest-path src-tauri/Cargo.toml --lib mcp_security -- --test-threads=1",

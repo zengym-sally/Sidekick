@@ -1,0 +1,111 @@
+Window: "跟班 Sidekick · MCP 隔离验收", App: Sidekick MCP Verify.
+0 standard window 跟班 Sidekick · MCP 隔离验收, Secondary Actions: Raise
+	1 scroll area
+		2 HTML content Description: 跟班 Sidekick, URL: tauri://localhost
+			3 container 主导航
+				4 button 跟班 Sidekick，打开今日工作台
+				5 container
+					6 button 今日, Help: 今日工作台
+					7 button 确认, Help: 待确认
+					8 button 事项 0, Help: 全部事项
+				9 button 个人信息与设置，小明同学, Help: 个人信息与设置
+			10 container
+				11 text 设置
+				12 button 刷新清单
+				13 button 快速录入
+			14 container
+				15 heading 工具, Value: 1
+					16 text 工具
+				17 text 管理完整技能与本机 MCP 服务配置。
+				18 tab group (selectable) 设置分类
+					19 tab (selectable) 个人信息
+					20 tab (selectable) 通用
+					21 tab (selectable) 模型服务
+					22 tab (selectable) 智能体
+					23 tab (selected) 工具
+					24 tab (selectable) 关于
+				25 container 工具
+					26 tab group (selectable) 工具分类
+						27 tab (selectable) Skills
+						28 tab (selected) MCP 服务, Value: on
+					29 container MCP 服务
+						30 container 诊断存储
+							31 heading 诊断存储, Value: 3
+								32 text 诊断存储
+							33 text 诊断存储已开启。可以保存诊断记录，不会自动连接服务。
+							34 text 当前工作目录：/private/tmp/sidekick-s33-authorized-f889amz_/app/workspace
+							35 button 重新核对存储状态
+						36 container MCP 服务列表
+							37 toggle button 原生隔离验收 已启用, Value: on
+							38 toggle button zai-mcp-server 已启用, Value: off
+							39 button 新增 MCP 服务
+							40 button 粘贴 JSON 配置
+						41 container MCP 服务配置
+							42 container
+								43 heading 原生隔离验收, Value: 2
+									44 text 原生隔离验收
+								45 text 保存配置后手动诊断，查看服务提供的工具。
+								46 container 配置编辑方式
+									47 toggle button 表单, Value: on
+									48 toggle button JSON, Value: off
+								49 button 移除
+							50 container
+								51 text 服务名称
+								52 text field (settable) 服务名称, Value: 原生隔离验收, Placeholder: 例如：本机文档工具
+								53 text 连接方式
+								54 combo box (collapsed) 连接方式, Value: stdio · 本机命令, Placeholder: 请选择, Secondary Actions: Expand
+									55 text stdio · 本机命令
+								56 text 启动命令
+								57 text field (settable) 启动命令, Placeholder: 程序路径或命令名, Value: /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s0-runtime/node
+								58 text 填写程序路径或命令名；参数请逐项填写，认证信息不要放在命令或参数中。
+								59 container 命令参数
+									60 heading 命令参数, Value: 3
+										61 text 命令参数
+									62 button 添加参数
+									63 text field (settable) 参数 1, Placeholder: 一个完整参数，也可以留空, Value: /Users/zengym/workspace/projects/ai/sidekick/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app/Contents/Resources/s33-ui/service.mjs
+									64 button 移除参数 1
+									65 text field (settable) 参数 2, Value: /private/tmp/sidekick-s33-authorized-f889amz_/app/service.jsonl, Placeholder: 一个完整参数，也可以留空
+									66 button 移除参数 2
+									67 text field (settable) 参数 3, Value: normal, Placeholder: 一个完整参数，也可以留空
+									68 button 移除参数 3
+								69 text 启用服务 保存不会启动程序；禁用的服务仍可手动诊断。
+								70 switch (settable, boolean) 启用 MCP 服务, Value: on
+								71 summary 工作目录与超时, Value: off
+									72 text 工作目录与超时
+								73 summary 环境项, Value: off
+									74 text 环境项
+							75 container 连接诊断与工具
+								76 heading 连接诊断与工具, Value: 3
+									77 text 连接诊断与工具
+								78 button 连接诊断
+								79 text 只初始化并发现工具，不调用工具；本次完成后关闭服务进程。
+								80 button 重新核对诊断状态
+								81 text 最近一次诊断完成，进程已清理。发现 2 项工具。
+								82 text 诊断记录 · 10/31 07:02
+								83 container
+									84 container lookup
+										85 text lookup
+										86 summary 输入格式（只读）, Value: off
+											87 text 输入格式（只读）
+									88 container second
+										89 text second
+										90 summary 输入格式（只读）, Value: off
+											91 text 输入格式（只读）
+							92 summary 服务标识, Value: off
+								93 text 服务标识
+				94 text 没有未保存的修改
+				95 button (disabled) 放弃修改
+				96 button (disabled) 保存服务配置
+	97 close button
+	98 full screen button Help: this button also has an action to zoom the window, Secondary Actions: zoom the window
+	99 minimize button
+	100 text 跟班 Sidekick · MCP 隔离验收
+101 menu bar
+	102 Sidekick MCP Verify
+	103 File
+	104 Edit
+	105 View
+	106 Window
+	107 Help
+
+The focused UI element is 28 tab (selected) MCP 服务, Value: on
