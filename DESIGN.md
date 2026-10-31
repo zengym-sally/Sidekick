@@ -140,7 +140,7 @@ components:
 
 象牙底承载工作，墨蓝组织信息，琥珀标出行动。界面以扫描和操作为先；穿小马甲的圆豆「班班」承担亲和感，反馈简短、克制。
 
-这是基于已渲染浅色原型的代码提取记录，视觉值以 [tokens.css](design/brand/tokens.css)、[prototype.css](design/prototype/prototype.css) 和 [brand.css](design/brand/brand.css) 为准。品牌方向已定，SVG 与应用图标仍为首轮草案，不代表最终商标或生产资产验收。当前没有深色主题。
+这是基于已渲染浅色原型的代码提取记录，视觉值以生产令牌 [tokens.css](src/styles/tokens.css)、[prototype.css](design/prototype/prototype.css) 和 [brand.css](design/brand/brand.css) 为准。品牌方向已定，SVG 与应用图标仍为首轮草案，不代表最终商标或生产资产验收。当前没有深色主题。
 
 **Key Characteristics:**
 
@@ -176,7 +176,7 @@ components:
 - **Body / Meta / Label**：事项标题、来源依据、状态和控件。UI 以紧凑字号组织短句，较长依据用更宽松行距。
 - **Latin**：字标、日期、计数与部分代码示例使用 Space Grotesk；中文回退到系统苹方、思源黑体及无衬线字体。
 
-Space Grotesk 本地可变字体声明覆盖字重 300–700；随资产保留 [OFL.txt](design/brand/fonts/OFL.txt)。其品牌选择以及象牙底已有两个目标 HTML 的窄范围检测例外，未关闭整个文件或检测规则。
+Space Grotesk 本地可变字体声明覆盖字重 300–700；随资产保留 [OFL.txt](src/assets/fonts/OFL.txt)。其品牌选择以及象牙底已有两个目标 HTML 的窄范围检测例外，未关闭整个文件或检测规则。
 
 ## Layout
 

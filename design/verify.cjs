@@ -24,7 +24,7 @@ fs.mkdirSync(output, { recursive: true });
     await page.screenshot({ path: path.join(output, name), fullPage: true }); screenshots.push(name);
   }
   async function nav(name) { await page.locator(`nav [data-page="${name}"], .sidebar-bottom [data-page="${name}"]`).click(); }
-  const prototype = `${origin}/prototype/`;
+  const prototype = `${origin}/design/prototype/`;
   try {
     await page.goto(prototype, { waitUntil: "networkidle" });
     await page.evaluate(async () => { await document.fonts.ready; });
@@ -163,7 +163,7 @@ fs.mkdirSync(output, { recursive: true });
       assert.equal(await page.locator("#nav-inbox-count").isVisible(), true);
       await page.screenshot({ path: path.join(output, "inbox-narrow-viewport.png"), fullPage: false }); screenshots.push("inbox-narrow-viewport.png");
       await shot("inbox-narrow.png");
-      await page.goto(`${origin}/brand/`, { waitUntil: "networkidle" });
+      await page.goto(`${origin}/design/brand/`, { waitUntil: "networkidle" });
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
       await shot("brand-narrow.png");
       await page.setViewportSize({ width: 1440, height: 1000 });

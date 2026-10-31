@@ -4,14 +4,17 @@
 
 ## 预览
 
-在仓库根目录运行：
+在仓库根目录运行窄范围只读预览服务（Node 标准库，无额外依赖；`PORT` 可覆盖端口）：
 
 ```sh
-python3 -m http.server 4173 --bind 127.0.0.1 --directory design
+node design/serve.mjs
 ```
 
-- 品牌板：`http://127.0.0.1:4173/brand/`
-- 交互原型：`http://127.0.0.1:4173/prototype/`
+- 设计索引：`http://127.0.0.1:4173/design/`
+- 品牌板：`http://127.0.0.1:4173/design/brand/`
+- 交互原型：`http://127.0.0.1:4173/design/prototype/`
+
+服务只暴露 `/design/`、`/src/assets/` 与 `/src/styles/`，其余路径返回 404；浏览器访问 `/` 会跳转到 `/design/`。原型引用的是 `src/` 中的生产品牌资产与设计令牌。
 
 交互原型使用虚构演示资料，不调用模型、飞书、MCP、Bash或本机文件系统；更改仅留在当前页面，刷新可复位。请勿输入真实密钥或业务资料。
 

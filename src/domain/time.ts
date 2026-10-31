@@ -1,4 +1,4 @@
-import { calendarDate, dayCoordinate } from '../../runtime/dates.mjs';
+import { calendarDate, dayCoordinate } from '../../shared/dates.mjs';
 import { currentZone,requireApplicationZone,localInput,pointFromInput,type TimePoint } from './todos.ts';
 export interface TimeDraft {enabled:boolean;dayOnly:boolean;raw:string;choice:number|null;previous:TimePoint|null;zone:string;needsReview:boolean}
 export function timeDraft(point:TimePoint|null):TimeDraft{return {zone:currentZone(),needsReview:false,enabled:!!point,dayOnly:point?.precision==='day',raw:point?(point.precision==='day'?calendarDate(point.atMs,point.timeZone):localInput(point)):'',choice:point?.atMs??null,previous:point};}

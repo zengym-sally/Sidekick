@@ -19,3 +19,6 @@ build/
 .impeccable/hook.cache.json
 .impeccable/questions/
 *.local.json
+
+# AgentTeams coordination state (never committed)
+.agent-teams/

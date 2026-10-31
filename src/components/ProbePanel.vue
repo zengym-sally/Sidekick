@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
 import { motion } from 'motion-v';
 import { Button as TButton } from 'tdesign-vue-next';
-import pet from '../../design/brand/banban-idle.svg';
+import pet from '../assets/brand/banban-idle.svg';
 
 const report = ref<Record<string, unknown> | null>(null);
 const error = ref('');

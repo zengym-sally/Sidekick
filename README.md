@@ -4,7 +4,12 @@
 
 macOS 桌面 AI 待办管家。由班班收拢事项、辅助签收、持续跟踪与提醒，管理“待我处理”和“待我跟进”。
 
-S3.2（0.3.0）已完成配置页改造及完整Skills接入：公共表单、统一应用时区、多供应商／多模型GUI与三角色配置／隔离试跑双栏。S3.3的P1生命周期探针已通过，P2已实现配置保存、安全边界、004／探测存储、无模型初始化／分页发现／清理及诊断页面接线；[本轮原生无凭据复验](docs/reviews/s33-p2-sck-diagnosis-20261031.md)已通过保存、发现、失败、取消、恢复和GUI冷重开，规定尺寸及生产凭据等出口仍开放，P2全项不标完成。真实模型＋Rust／SQLite的历史验证与原生逐项记录分别保留，详见 [S3.1记录](docs/reviews/s31-20261029.md)。**进展跟踪／工作参谋试跑、MCP业务工具调用、持续收集、桌宠、提醒和日报仍为规划，未经业务实测**；当前不代表可推广试用版。
+## 当前状态
+
+- 实施状态的唯一来源是[第一阶段实施计划](docs/product/05-第一阶段实施计划.md)（as of `808e268`，2026-10-31 结构治理前）；逐项证据与开放项见[评审记录索引](docs/reviews/README.md)。本文件不再维护第二份状态清单。
+- 目前可运行的主线：安装 → 工作根 → 手工录入或真实模型文本整理 → 候选签收 → 今日／全部事项 → 完成；三个固定角色可配置且事项整理可隔离试跑；完整 Skills 安装／重扫／诊断／备份恢复；stdio MCP 配置、隔离诊断与诊断存储升级入口。真实模型与 Rust／SQLite 的分层验证保留在对应切片记录。
+- **未完成或未验证**：原生完整动线与两规定尺寸、真实系统凭据、普通（非隔离）工作根升级、真实 MCP 业务工具调用、进展跟踪与工作参谋试跑、桌宠与全局快捷窗、来源收集、提醒与日报、真机安装与干净检出构建。MCP P2 与历史原生缺项保持开放，当前不代表可推广试用版。
+- 规划中的能力只出现在产品基线里，未经业务实测；文档不会把计划、原型或合成替身写成已实现。
 
 ## 产品基线
 
@@ -18,6 +23,33 @@ S3.2（0.3.0）已完成配置页改造及完整Skills接入：公共表单、�
 
 本仓库的历史说明书、评审资料保留溯源，以 `docs/product/` 为当前产品基线。
 
+## 仓库结构
+
+```text
+AGENTS.md            # 每轮必读：项目事实、命令、硬约束、文档地图
+shared/              # 跨进程纯逻辑（日期与时间锚点），前端与 Runtime 共用
+src/                 # Vue 3 前端：components/（含 ui/ 公共控件）、domain/、stores/、styles/、assets/
+runtime/             # 随包 Node Runtime：entries/ 任务入口、lib/ 库、workers/ 子进程
+src-tauri/src/       # Rust 宿主：app/ 装配与 IPC、store/ 业务存储、host/ 外部宿主、diagnostics/ 探针
+tests/               # unit/、integration/、probes/、fixtures/
+scripts/             # build/ 打包、checks/ 结构与文档守卫、probes/ 一次性探针
+design/              # 设计原型与评审；预览 node design/serve.mjs
+vendor/pi/           # 固定上游 Pi 源码（只读）
+resources/skills/    # 内置技能与哈希清单（只读）
+docs/                # product/ 产品基线、engineering/ 工程约定、reviews/ 记录与证据
+```
+
+- 结构、依赖边界与新代码放置的权威文件是[工程架构](docs/engineering/architecture.md)；生产前端只依赖 `src/` 与 `shared/`，不引用 `design/` 或 `runtime/`。
+- `vendor/pi/`、`resources/skills/` 是固定上游与内置技能，只读；版本变化需要单独授权。
+- 目录迁移不改变 npm 脚本名与测试文件名，历史命令仍可按名执行。
+
+## 工程约定
+
+- 全量门禁：`npm run check`（包含 `check:structure` 与 `check:docs`）；门禁矩阵、测试分层、证据新鲜度与独立评审要求见[验证约定](docs/engineering/verification.md)。
+- 不可绕过：未验证不关闭；证据默认放 `build/<slice>/`，仓库只收精选主证据与对应记录。
+- 需授权才能做：新增生产依赖、改 schema／migrations、改 identifier `com.sidekick.s0` 与资源目录 `s0-runtime`、真实凭据或真实用户根操作、commit／push。
+- 文档地图与权威边界见[文档地图](docs/README.md)；历史记录按当时版本保留，复核用 `git show <commit>:<path>`。
+
 ## 品牌与交互设计
 
 - [设计预览与运行说明](design/README.md)
@@ -26,7 +58,13 @@ S3.2（0.3.0）已完成配置页改造及完整Skills接入：公共表单、�
 - [已确认配置布局](design/layout-review/index.html)：设置、模型服务、智能体与公共控件。
 - [首轮交互原型](design/prototype/index.html)：今日工作台、候选签收、事项处理、日报及配置流程。
 
-在仓库根目录运行 `python3 -m http.server 4173 --bind 127.0.0.1 --directory design` 后访问 `http://127.0.0.1:4173/prototype/`。原型使用虚构演示数据，交互仅保留在当前页面。
+在仓库根目录运行 `node design/serve.mjs`（只读服务，默认 `127.0.0.1:4173`，`PORT` 可覆盖）后访问：
+
+- 品牌板 `http://127.0.0.1:4173/design/brand/`
+- 交互原型 `http://127.0.0.1:4173/design/prototype/`
+- 配置布局 `http://127.0.0.1:4173/design/layout-review/`
+
+生产设计令牌在 `src/styles/tokens.css`，品牌字体与 OFL 许可在 `src/assets/fonts/`；原型消费生产资产。原型使用虚构演示数据，交互仅保留在当前页面，不证明原生能力。
 
 ## 构建与验证
 
@@ -44,15 +82,13 @@ Pi 从 `vendor/pi/` 固定源码构建，准备阶段会获取上游公开模型
 
 真实模型验证为显式可选命令：`SIDEKICK_MODEL_ENV="$PWD/.env.deepseek" npm run test:s2-live`，使用已选配置、合成文本、临时工作根及隔离钥匙串条目，结束后清理。它会访问所选模型服务，不属于自动 `check`；产品不会自行读取 `.env`。S0 原探针仍可单独运行，详细前提见 S0 记录。
 
-
 ## 本地手工使用
 
 1. 打开 `Sidekick.app`，使用默认位置或选择空文件夹；已有跟班工作目录会先校验归属和版本。
 2. 点击“快速录入”或在应用内按 ⌘K，填写标题、类型、实际负责人、优先级和标签。截止与下次跟进分别启用；不设置时间即保留为未定期。
 3. 从今日或全部事项打开详情，可编辑／延期、完成、重新打开、确认删除和查活动历史。删除从普通清单移除，本地记录仍保留。
 4. 退出应用后重开，自动读取同一工作根。设置可查看并打开该目录；运行中迁移、备份恢复、正式全局快捷窗及桌宠常驻体验在后续切片验收。
-
-业务库在 `workspaceRoot/data/sidekick.sqlite`，历史与事项同事务保存。固定应用数据目录中的 `bootstrap.json` 定位工作根。根丢失、库损坏或版本过新时显示错误，不以空库替代；请先恢复原目录或保留现场交由维护者检查。
+5. 业务库在 `workspaceRoot/data/sidekick.sqlite`，历史与事项同事务保存。固定应用数据目录中的 `bootstrap.json` 定位工作根。根丢失、库损坏或版本过新时显示错误，不以空库替代；请先恢复原目录或保留现场交由维护者检查。
 
 聚焦检查：`npm run test:s1-domain`、`npm run test:s1-store`。隔离原生验收包使用 `npm run build:s1-verify` 构建，标识为 `com.sidekick.s1.verify.r2`，与普通包的数据指针分开。仓库截图与验收样本均为合成资料。
 
@@ -71,7 +107,6 @@ S2 每次任务总期限 120 秒；Bash 缺省 30 秒、最多 60 秒并受任�
 当前使用 schema v3，首次打开 v1／v2 库先在工作根 `backups/` 做一致性备份，再事务升级；失败不覆盖原数据。旧 S1／S2 包不能直接打开 v3 库。产品内备份恢复／运行中切根留 S5，不要用旧包强行降级数据库。
 
 聚焦验证：`npm run test:s2-domain`、`npm run test:s2-store`、`npm run test:s2-runtime`。`npm run build:s2-verify` 构建隔离原生包；`npm run dev:s2-native-model` 仅启动本地合成模型服务，不是真实模型。`dev:profile-ui` 是真实 Vue／CSS 加 API 替身的界面夹具，不能证明 SQLite、钥匙串或原生 IPC。
-
 
 ## 智能体配置与隔离试跑
 
@@ -113,20 +148,18 @@ S2 每次任务总期限 120 秒；Bash 缺省 30 秒、最多 60 秒并受任�
 
 `npm run test:s33-lifecycle`从固定Pi源码构建独立探针，用随包Node与本机合成服务验证真实发现／调用、取消、工具及守护超时、分别强杀各层后的普通子孙清理，以及启动ACK／初始化取消。另有隔离的安全替身测试核对进程拥有关系结束后不再向旧PGID发信号；替身不作为真实清理证据。
 
-探针及输入位于`tests/probes/s33/`、`tests/s33-lifecycle.test.mjs`；`build/s33-lifecycle/`仅为可重建测试输出，没有加入安装包。宿主为Node替身，尚未接入Rust、MCP设置页、数据库台账或AgentTool；无真实模型／业务服务调用。实施边界与证据见[计划§16.7](docs/product/05-第一阶段实施计划.md#167-p1实施与分层证据2026-10-30)。历史原生未补验继续保留。
+探针及输入位于`tests/probes/s33/`、`tests/integration/s33-lifecycle.test.mjs`；`build/s33-lifecycle/`仅为可重建测试输出，没有加入安装包。宿主为Node替身，尚未接入Rust、MCP设置页、数据库台账或AgentTool；无真实模型／业务服务调用。实施边界与证据见[计划§16.7](docs/product/05-第一阶段实施计划.md#167-p1实施与分层证据2026-10-30)。历史原生未补验继续保留。
 
-## MCP 服务配置（P2进行中）
+## MCP 服务配置（P2 进行中）
 
-个人入口 → 工具 → MCP服务，可保存stdio服务的命令、独立参数、可选工作目录与超时、普通环境值或宿主变量名引用；支持编辑、禁用、确认移除和重开读回。配置位于工作根`mcp/servers.json`，稳定ID不随名称变化；旧修订、坏配置、链接和超限不覆盖原文件。保存响应未知时保留草稿，重新读取核对后再继续。
+个人入口 → 工具 → MCP服务，可保存stdio服务的命令、独立参数、可选工作目录与超时、普通环境值或宿主变量名引用；支持编辑、禁用、确认移除和重开读回。配置位于工作根`mcp/servers.json`，稳定ID不随名称变化；旧修订、坏配置、链接和超限不覆盖原文件。保存响应未知时保留草稿，重新读取核对后再继续。编辑区支持“表单／JSON”两种方式：可直接粘贴`mcpServers`、服务名映射、单个服务对象，以及`mcp_servers`／`servers`的JSON表达；多项配置先选择一项，再保存当前服务，不会按名称覆盖其他服务。Codex的TOML需先转JSON；未知字段、重复键、不支持的动态表达和HTTP／SSE会明确提示，不会丢字段后伪装成功。协议版本由Pi自动协商。
 
-**保存不会启动服务；保存确认后可手动连接诊断，查看本次只读工具目录。成功表示初始化、发现、清理及持久化完成，不表示持续在线，也不会调用工具。** 草稿或保存结果未知时先保存／重新读取；旧修订结果明确标注，取消只针对已确认任务。生产宿主经隔离根受控进程验证，诊断页面经浏览器合成IPC验证，原生完整路径仍未验收。普通环境值只供非秘密资料；宿主显式准备环境及安全引用，解析结果不经IPC回传。MCP钥匙串适配器代码已补齐并接入默认工厂，工厂仍固定关闭，GUI不能新增／替换安全值；只有底层替身验证，系统调用桥仅通过编译／静态检查，真实访问及持久化尚未授权、未执行。见[适配器代码检查点](docs/reviews/s33-p2-keychain-20261030.md)。分层证据见[配置保存首步](docs/reviews/s33-p2-config-20261030.md)、[环境项与安全边界](docs/reviews/s33-p2-security-20261030.md)及[诊断页面检查点](docs/reviews/s33-p2-ui-20261030.md)。聚焦命令为`npm run test:s33-config-domain`／`store`、`npm run test:s33-security-domain`／`store`及`npm run test:s33-ui-domain`／`safety`。浏览器安全值使用内存替身，重载后显示缺失，不代表真实凭据持久化或原生IPC验收；P2整体和历史原生缺项仍未完成。
+**保存不会启动服务；保存确认后可手动连接诊断，查看本次只读工具目录。成功表示初始化、发现、清理及持久化完成，不表示持续在线，也不会调用工具。** 草稿或保存结果未知时先保存／重新读取；旧修订结果明确标注，取消只针对已确认任务。普通环境值只供非秘密资料；宿主显式准备环境及安全引用，解析结果不经IPC回传，环境认证值使用整值`${HOST_VARIABLE}`引用。当前不启用生产秘密存储：钥匙串适配器代码已接入默认工厂，但工厂固定关闭，GUI不能新增／替换安全值；只有底层替身与编译／静态检查，真实系统钥匙串访问未授权、未执行；浏览器安全值使用内存替身，重载后显示缺失，不代表真实凭据持久化。
 
-004与无角色`mcp_probe`存储已实现并经隔离根验证，见[迁移／存储检查点](docs/reviews/s33-p2-schema-20261030.md)，聚焦命令为`npm run test:s33-schema-store`。普通打开仍最高自动到v3；MCP页已提供明确确认的“开启诊断存储”入口，先预检及一致备份再升级到v4，旧版本将不能打开此根。只有新建隔离根验证，本轮未迁移真实用户根；备份失败或未知结果不自动还原／重试，见[产品升级入口检查点](docs/reviews/s33-p2-upgrade-20261030.md)。生产宿主与固定Pi公开客户端经受控初始化、分页发现、共享槽及拥有ACK验证，清理确认后才保存完整schema与摘要回执，冷重开验证通过。运行`npm run test:s33-discovery`及`npm run test:s33-catalog-store`可复核；前者会启动并强杀自建测试进程，需允许本机ps／kill身份检查，不访问模型／真实凭据或外部服务。见[连接发现检查点](docs/reviews/s33-p2-discovery-20261030.md)。`npm run build:s33-ui-verify`生成专用隔离包，必须使用明确隔离启动参数，不会回落普通根。原生完整用户路径与两尺寸验收、真实凭据、真实普通根升级和P2整体继续开放。
+存储升级：004与无角色`mcp_probe`存储已实现并经隔离根验证。普通打开仍最高自动到v3；MCP页提供明确确认的“开启诊断存储”入口，先预检及一致备份再升级到v4，旧版本将不能打开此根；备份失败或未知结果不自动还原／重试。本轮未迁移真实用户根。生产宿主与固定Pi公开客户端经受控初始化、分页发现、共享槽及拥有ACK验证，清理确认后才保存完整schema与摘要回执，冷重开验证通过；`npm run build:s33-ui-verify`生成专用隔离包，必须使用明确隔离启动参数，不会回落普通根。
 
-`npm run test:s33-upgrade-store`／`test:s33-upgrade-domain`验证当前根确认入口、故障恢复与客户端未知屏障。`npm run test:s33-keychain-adapter`验证真实适配器逻辑与底层替身，不访问系统钥匙串。`npm run check:s33-p2`聚合P2域／存储／宿主／隔离护栏、类型与Clippy，以及先专用后普通构建和实际包排除；它只运行当前获准的无真实凭据、零MCP工具调用检查，不能代替完整`npm run check`。完整check保留旧S0 MCP调用和系统钥匙串探针，并已补P1／P2缺失入口，本轮尚未执行。`npm run test:rust-no-keychain`仅跳过已列名的一项系统钥匙串探针，两项真实模型测试仍按原规则ignored；结果不能写成完整原生库或原生GUI验收。收口轮缺项矩阵和最小原生验证步骤见[P2收口核对](docs/reviews/s33-p2-closure-20261030.md)。
+**仍未验收**：原生完整用户路径与两规定尺寸、真实系统凭据、真实普通根升级、真实MCP业务工具调用及P2整体，历史原生缺项保留；不推进P3／P4。原生续验曾再次受ScreenCaptureKit -3812阻塞，已定位为捕获矩形越界并用公开Raise恢复，未改系统权限或控制工具；随后完成无凭据保存／分页发现／缺命令／取消／恢复／GUI冷重开复验。原生发现暴露的FD3审计误认也已修正为“验证宿主显式授予才放行、真正审计失败仍拒信号”，`npm run test:s33-native-fd`覆盖10种真实Runtime场景。
 
-后续授权补验已实际跑通完整check，见[授权记录](docs/reviews/s33-p2-authorized-20261030.md)；上述“本轮尚未执行”为此前收口轮历史状态。北京时间2026-10-31普通Codex原生续验取得同根v4启动、AX／原图及进入MCP空列表，新增前AX读取再次受ScreenCaptureKit -3812阻塞，未创建服务或执行原生发现。完整原生动线与两尺寸仍未通过，P2整体保持开放，见[最新续验记录](docs/reviews/s33-p2-native-20261031.md)。
+聚焦命令：`npm run test:s33-config-domain`／`test:s33-config-store`、`test:s33-security-domain`／`test:s33-security-store`、`test:s33-schema-store`、`test:s33-upgrade-domain`／`test:s33-upgrade-store`、`test:s33-keychain-adapter`、`test:s33-catalog-store`、`test:s33-ui-domain`／`test:s33-ui-safety`／`test:s33-ui-artifacts`、`test:s33-discovery`、`test:s33-native-fd`、`test:s33-verification-guards`。聚合入口`npm run check:s33-p2`只覆盖当前获准的零真实凭据、零MCP工具调用检查，不能代替完整`npm run check`；`npm run test:rust-no-keychain`仅跳过已列名的一项系统钥匙串探针，两项真实模型测试仍按原规则ignored，结果不构成完整原生库或原生GUI验收。`test:s33-discovery`会启动并强杀自建测试进程，需允许本机ps／kill身份检查，不访问模型／真实凭据或外部服务。
 
-本次后续排查从故障时日志定位到捕获矩形越界，使用公开Raise恢复原生操作，未改权限或控制工具。实际原生发现还暴露FD3误认审计导致清理失败，已修正为验证宿主显式授予，并保留真正审计失败拒信号；`npm run test:s33-native-fd`可复核10种真实Runtime场景。完整check已重跑通过，新包原生无凭据保存／分页发现／缺命令／取消／恢复／GUI重开已验证，旧失败保留；两规定尺寸及历史未验继续开放，不推进P3／P4。详见[最新排查与复验](docs/reviews/s33-p2-sck-diagnosis-20261031.md)。
-
-MCP编辑区支持“表单／JSON”两种方式。可直接粘贴`mcpServers`、服务名映射、单个服务对象，以及`mcp_servers`／`servers`的JSON表达；多项配置先选择一项，再保存当前服务，不会按名称覆盖其他服务。Codex的TOML需先转JSON；未知字段、重复键、不支持的动态表达和HTTP／SSE会明确提示，不会丢字段后伪装成功。环境认证值使用整值`${HOST_VARIABLE}`引用，当前不启用生产秘密存储；协议版本由Pi自动协商。兼容范围和本轮分层验收见[MCP编辑器记录](docs/reviews/s33-p2-json-20261031.md)，不改变P3／P4及历史未补验状态。
+证据按检查点存放，逐项边界见[配置保存](docs/reviews/s33-p2-config-20261030.md)、[环境项与安全边界](docs/reviews/s33-p2-security-20261030.md)、[迁移／存储](docs/reviews/s33-p2-schema-20261030.md)、[连接发现](docs/reviews/s33-p2-discovery-20261030.md)、[诊断页面](docs/reviews/s33-p2-ui-20261030.md)、[产品升级入口](docs/reviews/s33-p2-upgrade-20261030.md)、[钥匙串适配器](docs/reviews/s33-p2-keychain-20261030.md)、[P2收口核对](docs/reviews/s33-p2-closure-20261030.md)、[授权补验完整check](docs/reviews/s33-p2-authorized-20261030.md)、[原生续验](docs/reviews/s33-p2-native-20261031.md)、[-3812排查与复验](docs/reviews/s33-p2-sck-diagnosis-20261031.md)、[表单／JSON双模式](docs/reviews/s33-p2-json-20261031.md)。其中“完整check尚未执行”属于更早收口轮的历史状态，后续授权补验已实际跑通。

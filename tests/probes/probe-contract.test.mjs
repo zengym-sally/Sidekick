@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { isSyntheticFollowupBatch } from '../../runtime/probe-contract.mjs';
+import { isSyntheticFollowupBatch } from '../../runtime/lib/probe-contract.mjs';
 
 const candidate = { title: 'Follow up on delivery', kind: 'followup', dueExpression: 'Friday', followupExpression: 'today', evidence: 'S0 controlled fixture: delivery is on Friday; follow-up is today.' };
 

@@ -367,7 +367,7 @@
   ],
   "narrative": {
     "northStar": "有分寸的桌面跟班",
-    "overview": "象牙底承载工作，墨蓝组织信息，琥珀标出行动。界面以扫描和操作为先；穿小马甲的圆豆「班班」承担亲和感，反馈简短、克制。\n\n这是基于已渲染浅色原型的代码提取记录，视觉值以 [tokens.css](design/brand/tokens.css)、[prototype.css](design/prototype/prototype.css) 和 [brand.css](design/brand/brand.css) 为准。品牌方向已定，SVG 与应用图标仍为首轮草案，不代表最终商标或生产资产验收。当前没有深色主题。",
+    "overview": "象牙底承载工作，墨蓝组织信息，琥珀标出行动。界面以扫描和操作为先；穿小马甲的圆豆「班班」承担亲和感，反馈简短、克制。\n\n这是基于已渲染浅色原型的代码提取记录，视觉值以 [tokens.css](src/styles/tokens.css)、[prototype.css](design/prototype/prototype.css) 和 [brand.css](design/brand/brand.css) 为准。品牌方向已定，SVG 与应用图标仍为首轮草案，不代表最终商标或生产资产验收。当前没有深色主题。",
     "keyCharacteristics": [
       "扁平事项列表与温和圆角，依靠文字层级和分隔线组织信息。",
       "主操作和问题状态各有固定颜色，状态同时有文字说明。",

@@ -22,8 +22,8 @@ import {useSkills} from '../stores/skills';
 import { timeDraft,draftPoint } from '../domain/time';
 import SettingsPanel from './SettingsPanel.vue';
 import { useProfile, DEFAULT_NICKNAME } from '../stores/profile';
-import mark from '../../design/brand/sidekick-mark.svg';
-import pet from '../../design/brand/banban-idle.svg';
+import mark from '../assets/brand/sidekick-mark.svg';
+import pet from '../assets/brand/banban-idle.svg';
 
 const settings=useApplicationSettings(),modelSettings=useModelSettings();
 const store=useTodos(),profile=useProfile(),organizer=useOrganizer(),agents=useAgents(),skills=useSkills();

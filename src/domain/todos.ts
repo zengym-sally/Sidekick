@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { calendarDate,dayEnd,dayCoordinate,zonedCandidates } from '../../runtime/dates.mjs';
+import { calendarDate,dayEnd,dayCoordinate,zonedCandidates } from '../../shared/dates.mjs';
 export interface TimePoint { atMs:number; timeZone:string; localText:string; precision?:'day' }
 export interface TodoInput { title:string; kind:'action'|'followup'; owner:string; priority:'low'|'medium'|'high'; due:TimePoint|null; followup:TimePoint|null; tags:string[] }
 export interface Todo { id:string; data:TodoInput; status:'open'|'completed'|'deleted'; createdAtMs:number; updatedAtMs:number; completedAtMs:number|null; deletedAtMs:number|null; version:number; source:'manual'|'signed_ai' }

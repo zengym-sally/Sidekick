@@ -43,7 +43,7 @@
         "rule": "overused-font",
         "value": "space grotesk",
         "files": [
-          "design/brand/tokens.css"
+          "src/styles/tokens.css"
         ],
         "createdAt": "2026-10-28T17:31:56.208Z",
         "reason": "user confirmed: Space Grotesk is the fixed Sidekick Latin and numeric typeface recorded in PRODUCT.md, DESIGN.md, and the approved product baseline."
