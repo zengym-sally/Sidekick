@@ -8,6 +8,23 @@ const CATALOG_LIMIT: usize = 512 * 1024;
 const ARGUMENT_LIMIT: usize = 64 * 1024;
 const UNKNOWN: &str = "MCP_RESULT_UNKNOWN";
 
+#[cfg(test)]
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub(crate) enum McpCallFault {
+    BeforeBegin,
+    AfterBegin,
+    BeforeResponse,
+    AfterResponse,
+}
+
+#[cfg(test)]
+fn test_call_fault() -> StoreError {
+    StoreError::new(
+        "MCP_CALL_TEST_FAULT",
+        "Synthetic MCP call persistence failure.",
+    )
+}
+
 pub(crate) struct PreparedTrialMcp {
     pub(crate) revision: String,
     pub(crate) servers: Vec<PreparedTrialMcpServer>,
@@ -263,6 +280,8 @@ impl AppStore {
         if !args.is_object() {
             return Err(invalid_call());
         }
+        #[cfg(test)]
+        let fault = self.mcp_call_fault.take();
         let tx = self.db()?.unchecked_transaction().map_err(db_error)?;
         let snapshot = running_snapshot(&tx, id)?;
         let mcp = frozen(&snapshot)?;
@@ -283,7 +302,16 @@ impl AppStore {
             return Err(invalid_call());
         }
         tx.execute("INSERT INTO tool_calls(id,agent_run_id,model_call_id,configuration_revision,schema_sha256,server_id,tool_name,arguments_sha256,send_state,created_at_ms) VALUES(?1,?2,?3,?4,?5,?6,?7,?8,'possibly_sent',?9)", params![input.id,id,input.model_call_id,input.configuration_revision,input.schema_sha256,tool.server_id,tool.tool_name,hash(input.arguments_json.as_bytes()),now_ms()?]).map_err(db_error)?;
-        tx.commit().map_err(db_error)
+        #[cfg(test)]
+        if fault == Some(McpCallFault::BeforeBegin) {
+            return Err(test_call_fault());
+        }
+        tx.commit().map_err(db_error)?;
+        #[cfg(test)]
+        if fault == Some(McpCallFault::AfterBegin) {
+            return Err(test_call_fault());
+        }
+        Ok(())
     }
 
     pub(crate) fn confirm_trial_mcp_call(
@@ -293,6 +321,8 @@ impl AppStore {
         is_error: bool,
     ) -> Result<()> {
         self.require_mcp_schema()?;
+        #[cfg(test)]
+        let fault = self.mcp_call_fault.take();
         let tx = self.db()?.unchecked_transaction().map_err(db_error)?;
         running_snapshot(&tx, id)?;
         let category = if is_error { "tool_error" } else { "success" };
@@ -300,7 +330,16 @@ impl AppStore {
         if n != 1 {
             return Err(invalid_call());
         }
-        tx.commit().map_err(db_error)
+        #[cfg(test)]
+        if fault == Some(McpCallFault::BeforeResponse) {
+            return Err(test_call_fault());
+        }
+        tx.commit().map_err(db_error)?;
+        #[cfg(test)]
+        if fault == Some(McpCallFault::AfterResponse) {
+            return Err(test_call_fault());
+        }
+        Ok(())
     }
 
     pub(crate) fn trial_mcp_unknown(&self, id: &str) -> Result<bool> {
@@ -312,6 +351,11 @@ impl AppStore {
 
     pub(crate) fn settle_trial_mcp(&self, id: &str) -> Result<()> {
         settle(self.db()?, Some(id), None)
+    }
+
+    #[cfg(test)]
+    pub(crate) fn test_mcp_call_fault(&mut self, fault: Option<McpCallFault>) {
+        self.mcp_call_fault = fault;
     }
 
     #[cfg(test)]

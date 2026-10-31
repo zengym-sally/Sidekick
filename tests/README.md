@@ -25,7 +25,7 @@
 | `s2-client.test.mjs` | unit | 文本整理客户端与模型设置 |
 | `s2-bash.test.mjs` | integration | managed Bash worker 生命周期与凭据脱敏 |
 | `s2-runtime.test.mjs` | integration | 打包 organizer Runtime 的提取流程 |
-| `s31-client.test.mjs` | unit | 智能体偏好配置 store |
+| `s31-client.test.mjs` | unit | 智能体偏好配置、同run未知结果／终态吸收及真实Pinia store |
 | `s31-runtime.test.mjs` | integration | 打包 Runtime 的隔离试跑 |
 | `layout-domain.test.mjs` | unit | 布局/表单/设置域模型与控件绑定 |
 | `layout-runtime.test.mjs` | integration | 打包 Runtime 的采样与推理参数透传 |
@@ -46,8 +46,11 @@
 | `s33-ui-safety.test.mjs` | integration | 验证包的 UI 安全守卫 |
 | `s33-ui-artifacts.test.mjs` | integration | 打包产物内容与签名边界 |
 | `mcp-trial.test.mjs` | unit | MCP隔离调用的命名、参数、结果预算、ACK归属及unknown提示 |
+| `mcp-recovery.test.mjs` | integration | 真实Pi／Runtime取消、迟到、progress硬期限、ACK身份与拥塞下绝对期限；受控ACK替身 |
 
-Rust的`store/mcp_calls_tests.rs`覆盖调用台账、冻结和终态优先级，聚焦入口为`npm run test:mcp-calls`；`host/mcp_trial_tests.rs`通过真实Rust宿主、随包Runtime／Pi、本机合成模型和stdio服务做整链集成，使用`npm run test:mcp-trial`（先打包）。两者也随既有`probe:native`进入完整`check`，不需要真实模型或用户根。合成模型／服务输入在`fixtures/mcp-trial.mjs`；不能用这些结果替代P4完整矩阵或原生验收。
+Rust的`store/mcp_calls_tests.rs`覆盖调用台账、冻结和终态优先级，聚焦入口为`npm run test:mcp-calls`；`host/mcp_trial_tests.rs`通过真实Rust宿主、随包Runtime／Pi、本机合成模型和stdio服务做整链集成，使用`npm run test:mcp-trial`（先打包）。两者也随既有`probe:native`进入完整`check`，不需要真实模型或用户根。合成模型／服务输入在`fixtures/mcp-trial.mjs`；不能用这些结果替代原生验收。
+
+P4恢复矩阵在`host/mcp_recovery_tests.rs`及嵌套的`mcp_host_recovery_tests.rs`，入口`npm run test:mcp-recovery-host`：实际事务故障、精确累计预算、禁止重试、真实宿主强杀／冷启、进程组回收和OS管道限额；随`probe:native`进入完整门禁。Node接缝入口`npm run test:mcp-recovery`先由纳管脚本`prepare-mcp-recovery.mjs`从固定Pi源码构建，再运行14项集成测试；只把ACK作为受控替身，持久化由Rust矩阵另证。停读／畸形输出／累计字节超限及槽恢复输入在`fixtures/mcp-runtime-fault.mjs`，不冒充真实Pi。所有输入仅合成，均不调用真实模型、生产钥匙串或真实用户根。
 
 ## 新测试命名约定
 

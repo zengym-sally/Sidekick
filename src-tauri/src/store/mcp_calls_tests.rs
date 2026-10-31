@@ -348,6 +348,202 @@ fn mcp_calls_send_and_response_are_once_only_and_store_only_hashes() {
 }
 
 #[test]
+fn mcp_calls_begin_sqlite_write_rejection_leaves_no_pending_call() {
+    let (f, mut store, id, tool) = prepared();
+    let request = call(&store, &id, &tool, "call-readonly-begin");
+    store.test_mcp_query_only(true).unwrap();
+    let error = store.begin_trial_mcp_call(&id, request).unwrap_err();
+    assert_eq!(error.code, "DATABASE_ERROR");
+    assert!(!error.message.contains("synthetic-private-argument"));
+    assert!(states(&store, &id).is_empty());
+    assert_eq!(store.agent_run(&id).unwrap().status, "running");
+    assert!(!store.trial_mcp_unknown(&id).unwrap());
+    store.test_mcp_query_only(false).unwrap();
+    drop(store);
+    let store = f.store();
+    assert!(states(&store, &id).is_empty());
+    let run = store.agent_run(&id).unwrap();
+    assert_eq!(run.status, "interrupted");
+    assert_eq!(run.error_code.as_deref(), Some("INTERRUPTED"));
+    assert!(!store.trial_mcp_unknown(&id).unwrap());
+}
+
+#[test]
+fn mcp_calls_response_sqlite_write_rejection_recovers_pending_as_unknown() {
+    let (f, mut store, id, tool) = prepared();
+    store
+        .begin_trial_mcp_call(&id, call(&store, &id, &tool, "call-readonly-response"))
+        .unwrap();
+    store.test_mcp_query_only(true).unwrap();
+    let error = store
+        .confirm_trial_mcp_call(&id, "call-readonly-response", false)
+        .unwrap_err();
+    assert_eq!(error.code, "DATABASE_ERROR");
+    assert_eq!(states(&store, &id), vec![("possibly_sent".into(), None)]);
+    assert_eq!(store.agent_run(&id).unwrap().status, "running");
+    store.test_mcp_query_only(false).unwrap();
+    drop(store);
+    let mut store = f.store();
+    assert_unknown(&store, &id);
+    assert_eq!(states(&store, &id), vec![("unknown".into(), None)]);
+    assert!(store
+        .confirm_trial_mcp_call(&id, "call-readonly-response", false)
+        .is_err());
+    assert!(store
+        .begin_trial_mcp_call(&id, call(&store, &id, &tool, "call-retry-response"))
+        .is_err());
+    assert_unknown(&store, &id);
+}
+
+#[test]
+fn mcp_calls_begin_before_commit_error_rolls_back_insert() {
+    let (f, mut store, id, tool) = prepared();
+    store.test_mcp_call_fault(Some(McpCallFault::BeforeBegin));
+    let error = store
+        .begin_trial_mcp_call(&id, call(&store, &id, &tool, "call-rollback-begin"))
+        .unwrap_err();
+    assert_eq!(error.code, "MCP_CALL_TEST_FAULT");
+    assert!(!error.message.contains("synthetic-private-argument"));
+    assert!(states(&store, &id).is_empty());
+    assert!(!store.trial_mcp_unknown(&id).unwrap());
+    drop(store);
+    let store = f.store();
+    assert!(states(&store, &id).is_empty());
+    assert_eq!(store.agent_run(&id).unwrap().status, "interrupted");
+    assert!(!store.trial_mcp_unknown(&id).unwrap());
+}
+
+#[test]
+fn mcp_calls_begin_after_commit_error_recovers_committed_call_as_unknown() {
+    let (f, mut store, id, tool) = prepared();
+    store.test_mcp_call_fault(Some(McpCallFault::AfterBegin));
+    let error = store
+        .begin_trial_mcp_call(&id, call(&store, &id, &tool, "call-committed-begin"))
+        .unwrap_err();
+    assert_eq!(error.code, "MCP_CALL_TEST_FAULT");
+    assert_eq!(states(&store, &id), vec![("possibly_sent".into(), None)]);
+    store.test_mcp_call_fault(None);
+    assert_eq!(
+        store
+            .begin_trial_mcp_call(&id, call(&store, &id, &tool, "call-committed-begin"))
+            .unwrap_err()
+            .code,
+        "MCP_CALL_REPLAY"
+    );
+    assert!(store
+        .begin_trial_mcp_call(&id, call(&store, &id, &tool, "call-fresh-before-reopen"))
+        .is_err());
+    drop(store);
+    let mut store = f.store();
+    assert_unknown(&store, &id);
+    assert_eq!(states(&store, &id), vec![("unknown".into(), None)]);
+    assert_eq!(
+        store
+            .begin_trial_mcp_call(&id, call(&store, &id, &tool, "call-fresh-after-reopen"))
+            .unwrap_err()
+            .code,
+        "MCP_RESULT_UNKNOWN"
+    );
+    assert_eq!(
+        store
+            .confirm_trial_mcp_call(&id, "call-committed-begin", false)
+            .unwrap_err()
+            .code,
+        "MCP_RESULT_UNKNOWN"
+    );
+    assert_unknown(&store, &id);
+}
+
+#[test]
+fn mcp_calls_response_before_commit_error_rolls_back_update_and_recovers_unknown() {
+    for is_error in [false, true] {
+        let (f, mut store, id, tool) = prepared();
+        store
+            .begin_trial_mcp_call(&id, call(&store, &id, &tool, "call-rollback-response"))
+            .unwrap();
+        store.test_mcp_call_fault(Some(McpCallFault::BeforeResponse));
+        assert_eq!(
+            store
+                .confirm_trial_mcp_call(&id, "call-rollback-response", is_error)
+                .unwrap_err()
+                .code,
+            "MCP_CALL_TEST_FAULT"
+        );
+        assert_eq!(states(&store, &id), vec![("possibly_sent".into(), None)]);
+        assert_eq!(store.agent_run(&id).unwrap().status, "running");
+        drop(store);
+        let mut store = f.store();
+        assert_unknown(&store, &id);
+        assert_eq!(states(&store, &id), vec![("unknown".into(), None)]);
+        assert_eq!(
+            store
+                .confirm_trial_mcp_call(&id, "call-rollback-response", is_error)
+                .unwrap_err()
+                .code,
+            "MCP_RESULT_UNKNOWN"
+        );
+        store.cancel_agent_trial(&id).unwrap();
+        store
+            .finish_agent_trial_error(&id, "MODEL_TIMEOUT")
+            .unwrap();
+        assert_unknown(&store, &id);
+    }
+}
+
+#[test]
+fn mcp_calls_response_after_commit_error_preserves_response_and_never_becomes_unknown() {
+    for is_error in [false, true] {
+        let (f, mut store, id, tool) = prepared();
+        store
+            .begin_trial_mcp_call(&id, call(&store, &id, &tool, "call-committed-response"))
+            .unwrap();
+        store.test_mcp_call_fault(Some(McpCallFault::AfterResponse));
+        assert_eq!(
+            store
+                .confirm_trial_mcp_call(&id, "call-committed-response", is_error)
+                .unwrap_err()
+                .code,
+            "MCP_CALL_TEST_FAULT"
+        );
+        let category = if is_error { "tool_error" } else { "success" };
+        assert_eq!(
+            states(&store, &id),
+            vec![("responded".into(), Some(category.into()))]
+        );
+        assert!(!store.trial_mcp_unknown(&id).unwrap());
+        store.test_mcp_call_fault(None);
+        assert!(store
+            .confirm_trial_mcp_call(&id, "call-committed-response", is_error)
+            .is_err());
+        assert_eq!(
+            store
+                .begin_trial_mcp_call(&id, call(&store, &id, &tool, "call-committed-response"))
+                .unwrap_err()
+                .code,
+            "MCP_CALL_REPLAY"
+        );
+        drop(store);
+        let mut store = f.store();
+        assert_eq!(store.agent_run(&id).unwrap().status, "interrupted");
+        assert_eq!(
+            states(&store, &id),
+            vec![("responded".into(), Some(category.into()))]
+        );
+        store.cancel_agent_trial(&id).unwrap();
+        store
+            .finish_agent_trial_error(&id, "MODEL_TIMEOUT")
+            .unwrap();
+        store.interrupt_agent_trials(None).unwrap();
+        assert!(!store.trial_mcp_unknown(&id).unwrap());
+        assert_eq!(store.agent_run(&id).unwrap().status, "interrupted");
+        assert_eq!(
+            states(&store, &id),
+            vec![("responded".into(), Some(category.into()))]
+        );
+    }
+}
+
+#[test]
 fn mcp_calls_accept_opaque_utf8_model_call_ids_and_reject_control_bytes() {
     let (_f, mut store, id, tool) = prepared();
     let mut invalid = call(&store, &id, &tool, "invalid-model-id");

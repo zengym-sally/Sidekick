@@ -13,7 +13,7 @@
 - **索引强制**：新增记录必须登记到本文件；未登记视为未收口。`check:docs` 只校验链接存在，语义一致性靠评审。
 - **新路径**：2026-10-31 结构治理后，新记录使用新路径（`runtime/{entries,lib,workers}/`、`src-tauri/src/{app,store,host,diagnostics}/`、`tests/{unit,integration,probes,fixtures}/`、`scripts/{build,checks,probes}/`）；旧记录保留原路径，按文件名仍可检索。
 
-## 2. 记录索引（23 份）
+## 2. 记录索引（24 份）
 
 | 记录 | 日期 | 范围与结论 | 证据 |
 |---|---|---|---|
@@ -40,6 +40,7 @@
 | [s33-p2-json-20261031.md](s33-p2-json-20261031.md) | 2026-10-31 | MCP 配置改为表单／JSON 双模式，保存仍不启动服务 | `s33-p2-json-20261031/` |
 | [structural-governance-20261031.md](structural-governance-20261031.md) | 2026-10-31 | 结构治理与工程约定沉淀：迁移后完整 `npm run check` exit 0，T5 验证与 T6／T7 评审 pass；非发布 GO／NO-GO | `build/struct-review-20261031/`（gitignored，见 §3.1） |
 | [s33-p3-controlled-20261031.md](s33-p3-controlled-20261031.md) | 2026-10-31 | P3受控隔离调用：双面复核与完整check通过；P2遗留验收及P4–P6继续开放 | `build/p3-controlled-20261031/`（gitignored），精选验证摘要随记录保存 |
+| [s33-p4-recovery-20261101.md](s33-p4-recovery-20261101.md) | 2026-11-01 | P4中断与未知结果恢复：最终双面APPROVE，独立完整check pass；真实模型／原生保持开放 | `build/p4-recovery-20261101/`（gitignored），精选验证摘要及冻结清单随记录保存 |
 
 ## 3. 目录名与记录名不一致的证据目录
 

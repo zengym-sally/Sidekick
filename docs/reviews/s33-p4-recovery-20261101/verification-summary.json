@@ -1,0 +1,658 @@
+{
+  "conclusion": "pass",
+  "issuedUtc": "2026-10-31T17:54:34.644771+00:00",
+  "scope": {
+    "slice": "P4 synthetic recovery matrix",
+    "risk": "R3 inherited delivery gate",
+    "mode": "Independent execution and read-only static audit; writes confined to this ignored evidence directory",
+    "excluded": [
+      "source/document/index edits",
+      "commit/push",
+      "live or --ignored business tests",
+      "GUI",
+      "real model/credential/.env/real-root access",
+      "P5/P6 implementation"
+    ]
+  },
+  "head": "f3992c0f1bf5bcc6c876ba63ba995700e05972fd",
+  "fullCheck": {
+    "label": "full-check",
+    "command": [
+      "npm",
+      "run",
+      "check"
+    ],
+    "startUtc": "2026-10-31T17:47:43.698169+00:00",
+    "endUtc": "2026-10-31T17:52:48.191411+00:00",
+    "elapsedSeconds": 304.49702591681853,
+    "exitCode": 0,
+    "log": "commands/full-check.log"
+  },
+  "commandResults": [
+    {
+      "label": "full-check",
+      "command": [
+        "npm",
+        "run",
+        "check"
+      ],
+      "startUtc": "2026-10-31T17:47:43.698169+00:00",
+      "endUtc": "2026-10-31T17:52:48.191411+00:00",
+      "elapsedSeconds": 304.49702591681853,
+      "exitCode": 0,
+      "log": "commands/full-check.log"
+    },
+    {
+      "label": "structure",
+      "command": [
+        "npm",
+        "run",
+        "check:structure"
+      ],
+      "startUtc": "2026-10-31T17:53:04.746911+00:00",
+      "endUtc": "2026-10-31T17:53:05.060629+00:00",
+      "elapsedSeconds": 0.31348033412359655,
+      "exitCode": 0,
+      "log": "commands/structure.log"
+    },
+    {
+      "label": "docs",
+      "command": [
+        "npm",
+        "run",
+        "check:docs"
+      ],
+      "startUtc": "2026-10-31T17:53:05.098296+00:00",
+      "endUtc": "2026-10-31T17:53:05.268890+00:00",
+      "elapsedSeconds": 0.17024620808660984,
+      "exitCode": 0,
+      "log": "commands/docs.log"
+    },
+    {
+      "label": "syntax-1",
+      "command": [
+        "node",
+        "--check",
+        "runtime/lib/mcp-control.mjs"
+      ],
+      "startUtc": "2026-10-31T17:53:05.307550+00:00",
+      "endUtc": "2026-10-31T17:53:05.337816+00:00",
+      "elapsedSeconds": 0.030030209105461836,
+      "exitCode": 0,
+      "log": "commands/syntax-1.log"
+    },
+    {
+      "label": "syntax-2",
+      "command": [
+        "node",
+        "--check",
+        "runtime/lib/mcp-trial.mjs"
+      ],
+      "startUtc": "2026-10-31T17:53:05.375429+00:00",
+      "endUtc": "2026-10-31T17:53:05.403676+00:00",
+      "elapsedSeconds": 0.027997999917715788,
+      "exitCode": 0,
+      "log": "commands/syntax-2.log"
+    },
+    {
+      "label": "syntax-3",
+      "command": [
+        "node",
+        "--check",
+        "runtime/lib/managed-mcp.mjs"
+      ],
+      "startUtc": "2026-10-31T17:53:05.439866+00:00",
+      "endUtc": "2026-10-31T17:53:05.469396+00:00",
+      "elapsedSeconds": 0.029241791926324368,
+      "exitCode": 0,
+      "log": "commands/syntax-3.log"
+    },
+    {
+      "label": "syntax-4",
+      "command": [
+        "node",
+        "--check",
+        "scripts/probes/prepare-mcp-recovery.mjs"
+      ],
+      "startUtc": "2026-10-31T17:53:05.503743+00:00",
+      "endUtc": "2026-10-31T17:53:05.531541+00:00",
+      "elapsedSeconds": 0.027553999796509743,
+      "exitCode": 0,
+      "log": "commands/syntax-4.log"
+    },
+    {
+      "label": "syntax-5",
+      "command": [
+        "node",
+        "--check",
+        "tests/fixtures/mcp-trial.mjs"
+      ],
+      "startUtc": "2026-10-31T17:53:05.566991+00:00",
+      "endUtc": "2026-10-31T17:53:05.596484+00:00",
+      "elapsedSeconds": 0.02917395904660225,
+      "exitCode": 0,
+      "log": "commands/syntax-5.log"
+    },
+    {
+      "label": "syntax-6",
+      "command": [
+        "node",
+        "--check",
+        "tests/fixtures/mcp-runtime-fault.mjs"
+      ],
+      "startUtc": "2026-10-31T17:53:05.631470+00:00",
+      "endUtc": "2026-10-31T17:53:05.660739+00:00",
+      "elapsedSeconds": 0.029032333055511117,
+      "exitCode": 0,
+      "log": "commands/syntax-6.log"
+    },
+    {
+      "label": "syntax-7",
+      "command": [
+        "node",
+        "--check",
+        "tests/integration/mcp-recovery.test.mjs"
+      ],
+      "startUtc": "2026-10-31T17:53:05.698148+00:00",
+      "endUtc": "2026-10-31T17:53:05.728281+00:00",
+      "elapsedSeconds": 0.02988758380524814,
+      "exitCode": 0,
+      "log": "commands/syntax-7.log"
+    },
+    {
+      "label": "syntax-8",
+      "command": [
+        "node",
+        "--check",
+        "tests/unit/s31-client.test.mjs"
+      ],
+      "startUtc": "2026-10-31T17:53:05.764822+00:00",
+      "endUtc": "2026-10-31T17:53:05.794873+00:00",
+      "elapsedSeconds": 0.029749457957223058,
+      "exitCode": 0,
+      "log": "commands/syntax-8.log"
+    },
+    {
+      "label": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "startUtc": "2026-10-31T17:53:05.831174+00:00",
+      "endUtc": "2026-10-31T17:53:05.863151+00:00",
+      "elapsedSeconds": 0.03167983400635421,
+      "exitCode": 0,
+      "log": "commands/diff-check.log"
+    },
+    {
+      "label": "node-version",
+      "command": [
+        "node",
+        "--version"
+      ],
+      "startUtc": "2026-10-31T17:53:05.900121+00:00",
+      "endUtc": "2026-10-31T17:53:05.918862+00:00",
+      "elapsedSeconds": 0.018435792066156864,
+      "exitCode": 0,
+      "log": "commands/node-version.log"
+    },
+    {
+      "label": "npm-version",
+      "command": [
+        "npm",
+        "--version"
+      ],
+      "startUtc": "2026-10-31T17:53:05.955380+00:00",
+      "endUtc": "2026-10-31T17:53:06.039989+00:00",
+      "elapsedSeconds": 0.08434420800767839,
+      "exitCode": 0,
+      "log": "commands/npm-version.log"
+    },
+    {
+      "label": "rustc-version",
+      "command": [
+        "rustc",
+        "--version"
+      ],
+      "startUtc": "2026-10-31T17:53:06.075917+00:00",
+      "endUtc": "2026-10-31T17:53:06.121764+00:00",
+      "elapsedSeconds": 0.045550083043053746,
+      "exitCode": 0,
+      "log": "commands/rustc-version.log"
+    },
+    {
+      "label": "cargo-version",
+      "command": [
+        "cargo",
+        "--version"
+      ],
+      "startUtc": "2026-10-31T17:53:06.158927+00:00",
+      "endUtc": "2026-10-31T17:53:06.205678+00:00",
+      "elapsedSeconds": 0.046432292088866234,
+      "exitCode": 0,
+      "log": "commands/cargo-version.log"
+    }
+  ],
+  "node": {
+    "tests": [
+      15,
+      19,
+      25,
+      14,
+      28,
+      33,
+      7,
+      18,
+      8,
+      7,
+      14,
+      5,
+      66,
+      12,
+      9,
+      4,
+      6,
+      7,
+      2,
+      2,
+      3,
+      2
+    ],
+    "pass": [
+      15,
+      19,
+      25,
+      14,
+      28,
+      33,
+      7,
+      18,
+      8,
+      7,
+      14,
+      5,
+      66,
+      12,
+      9,
+      4,
+      6,
+      7,
+      2,
+      2,
+      3,
+      2
+    ],
+    "fail": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "cancelled": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "skipped": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "todo": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "groups": 22,
+    "total": 306,
+    "passed": 306,
+    "failed": 0,
+    "cancelledTotal": 0,
+    "skippedTotal": 0,
+    "todoTotal": 0
+  },
+  "rust": {
+    "dualFeatures": {
+      "result": "ok",
+      "passed": 8,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filteredOut": 166,
+      "seconds": 0.57
+    },
+    "default": {
+      "result": "ok",
+      "passed": 164,
+      "failed": 0,
+      "ignored": 2,
+      "measured": 0,
+      "filteredOut": 0,
+      "seconds": 129.34
+    },
+    "ignoredCases": [
+      "test runtime_host::tests::s2_live_text_preview_sign_and_restart ... ignored, explicit real model integration using the owner-selected private file",
+      "test runtime_host::tests::s31_live_isolated_organizer_trial_and_configuration_reopen ... ignored, explicit real model trial using the owner-selected private file"
+    ]
+  },
+  "actual": {
+    "nodePassed": 306,
+    "nodeFailed": 0,
+    "defaultRustPassed": 164,
+    "defaultRustIgnored": 2,
+    "dualFeatureRustPassed": 8,
+    "runtimeBundles": 6,
+    "ordinaryResourceEntries": 556,
+    "esbuildSize": 12,
+    "viteChunkSize": 2,
+    "notarizationSkipped": 2
+  },
+  "expectedCrossCheck": {
+    "nodePassed": 306,
+    "nodeFailed": 0,
+    "defaultRustPassed": 164,
+    "defaultRustIgnored": 2,
+    "dualFeatureRustPassed": 8,
+    "runtimeBundles": 6,
+    "ordinaryResourceEntries": 556,
+    "esbuildSize": 12,
+    "viteChunkSize": 2,
+    "notarizationSkipped": 2
+  },
+  "expectedMismatches": {},
+  "baselineDelta": {
+    "node": 33,
+    "defaultRust": 12,
+    "explanation": "Node +33 = UI +19 and recovery +14; Rust +12 = store +6 and recovery-host +6. Baseline counts are the provided P3 record; current counts come from this run."
+  },
+  "artifacts": [
+    {
+      "layer": "actual macOS bundles; no GUI or MCP launch",
+      "ordinaryResourceEntries": 556,
+      "controlledServiceExcluded": true,
+      "signatures": "both deep strict verified"
+    },
+    {
+      "layer": "ordinary executable negative entry; no ordinary-root startup",
+      "exitCode": 2,
+      "stderr": "MCP UI verification is not enabled in this package"
+    }
+  ],
+  "warnings": {
+    "esbuildSize": 12,
+    "viteChunkSize": 2,
+    "notarizationSkipped": 2,
+    "unexpected": [],
+    "classification": "Existing documented baseline: Runtime bundle size, frontend chunk size, ad-hoc signing/unnotarized local packages. No new warning category observed.",
+    "rows": [
+      {
+        "line": 13,
+        "text": "  build/s0-runtime/probe.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 17,
+        "text": "  build/s0-runtime/organizer.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 364,
+        "text": "  build/s0-runtime/probe.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 368,
+        "text": "  build/s0-runtime/organizer.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 525,
+        "text": "  build/s0-runtime/probe.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 529,
+        "text": "  build/s0-runtime/organizer.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 810,
+        "text": "  build/s0-runtime/probe.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 814,
+        "text": "  build/s0-runtime/organizer.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 882,
+        "text": "  build/s0-runtime/probe.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 886,
+        "text": "  build/s0-runtime/organizer.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 917,
+        "text": "(!) Some chunks are larger than 500 kB after minification. Consider:"
+      },
+      {
+        "line": 932,
+        "text": "        Warn skipping app notarization, no APPLE_ID & APPLE_PASSWORD & APPLE_TEAM_ID or APPLE_API_KEY & APPLE_API_ISSUER & APPLE_API_KEY_PATH environment variables found"
+      },
+      {
+        "line": 941,
+        "text": "  build/s0-runtime/probe.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 945,
+        "text": "  build/s0-runtime/organizer.mjs  2.3mb ⚠️"
+      },
+      {
+        "line": 976,
+        "text": "(!) Some chunks are larger than 500 kB after minification. Consider:"
+      },
+      {
+        "line": 991,
+        "text": "        Warn skipping app notarization, no APPLE_ID & APPLE_PASSWORD & APPLE_TEAM_ID or APPLE_API_KEY & APPLE_API_ISSUER & APPLE_API_KEY_PATH environment variables found"
+      }
+    ]
+  },
+  "unchanged": {
+    "beforeUtc": "2026-10-31T17:47:34.053755+00:00",
+    "afterUtc": "2026-10-31T17:53:26.052806+00:00",
+    "checks": {
+      "head": true,
+      "fileCount": true,
+      "totalBytes": true,
+      "files": true,
+      "aggregate": true,
+      "freezeFileSha256": true,
+      "freeze": true,
+      "status": true,
+      "diff-stat": true,
+      "diff-name-status": true,
+      "diff": true,
+      "cached-name-status": true,
+      "ls-files-stage": true
+    },
+    "unchanged": true,
+    "head": "f3992c0f1bf5bcc6c876ba63ba995700e05972fd",
+    "fileCount": 4172,
+    "totalBytes": 53512562,
+    "workingSetSha256": "20dbc196569370ee7c49fdbe5553669a3ef0b26692eed701504c637d1cf7188f",
+    "sourceInputCount": 217,
+    "sourceInputSha256": "df12f235e45782240e12c73255894948d6440b8239429d47a2634fb398007e98"
+  },
+  "static": {
+    "changedFiles": 22,
+    "trackedChanges": 16,
+    "untracked": 6,
+    "changedBytes": 572047,
+    "protectedChanges": [],
+    "packageChangedTopLevelKeys": [
+      "scripts"
+    ],
+    "trackedForbiddenPaths": [],
+    "indexDeclaredCount": 24,
+    "indexedRecordCount": 24,
+    "reviewMdFileCount": 24,
+    "indexMatchesFiles": true,
+    "localLinksMissing": []
+  },
+  "sourceScopeAudit": {
+    "documentConclusionInProgress": true,
+    "documentDoesNotPreclaimFullPass": true,
+    "evidencePaths": [
+      {
+        "path": "build/p4-recovery-20261101/design/core-v1.md",
+        "exists": true
+      },
+      {
+        "path": "build/p4-recovery-20261101/freeze-v5/code-hashes.json",
+        "exists": true
+      },
+      {
+        "path": "build/p4-recovery-20261101/focused/test-mcp-recovery-host.log",
+        "exists": true
+      },
+      {
+        "path": "build/p4-recovery-20261101/focused-v2/check-rust.log",
+        "exists": true
+      },
+      {
+        "path": "build/p4-recovery-20261101/focused-v2",
+        "exists": true
+      },
+      {
+        "path": "build/p4-recovery-20261101/focused-v3",
+        "exists": true
+      },
+      {
+        "path": "build/p4-recovery-20261101/repairs-v1",
+        "exists": true
+      },
+      {
+        "path": "build/p4-recovery-20261101/ui/red.log",
+        "exists": true
+      }
+    ],
+    "coreSha256": "c8af5acc822bc0401c1fb52b2232ebfa8594f70911540f4cb0330bcc2fc7b391",
+    "scopeAudit": "Not a pure move. Runtime production changes enforce absolute deadlines in control ACK, continuation and send permit; client same-run acceptance absorbs unknown/terminal. Rust faults/checkpoints/test modules are cfg(test); non-test transaction return refactoring preserves commit semantics. No new command, schema, migration, dependency, identifier, HTTP MCP, formal extract/revise or native GUI path."
+  },
+  "freezeCoverage": {
+    "changedSourceInputCount": 19,
+    "coveredCount": 19,
+    "missing": [],
+    "newSourcePaths": [
+      "scripts/probes/prepare-mcp-recovery.mjs",
+      "src-tauri/src/host/mcp_host_recovery_tests.rs",
+      "src-tauri/src/host/mcp_recovery_tests.rs",
+      "tests/fixtures/mcp-runtime-fault.mjs",
+      "tests/integration/mcp-recovery.test.mjs"
+    ],
+    "newSourcePathsIncluded": true,
+    "freezeIncludesTestsReadme": true,
+    "freezeSkillInputs": [
+      "tests/fixtures/skills/s32-reader/SKILL.md",
+      "tests/probes/fixtures/skills/s0-reader/SKILL.md"
+    ]
+  },
+  "standalone": {
+    "structure": "18 violation classes + 8 reference-negative samples; 151 source files / 330 references",
+    "docs": "15 files / 172 local links",
+    "mjsSyntax": 8,
+    "diffCheck": "exit 0"
+  },
+  "toolchains": {
+    "node": "v24.20.0",
+    "npm": "12.2.1",
+    "rustc": "rustc 1.89.0 (29483883e 2025-08-04)",
+    "cargo": "cargo 1.89.0 (c24e10642 2025-06-23)"
+  },
+  "limits": {
+    "realModelRequestsThisVerification": 0,
+    "mcpProductionKeychain": "remains closed; not validated",
+    "s0Keychain": "only pre-authorized synthetic roundtrip ran as part of full check",
+    "open": [
+      "P5 formal extract/revise + bounded real-model controlled invocation and candidate signing",
+      "P6 native GUI complete flow, wide/narrow windows, keyboard/focus/scroll",
+      "P2 production Keychain/real credentials/services/ordinary user root",
+      "historical native/design visual gaps, run_s0_probes, clean clone, CI and other previously unvalidated items"
+    ],
+    "interpretation": "Synthetic/model substitutes do not close real-model or native validation. Passing P4 verification is not S3.3 completion or release approval."
+  },
+  "collectionErrors": {
+    "path": "commands/collection-errors/",
+    "result": "Read-only preflight/collector errors preserved separately. Git quoted-path collector was corrected to NUL parsing and then passed. No product command failed; no source/test/guard was repaired by the verifier."
+  }
+}

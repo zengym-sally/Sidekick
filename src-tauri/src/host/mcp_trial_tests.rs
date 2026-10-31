@@ -5,17 +5,17 @@ use std::fs;
 use std::process::Child;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-struct TrialFixture {
-    root: PathBuf,
-    directory: PathBuf,
-    local: Option<LocalState>,
-    runtime: RuntimeState,
-    model: Child,
+pub(super) struct TrialFixture {
+    pub(super) root: PathBuf,
+    pub(super) directory: PathBuf,
+    pub(super) local: Option<LocalState>,
+    pub(super) runtime: RuntimeState,
+    pub(super) model: Child,
     key: String,
-    phases: Arc<Mutex<Vec<String>>>,
+    pub(super) phases: Arc<Mutex<Vec<String>>>,
 }
 impl TrialFixture {
-    fn new(mode: &str, tool_call: bool, enabled: bool) -> Self {
+    pub(super) fn new(mode: &str, tool_call: bool, enabled: bool) -> Self {
         let root = std::env::temp_dir().join(format!(
             "sidekick-mcp-trial-{}-{}",
             std::process::id(),
@@ -83,7 +83,7 @@ impl TrialFixture {
             phases: Default::default(),
         }
     }
-    fn start(&self) -> AgentRun {
+    pub(super) fn start(&self) -> AgentRun {
         let phases = self.phases.clone();
         self.runtime
             .start_trial(
@@ -99,7 +99,7 @@ impl TrialFixture {
             )
             .unwrap()
     }
-    fn wait(&self, id: &str) -> AgentRun {
+    pub(super) fn wait(&self, id: &str) -> AgentRun {
         let started = Instant::now();
         while self.runtime.active_run().is_some() {
             assert!(
@@ -124,21 +124,21 @@ impl TrialFixture {
             .access(|store| store.agent_run(id))
             .unwrap()
     }
-    fn events(&self, name: &str) -> Vec<Value> {
+    pub(super) fn events(&self, name: &str) -> Vec<Value> {
         fs::read_to_string(self.root.join(name))
             .unwrap_or_default()
             .lines()
             .map(|line| serde_json::from_str(line).unwrap())
             .collect()
     }
-    fn database(&self) -> Connection {
+    pub(super) fn database(&self) -> Connection {
         Connection::open_with_flags(
             self.root.join("workspace/data/sidekick.sqlite"),
             OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NOFOLLOW,
         )
         .unwrap()
     }
-    fn calls(&self) -> Vec<(String, String)> {
+    pub(super) fn calls(&self) -> Vec<(String, String)> {
         self.database().prepare("SELECT send_state,COALESCE(response_category,'') FROM tool_calls ORDER BY created_at_ms,id").unwrap().query_map([],|r|Ok((r.get(0)?,r.get(1)?))).unwrap().map(|row|row.unwrap()).collect()
     }
     fn assert_isolated(&self) {
@@ -180,7 +180,7 @@ impl TrialFixture {
             }
         }
     }
-    fn reopen(&mut self, id: &str) -> AgentRun {
+    pub(super) fn reopen(&mut self, id: &str) -> AgentRun {
         self.local.take();
         std::thread::sleep(Duration::from_millis(50));
         let store = AppStore::open(self.root.join("app")).unwrap();

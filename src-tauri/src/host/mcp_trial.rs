@@ -1,3 +1,5 @@
+#[cfg(test)]
+use crate::local_store::McpCallFault;
 use crate::local_store::{AppStore, McpCallInput, McpDiscoveredCatalog, StoreError, TrialMcpTool};
 use crate::mcp_host::{self, Owner};
 use crate::runtime_host::{Job, JobKind, RuntimeState};
@@ -246,7 +248,13 @@ impl<'a> TrialControl<'a> {
                 {
                     return Err(protocol());
                 }
-                session.owner = Some(owner);
+                session.owner = Some(owner.clone());
+                #[cfg(test)]
+                state.test_trial_checkpoint(
+                    self.job,
+                    "owner",
+                    json!({"serverId":server,"owner":owner}),
+                );
             }
             "end" => {
                 let owner: Owner = serde_json::from_value(frame.clone()).map_err(|_| protocol())?;
@@ -322,9 +330,28 @@ impl<'a> TrialControl<'a> {
                     return Err("MCP_PRIVATE_OUTPUT".into());
                 }
                 let call_id = input.id.clone();
+                #[cfg(test)]
+                state.test_trial_checkpoint(self.job, "before_begin", json!({"callId":call_id}));
                 self.local
-                    .access(|store| store.begin_trial_mcp_call(&self.job.run_id, input))
+                    .access(|store| {
+                        #[cfg(test)]
+                        match *state.trial_policy.lock().map_err(|_| StoreError {
+                            code: "MCP_CALL_TEST_FAULT",
+                            message: "Synthetic policy lock failure.",
+                        })? {
+                            Some("store-begin-before") => {
+                                store.test_mcp_call_fault(Some(McpCallFault::BeforeBegin))
+                            }
+                            Some("store-begin-after") => {
+                                store.test_mcp_call_fault(Some(McpCallFault::AfterBegin))
+                            }
+                            _ => {}
+                        }
+                        store.begin_trial_mcp_call(&self.job.run_id, input)
+                    })
                     .map_err(|error| error.code.to_string())?;
+                #[cfg(test)]
+                state.test_trial_checkpoint(self.job, "after_begin", json!({"callId":call_id}));
                 self.calls.insert(call_id, (server.into(), false));
             }
             "call_response" => {
@@ -342,9 +369,28 @@ impl<'a> TrialControl<'a> {
                 if *state.trial_policy.lock().map_err(|_| protocol())? == Some("before-response") {
                     return Err(protocol());
                 }
+                #[cfg(test)]
+                state.test_trial_checkpoint(self.job, "before_response", json!({"callId":call}));
                 self.local
-                    .access(|store| store.confirm_trial_mcp_call(&self.job.run_id, call, is_error))
+                    .access(|store| {
+                        #[cfg(test)]
+                        match *state.trial_policy.lock().map_err(|_| StoreError {
+                            code: "MCP_CALL_TEST_FAULT",
+                            message: "Synthetic policy lock failure.",
+                        })? {
+                            Some("store-response-before") => {
+                                store.test_mcp_call_fault(Some(McpCallFault::BeforeResponse))
+                            }
+                            Some("store-response-after") => {
+                                store.test_mcp_call_fault(Some(McpCallFault::AfterResponse))
+                            }
+                            _ => {}
+                        }
+                        store.confirm_trial_mcp_call(&self.job.run_id, call, is_error)
+                    })
                     .map_err(|error| error.code.to_string())?;
+                #[cfg(test)]
+                state.test_trial_checkpoint(self.job, "after_response", json!({"callId":call}));
                 self.result_bytes += bytes;
                 self.calls.insert(call.into(), (server.into(), true));
             }
@@ -369,6 +415,17 @@ impl<'a> TrialControl<'a> {
         }
         writer.try_send(bytes).map_err(|_| protocol())
     }
+}
+
+#[cfg(test)]
+pub(crate) fn test_trial_owners(job: &Job) -> Vec<Owner> {
+    job.mcp_trial
+        .lock()
+        .expect("controlled owners lock")
+        .sessions
+        .values()
+        .filter_map(|session| session.owner.clone())
+        .collect()
 }
 
 pub(crate) fn ended(job: &Job) -> bool {

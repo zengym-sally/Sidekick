@@ -307,6 +307,8 @@ pub struct AppStore {
     #[cfg(test)]
     mcp_write_fault: Option<McpWriteFault>,
     #[cfg(test)]
+    mcp_call_fault: Option<mcp_calls::McpCallFault>,
+    #[cfg(test)]
     mcp_security_fault: Option<mcp_security::McpSecurityFault>,
     mcp_schema_uncertain: bool,
     mcp_probe_uncertain: bool,
@@ -544,6 +546,8 @@ impl AppStore {
             agent_uncertain: Default::default(),
             #[cfg(test)]
             mcp_write_fault: None,
+            #[cfg(test)]
+            mcp_call_fault: None,
             #[cfg(test)]
             mcp_security_fault: None,
             mcp_schema_uncertain: false,

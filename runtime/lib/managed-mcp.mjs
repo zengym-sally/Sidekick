@@ -76,12 +76,13 @@ export class ManagedMcpTransport {
       const permit = this.callPermit; this.callPermit = null;
       if (!this.control.callGuard || !permit || permit.name !== message.params?.name || permit.argumentsJson !== canonicalArguments(message.params?.arguments)) throw new Error('MCP_PROTOCOL');
       if (options?.signal?.aborted) throw new Error('MCP_CANCELLED');
+      if (Date.now() >= permit.deadline) throw new Error('MCP_TIMEOUT');
     } else if (message.method && !['initialize', 'tools/list', 'notifications/initialized', 'notifications/cancelled'].includes(message.method)) throw new Error('MCP_PROTOCOL');
     await this.write(JSON.stringify(message) + '\n');
   }
-  grantCall(name, args) {
+  grantCall(name, args, deadline = this.config.deadline) {
     if (!this.control.callGuard || this.callPermit) throw new Error('MCP_PROTOCOL');
-    this.control.callGuard(); this.callPermit = { name, argumentsJson: canonicalArguments(args) };
+    this.control.callGuard(); this.callPermit = { name, argumentsJson: canonicalArguments(args), deadline };
   }
   groupAlive() {
     try { return execFileSync('/bin/ps', ['-axo', 'pgid=,stat='], { encoding: 'utf8', env: { PATH: '/usr/bin:/bin' } }).split('\n').some(line => { const p = line.trim().split(/\s+/); return Number(p[0]) === this.child.pid && !p[1]?.startsWith('Z'); }); } catch { return true; }

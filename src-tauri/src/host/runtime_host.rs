@@ -39,6 +39,8 @@ pub struct RuntimeState {
     pub(crate) slot: Arc<Mutex<Option<Job>>>,
     #[cfg(test)]
     pub(crate) trial_policy: Arc<Mutex<Option<&'static str>>>,
+    #[cfg(test)]
+    pub(crate) trial_events: Arc<Mutex<Vec<Value>>>,
 }
 pub enum StartTask {
     Extract {
@@ -99,6 +101,29 @@ fn reap_workers(job: &Job, directory: &Path) {
     }
 }
 impl RuntimeState {
+    #[cfg(test)]
+    pub(crate) fn test_trial_checkpoint(&self, job: &Job, point: &'static str, detail: Value) {
+        let mut events = self
+            .trial_events
+            .lock()
+            .expect("controlled checkpoint lock");
+        if events.len() >= 512 {
+            events.remove(0);
+        }
+        events.push(json!({"point":point,"runId":job.run_id,"detail":detail}));
+        drop(events);
+        let policy = *self.trial_policy.lock().expect("controlled policy lock");
+        let hold = match point {
+            "before_begin" => Some("hold-before-begin"),
+            "after_begin" => Some("hold-after-begin"),
+            "before_response" => Some("hold-before-response"),
+            "after_response" => Some("hold-after-response"),
+            _ => None,
+        };
+        if hold.is_some() && policy == hold {
+            std::thread::sleep(Duration::from_secs(30));
+        }
+    }
     pub fn active_run(&self) -> Option<String> {
         self.slot
             .lock()
@@ -362,6 +387,10 @@ fn execute(
     local: &LocalState,
     state: &RuntimeState,
 ) -> std::result::Result<Value, String> {
+    #[cfg(test)]
+    if *state.trial_policy.lock().map_err(|_| "RUNTIME_PROTOCOL")? == Some("short-io") {
+        payload["runLimitMs"] = 1000.into();
+    }
     payload["hostNonce"] = job.nonce.clone().into();
     let mut mcp = crate::mcp_trial::TrialControl::new(job, directory, local, &payload);
     let mut command = Command::new(directory.join("node"));
@@ -378,6 +407,8 @@ fn execute(
         .process_group(0);
     let mut child = command.spawn().map_err(|_| "RUNTIME_START".to_string())?;
     job.pid.store(child.id(), Ordering::SeqCst);
+    #[cfg(test)]
+    state.test_trial_checkpoint(job, "runtime_started", json!({"pid":child.id()}));
     let run_limit = Duration::from_millis(
         payload["runLimitMs"]
             .as_u64()
@@ -659,6 +690,10 @@ pub async fn start_agent_trial(
 pub async fn active_agent_trial(runtime: State<'_, RuntimeState>) -> Result<Option<String>> {
     Ok(runtime.active_trial())
 }
+
+#[cfg(test)]
+#[path = "mcp_recovery_tests.rs"]
+mod mcp_recovery_tests;
 
 #[cfg(test)]
 #[path = "mcp_trial_tests.rs"]

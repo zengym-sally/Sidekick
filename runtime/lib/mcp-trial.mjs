@@ -9,8 +9,8 @@ export class McpTrial {
     Object.assign(this, { runId, directory, cwd, deadline, servers, control, sensitive, onFatal });
     this.sessions = []; this.names = new Set(['read', 'bash']); this.resultBytes = 0; this.catalogBytes = 0; this.toolCount = 0; this.error = null;
   }
-  guard(signal) {
-    if (this.error || signal?.aborted || Date.now() >= this.deadline) throw new Error(this.error || 'MCP_TIMEOUT');
+  guard(signal, deadline = this.deadline) {
+    if (this.error || signal?.aborted || Date.now() >= Math.min(this.deadline, deadline)) throw new Error(this.error || 'MCP_TIMEOUT');
   }
   fail(code = 'MCP_PROTOCOL') {
     if (!this.error) { this.error = code; this.control.close(); this.onFatal(); }
@@ -74,16 +74,16 @@ export class McpTrial {
     const timer = setTimeout(() => controller.abort(), Math.max(1, deadline - Date.now()));
     try {
       await this.control.request('call_begin', { serverId: binding.serverId, callId, input: { id: callId, modelCallId, modelName: binding.modelName, configurationRevision: session.server.configurationRevision, schemaSha256: binding.schemaSha256, argumentsJson } }, deadline);
-      this.guard(combined);
-      session.transport.grantCall(binding.toolName, args);
+      this.guard(combined, deadline);
+      session.transport.grantCall(binding.toolName, args, deadline);
       const raw = await session.client.callTool(binding.toolName, JSON.parse(argumentsJson), { signal: combined, timeoutMs: Math.max(1, deadline - Date.now()) });
-      this.guard(combined);
+      this.guard(combined, deadline);
       const checked = checkMcpResult(raw, this.sensitive, this.resultBytes); this.resultBytes += checked.bytes;
       await this.control.request('call_response', { serverId: binding.serverId, callId, result: checked.result }, deadline);
-      this.guard(combined);
+      this.guard(combined, deadline);
       return { content: checked.content, ...(raw.structuredContent === undefined ? {} : { structuredContent: raw.structuredContent }), ...(checked.isError ? { isError: true } : {}) };
     } catch (error) {
-      this.fail(controller.signal.aborted ? 'MCP_TIMEOUT' : ['MCP_PRIVATE_OUTPUT', 'MCP_RESULT_INVALID'].includes(error?.message) ? error.message : 'MCP_PROTOCOL');
+      this.fail(controller.signal.aborted || Date.now() >= deadline ? 'MCP_TIMEOUT' : ['MCP_PRIVATE_OUTPUT', 'MCP_RESULT_INVALID'].includes(error?.message) ? error.message : 'MCP_PROTOCOL');
       throw new Error(this.error);
     } finally { clearTimeout(timer); }
   }
