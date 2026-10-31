@@ -3,6 +3,7 @@ import { fstatSync } from 'node:fs';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { parseJsonRpcMessage } from '@sidekick/pi-jsonrpc';
+import { canonicalArguments } from './mcp-tool-contract.mjs';
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 export class ManagedMcpTransport {
   constructor(config, control) {
@@ -70,8 +71,17 @@ export class ManagedMcpTransport {
   }
   async send(message, options) {
     if (options?.signal?.aborted) throw new Error('MCP_CANCELLED');
-    if (message.method && !['initialize', 'tools/list', 'notifications/initialized', 'notifications/cancelled'].includes(message.method)) throw new Error('MCP_PROTOCOL');
+    if (message.method === 'tools/call') {
+      this.control.callGuard?.();
+      const permit = this.callPermit; this.callPermit = null;
+      if (!this.control.callGuard || !permit || permit.name !== message.params?.name || permit.argumentsJson !== canonicalArguments(message.params?.arguments)) throw new Error('MCP_PROTOCOL');
+      if (options?.signal?.aborted) throw new Error('MCP_CANCELLED');
+    } else if (message.method && !['initialize', 'tools/list', 'notifications/initialized', 'notifications/cancelled'].includes(message.method)) throw new Error('MCP_PROTOCOL');
     await this.write(JSON.stringify(message) + '\n');
+  }
+  grantCall(name, args) {
+    if (!this.control.callGuard || this.callPermit) throw new Error('MCP_PROTOCOL');
+    this.control.callGuard(); this.callPermit = { name, argumentsJson: canonicalArguments(args) };
   }
   groupAlive() {
     try { return execFileSync('/bin/ps', ['-axo', 'pgid=,stat='], { encoding: 'utf8', env: { PATH: '/usr/bin:/bin' } }).split('\n').some(line => { const p = line.trim().split(/\s+/); return Number(p[0]) === this.child.pid && !p[1]?.startsWith('Z'); }); } catch { return true; }

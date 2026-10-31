@@ -1,0 +1,164 @@
+{
+  "schema": "sidekick-p3-controlled-evidence/1",
+  "verdict": "pass",
+  "baseHead": "30fffb87c70462cdae275865a9ab1474d5c3c47d",
+  "scope": "P3 controlled organizer role_trial stdio calls only",
+  "git": {
+    "committed": false,
+    "pushed": false
+  },
+  "fullCheck": {
+    "command": "npm run check",
+    "exitCode": 0,
+    "durationSeconds": 247.271,
+    "log": "build/p3-controlled-20261031/verify/check.log",
+    "logSha256": "7cf6d379e9260eaac54c0f926477d036025cebe0f8a29f0283917537142d702c"
+  },
+  "node": {
+    "groups": 21,
+    "tests": 273,
+    "pass": 273,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "rust": {
+    "default": {
+      "passed": 152,
+      "failed": 0,
+      "ignored": 2
+    },
+    "dualFeature": {
+      "passed": 8,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "newTests": {
+    "nodeContract": 7,
+    "rustStorage": 16,
+    "rustRealRuntime": 10
+  },
+  "bundles": {
+    "runtime": 6,
+    "app": 2,
+    "ordinaryResourceEntries": 556,
+    "controlledServiceExcluded": true,
+    "signatures": "both deep strict verified"
+  },
+  "warnings": {
+    "esbuildBundleSize": 12,
+    "viteChunkSize": 2,
+    "notarizationSkipped": 2
+  },
+  "standaloneChecks": [
+    {
+      "command": [
+        "npm",
+        "run",
+        "check:structure"
+      ],
+      "exitCode": 0,
+      "log": "build/p3-controlled-20261031/verify/structure.log"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "check:docs"
+      ],
+      "exitCode": 0,
+      "log": "build/p3-controlled-20261031/verify/docs.log"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "runtime/lib/mcp-control.mjs"
+      ],
+      "exitCode": 0,
+      "log": "build/p3-controlled-20261031/verify/syntax-mcp-control.log"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "runtime/lib/mcp-tool-contract.mjs"
+      ],
+      "exitCode": 0,
+      "log": "build/p3-controlled-20261031/verify/syntax-mcp-tool-contract.log"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "runtime/lib/mcp-trial.mjs"
+      ],
+      "exitCode": 0,
+      "log": "build/p3-controlled-20261031/verify/syntax-mcp-trial.log"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "runtime/entries/organizer-entry.mjs"
+      ],
+      "exitCode": 0,
+      "log": "build/p3-controlled-20261031/verify/syntax-organizer-entry.log"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "tests/fixtures/mcp-trial.mjs"
+      ],
+      "exitCode": 0,
+      "log": "build/p3-controlled-20261031/verify/syntax-fixture-mcp-trial.log"
+    }
+  ],
+  "freeze": {
+    "fileCount": 212,
+    "aggregateSha256": "20f6b57e9810291e90f072db83ea1a630eb1e168ffa9bd2a133c998ee80dd3c8",
+    "atGateWorksetCount": 26,
+    "integrity": {
+      "headBefore": "30fffb87c70462cdae275865a9ab1474d5c3c47d",
+      "headAfter": "30fffb87c70462cdae275865a9ab1474d5c3c47d",
+      "sourceCount": 212,
+      "sourceMatching": 212,
+      "worksetCount": 26,
+      "worksetMatching": 26,
+      "sourceBytesUnchanged": true,
+      "worksetBytesUnchanged": true,
+      "defaultStatusUnchanged": true,
+      "diffStatUnchanged": true,
+      "trackedUnchanged": true,
+      "protectedChanged": [],
+      "protectedDiffEmpty": true,
+      "generatedOrEnvTracked": [],
+      "diffCheckExitBefore": 0,
+      "diffCheckExitAfter": 0
+    }
+  },
+  "reviews": [
+    {
+      "face": "correctness",
+      "artifact": "build/p3-controlled-20261031/final-review/correctness.json",
+      "sha256": "5f59f9a320dd5db1bdd591875d7f9c37f7c826c38199c14309306869bc9f6fd0"
+    },
+    {
+      "face": "safety",
+      "artifact": "build/p3-controlled-20261031/final-review/safety.json",
+      "sha256": "0e97b916ae66dd708087df35542f61f07b5d76c9891dde3957a32a472b406bf8"
+    }
+  ],
+  "notVerified": [
+    "P2 remaining acceptance and production MCP credentials",
+    "Full P4 failure matrix",
+    "P5 real models and formal extract/revise MCP calls",
+    "P6 native GUI and visual verification",
+    "Real business services, credentials and user work roots",
+    "Clean checkout, CI, notarized distribution and other platforms"
+  ],
+  "keychainScope": "MCP production backend remains disabled; old S0 synthetic Keychain probe passed without establishing production MCP credential coverage"
+}

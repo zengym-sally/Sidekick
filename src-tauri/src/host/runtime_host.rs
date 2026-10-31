@@ -29,6 +29,7 @@ pub(crate) struct Job {
     pub(crate) server_id: Option<String>,
     pub(crate) mcp_owner: Arc<Mutex<Option<crate::mcp_host::Owner>>>,
     pub(crate) mcp_intent: Arc<Mutex<Option<String>>>,
+    pub(crate) mcp_trial: Arc<Mutex<crate::mcp_trial::TrialState>>,
     pub(crate) cancel: Arc<AtomicBool>,
     pub(crate) pid: Arc<AtomicU32>,
     pub(crate) workers: Arc<Mutex<BTreeMap<u32, String>>>,
@@ -36,6 +37,8 @@ pub(crate) struct Job {
 #[derive(Clone, Default)]
 pub struct RuntimeState {
     pub(crate) slot: Arc<Mutex<Option<Job>>>,
+    #[cfg(test)]
+    pub(crate) trial_policy: Arc<Mutex<Option<&'static str>>>,
 }
 pub enum StartTask {
     Extract {
@@ -122,6 +125,7 @@ impl RuntimeState {
                     signal_group(pid, "-TERM");
                 }
                 reap_workers(job, directory);
+                crate::mcp_trial::cleanup(job, directory);
             }
         }
     }
@@ -166,6 +170,7 @@ impl RuntimeState {
             server_id: None,
             mcp_owner: Arc::new(Mutex::new(None)),
             mcp_intent: Arc::new(Mutex::new(None)),
+            mcp_trial: Default::default(),
             cancel: Arc::new(AtomicBool::new(false)),
             pid: Arc::new(AtomicU32::new(0)),
             workers: Arc::new(Mutex::new(BTreeMap::new())),
@@ -181,7 +186,18 @@ impl RuntimeState {
         let id = job.run_id.clone();
         let worker_sink = sink.clone();
         std::thread::spawn(move || {
-            let result = execute(&job, &directory, payload, worker_sink.clone());
+            let mut result = execute(
+                &job,
+                &directory,
+                payload,
+                worker_sink.clone(),
+                &local,
+                &state,
+            );
+            let cleaned = crate::mcp_trial::cleanup(&job, &directory);
+            if !cleaned {
+                result = Err("MCP_CLEANUP".into());
+            }
             let stored = local.access(|store| {
                 if job.kind == JobKind::Trial {
                     if job.cancel.load(Ordering::SeqCst) {
@@ -241,7 +257,12 @@ impl RuntimeState {
             reap_workers(&job, &directory);
             job.pid.store(0, Ordering::SeqCst);
             if let Ok(mut slot) = state.slot.lock() {
-                if slot.as_ref().is_some_and(|j| j.run_id == id) {
+                let settled = stored.is_ok()
+                    || job
+                        .mcp_trial
+                        .lock()
+                        .is_ok_and(|trial| trial.servers.is_empty());
+                if cleaned && settled && slot.as_ref().is_some_and(|j| j.run_id == id) {
                     *slot = None;
                 }
             }
@@ -288,7 +309,26 @@ impl RuntimeState {
                 "当前仅事项整理支持试跑，另外两个角色可保存配置。",
             ));
         }
-        let (run,payload)=local.access(|store|{store.interrupt_unowned_runs()?;store.interrupt_agent_trials(None)?;let prepared=store.prepare_agent_model(agent_id)?;let mut run=store.begin_prepared_agent_trial(agent_id,input,prepared.snapshot)?;let cwd=store.run_directory(&run.id)?;if run.snapshot["model"]["capabilities"]["toolCall"]!=false{match crate::skills_host::freeze(&directory,&store.root()?,&cwd){Ok(skills)=>run=store.bind_trial_skills(&run.id,skills)?,Err(e)=>return Ok((store.finish_agent_trial_error(&run.id,e.code)?,None))};}let payload=json!({"runId":run.id,"kind":"trial","snapshot":run.snapshot,"apiKey":prepared.api_key,"cwd":cwd,"runLimitMs":120000_u64.saturating_sub(preparation_started.elapsed().as_millis() as u64).max(1),"anchorAtMs":run.input.source_at_ms.unwrap_or(run.created_at_ms),"source":{"rawText":run.input.text,"timeZone":run.input.time_zone}});Ok((run,Some(payload)))})?;
+        let (run, payload) = local.access(|store| {
+            store.interrupt_unowned_runs()?;
+            store.interrupt_agent_trials(None)?;
+            let prepared = store.prepare_agent_model(agent_id)?;
+            let mut run = store.begin_prepared_agent_trial(agent_id, input, prepared.snapshot)?;
+            let cwd = store.run_directory(&run.id)?;
+            if run.snapshot["model"]["capabilities"]["toolCall"] != false {
+                match crate::skills_host::freeze(&directory, &store.root()?, &cwd) {
+                    Ok(skills) => run = store.bind_trial_skills(&run.id, skills)?,
+                    Err(error) => return Ok((store.finish_agent_trial_error(&run.id, error.code)?, None)),
+                }
+            }
+            let mcp = match crate::mcp_trial::prepare(store, &run.id, &directory) {
+                Ok(value) => value,
+                Err(error) => return Ok((store.finish_agent_trial_error(&run.id, error.code)?, None)),
+            };
+            run = store.agent_run(&run.id)?;
+            let payload = json!({"runId":run.id,"kind":"trial","snapshot":run.snapshot,"mcp":mcp,"apiKey":prepared.api_key,"cwd":cwd,"runLimitMs":120000_u64.saturating_sub(preparation_started.elapsed().as_millis() as u64).max(1),"anchorAtMs":run.input.source_at_ms.unwrap_or(run.created_at_ms),"source":{"rawText":run.input.text,"timeZone":run.input.time_zone}});
+            Ok((run, Some(payload)))
+        })?;
         let Some(payload) = payload else {
             sink(&run.id, "changed");
             return Ok(run);
@@ -300,6 +340,9 @@ impl RuntimeState {
             server_id: None,
             mcp_owner: Arc::new(Mutex::new(None)),
             mcp_intent: Arc::new(Mutex::new(None)),
+            mcp_trial: Arc::new(Mutex::new(crate::mcp_trial::TrialState::from_payload(
+                &payload,
+            ))),
             cancel: Arc::new(AtomicBool::new(false)),
             pid: Arc::new(AtomicU32::new(0)),
             workers: Arc::new(Mutex::new(BTreeMap::new())),
@@ -314,9 +357,13 @@ impl RuntimeState {
 fn execute(
     job: &Job,
     directory: &Path,
-    payload: Value,
+    mut payload: Value,
     sink: Sink,
+    local: &LocalState,
+    state: &RuntimeState,
 ) -> std::result::Result<Value, String> {
+    payload["hostNonce"] = job.nonce.clone().into();
+    let mut mcp = crate::mcp_trial::TrialControl::new(job, directory, local, &payload);
     let mut command = Command::new(directory.join("node"));
     command
         .arg(directory.join("organizer.mjs"))
@@ -331,31 +378,39 @@ fn execute(
         .process_group(0);
     let mut child = command.spawn().map_err(|_| "RUNTIME_START".to_string())?;
     job.pid.store(child.id(), Ordering::SeqCst);
-    let mut stdin = child.stdin.take().ok_or("RUNTIME_START")?;
     let run_limit = Duration::from_millis(
         payload["runLimitMs"]
             .as_u64()
             .unwrap_or(120000)
             .clamp(1, 120000),
     );
-    let bytes = serde_json::to_vec(&payload).map_err(|_| "RUNTIME_PROTOCOL")?;
+    let mut bytes = serde_json::to_vec(&payload).map_err(|_| "RUNTIME_PROTOCOL")?;
     drop(payload);
-    if stdin
-        .write_all(&bytes)
-        .and_then(|_| stdin.write_all(b"\n"))
-        .is_err()
-    {
+    bytes.push(b'\n');
+    let (writer_tx, writer_rx) = mpsc::sync_channel::<Vec<u8>>(4);
+    let mut stdin = child.stdin.take().ok_or("RUNTIME_START")?;
+    let writer = std::thread::spawn(move || {
+        for bytes in writer_rx {
+            if stdin.write_all(&bytes).is_err() {
+                return false;
+            }
+        }
+        true
+    });
+    if bytes.len() > 1600000 || writer_tx.try_send(bytes).is_err() {
         let _ = child.kill();
         let _ = child.wait();
-        return Err("RUNTIME_START".into());
+        drop(writer_tx);
+        let _ = writer.join();
+        return Err("RUNTIME_PROTOCOL".into());
     }
-    drop(bytes);
     let stdout = child.stdout.take().ok_or("RUNTIME_START")?;
     let stderr = child.stderr.take().ok_or("RUNTIME_START")?;
-    let (send, receive) = mpsc::channel();
+    let (send, receive) = mpsc::sync_channel(8);
     let reader = std::thread::spawn(move || {
         let mut reader = BufReader::new(stdout);
         let mut total = 0;
+        let mut frames = 0;
         loop {
             let mut line = Vec::new();
             let n = reader.by_ref().take(1_200_001).read_until(b'\n', &mut line);
@@ -363,7 +418,9 @@ fn execute(
                 Ok(0) => break,
                 Ok(n) => {
                     total += n;
-                    if n > 1_200_000 || total > 2_000_000 {
+                    frames += 1;
+                    if n > 1_200_000 || total > 2_000_000 || frames > 512 || !line.ends_with(b"\n")
+                    {
                         let _ = send.send(Err(()));
                         break;
                     }
@@ -393,13 +450,19 @@ fn execute(
         }
         if job.cancel.load(Ordering::SeqCst) || failure.is_some() {
             if cancelled_at.is_none() {
-                let _ = stdin.write_all(b"{\"type\":\"cancel\"}\n");
+                let mut cancel = serde_json::to_vec(
+                    &json!({"type":"cancel","runId":job.run_id,"hostNonce":job.nonce}),
+                )
+                .unwrap_or_default();
+                cancel.push(b'\n');
+                let _ = writer_tx.try_send(cancel);
                 cancelled_at = Some(Instant::now());
             }
             if cancelled_at.is_some_and(|at| at.elapsed() > Duration::from_millis(500)) {
                 signal_group(child.id(), "-STOP");
                 signal_group(child.id(), "-KILL");
                 reap_workers(job, directory);
+                crate::mcp_trial::cleanup(job, directory);
             }
         }
         match receive.recv_timeout(Duration::from_millis(40)) {
@@ -409,6 +472,11 @@ fn execute(
                     continue;
                 }
                 match frame["type"].as_str() {
+                    Some("mcp") if failure.is_none() || frame["action"] == "end" => {
+                        if let Err(code) = mcp.handle(&frame, child.id(), state, &writer_tx) {
+                            failure.get_or_insert(code);
+                        }
+                    }
                     Some("progress") => {
                         if let Some(phase) = frame["phase"]
                             .as_str()
@@ -444,10 +512,14 @@ fn execute(
                         }
                     }
                     Some("result") if result.is_none() && failure.is_none() => {
-                        result = frame.get("data").cloned();
+                        if crate::mcp_trial::ended(job) {
+                            result = frame.get("data").cloned();
+                        } else {
+                            failure = Some("MCP_CLEANUP".into());
+                        }
                     }
                     Some("error") if result.is_none() => {
-                        failure = Some(
+                        failure.get_or_insert(
                             frame["code"]
                                 .as_str()
                                 .filter(|c| {
@@ -475,7 +547,10 @@ fn execute(
         }
     }
     let _ = child.wait();
-    drop(stdin);
+    drop(writer_tx);
+    if !matches!(writer.join(), Ok(true)) {
+        failure.get_or_insert("RUNTIME_PROTOCOL".into());
+    }
     let _ = reader.join();
     let _ = errors.join();
     if job.cancel.load(Ordering::SeqCst) {
@@ -584,6 +659,10 @@ pub async fn start_agent_trial(
 pub async fn active_agent_trial(runtime: State<'_, RuntimeState>) -> Result<Option<String>> {
     Ok(runtime.active_trial())
 }
+
+#[cfg(test)]
+#[path = "mcp_trial_tests.rs"]
+mod mcp_trial_tests;
 
 #[cfg(test)]
 mod tests {

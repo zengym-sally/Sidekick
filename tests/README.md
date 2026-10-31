@@ -45,6 +45,9 @@
 | `s33-native-fd.test.mjs` | integration | 原生文件描述符审计 |
 | `s33-ui-safety.test.mjs` | integration | 验证包的 UI 安全守卫 |
 | `s33-ui-artifacts.test.mjs` | integration | 打包产物内容与签名边界 |
+| `mcp-trial.test.mjs` | unit | MCP隔离调用的命名、参数、结果预算、ACK归属及unknown提示 |
+
+Rust的`store/mcp_calls_tests.rs`覆盖调用台账、冻结和终态优先级，聚焦入口为`npm run test:mcp-calls`；`host/mcp_trial_tests.rs`通过真实Rust宿主、随包Runtime／Pi、本机合成模型和stdio服务做整链集成，使用`npm run test:mcp-trial`（先打包）。两者也随既有`probe:native`进入完整`check`，不需要真实模型或用户根。合成模型／服务输入在`fixtures/mcp-trial.mjs`；不能用这些结果替代P4完整矩阵或原生验收。
 
 ## 新测试命名约定
 

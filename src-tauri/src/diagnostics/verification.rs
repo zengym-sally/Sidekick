@@ -163,6 +163,7 @@ fn serve() -> Result<(), StoreError> {
                         workers: Arc::new(Mutex::new(std::collections::BTreeMap::new())),
                         mcp_owner: Arc::new(Mutex::new(None)),
                         mcp_intent: Arc::new(Mutex::new(None)),
+                        mcp_trial: Default::default(),
                     });
                     Ok(Value::Null)
                 }

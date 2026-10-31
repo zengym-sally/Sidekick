@@ -11,6 +11,9 @@ mod store_commands;
 #[path = "host/mcp_host.rs"]
 mod mcp_host;
 
+#[path = "host/mcp_trial.rs"]
+mod mcp_trial;
+
 #[path = "host/runtime_host.rs"]
 mod runtime_host;
 

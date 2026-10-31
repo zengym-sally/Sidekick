@@ -87,6 +87,9 @@ impl AppStore {
         id: &str,
         skills: serde_json::Value,
     ) -> Result<AgentRun> {
+        if self.trial_mcp_unknown(id)? {
+            return Err(super::mcp_calls::unknown_error());
+        }
         let run = self.agent_run(id)?;
         if run.status != "running" {
             return Err(trial_stopped());
@@ -106,6 +109,10 @@ impl AppStore {
         id: &str,
         drafts: Vec<CandidateDraft>,
     ) -> Result<AgentRun> {
+        self.settle_trial_mcp(id)?;
+        if self.trial_mcp_unknown(id)? {
+            return Err(super::mcp_calls::unknown_error());
+        }
         let run = self.agent_run(id)?;
         if run.status != "running" {
             return Err(trial_stopped());
@@ -136,14 +143,17 @@ impl AppStore {
         if code.len() > 64 || !code.bytes().all(|c| c.is_ascii_uppercase() || c == b'_') {
             return Err(invalid());
         }
+        self.settle_trial_mcp(id)?;
         self.db()?.execute("UPDATE agent_runs SET status='failed',error_code=?2,finished_at_ms=?3 WHERE id=?1 AND purpose='role_trial' AND status='running'",params![id,code,now_ms()?]).map_err(db_error)?;
         self.agent_run(id)
     }
     pub fn cancel_agent_trial(&mut self, id: &str) -> Result<AgentRun> {
+        self.settle_trial_mcp(id)?;
         self.db()?.execute("UPDATE agent_runs SET status='cancelled',error_code='CANCELLED',finished_at_ms=?2 WHERE id=?1 AND purpose='role_trial' AND status='running'",params![id,now_ms()?]).map_err(db_error)?;
         self.agent_run(id)
     }
     pub fn interrupt_agent_trials(&mut self, owned: Option<&str>) -> Result<()> {
+        super::mcp_calls::recover_trial_mcp(self.db()?, owned)?;
         self.db()?.execute("UPDATE agent_runs SET status='interrupted',error_code='INTERRUPTED',finished_at_ms=?1 WHERE purpose='role_trial' AND status='running' AND (?2 IS NULL OR id<>?2)",params![now_ms()?,owned]).map_err(db_error)?;
         Ok(())
     }

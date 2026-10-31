@@ -793,6 +793,7 @@ impl AppStore {
                 )
             })?;
         }
+        mcp_calls::recover_trial_mcp(&db, None)?;
         db.execute("UPDATE runs SET status='interrupted',error_code='INTERRUPTED',finished_at_ms=?1 WHERE status IN ('queued','running')",[now_ms()?]).map_err(db_error)?;
         db.execute("UPDATE agent_runs SET status='interrupted',error_code='INTERRUPTED',finished_at_ms=?1 WHERE status='running'",[now_ms()?]).map_err(db_error)?;
         self.check_fault(InitPhase::Schema)?;
@@ -1242,6 +1243,10 @@ pub use mcp_probe::*;
 #[path = "mcp_catalog.rs"]
 mod mcp_catalog;
 pub use mcp_catalog::{McpDiscoveredCatalog, McpDiscoveredTool, PreparedMcpProbe};
+
+#[path = "mcp_calls.rs"]
+mod mcp_calls;
+pub(crate) use mcp_calls::*;
 
 #[cfg(test)]
 #[path = "mcp_catalog_tests.rs"]

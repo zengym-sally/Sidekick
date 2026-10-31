@@ -34,12 +34,15 @@ const business = await build({
   banner: { js: "import { createRequire as runtimeRequire } from 'node:module'; const require = runtimeRequire(import.meta.url);" },
   nodePaths: [join(resolve(source), 'node_modules')],
   alias: {
+    '@sidekick/pi-mcp-client': join(resolve(source), 'packages/mcp/src/client.ts'),
+    '@sidekick/pi-jsonrpc': join(resolve(source), 'packages/mcp/src/protocol/jsonrpc.ts'),
     '@sidekick/pi-bash': join(resolve(source), 'packages/coding-agent/dist/core/tools/bash.js'),
     '@sidekick/pi-read': join(resolve(source), 'packages/coding-agent/dist/core/tools/read.js'),
     '@sidekick/pi-skills': join(resolve(source), 'packages/coding-agent/dist/core/skills.js'),
     '@sidekick/pi-paths': join(resolve(source), 'packages/coding-agent/dist/core/tools/path-utils.js'),
   }, logLevel: 'info', metafile: true,
 });
+if (Object.keys(business.metafile.inputs).some(input => /transports[\/]stdio\.ts$/.test(input))) throw new Error('Organizer must use the managed MCP signal path.');
 const skillsBuild = await build({entryPoints:['runtime/entries/skills-manager.mjs'],outfile:join(directory,'skills-manager.mjs'),bundle:true,platform:'node',target:'node24',format:'esm',banner:{js:"import { createRequire as skillsRequire } from 'node:module'; const require = skillsRequire(import.meta.url);"},nodePaths:[join(resolve(source),'node_modules')],alias:{'@sidekick/pi-skills':join(resolve(source),'packages/coding-agent/dist/core/skills.js')},logLevel:'info',metafile:true});
 const mcpBuild = await build({
   entryPoints: ['runtime/entries/mcp-probe-entry.mjs'], outfile: join(directory, 'mcp-probe.mjs'),

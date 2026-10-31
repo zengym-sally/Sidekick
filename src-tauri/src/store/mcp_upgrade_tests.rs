@@ -41,6 +41,7 @@ fn fake_job(kind: JobKind) -> Job {
         server_id: None,
         mcp_owner: Arc::new(Mutex::new(None)),
         mcp_intent: Arc::new(Mutex::new(None)),
+        mcp_trial: Default::default(),
         cancel: Arc::new(AtomicBool::new(true)),
         pid: Arc::new(AtomicU32::new(0)),
         workers: Arc::new(Mutex::new(BTreeMap::new())),

@@ -381,9 +381,9 @@ pub async fn cancel_agent_trial(
     runtime: State<'_, crate::runtime_host::RuntimeState>,
     id: String,
 ) -> Result<crate::local_store::AgentRun, StoreError> {
+    runtime.cancel(&id);
     let key = id.clone();
     let run = call(state, move |s| s.cancel_agent_trial(&key)).await?;
-    runtime.cancel(&id);
     Ok(run)
 }
 

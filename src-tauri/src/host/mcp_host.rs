@@ -83,7 +83,56 @@ fn proof(owner: &Owner, directory: &Path) -> Option<u32> {
     }
     None
 }
-fn group_gone(group: u32) -> bool {
+pub(crate) fn owner_matches(owner: &Owner, directory: &Path, parent: u32) -> bool {
+    owner.guardian != owner.keeper
+        && process(owner.guardian)
+            .is_some_and(|(p, group, _)| p == parent && group == owner.guardian)
+        && process(owner.keeper)
+            .is_some_and(|(p, group, _)| p == owner.guardian && group == owner.guardian)
+        && [owner.guardian, owner.keeper].iter().all(|pid| {
+            process(*pid).is_some_and(|(_, group, command)| {
+                group == owner.guardian
+                    && command.contains(
+                        directory
+                            .join("mcp-guardian.mjs")
+                            .to_string_lossy()
+                            .as_ref(),
+                    )
+                    && command.contains(&format!("--run {} ", owner.run))
+                    && command.contains(&format!("--nonce {} ", owner.nonce))
+            })
+        })
+}
+pub(crate) fn cleanup_owners(owners: &[Owner], directory: &Path) -> bool {
+    let until = Instant::now() + Duration::from_secs(5);
+    let mut audit_ok = true;
+    for signal in ["-STOP", "-KILL"] {
+        for owner in owners {
+            if group_gone(owner.guardian) {
+                continue;
+            }
+            if let Some(pid) = proof(owner, directory) {
+                if audit_signal(owner, pid, signal) {
+                    let _ = Command::new("/bin/kill")
+                        .args([signal, &format!("-{}", owner.guardian)])
+                        .stdout(Stdio::null())
+                        .stderr(Stdio::null())
+                        .status();
+                } else {
+                    audit_ok = false;
+                }
+            }
+        }
+    }
+    loop {
+        let gone = owners.iter().all(|owner| group_gone(owner.guardian));
+        if gone || Instant::now() >= until {
+            return gone && audit_ok;
+        }
+        std::thread::sleep(Duration::from_millis(25));
+    }
+}
+pub(crate) fn group_gone(group: u32) -> bool {
     let Ok(output) = Command::new("/bin/ps")
         .args(["-axo", "pgid=,stat="])
         .env_clear()
@@ -142,7 +191,7 @@ fn audit_signal(_owner: &Owner, _pid: u32, _signal: &str) -> bool {
         true
     }
 }
-fn valid_nonce(n: &str) -> bool {
+pub(crate) fn valid_nonce(n: &str) -> bool {
     n.len() == 36
         && n.bytes().enumerate().all(|(i, b)| {
             if [8, 13, 18, 23].contains(&i) {
@@ -152,7 +201,7 @@ fn valid_nonce(n: &str) -> bool {
             }
         })
 }
-fn discover_intent(run: &str, nonce: &str, directory: &Path) -> Result<Vec<Owner>> {
+pub(crate) fn discover_intent(run: &str, nonce: &str, directory: &Path) -> Result<Vec<Owner>> {
     let output = Command::new("/bin/ps")
         .args(["-axo", "pid=,pgid=,stat=,command="])
         .env_clear()
@@ -240,10 +289,13 @@ impl RuntimeState {
         input: McpRemoveInput,
     ) -> Result<McpConfigSave> {
         let slot = self.slot.lock().map_err(|_| error("RUNTIME_BUSY"))?;
-        if slot
-            .as_ref()
-            .is_some_and(|j| j.server_id.as_deref() == Some(&input.id))
-        {
+        if slot.as_ref().is_some_and(|j| {
+            j.server_id.as_deref() == Some(&input.id)
+                || j.mcp_trial
+                    .lock()
+                    .map(|state| state.servers.contains(&input.id))
+                    .unwrap_or(true)
+        }) {
             return Err(error("MCP_PROBE_ACTIVE"));
         }
         local.access(|s| s.remove_mcp_server(input))
@@ -301,6 +353,7 @@ impl RuntimeState {
             workers: Arc::new(Mutex::new(BTreeMap::new())),
             mcp_owner: Arc::new(Mutex::new(None)),
             mcp_intent: Arc::new(Mutex::new(None)),
+            mcp_trial: Default::default(),
         };
         *slot = Some(job.clone());
         let state = self.clone();
@@ -382,7 +435,10 @@ fn failure(code: &str) -> McpProbeFailure {
         _ => McpProbeFailure::Process,
     }
 }
-fn resolve_command(mut p: PreparedMcpProbe, directory: &Path) -> Result<PreparedMcpProbe> {
+pub(crate) fn resolve_command(
+    mut p: PreparedMcpProbe,
+    directory: &Path,
+) -> Result<PreparedMcpProbe> {
     use std::os::unix::fs::PermissionsExt;
     let path = format!(
         "{}:{}:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
