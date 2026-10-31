@@ -10,6 +10,7 @@
 | 当前实施状态与切片证据 | [第一阶段实施计划](product/05-第一阶段实施计划.md) | 唯一当前状态源，顶部写明 as-of 基点；未验证项保持开放 |
 | 工程结构、依赖边界、新代码放置 | [工程架构](engineering/architecture.md) | 与 `scripts/checks/check-structure.mjs` 同源；改结构必须同步守卫 |
 | 验证门禁、测试分层、证据与评审要求 | [验证约定](engineering/verification.md) | 与 `package.json` 脚本及 `check:docs` 同源 |
+| 已授权连续目标的准入、选取与无人值守流程 | [无人值守约定](engineering/unattended.md) | 授权及进度仍以实施计划和当次用户指令为准 |
 | 每轮必读的定位与红线 | [AGENTS.md](../AGENTS.md) | 只导航，不维护第二份状态清单 |
 | 设计规范与视觉约定 | [DESIGN.md](../DESIGN.md) | 令牌的代码来源是 `src/styles/tokens.css` |
 | 设计预览与原型边界 | [设计说明](../design/README.md) | 原型不是生产代码，也不是验收证据 |
@@ -35,6 +36,7 @@ docs/product/
 docs/engineering/
   architecture.md             # 结构、边界、模块职责、放置决策表、后续落点、已知债
   verification.md             # 门禁矩阵、测试分层、证据新鲜度、留存、独立验证、CI 缺口
+  unattended.md               # 已授权连续目标的准入、选取、预算与收口流程
 docs/reviews/
   README.md                   # 记录索引、证据目录映射与留存策略
   <slice>-<YYYYMMDD>.md       # 各切片的评审／验证记录
