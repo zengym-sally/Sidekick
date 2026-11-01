@@ -26,6 +26,7 @@
 | `s2-bash.test.mjs` | integration | managed Bash worker 生命周期与凭据脱敏 |
 | `s2-runtime.test.mjs` | integration | 打包 organizer Runtime 的提取流程 |
 | `s31-client.test.mjs` | unit | 智能体偏好配置、同run未知结果／终态吸收及真实Pinia store |
+| `tracker-contract.test.mjs` | unit | tracker独立结果、样本引用、未知字段／控制字符／重复与工具载荷拒绝 |
 | `s31-runtime.test.mjs` | integration | 打包 Runtime 的隔离试跑 |
 | `layout-domain.test.mjs` | unit | 布局/表单/设置域模型与控件绑定 |
 | `layout-runtime.test.mjs` | integration | 打包 Runtime 的采样与推理参数透传 |

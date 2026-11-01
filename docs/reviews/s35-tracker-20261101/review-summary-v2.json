@@ -1,0 +1,87 @@
+{
+  "scope": "S3.5 N1 tracker only; independent review does not replace full check or native evidence",
+  "normativeCoreSha256": "567249f8ac99c01d9e2e205e929bf49dd143ed79734eedb2f4d7a1cffb751cc7",
+  "sourceFiles": 16,
+  "sourceSha256": "8eb3d60e3d31eae22d46e49e30141e88f7e8f4641ff1d1a1f9e47d5a42adeaa8",
+  "reports": [
+    {
+      "phase": "design",
+      "face": "a",
+      "round": 1,
+      "report": "n1-design/a-review.md",
+      "sha256": "55a76c9adb08414804fd6b7e7c7ac6084af1ffe56c7d551f04226a72a3b113eb",
+      "verdict": "APPROVE"
+    },
+    {
+      "phase": "design",
+      "face": "a",
+      "round": 2,
+      "report": "n1-design/a-review-v2.md",
+      "sha256": "b1d33e2c1e15d83756d996fbe050a2ee6a7ec055bec05003e1d1cea7395dd3d9",
+      "verdict": "APPROVE"
+    },
+    {
+      "phase": "design",
+      "face": "b",
+      "round": 1,
+      "report": "n1-design/b-review.md",
+      "sha256": "b5aed1fc320ddda2c96b5f8f95c906fb19e82f67905224c07193987bd3b783a7",
+      "verdict": "APPROVE_WITH_CHANGES"
+    },
+    {
+      "phase": "design",
+      "face": "b",
+      "round": 2,
+      "report": "n1-design/b-review-v2.md",
+      "sha256": "b90f27520520dad579844b867a1bce2b612027a8a8e2d1d47ee995c4fb8cdb81",
+      "verdict": "APPROVE"
+    },
+    {
+      "phase": "delivery",
+      "face": "a",
+      "round": 1,
+      "report": "n1-delivery/a-review-v1.md",
+      "sha256": "80015b9592cdc8f71152172b0eafbf2f6d11ae95abdc4b8a4da9c910a1045ea6",
+      "verdict": "APPROVE_WITH_CHANGES"
+    },
+    {
+      "phase": "delivery",
+      "face": "a",
+      "round": 2,
+      "report": "n1-delivery/a-review-v2.md",
+      "sha256": "fa33794df9b866227b03339e0c6547444f21f426c9bdaa85496112772039fba6",
+      "verdict": "APPROVE"
+    },
+    {
+      "phase": "delivery",
+      "face": "b",
+      "round": 1,
+      "report": "n1-delivery/b-review-v1.md",
+      "sha256": "2bcdeed0220595f1777fcff3f5d40f38811cb047b385226f8556335f6ef759c3",
+      "verdict": "APPROVE_WITH_CHANGES"
+    },
+    {
+      "phase": "delivery",
+      "face": "b",
+      "round": 2,
+      "report": "n1-delivery/b-review-v2.md",
+      "sha256": "53642bd4d23020f764b707043c809ed822ba61543196a4ffc1fdc8df0efad72b",
+      "verdict": "APPROVE"
+    }
+  ],
+  "designRound2": {
+    "A": "APPROVE",
+    "B": "APPROVE",
+    "openFindings": 0
+  },
+  "deliveryRound2": {
+    "A": "APPROVE",
+    "B": "APPROVE",
+    "openFindings": 0
+  },
+  "closedDeliveryFinding": "Runtime must reject missing or modified complete fixed facts before model networking; local literal facts and complete-base positive and negative controls now enforced.",
+  "fullCheck": "separately verified by fresh non-implementer; see validation-summary-v2.json",
+  "realModelRequests": 0,
+  "native": "not run",
+  "productionMcpKeychain": "OFF"
+}

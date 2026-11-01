@@ -220,7 +220,7 @@ fn cancelled_invalid_and_interrupted_trials_never_publish_results() {
         source_at_ms: None,
         time_zone: "Asia/Shanghai".into(),
     };
-    assert!(s.begin_agent_trial("tracker", text.clone()).is_err());
+    assert!(s.begin_agent_trial("advisor", text.clone()).is_err());
     let r = s.begin_agent_trial("organizer", text.clone()).unwrap();
     s.cancel_agent_trial(&r.id).unwrap();
     assert!(s.complete_agent_trial(&r.id, vec![]).is_err());
@@ -313,4 +313,161 @@ fn v2_wal_is_backed_up_and_failed_v3_ddl_preserves_business_history() {
             .unwrap(),
         "v2 WAL合成事项"
     );
+}
+
+#[test]
+fn tracker_trial_begins_with_host_owned_synthetic_facts() {
+    let f = Fixture::new();
+    let mut s = f.store();
+    s.initialize(None, "Asia/Shanghai").unwrap();
+    s.save_models(models()).unwrap();
+    let run = s
+        .begin_agent_trial(
+            "tracker",
+            TextInput {
+                text: "林川已提交SDK鉴权修复，等待我验收。".into(),
+                source_at_ms: None,
+                time_zone: "Asia/Shanghai".into(),
+            },
+        )
+        .unwrap();
+    assert_eq!(run.agent_id, "tracker");
+    assert_eq!(run.snapshot["trackerSample"]["version"], 1);
+    assert_eq!(
+        run.snapshot["trackerSample"]["todos"][1]["id"],
+        "sample-followup"
+    );
+    assert!(s.list().unwrap().is_empty());
+}
+
+fn tracker_result() -> TrackerTrialResult {
+    serde_json::from_value(json!({"kind":"tracker","version":1,"suggestions":[{"todoId":"sample-followup","todoVersion":1,"change":"submission","summary":"提交待验收","evidence":"林川已提交SDK鉴权修复"}]})).unwrap()
+}
+fn tracker_input() -> TextInput {
+    TextInput {
+        text: "林川已提交SDK鉴权修复，等待我验收。".into(),
+        source_at_ms: None,
+        time_zone: "Asia/Shanghai".into(),
+    }
+}
+fn formal_rows(s: &AppStore) -> Vec<serde_json::Value> {
+    [
+        "sources",
+        "candidates",
+        "todos",
+        "todo_events",
+        "todo_sources",
+    ]
+    .into_iter()
+    .map(|table| {
+        let mut q = s
+            .db()
+            .unwrap()
+            .prepare(&format!("SELECT * FROM {table} ORDER BY rowid"))
+            .unwrap();
+        let width = q.column_count();
+        let rows: Vec<Vec<String>> = q
+            .query_map([], |row| {
+                (0..width)
+                    .map(|i| row.get_ref(i).map(|v| format!("{v:?}")))
+                    .collect()
+            })
+            .unwrap()
+            .map(|r| r.unwrap())
+            .collect();
+        json!({"table":table,"rows":rows})
+    })
+    .collect()
+}
+#[test]
+fn tracker_results_reopen_without_candidates_or_business_writes() {
+    let f = Fixture::new();
+    let mut s = f.store();
+    s.initialize(None, "Asia/Shanghai").unwrap();
+    s.save_models(models()).unwrap();
+    let todo = s.create(input(), "tracker-formal-baseline").unwrap();
+    let before = formal_rows(&s);
+    let run = s.begin_agent_trial("tracker", tracker_input()).unwrap();
+    assert!(s.complete_agent_trial(&run.id, vec![]).is_err());
+    let result = s.complete_tracker_trial(&run.id, tracker_result()).unwrap();
+    assert_eq!(result.status, "succeeded");
+    assert!(result.result.is_none());
+    assert_eq!(
+        result.role_result.as_ref().unwrap().suggestions[0].change,
+        "submission"
+    );
+    assert_eq!(formal_rows(&s), before);
+    assert_eq!(s.get(&todo.id).unwrap().status, "open");
+    assert_eq!(s.cancel_agent_trial(&run.id).unwrap().status, "succeeded");
+    drop(s);
+    let s = f.store();
+    let reopened = s.latest_agent_trial("tracker").unwrap().unwrap();
+    assert_eq!(reopened.id, run.id);
+    assert_eq!(reopened.role_result.unwrap().suggestions.len(), 1);
+    assert_eq!(formal_rows(&s), before);
+}
+#[test]
+fn tracker_rejects_invalid_results_and_never_overwrites_terminal_or_other_roles() {
+    let f = Fixture::new();
+    let mut s = f.store();
+    s.initialize(None, "Asia/Shanghai").unwrap();
+    s.save_models(models()).unwrap();
+    for invalid in [
+        "id",
+        "version",
+        "change",
+        "quote",
+        "summary",
+        "duplicate",
+        "count",
+        "kind",
+        "format-version",
+    ] {
+        let run = s.begin_agent_trial("tracker", tracker_input()).unwrap();
+        let mut value = tracker_result();
+        match invalid {
+            "id" => value.suggestions[0].todo_id = "formal-id".into(),
+            "version" => value.suggestions[0].todo_version = 2,
+            "change" => value.suggestions[0].change = "completed".into(),
+            "quote" => value.suggestions[0].evidence = "已验收通过".into(),
+            "summary" => value.suggestions[0].summary = "x".repeat(501),
+            "duplicate" => value.suggestions.push(value.suggestions[0].clone()),
+            "count" => value.suggestions = vec![value.suggestions[0].clone(); 21],
+            "kind" => value.kind = "advisor".into(),
+            _ => value.version = 2,
+        }
+        assert_eq!(
+            s.complete_tracker_trial(&run.id, value).unwrap_err().code,
+            "MODEL_INVALID_OUTPUT"
+        );
+        assert!(s.agent_run(&run.id).unwrap().role_result.is_none());
+        s.cancel_agent_trial(&run.id).unwrap();
+    }
+    assert!(serde_json::from_value::<TrackerTrialResult>(
+        json!({"kind":"tracker","version":1,"suggestions":[],"status":"done"})
+    )
+    .is_err());
+    let organizer = s.begin_agent_trial("organizer", tracker_input()).unwrap();
+    assert!(s
+        .complete_tracker_trial(&organizer.id, tracker_result())
+        .is_err());
+    s.complete_agent_trial(&organizer.id, vec![]).unwrap();
+    assert!(s
+        .agent_run(&organizer.id)
+        .unwrap()
+        .result
+        .unwrap()
+        .is_empty());
+    let cancelled = s.begin_agent_trial("tracker", tracker_input()).unwrap();
+    s.cancel_agent_trial(&cancelled.id).unwrap();
+    assert!(s
+        .complete_tracker_trial(&cancelled.id, tracker_result())
+        .is_err());
+    let interrupted = s.begin_agent_trial("tracker", tracker_input()).unwrap();
+    drop(s);
+    let mut s = f.store();
+    assert_eq!(s.agent_run(&interrupted.id).unwrap().status, "interrupted");
+    assert!(s
+        .complete_tracker_trial(&interrupted.id, tracker_result())
+        .is_err());
 }

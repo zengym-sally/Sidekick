@@ -25,3 +25,5 @@ P2第二步：安全来源仅由合成界面的内存替身提供；配置localS
 S3.2工具页在同一夹具中展示合成技能、修改／坏包诊断和恢复确认；`skillsError=1`用于扫描失败。该层不操作真实文件；真实安装、快照和恢复见S3.2 Rust／打包Runtime与原生证据。
 
 P2配置首步：工具 → MCP服务，可测试新增／编辑／禁用／移除、参数和环境引用表单。配置只存此来源的`sidekick-mcp-ui-fixture` localStorage；不执行任何命令或解析变量，不访问真实工作根／钥匙串。`mcpUncertain=1`模拟每次重载后的首次保存／移除已生效但响应丢失，`mcpConflict=1`模拟首次修订冲突，`mcpReadError=1`与`mcpSaveError=1`分别模拟读取／保存失败。所有“已保存”仅指夹具状态，不表示真实文件或连接成功。本轮可用`npm run dev:profile-ui -- --port 1481`隔离端口验收，具体记录见[P2首步](../../../docs/reviews/s33-p2-config-20261030.md)。
+
+S3.5 tracker：智能体→进展跟踪可用固定合成事项与线索试跑，结果只由IPC替身产生，不发模型请求、不读正式库。`trackerEmpty=1`／`trackerError=1`分别检查空建议／非法输出失败；只证Vue状态与布局，真实Pi及宿主存储另由纳管测试验证。

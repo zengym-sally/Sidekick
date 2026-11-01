@@ -262,9 +262,11 @@ fn mcp_calls_business_scope_rejects_test_other_roles_and_model_supplied_scope() 
         );
     }
     for agent in ["organizer", "tracker", "advisor"] {
-        let id = if agent == "organizer" {
+        let id = if agent != "advisor" {
+            let mut prepared = snapshot(true);
+            prepared["agent"]["agentId"] = agent.into();
             store
-                .begin_prepared_agent_trial(agent, text(), snapshot(true))
+                .begin_prepared_agent_trial(agent, text(), prepared)
                 .unwrap()
                 .id
         } else {

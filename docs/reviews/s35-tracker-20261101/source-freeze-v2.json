@@ -1,0 +1,121 @@
+{
+  "baseHead": "49c84c16dd4246df2fe054d872bc5a73134d222b",
+  "files": [
+    {
+      "path": "package.json",
+      "sha256": "97e0267dc014a6cbafbd8c17081d2f8054f1b95910207a8170461a4bf9b0ed6f",
+      "bytes": 11806
+    },
+    {
+      "path": "runtime/entries/organizer-entry.mjs",
+      "sha256": "76e0eb9696495e93566430171ec007df471a4ba71efaa4265cf378cd77dfe77f",
+      "bytes": 15214
+    },
+    {
+      "path": "runtime/lib/tracker-contract.mjs",
+      "sha256": "4ed3288b49e68d9c81630ad23c819e8e1d8b606c5a63e00ea191c79703664577",
+      "bytes": 2901
+    },
+    {
+      "path": "src-tauri/src/host/runtime_host.rs",
+      "sha256": "f5a4754fc7069e5bf32b1b4da11fe9b107cf4b0090dfb05bee07085468e8b68a",
+      "bytes": 55720
+    },
+    {
+      "path": "src-tauri/src/host/tracker_trial_tests.rs",
+      "sha256": "20febefe7f4c9f68ad932dd81f58c36626c75b3e889b548dce7eacc074a28e13",
+      "bytes": 11359
+    },
+    {
+      "path": "src-tauri/src/store/agent_config_tests.rs",
+      "sha256": "6d93ffe099d1fd729e4dfdce85d0c1dbea3495e4d7c823b8d5e0ad6c073bd8d5",
+      "bytes": 17787
+    },
+    {
+      "path": "src-tauri/src/store/agent_trials.rs",
+      "sha256": "7622d46bb467dfb6e800ee59ad87e534b15593270fb816099bb46f97111857b3",
+      "bytes": 11245
+    },
+    {
+      "path": "src-tauri/src/store/mcp_formal_calls_tests.rs",
+      "sha256": "5bd3be66bd90dc769e233097f1a7e7271f54cb2cd862ef3fccda971e74add6e8",
+      "bytes": 31842
+    },
+    {
+      "path": "src/components/AgentSettingsPanel.vue",
+      "sha256": "253e95981b4f6d76bfdf46650ec001c6a03a47bfadadeeaacda387c14385a5d1",
+      "bytes": 11205
+    },
+    {
+      "path": "src/domain/agents.ts",
+      "sha256": "917fa04f21545b008f186b97276dab2b95853bcae09e97456eba18334c8bbf0d",
+      "bytes": 2011
+    },
+    {
+      "path": "src/stores/agents.ts",
+      "sha256": "0021e1db083df596a065f8bf0932bc613515ffb3fd12f852f10d29733994eb32",
+      "bytes": 6990
+    },
+    {
+      "path": "tests/fixtures/mcp-trial.mjs",
+      "sha256": "79f3b7da4f009ac5431b4bb0a16f56868f5967484dd827e19813cd2485e3f58e",
+      "bytes": 9664
+    },
+    {
+      "path": "tests/fixtures/profile-ui/agents.ts",
+      "sha256": "edc30667725788cdc3ea1b2bb4b9158cd67c18bce546170253cda22f04e9986f",
+      "bytes": 3045
+    },
+    {
+      "path": "tests/integration/s31-runtime.test.mjs",
+      "sha256": "6938a45578810be24e5fdce72a858f22b4a146a43eb661ab76b0d2d418c54acc",
+      "bytes": 8170
+    },
+    {
+      "path": "tests/unit/s31-client.test.mjs",
+      "sha256": "787692628bae1ed7917d17a43196c48d67b123d84ca3e3a3831c6e3586e76a39",
+      "bytes": 16761
+    },
+    {
+      "path": "tests/unit/tracker-contract.test.mjs",
+      "sha256": "27e4938423c8b66d51a35d328c300914494aa7e5647862f9e8e61fa9e31e3598",
+      "bytes": 4465
+    }
+  ],
+  "sourceSha256": "8eb3d60e3d31eae22d46e49e30141e88f7e8f4641ff1d1a1f9e47d5a42adeaa8",
+  "allChangedPaths": [
+    "docs/engineering/unattended.md",
+    "docs/product/05-第一阶段实施计划.md",
+    "docs/reviews/README.md",
+    "docs/reviews/s35-tracker-20261101.md",
+    "docs/reviews/s35-tracker-20261101/source-freeze-v1.json",
+    "package.json",
+    "runtime/entries/organizer-entry.mjs",
+    "runtime/lib/tracker-contract.mjs",
+    "src-tauri/src/host/runtime_host.rs",
+    "src-tauri/src/host/tracker_trial_tests.rs",
+    "src-tauri/src/store/agent_config_tests.rs",
+    "src-tauri/src/store/agent_trials.rs",
+    "src-tauri/src/store/mcp_formal_calls_tests.rs",
+    "src/components/AgentSettingsPanel.vue",
+    "src/domain/agents.ts",
+    "src/stores/agents.ts",
+    "tests/README.md",
+    "tests/fixtures/mcp-trial.mjs",
+    "tests/fixtures/profile-ui/README.md",
+    "tests/fixtures/profile-ui/agents.ts",
+    "tests/integration/s31-runtime.test.mjs",
+    "tests/unit/s31-client.test.mjs",
+    "tests/unit/tracker-contract.test.mjs"
+  ],
+  "untrackedDependencies": [
+    "runtime/lib/tracker-contract.mjs",
+    "src-tauri/src/host/tracker_trial_tests.rs",
+    "tests/unit/tracker-contract.test.mjs"
+  ],
+  "deltaFromV1": [
+    "runtime/lib/tracker-contract.mjs",
+    "tests/integration/s31-runtime.test.mjs",
+    "tests/unit/tracker-contract.test.mjs"
+  ]
+}

@@ -39,7 +39,7 @@
     "test:s2-store": "cargo test --manifest-path src-tauri/Cargo.toml --lib local_store -- --test-threads=1",
     "build:s2-verify": "npm run probe:bundle && node scripts/build/build-app.mjs tests/fixtures/s2-verify.config.json",
     "dev:s2-native-model": "node tests/fixtures/openai-ui-server.mjs",
-    "test:s31-domain": "node --test tests/unit/s31-client.test.mjs",
+    "test:s31-domain": "node --test tests/unit/s31-client.test.mjs tests/unit/tracker-contract.test.mjs",
     "test:s31-store": "cargo test --manifest-path src-tauri/Cargo.toml --lib agent_config -- --test-threads=1",
     "test:s31-runtime": "npm run probe:bundle && node --test --test-timeout=15000 tests/integration/s31-runtime.test.mjs",
     "test:s31-live": "npm run probe:bundle && cargo test --manifest-path src-tauri/Cargo.toml --lib s31_live_isolated_organizer_trial_and_configuration_reopen -- --ignored --nocapture",

@@ -322,6 +322,24 @@ impl RuntimeState {
                     } else {
                         match result {
                             Ok(value) => {
+                                if store.agent_run(&id)?.agent_id == "tracker" {
+                                    #[derive(serde::Deserialize)]
+                                    #[serde(rename_all = "camelCase", deny_unknown_fields)]
+                                    struct TrackerOutput {
+                                        role_result: crate::local_store::TrackerTrialResult,
+                                    }
+                                    let applied = serde_json::from_value::<TrackerOutput>(value)
+                                        .map_err(|_| {
+                                            error("MODEL_INVALID_OUTPUT", "跟踪建议格式不正确。")
+                                        })
+                                        .and_then(|output| {
+                                            store.complete_tracker_trial(&id, output.role_result)
+                                        });
+                                    if let Err(e) = applied {
+                                        store.finish_agent_trial_error(&id, e.code)?;
+                                    }
+                                    return Ok(());
+                                }
                                 let decoded = serde_json::from_value(
                                     value.get("candidates").cloned().unwrap_or(Value::Null),
                                 )
@@ -476,10 +494,10 @@ impl RuntimeState {
         if slot.is_some() {
             return Err(busy());
         }
-        if agent_id != "organizer" {
+        if !["organizer", "tracker"].contains(&agent_id) {
             return Err(error(
                 "AGENT_TRIAL_UNAVAILABLE",
-                "当前仅事项整理支持试跑，另外两个角色可保存配置。",
+                "当前工作参谋尚未开放试跑，可先保存配置。",
             ));
         }
         let (run, payload) = local.access(|store| {
@@ -488,16 +506,18 @@ impl RuntimeState {
             let prepared = store.prepare_agent_model(agent_id)?;
             let mut run = store.begin_prepared_agent_trial(agent_id, input, prepared.snapshot)?;
             let cwd = store.run_directory(&run.id)?;
-            if run.snapshot["model"]["capabilities"]["toolCall"] != false {
+            if agent_id == "organizer" && run.snapshot["model"]["capabilities"]["toolCall"] != false {
                 match crate::skills_host::freeze(&directory, &store.root()?, &cwd) {
                     Ok(skills) => run = store.bind_trial_skills(&run.id, skills)?,
                     Err(error) => return Ok((store.finish_agent_trial_error(&run.id, error.code)?, None)),
                 }
             }
-            let mcp = match crate::mcp_trial::prepare(store, &run.id, &directory) {
-                Ok(value) => value,
-                Err(error) => return Ok((store.finish_agent_trial_error(&run.id, error.code)?, None)),
-            };
+            let mcp = if agent_id == "organizer" {
+                match crate::mcp_trial::prepare(store, &run.id, &directory) {
+                    Ok(value) => value,
+                    Err(error) => return Ok((store.finish_agent_trial_error(&run.id, error.code)?, None)),
+                }
+            } else { Value::Null };
             run = store.agent_run(&run.id)?;
             let payload = json!({"runId":run.id,"kind":"trial","snapshot":run.snapshot,"mcp":mcp,"apiKey":prepared.api_key,"cwd":cwd,"runLimitMs":120000_u64.saturating_sub(preparation_started.elapsed().as_millis() as u64).max(1),"anchorAtMs":run.input.source_at_ms.unwrap_or(run.created_at_ms),"source":{"rawText":run.input.text,"timeZone":run.input.time_zone}});
             Ok((run, Some(payload)))
@@ -885,6 +905,10 @@ mod mcp_recovery_tests;
 #[cfg(test)]
 #[path = "mcp_formal_tests.rs"]
 mod mcp_formal_tests;
+
+#[cfg(test)]
+#[path = "tracker_trial_tests.rs"]
+mod tracker_trial_tests;
 
 #[cfg(test)]
 #[path = "mcp_trial_tests.rs"]
