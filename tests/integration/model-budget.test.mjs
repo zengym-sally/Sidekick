@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, realpath, writeFile, readFile, rename, rm, chmod, symlink } from 'node:fs/promises';
+import { mkdtemp, realpath, writeFile, readFile, rename, rm, chmod, symlink, readdir, lstat } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
-import { randomBytes } from 'node:crypto';
+import { randomBytes, createHash } from 'node:crypto';
 import { spawn, execFileSync } from 'node:child_process';
 import { createServer } from 'node:http';
 
@@ -25,6 +25,32 @@ test('private model credentials cannot escape through model metadata or malforme
   assert.equal(result.rejected, 3);
   assert.equal(result.safe_control, true);
   assert.equal(result.actual_node_executions, 0);
+  assert.equal(result.real_env_reads, 0);
+});
+
+test('the revised real budget has a fixed new label, ten slots and noon cutoff without reading old enrollment', () => {
+  const result = JSON.parse(faultProbe('revised-configuration'));
+  assert.equal(result.old_enrollment_reads, 0);
+  assert.equal(result.rejected_old_directory, true);
+});
+
+test('real initialization requires a bounded read-only admission pass before chmod or ledger writes', () => {
+  const result = JSON.parse(faultProbe('real-initialization-admission'));
+  assert.equal(result.refused_before_write, 15);
+  assert.equal(result.approved_initialized, true);
+  assert.equal(result.reset_refused, true);
+  assert.equal(result.cutoff_crossing_refused, true);
+  assert.equal(result.actual_admission_processes, 0);
+  assert.equal(result.real_env_reads, 0);
+});
+
+test('real initialization admission probe remains deterministic after the real cutoff and restores its external clock', () => {
+  const result = JSON.parse(faultProbe('real-initialization-admission-future'));
+  assert.equal(result.refused_before_write, 15);
+  assert.equal(result.approved_initialized, true);
+  assert.equal(result.reset_refused, true);
+  assert.equal(result.cutoff_crossing_refused, true);
+  assert.equal(result.actual_admission_processes, 0);
   assert.equal(result.real_env_reads, 0);
 });
 
@@ -77,6 +103,49 @@ async function fixture(body, options = {}) {
     if (succeeded) await rm(base, { recursive: true });
   }
 }
+
+test('ordinary fake relay leaves diagnostic collection disabled', async () => {
+  await fixture(async ({ base, request }) => {
+    assert.equal((await request()).status, 200);
+    assert.deepEqual((await readdir(base)).filter(name => name.startsWith('response-')), []);
+  });
+});
+
+test('explicit controlled diagnostics fingerprint only the exact scanned content channel', async () => {
+  const content = '  {"candidates":[]}\n';
+  await fixture(async ({ base, request }) => {
+    assert.equal((await request()).status, 200);
+    const path = join(base, 'response-1.json');
+    const value = JSON.parse(await readFile(path, 'utf8'));
+    assert.deepEqual(value, { version: 1, slot: 1, contentSha256: createHash('sha256').update(content).digest('hex'), contentBytes: Buffer.byteLength(content), finishReason: 'stop', toolCallCount: 0 });
+    const metadata = await lstat(path);
+    assert.equal(metadata.mode & 0o777, 0o600);
+    assert.equal(metadata.nlink, 1);
+    assert.equal(metadata.uid, process.getuid());
+    assert.ok(!(await readFile(path, 'utf8')).includes('candidates'));
+  }, { flags: ['--diagnostics'], response: frame({ reasoning_content: 'unretained private reasoning', content }) + finish });
+});
+
+test('diagnostic collisions fail closed without overwriting evidence or refunding a slot', async () => {
+  await fixture(async ({ base, request, effects, inspect }) => {
+    await writeFile(join(base, 'response-1.json'), 'owned sentinel', { mode: 0o600, flag: 'wx' });
+    assert.notEqual((await request()).status, 200);
+    assert.equal(await readFile(join(base, 'response-1.json'), 'utf8'), 'owned sentinel');
+    assert.equal(effects(), 1);
+    assert.equal(inspect().reserved, 1);
+    assert.equal(inspect().completed, 0);
+  }, { flags: ['--diagnostics'] });
+});
+
+test('sensitive and incomplete responses produce no content diagnostic', async () => {
+  for (const response of [frame({ content: JSON.stringify({ candidates: [{ title: canary }] }) }) + finish, frame({ content: '{"candidates":[]}' })]) {
+    await fixture(async ({ base, request, inspect }) => {
+      assert.notEqual((await request()).status, 200);
+      assert.deepEqual((await readdir(base)).filter(name => name.startsWith('response-')), []);
+      assert.equal(inspect().reserved, 1);
+    }, { flags: ['--diagnostics'], response });
+  }
+});
 
 test('PF07 the actual Pi extraction context may omit its undefined candidate', async () => {
   await fixture(async ({ payload, request, effects, inspect }) => {

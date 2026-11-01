@@ -1,0 +1,477 @@
+{
+  "version": 1,
+  "conclusion": "pass",
+  "scope": "Only this run real-model complete matrix and private diagnostics; readback creates zero HTTP/model calls. Not an npm run check verdict or historical defect fix verdict.",
+  "baseHead": "997c5c19ade79407a1213cbdda7f8c518e38071d",
+  "checkedUtc": "2026-11-01T03:01:31.512502+00:00",
+  "realRequestsCreatedByReviewer": 0,
+  "commands": [
+    {
+      "command": "python3 (stdin): guarded lstat + SQLite mode=ro/query_only=ON/BEGIN + hashes + diagnostic correlation + process ownership snapshot",
+      "exitCode": 0
+    },
+    {
+      "command": "Original author run: npm run probe:mcp-live",
+      "evidence": "real-attempt-1.log + real-budgeted-1793501673619075000/summary.json",
+      "recordedNativeExitCode": 0,
+      "nativeResult": "1 passed; 0 failed; 0 ignored; 199 filtered out"
+    }
+  ],
+  "counts": {
+    "sources": 1,
+    "candidates": 1,
+    "todos": 1,
+    "todo_events": 1,
+    "runs": 2,
+    "todo_sources": 1,
+    "agent_runs": 1,
+    "tool_calls": 3,
+    "ingestion_operations": 2
+  },
+  "matrix": {
+    "extract": "succeeded, one candidate",
+    "revise": "succeeded, non-null target-title preview",
+    "apply": "persisted formal-apply; original nonempty evidence preserved",
+    "sign": "persisted formal-sign; exactly one todo/event/source-link; same-operation idempotence and changed-operation rejection are completed native assertions",
+    "trial": "succeeded; one result; native before/after full-five-table row equality on nonempty baseline; independent post-run readback has five nonempty tables",
+    "targetTitle": "核对合成清单",
+    "acceptedCandidateVersion": 3,
+    "fiveTablePostRunSnapshotSha256": {
+      "sources": "dd33fb8a4a0e5299855633422d980a6d635c0374e40003c14fd38b9dd08a46ab",
+      "candidates": "491185a66422539356b85ae6a4af13d6a2ec71551a7cef15a6a6a1e5d490522e",
+      "todos": "c8bab14dad8c16e9b78a6cddeb2324fa771ed47de1aa41cddcda74ada8f904f7",
+      "todo_events": "d7977e1d5d0423d3c70a8064e0cbd0ca23a081e255d13d7390e816d16c6e476e",
+      "runs": "7d1d4067664ec450be420bbf1d0a811ccf41f443f0ff46ba9e5e2566c0afdb2a"
+    },
+    "fiveTableTemporalReadbackBeforeTrial": true,
+    "separatePreTrialRawSnapshotRetained": false
+  },
+  "receipts": [
+    {
+      "kind": "extract",
+      "business": true,
+      "modelCallIdSha256": "7f7b4b9ebd4c52a9b1cc51759eaa8b8bad5ac582463c67ddb8b012f91efc4a3f",
+      "modelCallIdPresent": true,
+      "schemaSha256": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a",
+      "argumentsSha256": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+      "sendState": "responded",
+      "responseCategory": "success",
+      "mappingMatched": true
+    },
+    {
+      "kind": "revise",
+      "business": true,
+      "modelCallIdSha256": "f03af844cd34bbfc91f66b1b4c8b5907311b7988c2a33f188320e88ca520c0d7",
+      "modelCallIdPresent": true,
+      "schemaSha256": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a",
+      "argumentsSha256": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+      "sendState": "responded",
+      "responseCategory": "success",
+      "mappingMatched": true
+    },
+    {
+      "kind": "trial",
+      "business": false,
+      "modelCallIdSha256": "51677fe62887cdd8fe4b8a1eee28437196631dd1952e435cac8e2ea3f4231864",
+      "modelCallIdPresent": true,
+      "schemaSha256": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a",
+      "argumentsSha256": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+      "sendState": "responded",
+      "responseCategory": "success",
+      "mappingMatched": true
+    }
+  ],
+  "service": {
+    "lookupCount": 3,
+    "processRecords": 6,
+    "modelKeyPresent": false,
+    "currentlyOwnedProcessesRemaining": 0,
+    "naturalCleanupRecorded": true
+  },
+  "diagnostics": {
+    "nodeValidated": 3,
+    "hostOk": 9,
+    "responseSlots": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "responseNodeCorrelations": [
+      {
+        "kind": "extract",
+        "slot": 2,
+        "contentSha256": "cf0f39eb56b5a5ec82f1efa23adfceebd590de6ca283190079e7b81a2b61764e",
+        "contentBytes": 257,
+        "finishReason": "stop"
+      },
+      {
+        "kind": "revise",
+        "slot": 4,
+        "contentSha256": "f09d606eaf966fbdc3e079a5faa984506eed81c35d410509ca834ba308541fbe",
+        "contentBytes": 42,
+        "finishReason": "stop"
+      },
+      {
+        "kind": "trial",
+        "slot": 6,
+        "contentSha256": "cf0f39eb56b5a5ec82f1efa23adfceebd590de6ca283190079e7b81a2b61764e",
+        "contentBytes": 257,
+        "finishReason": "stop"
+      }
+    ],
+    "complete": true,
+    "rawBusinessTextRetained": false,
+    "note": "SHA/byte fingerprints correlate final content; these are not retained raw model business responses."
+  },
+  "freeze": {
+    "sourceCount": 231,
+    "sourceSha256": "27084aeae36d0a63cc50a0cc8831530dca3c895ffa565e0d43ab057f4a714107",
+    "inputCount": 252,
+    "normativeCoreSha256": "5cd925fe15b1727314ff72eafd92eaae4cfd82451e82eba1af334b456a9977b8",
+    "nativeSha256": "dd1eaa589f4cdb62258b8c32eb47367aa744332ee2b69e2ce724fcf04ce6fd52",
+    "usedNativeCopyMatched": true,
+    "allCurrentAndBeforeAfterInputsMatched": true
+  },
+  "budget": {
+    "reserved": 6,
+    "forwarded": 6,
+    "completed": 6,
+    "remaining": 4,
+    "limit": 10,
+    "cutoffUtc": "2026-11-01T04:00:00Z",
+    "enrollmentMatchesInitialization": true,
+    "oldNightOpaqueHashesUnchanged": true,
+    "reviewerTouchedOldLedgerContent": false
+  },
+  "checks": [
+    {
+      "name": "owned-canonical-private-base",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "private-info-and-allow",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "guard-static-contract",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "synthetic-marker-and-source",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "private-app",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "private-workspace",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "private-workspace/data",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "private-synthetic-database",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "business-connection-read-only",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "business-table-counts",
+      "pass": true,
+      "detail": {
+        "sources": 1,
+        "candidates": 1,
+        "todos": 1,
+        "todo_events": 1,
+        "runs": 2,
+        "todo_sources": 1,
+        "agent_runs": 1,
+        "tool_calls": 3,
+        "ingestion_operations": 2
+      }
+    },
+    {
+      "name": "extract-success-one-candidate",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "revise-valid-target-preview",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "apply-preserves-source-evidence",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "signed-exactly-one-linked-event",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "trial-success-with-result",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "trial-nonempty-five-table-readback",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "receipt-extract",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "receipt-revise",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "receipt-trial",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "two-business-one-trial",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "business-db-byte-unchanged-by-readback",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "service-three-real-lookups",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "service-contained-no-model-key",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "no-owned-service-process-remains",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "diagnostic-manifest-complete",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "diagnostic-captured-hash-node-230fbcba4133f89cdb0c8d8d5e4ff7e9.json",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "diagnostic-captured-hash-node-8168b61651e96ed79266c67ffde98825.json",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "diagnostic-captured-hash-node-trial-92087-1793501682723298000.json",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "diagnostic-captured-hash-host.json",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "diagnostic-captured-hash-response-1.json",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "diagnostic-captured-hash-response-2.json",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "diagnostic-captured-hash-response-3.json",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "diagnostic-captured-hash-response-4.json",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "diagnostic-captured-hash-response-5.json",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "diagnostic-captured-hash-response-6.json",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "node-three-validated",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "host-nine-ok",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "six-response-slots",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "response-node-match-extract",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "response-node-match-revise",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "response-node-match-trial",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "tool-continuations-1-3-5",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "raw-node-fingerprint-extract",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "raw-node-fingerprint-revise",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "raw-node-fingerprint-trial",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "raw-response-fingerprint-1",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "raw-response-fingerprint-2",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "raw-response-fingerprint-3",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "raw-response-fingerprint-4",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "raw-response-fingerprint-5",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "raw-response-fingerprint-6",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "raw-host-fingerprint",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "252-current-inputs-match",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "231-source-freeze-match",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "normative-core-current",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "exact-used-native-bytes-match",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "old-night-opaque-files-unchanged",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "new-budget-enrollment-unchanged",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "budget-mode-read-only",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "budget-six-completed-four-remaining",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "budget-db-byte-unchanged-by-readback",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "original-native-exit-zero-and-assertions-completed",
+      "pass": true,
+      "detail": null
+    }
+  ],
+  "limitations": [
+    "Historical 20261031 rejected raw business output was not retained; this run did not reproduce that failure. No historical root cause or production fix can be signed.",
+    "No standalone retained pre-trial raw SQL snapshot exists in this evidence; unchanged five-table assertion is established by exact native source/binary and completed original test, combined with current read-only SQL snapshot.",
+    "No new HTTP, model, env/private_model, prepare, Cargo, GUI, initialization, real user root or production MCP Keychain operation.",
+    "Full npm run check belongs to the separate independent validation task and was not executed by this reviewer."
+  ]
+}

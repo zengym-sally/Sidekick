@@ -68,6 +68,218 @@ fn formal_business_mcp_prepares_catalog_and_durable_receipts() {
     );
 }
 
+#[test]
+fn formal_output_diagnostic_is_opt_in_and_private() {
+    for policy in [None, Some("mcp-only"), Some("mcp-only-diagnostic")] {
+        let fixture = TrialFixture::new("normal", true, true);
+        *fixture.runtime.trial_policy.lock().unwrap() = policy;
+        let run = extract(&fixture);
+        assert_eq!(wait_business(&fixture, &run.id).status, "succeeded");
+        let path = fixture
+            .root
+            .join("workspace/runs")
+            .join(&run.id)
+            .join("output-diagnostic.json");
+        let events = fixture.runtime.output_diagnostics.lock().unwrap();
+        if policy == Some("mcp-only-diagnostic") {
+            assert!(
+                path.is_file(),
+                "explicit controlled output diagnostics were not retained"
+            );
+            let metadata = std::fs::symlink_metadata(&path).unwrap();
+            assert_eq!(metadata.mode() & 0o7777, 0o600);
+            assert_eq!(metadata.nlink(), 1);
+            assert!(metadata.len() <= 16384);
+            let value: Value = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
+            assert_eq!(value["runId"], run.id);
+            assert_eq!(value["outcome"], "validated");
+            assert_eq!(events.len(), 3);
+            for (event, stage) in
+                events
+                    .iter()
+                    .zip(["runtime-result", "rust-decode", "rust-publish"])
+            {
+                assert_eq!(event.run_id, run.id);
+                assert_eq!(event.kind, "extract");
+                assert_eq!(event.stage, stage);
+                assert_eq!(event.outcome, "ok");
+                assert_eq!(event.code, None);
+            }
+        } else {
+            assert!(
+                !path.exists(),
+                "ordinary runtime created output diagnostics"
+            );
+            assert!(events.is_empty());
+        }
+    }
+}
+
+#[test]
+fn formal_output_diagnostic_distinguishes_node_rejection_from_rust_decode() {
+    for node_rejection in [true, false] {
+        let fixture = TrialFixture::new(
+            if node_rejection {
+                "diagnostic-invalid-revise"
+            } else {
+                "normal"
+            },
+            true,
+            true,
+        );
+        *fixture.runtime.trial_policy.lock().unwrap() = Some("mcp-only-diagnostic");
+        let local = fixture.local.as_ref().unwrap();
+        let run = extract(&fixture);
+        assert_eq!(wait_business(&fixture, &run.id).status, "succeeded");
+        let batch = local
+            .access(|store| store.batch(run.source_id.as_deref().unwrap()))
+            .unwrap();
+        let candidate = &batch.candidates[0];
+        if !node_rejection {
+            fixture
+                .runtime
+                .output_decode_fault
+                .store(true, Ordering::SeqCst);
+        }
+        let revised = fixture
+            .runtime
+            .start(
+                local.clone(),
+                fixture.directory.clone(),
+                StartTask::Revise {
+                    id: candidate.id.clone(),
+                    version: candidate.version,
+                    instruction: INSTRUCTION.into(),
+                    time_zone: "UTC".into(),
+                },
+                Arc::new(|_, _| {}),
+            )
+            .unwrap();
+        let completed = wait_business(&fixture, &revised.id);
+        assert_eq!(completed.status, "failed");
+        assert_eq!(
+            completed.error_code.as_deref(),
+            Some("MODEL_INVALID_OUTPUT")
+        );
+        assert!(completed.preview.is_none());
+        assert_eq!(
+            local
+                .access(|store| store.candidate(&candidate.id))
+                .unwrap()
+                .draft,
+            candidate.draft
+        );
+        assert_eq!(count(&fixture.database(), "todos"), 0);
+        assert_eq!(count(&fixture.database(), "todo_events"), 0);
+        let events = fixture
+            .runtime
+            .output_diagnostics
+            .lock()
+            .unwrap()
+            .iter()
+            .filter(|event| event.run_id == revised.id)
+            .cloned()
+            .collect::<Vec<_>>();
+        assert_eq!(events.len(), if node_rejection { 1 } else { 2 });
+        assert_eq!(events[0].stage, "runtime-result");
+        assert_eq!(
+            events[0].outcome,
+            if node_rejection { "error" } else { "ok" }
+        );
+        assert_eq!(
+            events[0].code,
+            if node_rejection {
+                Some("MODEL_INVALID_OUTPUT")
+            } else {
+                None
+            }
+        );
+        if !node_rejection {
+            assert_eq!(events[1].stage, "rust-decode");
+            assert_eq!(events[1].outcome, "error");
+            assert_eq!(events[1].code, Some("MODEL_INVALID_OUTPUT"));
+        }
+        assert!(events.iter().all(|event| event.stage != "rust-publish"));
+        let diagnostic: Value = serde_json::from_slice(
+            &fs::read(
+                fixture
+                    .root
+                    .join("workspace/runs")
+                    .join(&revised.id)
+                    .join("output-diagnostic.json"),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        assert_eq!(
+            diagnostic["outcome"],
+            if node_rejection {
+                "rejected"
+            } else {
+                "validated"
+            }
+        );
+        assert_eq!(
+            diagnostic["reason"],
+            if node_rejection {
+                json!("changes-empty")
+            } else {
+                Value::Null
+            }
+        );
+    }
+}
+
+#[test]
+fn formal_output_diagnostic_persistence_failure_preserves_existing_file() {
+    let fixture = TrialFixture::new("normal", true, true);
+    *fixture.runtime.trial_policy.lock().unwrap() = Some("mcp-only-diagnostic");
+    fixture
+        .runtime
+        .output_diagnostic_conflict
+        .store(true, Ordering::SeqCst);
+    let run = extract(&fixture);
+    let completed = wait_business(&fixture, &run.id);
+    assert_eq!(completed.status, "failed");
+    assert_eq!(completed.error_code.as_deref(), Some("RUNTIME_PROTOCOL"));
+    let path = fixture
+        .root
+        .join("workspace/runs")
+        .join(&run.id)
+        .join("output-diagnostic.json");
+    assert_eq!(
+        fs::read(&path).unwrap(),
+        b"controlled-existing-diagnostic\n"
+    );
+    assert_eq!(fs::symlink_metadata(&path).unwrap().mode() & 0o7777, 0o600);
+    for table in ["candidates", "todos", "todo_events", "todo_sources"] {
+        assert_eq!(count(&fixture.database(), table), 0);
+    }
+    let events = fixture.runtime.output_diagnostics.lock().unwrap();
+    assert_eq!(events.len(), 1);
+    assert_eq!(events[0].stage, "runtime-result");
+    assert_eq!(events[0].outcome, "error");
+    assert_eq!(events[0].code, Some("RUNTIME_REJECTED"));
+}
+
+#[test]
+fn formal_output_diagnostic_events_remain_bounded() {
+    let runtime = RuntimeState::default();
+    *runtime.trial_policy.lock().unwrap() = Some("mcp-only-diagnostic");
+    for index in 0..80 {
+        runtime.record_output_diagnostic(
+            &format!("controlled-{index}"),
+            Some("extract"),
+            "runtime-result",
+            None,
+        );
+    }
+    let events = runtime.output_diagnostics.lock().unwrap();
+    assert_eq!(events.len(), 64);
+    assert_eq!(events.first().unwrap().run_id, "controlled-16");
+    assert_eq!(events.last().unwrap().run_id, "controlled-79");
+}
+
 use crate::local_store::{
     AgentConfigInput, AppStore, CandidateDraft, McpRemoveInput, McpServerInput, McpTaskOwner,
     ModelConfigInput, SignChoice, TodoInput,
@@ -963,6 +1175,106 @@ fn write_live_allow(guard: &LiveGuard, server_id: &str) {
         identity(&file.metadata().unwrap())
     );
 }
+fn write_live_output_diagnostics(
+    guard: &LiveGuard,
+    events: &[OutputDiagnosticEvent],
+) -> std::result::Result<(), &'static str> {
+    let owner = uid()?;
+    let base = &guard.info.base;
+    if base.canonicalize().map_err(|_| "LIVE_OUTPUT_BASE")? != *base {
+        return Err("LIVE_OUTPUT_BASE");
+    }
+    let before = fs::symlink_metadata(base).map_err(|_| "LIVE_OUTPUT_BASE")?;
+    if identity(&before) != guard.base_identity || !secure_metadata(&before, owner, 0o700, true) {
+        return Err("LIVE_OUTPUT_BASE");
+    }
+    let directory = OpenOptions::new()
+        .read(true)
+        .custom_flags(nofollow())
+        .open(base)
+        .map_err(|_| "LIVE_OUTPUT_BASE")?;
+    let opened = directory.metadata().map_err(|_| "LIVE_OUTPUT_BASE")?;
+    if identity(&opened) != guard.base_identity || !secure_metadata(&opened, owner, 0o700, true) {
+        return Err("LIVE_OUTPUT_BASE");
+    }
+    if events.len() > 64 {
+        return Err("LIVE_OUTPUT_LIMIT");
+    }
+    let mut bytes = serde_json::to_vec(&json!({"version":1,"events":events}))
+        .map_err(|_| "LIVE_OUTPUT_JSON")?;
+    bytes.push(b'\n');
+    if bytes.len() > 16384 {
+        return Err("LIVE_OUTPUT_LIMIT");
+    }
+    let path = base.join("output-diagnostics.json");
+    let mut file = OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .mode(0o600)
+        .custom_flags(nofollow())
+        .open(&path)
+        .map_err(|_| "LIVE_OUTPUT_FILE")?;
+    let initial = file.metadata().map_err(|_| "LIVE_OUTPUT_FILE")?;
+    if !secure_metadata(&initial, owner, 0o600, false) {
+        return Err("LIVE_OUTPUT_FILE");
+    }
+    file.write_all(&bytes).map_err(|_| "LIVE_OUTPUT_WRITE")?;
+    file.sync_all().map_err(|_| "LIVE_OUTPUT_WRITE")?;
+    let after = fs::symlink_metadata(&path).map_err(|_| "LIVE_OUTPUT_FILE")?;
+    let base_after = fs::symlink_metadata(base).map_err(|_| "LIVE_OUTPUT_BASE")?;
+    if identity(&after) != identity(&initial)
+        || !secure_metadata(&after, owner, 0o600, false)
+        || identity(&base_after) != guard.base_identity
+        || !secure_metadata(&base_after, owner, 0o700, true)
+        || base.canonicalize().map_err(|_| "LIVE_OUTPUT_BASE")? != *base
+    {
+        return Err("LIVE_OUTPUT_IDENTITY");
+    }
+    directory.sync_all().map_err(|_| "LIVE_OUTPUT_WRITE")?;
+    Ok(())
+}
+
+#[test]
+fn formal_output_diagnostic_summary_rejects_unsafe_or_existing_targets() {
+    let fixture = TrialFixture::new("normal", true, true);
+    let base = fixture.root.join("output-summary");
+    fs::create_dir(&base).unwrap();
+    fs::set_permissions(&base, fs::Permissions::from_mode(0o700)).unwrap();
+    let guard = LiveGuard {
+        base_identity: identity(&fs::symlink_metadata(&base).unwrap()),
+        info: LiveInfo {
+            version: 1,
+            parent_pid: std::process::id(),
+            nonce: "controlled".into(),
+            base: base.clone(),
+            exe: PathBuf::new(),
+            case: LIVE_CASE.into(),
+            port: 1,
+            relay_token: "controlled".into(),
+            model_id: "synthetic".into(),
+        },
+    };
+    let path = base.join("output-diagnostics.json");
+    fs::write(&path, b"controlled-existing-summary\n").unwrap();
+    fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+    assert_eq!(
+        write_live_output_diagnostics(&guard, &[]),
+        Err("LIVE_OUTPUT_FILE")
+    );
+    assert_eq!(fs::read(&path).unwrap(), b"controlled-existing-summary\n");
+    fs::remove_file(&path).unwrap();
+    fs::set_permissions(&base, fs::Permissions::from_mode(0o755)).unwrap();
+    assert_eq!(
+        write_live_output_diagnostics(&guard, &[]),
+        Err("LIVE_OUTPUT_BASE")
+    );
+    assert!(!path.exists());
+    fs::set_permissions(&base, fs::Permissions::from_mode(0o700)).unwrap();
+    write_live_output_diagnostics(&guard, &[]).unwrap();
+    let metadata = fs::symlink_metadata(&path).unwrap();
+    assert!(secure_metadata(&metadata, uid().unwrap(), 0o600, false));
+    assert_eq!(fs::read(&path).unwrap(), b"{\"events\":[],\"version\":1}\n");
+}
 struct RelayEnv(String);
 impl Drop for RelayEnv {
     fn drop(&mut self) {
@@ -996,38 +1308,111 @@ fn live_roundtrip(path: &Path) {
     let server_id = saved.configuration.servers[0].id.clone();
     write_live_allow(&guard, &server_id);
     let runtime = RuntimeState::default();
-    *runtime.trial_policy.lock().unwrap() = Some("mcp-only");
-    let mut evidence = roundtrip(
-        &local,
-        &runtime,
-        &directory,
-        &info.base.join("workspace"),
-        1,
-    );
-    let events = fs::read_to_string(info.base.join("service.jsonl"))
-        .unwrap()
-        .lines()
-        .map(|line| serde_json::from_str::<Value>(line).unwrap())
-        .collect::<Vec<_>>();
-    assert_eq!(
-        events
-            .iter()
-            .filter(|event| event["type"] == "call")
-            .count(),
-        3
-    );
-    for event in events.iter().filter(|event| event["type"] == "call") {
-        assert_eq!(event["name"], "lookup");
-        assert_eq!(event["arguments"], json!({"text":"controlled"}));
-    }
-    for event in events.iter().filter(|event| event["type"] == "pid") {
-        assert_eq!(event["modelKeyPresent"], false);
-    }
-    evidence["serviceCounts"] = json!({"lookup":3});
+    *runtime.trial_policy.lock().unwrap() = Some("mcp-only-diagnostic");
+    let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        let mut evidence = roundtrip(
+            &local,
+            &runtime,
+            &directory,
+            &info.base.join("workspace"),
+            1,
+        );
+        let events = fs::read_to_string(info.base.join("service.jsonl"))
+            .unwrap()
+            .lines()
+            .map(|line| serde_json::from_str::<Value>(line).unwrap())
+            .collect::<Vec<_>>();
+        assert_eq!(
+            events
+                .iter()
+                .filter(|event| event["type"] == "call")
+                .count(),
+            3
+        );
+        for event in events.iter().filter(|event| event["type"] == "call") {
+            assert_eq!(event["name"], "lookup");
+            assert_eq!(event["arguments"], json!({"text":"controlled"}));
+        }
+        for event in events.iter().filter(|event| event["type"] == "pid") {
+            assert_eq!(event["modelKeyPresent"], false);
+        }
+        evidence["serviceCounts"] = json!({"lookup":3});
+        evidence
+    }));
+    let events = runtime
+        .output_diagnostics
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner())
+        .clone();
+    let written = write_live_output_diagnostics(&guard, &events);
+    let evidence = match outcome {
+        Ok(evidence) => {
+            written.unwrap_or_else(|code| panic!("{code}"));
+            evidence
+        }
+        Err(panic) => {
+            if let Err(code) = written {
+                eprintln!("{code}");
+            }
+            std::panic::resume_unwind(panic);
+        }
+    };
     println!(
         "P5_LIVE_EVIDENCE {}",
         serde_json::to_string(&evidence).unwrap()
     );
+}
+
+#[test]
+fn formal_output_diagnostic_roundtrip_records_all_real_boundaries() {
+    let fixture = TrialFixture::new("normal", true, true);
+    *fixture.runtime.trial_policy.lock().unwrap() = Some("mcp-only-diagnostic");
+    let evidence = roundtrip(
+        fixture.local.as_ref().unwrap(),
+        &fixture.runtime,
+        &fixture.directory,
+        &fixture.root.join("workspace"),
+        2,
+    );
+    let calls = evidence["calls"].as_array().unwrap();
+    let ids = calls
+        .iter()
+        .step_by(2)
+        .map(|call| call["runId"].as_str().unwrap())
+        .collect::<Vec<_>>();
+    assert_eq!(ids.len(), 3);
+    let events = fixture.runtime.output_diagnostics.lock().unwrap();
+    assert_eq!(events.len(), 9);
+    for ((group, kind), id) in events
+        .chunks_exact(3)
+        .zip(["extract", "revise", "trial"])
+        .zip(ids)
+    {
+        for (event, stage) in group
+            .iter()
+            .zip(["runtime-result", "rust-decode", "rust-publish"])
+        {
+            assert_eq!(event.run_id, id);
+            assert_eq!(event.kind, kind);
+            assert_eq!(event.stage, stage);
+            assert_eq!(event.outcome, "ok");
+            assert_eq!(event.code, None);
+        }
+        let value: Value = serde_json::from_slice(
+            &fs::read(
+                fixture
+                    .root
+                    .join("workspace/runs")
+                    .join(id)
+                    .join("output-diagnostic.json"),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        assert_eq!(value["runId"], id);
+        assert_eq!(value["kind"], kind);
+        assert_eq!(value["outcome"], "validated");
+    }
 }
 
 #[test]

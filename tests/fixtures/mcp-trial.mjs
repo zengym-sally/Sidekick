@@ -20,7 +20,7 @@ if (role === 'model') {
       const user = body.messages.findLast(message => message.role === 'user');
       const userText = typeof user?.content === 'string' ? user.content : (user?.content || []).filter(block => block.type === 'text').map(block => block.text).join('');
       const context = JSON.parse(userText || '{}');
-      const finalData = context.task === 'connection test' ? { ok: true } : context.instruction ? { changes: { title: '核对合成清单' } } : null;
+      const finalData = context.task === 'connection test' ? { ok: true } : context.instruction ? { changes: mode === 'diagnostic-invalid-revise' ? {} : { title: '核对合成清单' } } : null;
       const names = (body.tools || []).map(tool => tool.function.name).filter(name => name.startsWith('mcp_'));
       requests++;
       const readPath = ['recovery-retry', 'recovery-read-control'].includes(mode) ? /<location>([^<]+)<\/location>/.exec(body.messages.filter(message => message.role === 'system').map(message => message.content).join('\n'))?.[1] : undefined;

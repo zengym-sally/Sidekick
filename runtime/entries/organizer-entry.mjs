@@ -18,9 +18,17 @@ import { calendarDate } from '../../shared/dates.mjs';
 import { McpControl } from '../lib/mcp-control.mjs';
 import { McpTrial } from '../lib/mcp-trial.mjs';
 import { createNativeModelFetch } from '../lib/native-model-fetch.mjs';
+import { buildOutputDiagnostic, writeOutputDiagnostic } from '../lib/model-output-diagnostics.mjs';
 
 const directory=dirname(fileURLToPath(import.meta.url));
 let agent,bash,mcp,mcpControl,hostNonce,timer,cancelled=false,timedOut=false,inputReceived=false,resolveInput,rejectInput,runId,proofPath,proofRoot;const proof=[];
+let request,diagnosticsEnabled=false,diagnosticAttempted=false,rawOutput=null,canonicalOutput,outputOutcome='unavailable',outputReason='model-error';
+async function saveOutputDiagnostic(){
+  if(!diagnosticsEnabled||diagnosticAttempted)return;
+  diagnosticAttempted=true;
+  try{await writeOutputDiagnostic(request.cwd,buildOutputDiagnostic(rawOutput,{runId,kind:request.kind,outcome:outputOutcome,reason:outputReason},canonicalOutput));}
+  catch{throw new Error('RUNTIME_PROTOCOL');}
+}
 const input=new Promise((resolve,reject)=>{resolveInput=resolve;rejectInput=reject;});
 const emit=value=>{if(!process.stdout.destroyed)process.stdout.write(`${JSON.stringify({...value,runId,hostNonce})}\n`);};
 function abort(){cancelled=true;agent?.abort();bash?.close();mcp?.fail(timedOut?'MODEL_TIMEOUT':'CANCELLED');void mcp?.close().catch(()=>{});if(!inputReceived)rejectInput(new Error('CANCELLED'));}
@@ -45,7 +53,7 @@ function category(error){
   return 'MODEL_SERVICE';
 }
 try{
-  const request=await input;runId=request.runId;hostNonce=request.hostNonce;
+  request=await input;runId=request.runId;hostNonce=request.hostNonce;
   if(cancelled)throw new Error('CANCELLED');
   if(!/^[a-zA-Z0-9_-]{1,128}$/.test(runId||'')||!['extract','revise','test','trial'].includes(request.kind)||!request.snapshot?.provider||!request.snapshot?.model||typeof request.apiKey!=='string'||!request.apiKey)throw new Error('RUNTIME_PROTOCOL');
   const zone=request.source?.timeZone||request.timeZone||'UTC';
@@ -78,6 +86,7 @@ try{
   const toolPath=`${directory}:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin`;
   const verificationMcpOnly=request.verificationMcpOnly===true;
   if(verificationMcpOnly&&(!['extract','revise','trial'].includes(request.kind)||!request.mcp?.servers?.length))throw new Error('RUNTIME_PROTOCOL');
+  if(request.verificationOutputDiagnostics!==undefined){if(request.verificationOutputDiagnostics!==true||!verificationMcpOnly)throw new Error('RUNTIME_PROTOCOL');diagnosticsEnabled=true;}
   const skillSnapshot=request.snapshot.skills;const useTools=!verificationMcpOnly&&request.kind!=='test'&&(request.kind!=='trial'||skillSnapshot?.index?.length>0)&&declared.capabilities?.toolCall!==false;if(skillSnapshot){proofPath=join(request.cwd,'skills-proof.json');proofRoot=dirname(skillSnapshot.root);}
   const tools=!useTools?[]:[createSkillRead(request.cwd,skillSnapshot,createReadTool,resolveReadPathAsync,path=>{if(proof.length<1000)proof.push({type:'read',path:relative(proofRoot,path)});}),createBashTool(request.cwd,{operations:bash.operations,exposeSessionEnvironment:false,spawnHook:context=>({...context,env:{PATH:toolPath,TMPDIR:request.cwd}})})];
   if(request.mcp?.servers?.length){
@@ -100,7 +109,9 @@ try{
   if(timedOut||cancelled)throw new Error(timedOut?'MODEL_TIMEOUT':'CANCELLED');
   if(agent.state.errorMessage)throw new Error(agent.state.errorMessage);
   const last=agent.state.messages.findLast(m=>m.role==='assistant');
-  const raw=last?.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'';
-  const data=parseModelResult(raw,request.kind==='trial'?{...request,kind:'extract'}:request);await mcp?.close();if(mcp?.error)throw new Error(mcp.error);emit({type:'result',data});
-}catch(error){emit({type:'error',code:category(error)});process.exitCode=1;}
+  rawOutput=last?.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'';
+  try{canonicalOutput=parseModelResult(rawOutput,request.kind==='trial'?{...request,kind:'extract'}:request);outputOutcome='validated';outputReason=null;}
+  catch(error){outputOutcome='rejected';outputReason=error.reason||'contract';throw error;}
+  await mcp?.close();if(mcp?.error)throw new Error(mcp.error);await saveOutputDiagnostic();emit({type:'result',data:canonicalOutput});
+}catch(error){try{await saveOutputDiagnostic();}catch{error=new Error('RUNTIME_PROTOCOL');}emit({type:'error',code:category(error)});process.exitCode=1;}
 finally{await mcp?.close().catch(()=>{});mcpControl?.close();if(proofPath)await writeFile(proofPath,JSON.stringify(proof),{flag:'wx',mode:0o600}).catch(()=>{});clearTimeout(timer);bash?.close();unwatch();lines.close();process.stdin.destroy();}

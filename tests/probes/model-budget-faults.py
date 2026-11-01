@@ -344,9 +344,95 @@ def private_model_metadata():
     print(json.dumps({"case": "private-model-metadata", "rejected": rejected, "safe_control": True, "actual_node_executions": 0, "real_env_reads": 0}))
 
 
+def revised_configuration():
+    import datetime
+    assert mb.NIGHT == mb.REPOSITORY / "build/p5-revise-20261101/budget"
+    assert mb.CUTOFF == datetime.datetime(2026, 11, 1, 4, tzinfo=datetime.timezone.utc).timestamp()
+    assert mb.RUN_LABEL == "p5-revise-20261101" and mb.LIMIT == 10
+    with mock.patch.object(mb, "private_json", side_effect=AssertionError("old enrollment must not be read")) as read:
+        try:
+            mb.Budget(mb.REPOSITORY / "build/night-20261031", True)
+        except mb.BudgetError:
+            pass
+        else:
+            raise AssertionError("old real directory was accepted")
+        assert read.call_count == 0
+    print(json.dumps({"old_enrollment_reads": 0, "rejected_old_directory": True}))
+
+
+@mock.patch.object(mb.time, "time", return_value=mb.CUTOFF - 60)
+def real_initialization_admission(clock):
+    approved = b'{"version":1,"conclusion":"pass"}\n'
+    failures = [subprocess.CompletedProcess([], 1, stdout=b"") for _ in ["missing", "source", "core", "native", "reviewer", "independent"]]
+    failures += [subprocess.CompletedProcess([], code, stdout=data) for code, data in [(1, approved), (0, b'{}'), (0, b'{"version":true,"conclusion":"pass"}'), (0, b'{"version":1,"conclusion":"fail"}'), (0, b'{"version":1,"conclusion":"pass","extra":0}'), (0, b'{"version":1,"version":1,"conclusion":"pass"}'), (0, b"x" * 1025)]]
+    failures += [subprocess.TimeoutExpired(["controlled-check"], 10), OSError("synthetic private checker exception")]
+    for failure in failures:
+        base = temporary()
+        base.chmod(0o755)
+        try:
+            with mock.patch.object(mb, "NIGHT", base), mock.patch.object(mb.subprocess, "run", side_effect=failure if isinstance(failure, BaseException) else None, return_value=failure) as execute, mock.patch.object(mb.os, "chmod", wraps=os.chmod) as chmod:
+                try:
+                    mb.initialize(base, real=True)
+                except mb.BudgetError as error:
+                    assert error.args == ("BUDGET_ADMISSION_REQUIRED",)
+                else:
+                    raise AssertionError("unapproved real initialization created a ledger")
+                assert execute.call_count == 1, "initialization must invoke the read-only admission gate"
+                assert chmod.call_count == 0, "admission must precede chmod"
+                assert not list(base.iterdir()), "admission failure must retain zero created files"
+                assert base.stat().st_mode & 0o777 == 0o755
+        finally:
+            shutil.rmtree(base)
+    base = temporary()
+    try:
+        with mock.patch.object(mb, "NIGHT", base), mock.patch.object(mb.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, stdout=approved)) as execute:
+            state = mb.initialize(base, real=True)
+            assert state["reserved"] == 0 and state["remaining"] == 10
+            args, kwargs = execute.call_args
+            assert args[0] == [sys.executable, "-B", str(mb.REPOSITORY / "scripts/probes/run-mcp-live.py"), "--check-admission"]
+            assert set(kwargs["env"]) == {"PATH", "HOME"} and kwargs["stderr"] == subprocess.DEVNULL
+            assert 0 < kwargs["timeout"] <= 10
+            original = {path.name: path.read_bytes() for path in base.iterdir()}
+            try:
+                mb.initialize(base, real=True)
+            except mb.BudgetError:
+                pass
+            else:
+                raise AssertionError("an existing admitted ledger was reset")
+            assert execute.call_count == 1
+            assert {path.name: path.read_bytes() for path in base.iterdir()} == original
+    finally:
+        shutil.rmtree(base)
+    base = temporary()
+    base.chmod(0o755)
+    def approve_after_cutoff(*_args, **_kwargs):
+        clock.return_value = mb.CUTOFF + 1
+        return subprocess.CompletedProcess([], 0, stdout=approved)
+    try:
+        with mock.patch.object(mb, "NIGHT", base), mock.patch.object(mb.subprocess, "run", side_effect=approve_after_cutoff) as execute, mock.patch.object(mb.os, "chmod", wraps=os.chmod) as chmod:
+            try:
+                mb.initialize(base, real=True)
+            except mb.BudgetError as error:
+                assert error.args == ("BUDGET_UNAVAILABLE",)
+            else:
+                raise AssertionError("admission crossed the cutoff and created a ledger")
+            assert execute.call_count == 1
+            assert chmod.call_count == 0 and not list(base.iterdir())
+            assert base.stat().st_mode & 0o777 == 0o755
+    finally:
+        shutil.rmtree(base)
+    print(json.dumps({"refused_before_write": len(failures), "approved_initialized": True, "reset_refused": True, "cutoff_crossing_refused": True, "actual_admission_processes": 0, "real_env_reads": 0}))
+
+
+def real_initialization_admission_future():
+    with mock.patch.object(mb.time, "time", return_value=mb.CUTOFF + 1):
+        real_initialization_admission()
+        assert mb.time.time() == mb.CUTOFF + 1, "the internal fixed clock must restore the external future clock"
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    cases = {"locked-identity": locked_identity, "deadline-after-identity": deadline_after_identity, "scanner-mutation": scanner_mutation, "initialization-faults": initialization_faults, "commit-faults": commit_faults, "header-limits": header_limits, "private-model-metadata": private_model_metadata}
+    cases = {"locked-identity": locked_identity, "deadline-after-identity": deadline_after_identity, "scanner-mutation": scanner_mutation, "initialization-faults": initialization_faults, "commit-faults": commit_faults, "header-limits": header_limits, "private-model-metadata": private_model_metadata, "revised-configuration": revised_configuration, "real-initialization-admission": real_initialization_admission, "real-initialization-admission-future": real_initialization_admission_future}
     parser.add_argument("case", choices=cases)
     args = parser.parse_args()
     cases[args.case]()

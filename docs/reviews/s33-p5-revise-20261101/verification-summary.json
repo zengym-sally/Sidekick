@@ -1,0 +1,126 @@
+{
+  "conclusion": "pass",
+  "scope": "Independent original complete mechanical check; historical real rejection cause remains unknown. Only repository path prefixes are redacted from the raw summary.",
+  "sourceFileCount": 231,
+  "sourceAggregate": "27084aeae36d0a63cc50a0cc8831530dca3c895ffa565e0d43ab057f4a714107",
+  "realExecutionNativeSha256": "dd1eaa589f4cdb62258b8c32eb47367aa744332ee2b69e2ce724fcf04ce6fd52",
+  "fullRebuiltNativeSha256": "1595f481fd0417c510eceb436df2978928cadc6ea274bc0e820c844293b74989",
+  "rawSummary": {
+    "path": "build/p5-revise-20261101/independent-full/summary.json",
+    "sha256": "1c7b7ab57f70eac0fcc24d091bbb9e7e78057629c44ff00c4592f2843c96227f"
+  },
+  "rawReport": {
+    "path": "build/p5-revise-20261101/independent-full/report.json",
+    "sha256": "93cb6b64d6921448074db9061d1211ab5ef6f323b883fd7b6d49d733dae367ae"
+  },
+  "result": {
+    "conclusion": "pass",
+    "fullExit": 0,
+    "elapsedSeconds": 464.855,
+    "gates": 51,
+    "nodeGroups": 26,
+    "node": {
+      "tests": 542,
+      "pass": 542,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "rust": [
+      {
+        "line": 773,
+        "result": "ok",
+        "passed": 17,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 200
+      },
+      {
+        "line": 1093,
+        "result": "ok",
+        "passed": 198,
+        "failed": 0,
+        "ignored": 2,
+        "measured": 0,
+        "filteredOut": 0
+      }
+    ],
+    "rustIgnoredNames": [
+      "test runtime_host::tests::s2_live_text_preview_sign_and_restart ... ignored, explicit real model integration using the owner-selected private file",
+      "test runtime_host::tests::s31_live_isolated_organizer_trial_and_configuration_reopen ... ignored, explicit real model trial using the owner-selected private file"
+    ],
+    "bundleCalls": 6,
+    "warnings": {
+      "runtimeSize": 12,
+      "viteSize": 2,
+      "notarization": 2,
+      "newCategories": 0
+    },
+    "apps": [
+      {
+        "name": "Sidekick MCP Verify.app",
+        "identity": {
+          "CFBundleIdentifier": "com.sidekick.s33.ui.verify",
+          "CFBundleName": "Sidekick MCP Verify",
+          "CFBundleExecutable": "sidekick",
+          "CFBundleShortVersionString": "0.3.0",
+          "CFBundleVersion": "0.3.0"
+        },
+        "resourceEntries": 559,
+        "codesignExit": 0
+      },
+      {
+        "name": "Sidekick.app",
+        "identity": {
+          "CFBundleIdentifier": "com.sidekick.s0",
+          "CFBundleName": "Sidekick",
+          "CFBundleExecutable": "sidekick",
+          "CFBundleShortVersionString": "0.3.0",
+          "CFBundleVersion": "0.3.0"
+        },
+        "resourceEntries": 556,
+        "codesignExit": 0
+      }
+    ],
+    "visibleChanges": 0,
+    "indexRawUnchanged": true,
+    "indexEntryChanges": 0,
+    "artifactChanges": 8,
+    "ledgerChanges": 0,
+    "oldNightOriginal": {
+      "build/night-20261031/model-budget.sqlite": true,
+      "build/night-20261031/model-budget.enrollment.json": true
+    },
+    "actualInputMismatchesAfter": [],
+    "freezeMismatchesAfter": [],
+    "syntheticBudgeted": {
+      "exitCode": 0,
+      "summary": {
+        "layer": "synthetic-budgeted",
+        "conclusion": "pass",
+        "occupiedSlots": 6,
+        "possiblyForwarded": 6,
+        "completed": 6,
+        "remaining": 4,
+        "realModelRequests": 0,
+        "realModelRequestUpperBound": 0,
+        "evidence": "build/p5-revise-20261101/synthetic-budgeted-1793503005849941000"
+      },
+      "nativeResult": {
+        "result": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 199
+      },
+      "nativeExecutableAfter": {
+        "path": "src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1",
+        "sha256": "1595f481fd0417c510eceb436df2978928cadc6ea274bc0e820c844293b74989"
+      },
+      "diagnosticsComplete": true
+    }
+  }
+}

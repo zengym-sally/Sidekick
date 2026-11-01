@@ -20,8 +20,9 @@ import time
 from urllib.parse import quote, urlsplit
 
 REPOSITORY = Path(__file__).resolve().parents[2]
-NIGHT = REPOSITORY / "build/night-20261031"
-CUTOFF = datetime.datetime(2026, 11, 1, tzinfo=datetime.timezone.utc).timestamp()
+NIGHT = REPOSITORY / "build/p5-revise-20261101/budget"
+RUN_LABEL = "p5-revise-20261101"
+CUTOFF = datetime.datetime(2026, 11, 1, 4, tzinfo=datetime.timezone.utc).timestamp()
 LIMIT = 10
 MAX_BODY = 2_000_000
 FAKE_KEY = "synthetic-budget-private-canary-7312"
@@ -148,6 +149,17 @@ def initialize(directory, real=False):
         metadata = directory.lstat()
         if not stat.S_ISDIR(metadata.st_mode) or directory.resolve() != directory or metadata.st_uid != os.getuid():
             fail()
+        try:
+            checked = subprocess.run([sys.executable, "-B", str(REPOSITORY / "scripts/probes/run-mcp-live.py"), "--check-admission"], cwd=REPOSITORY, env={"PATH": "/usr/bin:/bin", "HOME": os.environ.get("HOME", "")}, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, timeout=10, check=False)
+            if checked.returncode or not isinstance(checked.stdout, bytes) or len(checked.stdout) > 1024:
+                fail("BUDGET_ADMISSION_REQUIRED")
+            approval = strict_json(checked.stdout)
+            if not isinstance(approval, dict) or set(approval) != {"version", "conclusion"} or type(approval["version"]) is not int or approval["version"] != 1 or approval["conclusion"] != "pass":
+                fail("BUDGET_ADMISSION_REQUIRED")
+        except (OSError, subprocess.SubprocessError, ValueError, RecursionError, BudgetError):
+            fail("BUDGET_ADMISSION_REQUIRED")
+        if time.time() >= CUTOFF:
+            fail()
         os.chmod(directory, 0o700)
     metadata = private_directory(directory)
     descriptor = os.open(receipt_path, os.O_CREAT | os.O_EXCL | os.O_RDWR | os.O_NOFOLLOW, 0o600)
@@ -166,7 +178,7 @@ def initialize(directory, real=False):
             fingerprint = schema_hash(connection)
         finally:
             connection.close()
-        receipt = {"version": 1, "state": "ready", "night": "20261031" if real else "synthetic", "limit": LIMIT, "cutoff": CUTOFF if real else time.time() + 3600, "uid": os.getuid(), "directory": identity(metadata), "database": database_identity, "schema": fingerprint}
+        receipt = {"version": 1, "state": "ready", "night": RUN_LABEL if real else "synthetic", "limit": LIMIT, "cutoff": CUTOFF if real else time.time() + 3600, "uid": os.getuid(), "directory": identity(metadata), "database": database_identity, "schema": fingerprint}
         data = (json.dumps(receipt, sort_keys=True) + "\n").encode()
         os.lseek(descriptor, 0, os.SEEK_SET)
         os.ftruncate(descriptor, 0)
@@ -181,11 +193,13 @@ def initialize(directory, real=False):
 
 class Budget:
     def __init__(self, directory, real=False, cutoff=None):
+        if real and (directory != NIGHT or cutoff is not None):
+            fail()
         self.directory = directory
         self.real = real
         self.receipt = private_json(directory / "model-budget.enrollment.json")
         expected = {"version", "state", "night", "limit", "cutoff", "uid", "directory", "database", "schema"}
-        if set(self.receipt) != expected or type(self.receipt["version"]) is not int or self.receipt["version"] != 1 or self.receipt["state"] != "ready" or self.receipt["limit"] != LIMIT or self.receipt["uid"] != os.getuid() or self.receipt["night"] != ("20261031" if real else "synthetic") or type(self.receipt["cutoff"]) not in (int, float) or not math.isfinite(self.receipt["cutoff"]):
+        if set(self.receipt) != expected or type(self.receipt["version"]) is not int or self.receipt["version"] != 1 or self.receipt["state"] != "ready" or self.receipt["limit"] != LIMIT or self.receipt["uid"] != os.getuid() or self.receipt["night"] != (RUN_LABEL if real else "synthetic") or type(self.receipt["cutoff"]) not in (int, float) or not math.isfinite(self.receipt["cutoff"]):
             fail()
         if real and (directory != NIGHT or self.receipt["cutoff"] != CUTOFF):
             fail()
@@ -394,7 +408,7 @@ def checked_sse(data, secret, audit=None, expected_tools=None):
         value = re.sub(r"^```(?:json)?\s*|\s*```$", "", content.strip())
         secret_scan(strict_json(value), secret)
     if audit is not None:
-        audit.update({"content": content or None, "reasoning": reasoning, "calls": normalized_calls})
+        audit.update({"content": content or None, "reasoning": reasoning, "calls": normalized_calls, "finishReason": finished})
     return "".join(output).encode()
 
 
@@ -494,8 +508,11 @@ def checked_payload(data, allow, model, synthetic=True, history=None):
 class Relay(http.server.ThreadingHTTPServer):
     daemon_threads = True
 
-    def __init__(self, budget, base, upstream, key, model, phase="test", fault=None):
+    def __init__(self, budget, base, upstream, key, model, phase="test", fault=None, diagnostics=False):
         self.budget, self.base, self.upstream, self.key, self.model, self.phase, self.fault = budget, base, upstream, key, model, phase, fault
+        if type(diagnostics) is not bool or (diagnostics and phase not in ("P5", "test")):
+            fail("MODEL_CONFIGURATION_INVALID")
+        self.diagnostics = diagnostics
         self.base_identity = identity(private_directory(base))
         self.state_lock = threading.RLock()
         self.capacity = threading.BoundedSemaphore(16)
@@ -587,7 +604,33 @@ class Relay(http.server.ThreadingHTTPServer):
             self.fault = None
             fail("SYNTHETIC_FORWARD_FAULT")
 
-    def forward(self, body, allow):
+    def response_diagnostic(self, slot, audit):
+        if not self.diagnostics:
+            return
+        if type(slot) is not int or not 1 <= slot <= LIMIT or identity(private_directory(self.base)) != self.base_identity:
+            fail("MODEL_DIAGNOSTIC_INVALID")
+        content = (audit["content"] or "").encode("utf-8")
+        value = {"version": 1, "slot": slot, "contentSha256": hashlib.sha256(content).hexdigest(), "contentBytes": len(content), "finishReason": audit["finishReason"], "toolCallCount": len(audit["calls"])}
+        secret_scan(value, self.key)
+        data = (json.dumps(value, separators=(",", ":")) + "\n").encode()
+        if len(data) > 2048:
+            fail("MODEL_DIAGNOSTIC_INVALID")
+        path = self.base / f"response-{slot}.json"
+        descriptor = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW, 0o600)
+        try:
+            metadata = os.fstat(descriptor)
+            if identity(private_metadata(path)) != identity(metadata) or identity(private_directory(self.base)) != self.base_identity:
+                fail("MODEL_DIAGNOSTIC_INVALID")
+            if os.write(descriptor, data) != len(data):
+                fail("MODEL_DIAGNOSTIC_INVALID")
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+        sync_directory(self.base)
+        if identity(private_metadata(path)) != identity(metadata) or identity(private_directory(self.base)) != self.base_identity:
+            fail("MODEL_DIAGNOSTIC_INVALID")
+
+    def forward(self, body, allow, slot=None):
         self.budget.deadline()
         target = self.target
         server = self
@@ -619,10 +662,12 @@ class Relay(http.server.ThreadingHTTPServer):
             self.inject("after-upstream")
             audit = {}
             result = checked_sse(data, self.key, audit, {tool["name"] for tool in allow["tools"]})
+            self.response_diagnostic(slot, audit)
             context = strict_json(message_text(strict_json(body)["messages"][1]["content"]))
             context_key = hashlib.sha256(json.dumps(context, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
             audit["content"] = audit["content"] if audit["content"] and audit["content"].strip() else None
             audit["reasoning"] = audit["reasoning"].replace("\n", "")
+            audit.pop("finishReason")
             if audit["calls"]:
                 with self.state_lock:
                     self.history.setdefault(context_key, []).append(audit)
@@ -680,7 +725,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self.server.budget.mark(slot, "forwarded")
             self.server.inject("after-forwarded")
             self.server.budget.verify_files()
-            result = self.server.forward(body, allow)
+            result = self.server.forward(body, allow, slot)
             self.server.budget.mark(slot, "completed")
             self.answer(200, result)
         except BaseException as error:
@@ -724,21 +769,24 @@ def main():
     parser.add_argument("--upstream")
     parser.add_argument("--fault", choices=["after-reserve", "after-forwarded", "after-upstream"])
     parser.add_argument("--cutoff-offset", type=float)
+    parser.add_argument("--diagnostics", action="store_true")
     arguments = parser.parse_args()
     if arguments.command.endswith("night"):
-        if any(value is not None for value in [arguments.directory, arguments.upstream, arguments.fault, arguments.cutoff_offset]):
+        if any(value is not None for value in [arguments.directory, arguments.upstream, arguments.fault, arguments.cutoff_offset]) or arguments.diagnostics:
             fail()
         value = initialize(NIGHT, True) if arguments.command == "init-night" else Budget(NIGHT, True).inspect()
         print(json.dumps(value))
         return
     directory = test_directory(arguments.directory)
+    if arguments.command != "serve-fake" and arguments.diagnostics:
+        fail()
     if arguments.command == "init-test":
         print(json.dumps(initialize(directory)))
     elif arguments.command == "inspect-test":
         print(json.dumps(Budget(directory).inspect()))
     else:
         cutoff = None if arguments.cutoff_offset is None else time.time() + arguments.cutoff_offset
-        relay = Relay(Budget(directory, cutoff=cutoff), directory, arguments.upstream, FAKE_KEY, "synthetic", fault=arguments.fault)
+        relay = Relay(Budget(directory, cutoff=cutoff), directory, arguments.upstream, FAKE_KEY, "synthetic", fault=arguments.fault, diagnostics=arguments.diagnostics)
         print(json.dumps({"port": relay.server_address[1]}), flush=True)
         relay.serve_forever(poll_interval=0.1)
 

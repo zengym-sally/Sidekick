@@ -41,6 +41,22 @@ pub struct RuntimeState {
     pub(crate) trial_policy: Arc<Mutex<Option<&'static str>>>,
     #[cfg(test)]
     pub(crate) trial_events: Arc<Mutex<Vec<Value>>>,
+    #[cfg(test)]
+    output_diagnostics: Arc<Mutex<Vec<OutputDiagnosticEvent>>>,
+    #[cfg(test)]
+    output_decode_fault: Arc<AtomicBool>,
+    #[cfg(test)]
+    output_diagnostic_conflict: Arc<AtomicBool>,
+}
+#[cfg(test)]
+#[derive(Clone, Debug, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct OutputDiagnosticEvent {
+    run_id: String,
+    kind: &'static str,
+    stage: &'static str,
+    outcome: &'static str,
+    code: Option<&'static str>,
 }
 pub enum StartTask {
     Extract {
@@ -101,6 +117,39 @@ fn reap_workers(job: &Job, directory: &Path) {
     }
 }
 impl RuntimeState {
+    #[cfg(test)]
+    fn output_diagnostic_enabled(&self) -> bool {
+        *self.trial_policy.lock().expect("controlled policy lock") == Some("mcp-only-diagnostic")
+    }
+    #[cfg(test)]
+    fn record_output_diagnostic(
+        &self,
+        run_id: &str,
+        kind: Option<&'static str>,
+        stage: &'static str,
+        code: Option<&'static str>,
+    ) {
+        if !self.output_diagnostic_enabled() {
+            return;
+        }
+        let Some(kind) = kind else {
+            return;
+        };
+        let mut events = self
+            .output_diagnostics
+            .lock()
+            .expect("controlled output lock");
+        if events.len() >= 64 {
+            events.remove(0);
+        }
+        events.push(OutputDiagnosticEvent {
+            run_id: run_id.into(),
+            kind,
+            stage,
+            outcome: if code.is_some() { "error" } else { "ok" },
+            code,
+        });
+    }
     #[cfg(test)]
     pub(crate) fn test_trial_checkpoint(&self, job: &Job, point: &'static str, detail: Value) {
         let mut events = self
@@ -215,6 +264,13 @@ impl RuntimeState {
         let state = self.clone();
         let id = job.run_id.clone();
         let worker_sink = sink.clone();
+        #[cfg(test)]
+        let diagnostic_kind = match payload["kind"].as_str() {
+            Some("extract") => Some("extract"),
+            Some("revise") => Some("revise"),
+            Some("trial") => Some("trial"),
+            _ => None,
+        };
         std::thread::spawn(move || {
             let mut result = execute(
                 &job,
@@ -228,6 +284,32 @@ impl RuntimeState {
             if !cleaned {
                 result = Err("MCP_CLEANUP".into());
             }
+            #[cfg(test)]
+            state.record_output_diagnostic(
+                &id,
+                diagnostic_kind,
+                "runtime-result",
+                result.as_ref().err().map(|code| {
+                    if code == "MODEL_INVALID_OUTPUT" {
+                        "MODEL_INVALID_OUTPUT"
+                    } else {
+                        "RUNTIME_REJECTED"
+                    }
+                }),
+            );
+            #[cfg(test)]
+            if state.output_diagnostic_enabled()
+                && result.is_ok()
+                && state.output_decode_fault.swap(false, Ordering::SeqCst)
+            {
+                if let Ok(value) = result.as_mut() {
+                    match diagnostic_kind {
+                        Some("extract" | "trial") => value["candidates"] = Value::Null,
+                        Some("revise") => value["preview"] = Value::Null,
+                        _ => {}
+                    }
+                }
+            }
             let stored = local.access(|store| {
                 if job.kind == JobKind::Trial {
                     if job.cancel.load(Ordering::SeqCst) {
@@ -235,11 +317,28 @@ impl RuntimeState {
                     } else {
                         match result {
                             Ok(value) => {
-                                let applied = serde_json::from_value(
+                                let decoded = serde_json::from_value(
                                     value.get("candidates").cloned().unwrap_or(Value::Null),
                                 )
-                                .map_err(|_| error("MODEL_INVALID_OUTPUT", "试跑结果格式不正确。"))
-                                .and_then(|drafts| store.complete_agent_trial(&id, drafts));
+                                .map_err(|_| error("MODEL_INVALID_OUTPUT", "试跑结果格式不正确。"));
+                                #[cfg(test)]
+                                state.record_output_diagnostic(
+                                    &id,
+                                    diagnostic_kind,
+                                    "rust-decode",
+                                    decoded.as_ref().err().map(|_| "MODEL_INVALID_OUTPUT"),
+                                );
+                                let applied = decoded.and_then(|drafts| {
+                                    let published = store.complete_agent_trial(&id, drafts);
+                                    #[cfg(test)]
+                                    state.record_output_diagnostic(
+                                        &id,
+                                        diagnostic_kind,
+                                        "rust-publish",
+                                        published.as_ref().err().map(|_| "STORE_REJECTED"),
+                                    );
+                                    published
+                                });
                                 if let Err(e) = applied {
                                     store.finish_agent_trial_error(&id, e.code)?;
                                 }
@@ -259,16 +358,55 @@ impl RuntimeState {
                     Ok(value) => {
                         let run = store.model_run(&id)?;
                         let applied = match run.kind.as_str() {
-                            "extract" => serde_json::from_value(
-                                value.get("candidates").cloned().unwrap_or(Value::Null),
-                            )
-                            .map_err(|_| error("MODEL_INVALID_OUTPUT", "整理结果格式不正确。"))
-                            .and_then(|drafts| store.publish_candidates(&id, drafts).map(|_| ())),
-                            "revise" => serde_json::from_value(
-                                value.get("preview").cloned().unwrap_or(Value::Null),
-                            )
-                            .map_err(|_| error("MODEL_INVALID_OUTPUT", "修改预览格式不正确。"))
-                            .and_then(|draft| store.publish_revision(&id, draft).map(|_| ())),
+                            "extract" => {
+                                let decoded = serde_json::from_value(
+                                    value.get("candidates").cloned().unwrap_or(Value::Null),
+                                )
+                                .map_err(|_| error("MODEL_INVALID_OUTPUT", "整理结果格式不正确。"));
+                                #[cfg(test)]
+                                state.record_output_diagnostic(
+                                    &id,
+                                    diagnostic_kind,
+                                    "rust-decode",
+                                    decoded.as_ref().err().map(|_| "MODEL_INVALID_OUTPUT"),
+                                );
+                                decoded.and_then(|drafts| {
+                                    let published =
+                                        store.publish_candidates(&id, drafts).map(|_| ());
+                                    #[cfg(test)]
+                                    state.record_output_diagnostic(
+                                        &id,
+                                        diagnostic_kind,
+                                        "rust-publish",
+                                        published.as_ref().err().map(|_| "STORE_REJECTED"),
+                                    );
+                                    published
+                                })
+                            }
+                            "revise" => {
+                                let decoded = serde_json::from_value(
+                                    value.get("preview").cloned().unwrap_or(Value::Null),
+                                )
+                                .map_err(|_| error("MODEL_INVALID_OUTPUT", "修改预览格式不正确。"));
+                                #[cfg(test)]
+                                state.record_output_diagnostic(
+                                    &id,
+                                    diagnostic_kind,
+                                    "rust-decode",
+                                    decoded.as_ref().err().map(|_| "MODEL_INVALID_OUTPUT"),
+                                );
+                                decoded.and_then(|draft| {
+                                    let published = store.publish_revision(&id, draft).map(|_| ());
+                                    #[cfg(test)]
+                                    state.record_output_diagnostic(
+                                        &id,
+                                        diagnostic_kind,
+                                        "rust-publish",
+                                        published.as_ref().err().map(|_| "STORE_REJECTED"),
+                                    );
+                                    published
+                                })
+                            }
                             "test" if value.get("ok") == Some(&Value::Bool(true)) => {
                                 store.finish_model_test(&id).map(|_| ())
                             }
@@ -397,8 +535,31 @@ fn execute(
         payload["runLimitMs"] = 1000.into();
     }
     #[cfg(test)]
-    if *state.trial_policy.lock().map_err(|_| "RUNTIME_PROTOCOL")? == Some("mcp-only") {
-        payload["verificationMcpOnly"] = true.into();
+    {
+        let policy = *state.trial_policy.lock().map_err(|_| "RUNTIME_PROTOCOL")?;
+        if matches!(policy, Some("mcp-only" | "mcp-only-diagnostic")) {
+            payload["verificationMcpOnly"] = true.into();
+        }
+        if policy == Some("mcp-only-diagnostic") {
+            payload["verificationOutputDiagnostics"] = true.into();
+            if state
+                .output_diagnostic_conflict
+                .swap(false, Ordering::SeqCst)
+            {
+                use std::os::unix::fs::OpenOptionsExt;
+                let path = Path::new(payload["cwd"].as_str().ok_or("RUNTIME_PROTOCOL")?)
+                    .join("output-diagnostic.json");
+                let mut file = std::fs::OpenOptions::new()
+                    .write(true)
+                    .create_new(true)
+                    .mode(0o600)
+                    .open(path)
+                    .map_err(|_| "RUNTIME_PROTOCOL")?;
+                file.write_all(b"controlled-existing-diagnostic\n")
+                    .map_err(|_| "RUNTIME_PROTOCOL")?;
+                file.sync_all().map_err(|_| "RUNTIME_PROTOCOL")?;
+            }
+        }
     }
     #[cfg(feature = "s33-mcp-ui-verification")]
     if let Some(pin) = local.native_model_pin() {

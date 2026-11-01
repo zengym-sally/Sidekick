@@ -11,7 +11,7 @@ const harness = String.raw`
 import importlib.util, io, json, os, pathlib, sys, tempfile, types
 sys.dont_write_bytecode = True
 program, scenario = sys.argv[1:]
-sys.argv = [program, '--real' if scenario == 'admission' else '--synthetic']
+sys.argv = [program, '--real' if scenario in {'admission', 'insufficient-budget'} else '--synthetic']
 root = pathlib.Path(tempfile.mkdtemp(prefix='sidekick-launcher-test-'))
 events = []
 gate = types.ModuleType('model_budget')
@@ -27,7 +27,10 @@ gate.sync_directory = lambda path: None
 def secret_scan(value, secret):
     if secret and secret in json.dumps(value): fail('PRIVATE_CANARY_REJECTED')
 gate.secret_scan = secret_scan
-gate.private_model = lambda node: fail('PRIVATE_MODEL_MUST_NOT_RUN')
+def private_model(node):
+    events.append('private_model')
+    fail('PRIVATE_MODEL_MUST_NOT_RUN')
+gate.private_model = private_model
 class Budget:
     def __init__(self, *args):
         events.append('budget')
@@ -36,12 +39,13 @@ class Budget:
     def inspect(self):
         self.reads += 1
         n = 0 if self.reads == 1 else 6
+        if scenario == 'insufficient-budget': n = 5
         if scenario == 'late-budget' and self.reads > 2: fail('FINAL_BUDGET_UNKNOWN')
-        return {'reserved': n + (1 if n and scenario == 'failed-slot' else 0), 'forwarded': n, 'completed': n, 'requests': [gate.FAKE_KEY] if n and scenario == 'summary-secret' else []}
+        return {'reserved': n + (1 if n and scenario == 'failed-slot' else 0), 'forwarded': n, 'completed': n, 'remaining': 10 - n, 'requests': [gate.FAKE_KEY] if n and scenario == 'summary-secret' else []}
 gate.Budget = Budget
 class Relay:
     server_address = ('127.0.0.1', 12345)
-    def __init__(self, *args): self.shutdown_unknown = scenario == 'relay-unknown'
+    def __init__(self, *args, **kwargs): self.shutdown_unknown = scenario == 'relay-unknown'
     def serve_forever(self, **kwargs): pass
     def shutdown(self):
         events.append('shutdown')
@@ -70,10 +74,12 @@ def native_binding(executable):
     return {'path': 'src-tauri/target/debug/deps/sidekick_lib-synthetic', 'sha256': 'changed-native' if scenario == 'late-native' and native_reads > 2 else 'synthetic-native-hash'}
 launcher.native_binding = native_binding
 def prepare(evidence):
+    events.append('prepare')
     if scenario == 'prepare': fail('PREPARE_FAILED')
     return root / 'synthetic-test-executable'
 launcher.prepare = prepare
 launcher.admission = lambda: fail('LIVE_ADMISSION_REQUIRED')
+if scenario == 'insufficient-budget': launcher.admission = lambda: {'path': 'synthetic', 'sha256': 'synthetic'}
 launcher.register = lambda *args: {}
 def remaining(owned):
     events.append('remaining')
@@ -83,6 +89,10 @@ def cleanup(*args):
     events.append('cleanup')
     if scenario == 'cleanup': fail('CLEANUP_FAILED')
 launcher.cleanup = cleanup
+def collect_diagnostics(*args, **kwargs):
+    events.append('diagnostics')
+    return {'version': 1, 'complete': scenario != 'diagnostics', 'errors': [], 'node': [], 'host': None, 'responses': [], 'matches': []}
+launcher.collect_diagnostics = collect_diagnostics
 class Process:
     def __init__(self, args, **kwargs):
         self.args, self.pid = args, 987654
@@ -133,9 +143,9 @@ try:
     launcher.main()
 except BaseException as caught:
     error = str(caught)
-summaries = list(root.glob('build/p5-formal-20261101/*/summary.json'))
+summaries = list(root.glob('build/p5-revise-20261101/*/summary.json'))
 summary = json.loads(summaries[0].read_text()) if len(summaries) == 1 else None
-print(json.dumps({'events': events, 'error': error, 'summary': summary, 'evidence': str(root), 'nativeLogExists': any(root.glob('build/p5-formal-20261101/*/native-test.log'))}))
+print(json.dumps({'events': events, 'error': error, 'summary': summary, 'evidence': str(root), 'nativeLogExists': any(root.glob('build/p5-revise-20261101/*/native-test.log'))}))
 `;
 
 function run(scenario) {
@@ -150,7 +160,7 @@ for (const scenario of ['cleanup', 'shutdown', 'model-wait']) test(`${scenario} 
   assert.ok(result.error, 'cleanup failure must fail the launcher');
 });
 
-for (const scenario of ['native', 'failed-slot', 'collector', 'prepare', 'admission', 'late-budget', 'late-source', 'late-core', 'late-native', 'native-secret', 'summary-secret', 'relay-unknown']) test(`${scenario} failure remains a failure with retained evidence`, () => {
+for (const scenario of ['native', 'failed-slot', 'collector', 'prepare', 'admission', 'late-budget', 'late-source', 'late-core', 'late-native', 'native-secret', 'summary-secret', 'relay-unknown', 'diagnostics']) test(`${scenario} failure remains a failure with retained evidence`, () => {
   const result = run(scenario);
   assert.equal(result.summary?.conclusion, 'fail', JSON.stringify(result));
   assert.ok(result.error, 'failed verification must throw');
@@ -168,12 +178,24 @@ test('a successful controlled launcher reports pass only after all cleanup succe
   assert.deepEqual(result.summary.nativeExecutable, result.summary.nativeExecutableAfter);
   assert.equal(result.summary.designSha256, result.summary.designSha256After);
   assert.ok(result.events.indexOf('remaining') < result.events.indexOf('cleanup'), 'natural descendant exit must be checked before forced cleanup');
+  assert.ok(result.events.indexOf('cleanup') < result.events.indexOf('diagnostics'), 'diagnostics must be collected after owned processes are reaped');
+});
+
+test('a real-mode mock with fewer than six slots refuses before prepare and private credentials', () => {
+  const result = run('insufficient-budget');
+  assert.equal(result.summary?.conclusion, 'fail');
+  assert.equal(result.summary?.failureCode, 'LIVE_BUDGET_REMAINING');
+  assert.ok(!result.events.includes('prepare'));
+  assert.ok(!result.events.includes('private_model'));
 });
 
 const functionHarness = String.raw`
-import hashlib, importlib.util, json, os, pathlib, stat, subprocess, sys, tempfile, time, types
+import contextlib, hashlib, importlib.util, io, json, os, pathlib, stat, subprocess, sys, tempfile, time, types
+from unittest import mock
 sys.dont_write_bytecode = True
 program, scenario = sys.argv[1:]
+check_only = scenario.startswith('check-admission-')
+if check_only: scenario = scenario[len('check-'):]
 sys.argv = [program]
 gate = types.ModuleType('model_budget')
 gate.REPOSITORY = pathlib.Path(program).resolve().parents[2]
@@ -318,12 +340,12 @@ elif scenario.startswith('admission-'):
     plan_relative = 'docs/product/05-第一阶段实施计划.md'
     plan_bytes = (gate.REPOSITORY / plan_relative).read_bytes()
     gate.REPOSITORY = pathlib.Path(tempfile.mkdtemp(prefix='sidekick-launcher-admission-test-')).resolve()
-    launcher.ADMISSION = gate.REPOSITORY / 'build/p5-formal-20261101/budget-admission.json'
+    launcher.ADMISSION = gate.REPOSITORY / 'build/p5-revise-20261101/budget-admission.json'
     launcher.ADMISSION.parent.mkdir(parents=True, mode=0o700)
     plan = gate.REPOSITORY / plan_relative
     plan.parent.mkdir(parents=True)
     plan.write_bytes(plan_bytes)
-    design = '8961b453f91bc7927c2855a4bd9d9e156a2f879dfb3655aeeda72c8baa056ea9'
+    design = '5cd925fe15b1727314ff72eafd92eaae4cfd82451e82eba1af334b456a9977b8'
     binding_targets = {'admission-package-input': 'package.json', 'admission-runtime-input': 'build/s0-runtime/organizer.mjs', 'admission-node-input': 'build/s0-runtime/node', 'admission-host-input': 'src-tauri/src/host/mcp_host.rs', 'admission-config-input': 'src-tauri/src/store/model_config.rs', 'admission-recovery-input': 'src-tauri/src/host/mcp_recovery_tests.rs', 'admission-cargo-input': 'src-tauri/Cargo.toml', 'admission-build-input': 'src-tauri/build.rs', 'admission-new-input': 'src-tauri/src/host/new_guard.rs'}
     if scenario in binding_targets:
         subprocess.run(['git', 'init', '--quiet', str(gate.REPOSITORY)], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -371,8 +393,8 @@ elif scenario.startswith('admission-'):
     target = gate.REPOSITORY / reports[0]['path']
     if scenario == 'admission-digest': target.write_bytes(b'{}')
     if scenario == 'admission-core':
-        plan.write_bytes(plan_bytes.replace('P5正式文本MCP闭环'.encode(), 'P5 changed core'.encode()))
-    if scenario == 'admission-core-status': plan.write_bytes(plan_bytes + b'\nSynthetic later status evidence.\n')
+        plan.write_bytes(plan_bytes.replace('P5真实修改链路收口'.encode(), 'P5 changed core'.encode()))
+    if scenario == 'admission-core-status': plan.write_bytes(plan_bytes + b'\n### 16.30 Synthetic later status evidence\n')
     if scenario == 'admission-shared': value['deliveryEvidence'] = [reports[0], reports[0]]
     if scenario == 'admission-mode': target.chmod(0o644)
     if scenario == 'admission-symlink':
@@ -397,17 +419,132 @@ elif scenario.startswith('admission-'):
     launcher.ADMISSION.write_text(json.dumps(value))
     launcher.ADMISSION.chmod(0o600)
     error = None
+    check_output = None
     try:
-        if scenario == 'admission-native-prepared': launcher.admission(native.with_name('sidekick_lib-different'))
+        if check_only:
+            sys.argv = [program, '--check-admission']
+            def forbidden(*args, **kwargs): raise AssertionError('check-only admission attempted a resource mutation')
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output), mock.patch.object(pathlib.Path, 'mkdir', side_effect=forbidden), mock.patch.object(launcher, 'prepare', side_effect=forbidden), mock.patch.object(gate, 'Budget', side_effect=forbidden, create=True), mock.patch.object(gate, 'private_model', side_effect=forbidden, create=True):
+                launcher.main()
+            check_output = json.loads(output.getvalue())
+        elif scenario == 'admission-native-prepared': launcher.admission(native.with_name('sidekick_lib-different'))
         elif scenario == 'admission-native-prepared-positive': launcher.admission(native)
         else: launcher.admission()
     except BaseException as caught: error = type(caught).__name__
-    print(json.dumps({'error': error, 'syntheticFixture': True}))
+    print(json.dumps({'error': error, 'syntheticFixture': True, 'checkOutput': check_output}))
 `;
 
 function runFunction(scenario) {
   return JSON.parse(execFileSync('python3', ['-c', functionHarness, program, scenario], { encoding: 'utf8', env: { PATH: process.env.PATH }, timeout: 10000 }));
 }
+
+const diagnosticHarness = String.raw`
+import hashlib, importlib.util, json, os, pathlib, shutil, sys, tempfile
+sys.dont_write_bytecode = True
+program, scenario = sys.argv[1:]
+sys.argv = [program]
+sys.path.insert(0, str(pathlib.Path(program).parent))
+spec = importlib.util.spec_from_file_location('launcher_diagnostics', program)
+launcher = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(launcher)
+os.umask(0o077)
+base = pathlib.Path(tempfile.mkdtemp(prefix='sidekick-launcher-diagnostic-')).resolve()
+evidence = base / 'evidence'
+evidence.mkdir(mode=0o700)
+runs = base / 'workspace/runs'
+runs.mkdir(parents=True, mode=0o700)
+calls = [{'runId': 'run-' + kind} for kind in ['extract', 'revise', 'trial']]
+def write(path, value):
+    path.write_text(json.dumps(value))
+    path.chmod(0o600)
+events = []
+for index, kind in enumerate(['extract', 'revise', 'trial']):
+    run = runs / ('run-' + kind)
+    run.mkdir(mode=0o700)
+    raw = ('synthetic-' + kind).encode()
+    digest = hashlib.sha256(raw).hexdigest()
+    shape = {'type': 'object', 'entryCount': 1, 'entries': [{'key': 'title', 'value': {'type': 'string', 'bytes': 8}}]}
+    node = {'version': 1, 'runId': run.name, 'kind': kind, 'outcome': 'validated', 'reason': None, 'raw': {'sha256': digest, 'bytes': len(raw), 'shape': shape}, 'canonicalShape': shape}
+    write(run / 'output-diagnostic.json', node)
+    for stage in ['runtime-result', 'rust-decode', 'rust-publish']:
+        events.append({'runId': run.name, 'kind': kind, 'stage': stage, 'outcome': 'ok', 'code': None})
+    write(base / ('response-' + str(index * 2 + 1) + '.json'), {'version': 1, 'slot': index * 2 + 1, 'contentSha256': hashlib.sha256(b'').hexdigest(), 'contentBytes': 0, 'finishReason': 'tool_calls', 'toolCallCount': 1})
+    write(base / ('response-' + str(index * 2 + 2) + '.json'), {'version': 1, 'slot': index * 2 + 2, 'contentSha256': digest, 'contentBytes': len(raw), 'finishReason': 'stop', 'toolCallCount': 0})
+host = base / 'output-diagnostics.json'
+write(host, {'version': 1, 'events': events})
+target = runs / 'run-revise/output-diagnostic.json'
+if scenario == 'partial':
+    target.unlink()
+    host.unlink()
+if scenario == 'secret':
+    value = json.loads(target.read_text()); value['raw']['shape']['entries'][0]['key'] = 'synthetic-private-canary'
+    write(target, value)
+if scenario == 'unknown-key':
+    value = json.loads(target.read_text()); value['raw']['shape']['entries'][0]['key'] = 'unapproved-key'
+    write(target, value)
+if scenario == 'string-value':
+    value = json.loads(target.read_text()); value['raw']['shape']['entries'][0]['value']['value'] = 'unretained business text'
+    write(target, value)
+if scenario == 'permissions': target.chmod(0o644)
+if scenario == 'hardlink': os.link(target, target.with_name('linked'))
+if scenario == 'symlink':
+    moved = target.with_name('owned-original'); target.rename(moved); target.symlink_to(moved)
+if scenario == 'oversize': target.write_bytes(b' ' * 16385)
+if scenario == 'host-code':
+    value = json.loads(host.read_text()); value['events'][0]['code'] = 'unretained exception text'; write(host, value)
+if scenario == 'stop-hash':
+    path = base / 'response-4.json'; value = json.loads(path.read_text()); value['contentSha256'] = '0' * 64; write(path, value)
+if scenario == 'duplicate-stop':
+    path = base / 'response-4.json'; value = json.loads(path.read_text()); value.update(json.loads((base / 'response-2.json').read_text())); value['slot'] = 4; write(path, value)
+if scenario == 'response-symlink':
+    path = base / 'response-2.json'; moved = base / 'owned-response'; path.rename(moved); path.symlink_to(moved)
+if scenario == 'missing-tool-response': (base / 'response-3.json').unlink()
+if scenario == 'wrong-tool-slot':
+    path = base / 'response-5.json'; value = json.loads(path.read_text()); path.unlink(); value['slot'] = 7; write(base / 'response-7.json', value)
+if scenario == 'directory-mode': runs.chmod(0o755)
+if scenario == 'rejected-node':
+    value = json.loads(target.read_text()); value['outcome'] = 'rejected'; value['reason'] = 'changes-empty'; value['canonicalShape'] = None; write(target, value)
+try:
+    result = launcher.collect_diagnostics(base, evidence, 'synthetic-private-canary', calls, list(range(1, 7)))
+    copied = [str(path.relative_to(evidence)) for path in evidence.rglob('*.json')]
+    leak = any('synthetic-private-canary' in path.read_text() or 'unretained business text' in path.read_text() for path in evidence.rglob('*.json'))
+    references = result['node'] + result['responses'] + ([result['host']] if result['host'] else [])
+    copy_hashes_match = all(hashlib.sha256((evidence / item['path']).read_bytes()).hexdigest() == item['sha256'] and len((evidence / item['path']).read_bytes()) == item['bytes'] for item in references)
+    print(json.dumps({'manifest': result, 'copied': copied, 'leak': leak, 'copyHashesMatch': copy_hashes_match}))
+finally:
+    shutil.rmtree(base)
+`;
+
+function diagnostics(scenario) {
+  return JSON.parse(execFileSync('python3', ['-c', diagnosticHarness, program, scenario], { encoding: 'utf8', env: { PATH: process.env.PATH }, timeout: 10000 }));
+}
+
+test('private diagnostics correlate three run identities, host stages and each final content fingerprint', () => {
+  const result = diagnostics('success');
+  assert.equal(result.manifest.complete, true);
+  assert.deepEqual(result.manifest.errors, []);
+  assert.equal(result.manifest.node.length, 3);
+  assert.equal(result.manifest.responses.length, 6);
+  assert.deepEqual(result.manifest.matches.map(value => value.slot), [2, 4, 6]);
+  assert.equal(result.leak, false);
+  assert.equal(result.copyHashesMatch, true);
+});
+
+test('failed partial diagnostics retain only available safe files and never claim complete', () => {
+  const result = diagnostics('partial');
+  assert.equal(result.manifest.complete, false);
+  assert.equal(result.manifest.node.length, 2);
+  assert.equal(result.manifest.host, null);
+  assert.equal(result.leak, false);
+});
+
+for (const scenario of ['secret', 'unknown-key', 'string-value', 'permissions', 'hardlink', 'symlink', 'oversize', 'host-code', 'stop-hash', 'duplicate-stop', 'response-symlink', 'missing-tool-response', 'wrong-tool-slot', 'directory-mode', 'rejected-node']) test(`diagnostic ${scenario} cannot produce a complete accepted manifest or leak content`, () => {
+  const result = diagnostics(scenario);
+  assert.equal(result.manifest.complete, false);
+  assert.equal(result.leak, false);
+  if (!['rejected-node'].includes(scenario)) assert.ok(result.manifest.errors.length > 0 || scenario === 'directory-mode');
+});
 
 test('synthetic model readiness has a deadline even when the owned process keeps stdout open', () => {
   const result = runFunction('ready-timeout');
@@ -461,6 +598,16 @@ test('cleanup reaps only owned process groups and preserves an unrelated canary'
 
 test('admission accepts two approved source-bound reports and a zero-real-request synthetic report in an isolated fixture', () => {
   assert.equal(runFunction('admission-positive').error, null);
+});
+
+test('check-only admission validates isolated approval without evidence, prepare, ledger or credentials', () => {
+  const result = runFunction('check-admission-positive');
+  assert.equal(result.error, null);
+  assert.deepEqual(result.checkOutput, { version: 1, conclusion: 'pass' });
+});
+
+for (const scenario of ['missing', 'source', 'core', 'native-drift', 'verdict', 'real']) test(`check-only admission rejects ${scenario} before all mutable resources`, () => {
+  assert.equal(runFunction(`check-admission-${scenario}`).error, 'RuntimeError');
 });
 
 for (const scenario of ['digest', 'source', 'verdict', 'real', 'core', 'shared', 'mode', 'symlink', 'outside', 'missing', 'boolean-only', 'package-input', 'runtime-input', 'node-input', 'host-input', 'config-input', 'recovery-input', 'cargo-input', 'build-input', 'new-input', 'native-report', 'native-drift', 'native-mode', 'native-missing', 'native-absent', 'native-symlink', 'native-prepared']) test(`admission rejects ${scenario} evidence before any real-mode resource access`, () => {

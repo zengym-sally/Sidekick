@@ -1,0 +1,61 @@
+{
+  "scope": "P5 current real complete matrix and private diagnostics; no historical cause repair claim",
+  "baseHead": "997c5c19ade79407a1213cbdda7f8c518e38071d",
+  "designSha256": "5cd925fe15b1727314ff72eafd92eaae4cfd82451e82eba1af334b456a9977b8",
+  "sourceFileCount": 231,
+  "sourceAggregate": "27084aeae36d0a63cc50a0cc8831530dca3c895ffa565e0d43ab057f4a714107",
+  "criticalInputCount": 252,
+  "realNative": {
+    "path": "src-tauri/target/debug/deps/sidekick_lib-a4be4c81a1d240e1",
+    "sha256": "dd1eaa589f4cdb62258b8c32eb47367aa744332ee2b69e2ce724fcf04ce6fd52"
+  },
+  "gates": {
+    "deliveryA": "APPROVE",
+    "deliveryB": "APPROVE",
+    "zeroReal": "pass",
+    "zeroRealRequests": 0,
+    "realReadback": "pass",
+    "realReadbackChecks": 62
+  },
+  "requests": {
+    "newRunLimit": 10,
+    "newRunUsed": 6,
+    "newRunRemaining": 4,
+    "oldRunUsed": 6,
+    "oldLedgerReset": false,
+    "cutoffShanghai": "2026-11-01T12:00:00+08:00",
+    "furtherRealRequestsPlanned": false
+  },
+  "focused": {
+    "modelBudget": 133,
+    "nodeDiagnostic": 16,
+    "hostDiagnostic": 6,
+    "formalRegression": 21,
+    "s2Domain": 47,
+    "fail": 0
+  },
+  "originalIncident": {
+    "reproduced": false,
+    "rootCauseKnown": false,
+    "productionCausalFixClaimed": false,
+    "rejectedOriginalAnswerAvailable": false
+  },
+  "evidence": {
+    "deliveryA": {
+      "path": "build/p5-revise-20261101/delivery-v3-a/report.json",
+      "sha256": "4edf567e606b91d585c950621bad9f151f1aeb951af1a455a652e4002b5f867a"
+    },
+    "deliveryB": {
+      "path": "build/p5-revise-20261101/delivery-v3-b/report.json",
+      "sha256": "38766208388beac0d723b7578d037754b60a9594b2d981927b5933c866d2d2f5"
+    },
+    "zeroReal": {
+      "path": "build/p5-revise-20261101/independent-gate-v3/report.json",
+      "sha256": "e7ee5f4e556c353f911c053df70cf1cce3db2a73cde8ed54f2e5b9f1ff549c51"
+    },
+    "realReadback": {
+      "path": "build/p5-revise-20261101/real-readback/report.json",
+      "sha256": "326aefb13e88473f1db1bebd5181fb64e08647f75f2b8161cc08b917947c0740"
+    }
+  }
+}

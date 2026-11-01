@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import secrets
 import select
 import signal
@@ -36,9 +37,9 @@ CRITICAL = [
     "tests/integration/mcp-launcher.test.mjs",
     "tests/probes/model-budget-faults.py",
 ]
-ADMISSION = gate.REPOSITORY / "build/p5-formal-20261101/budget-admission.json"
+ADMISSION = gate.REPOSITORY / "build/p5-revise-20261101/budget-admission.json"
 PLAN = "docs/product/05-第一阶段实施计划.md"
-DESIGN_SHA256 = "8961b453f91bc7927c2855a4bd9d9e156a2f879dfb3655aeeda72c8baa056ea9"
+DESIGN_SHA256 = "5cd925fe15b1727314ff72eafd92eaae4cfd82451e82eba1af334b456a9977b8"
 
 
 def input_bytes(path, executable=False):
@@ -73,7 +74,7 @@ def hashes():
 
 def core_hash():
     lines = input_bytes(gate.REPOSITORY / PLAN).splitlines(keepends=True)
-    starts = [index for index, line in enumerate(lines) if line.startswith(b"### 16.25 ")]
+    starts = [index for index, line in enumerate(lines) if line.startswith(b"### 16.29 ")]
     if len(starts) != 1:
         gate.fail("LIVE_CORE_INVALID")
     start = starts[0]
@@ -139,6 +140,185 @@ def private_write(path, value):
     finally:
         os.close(descriptor)
     gate.sync_directory(path.parent)
+
+
+SHAPE_KEYS = {"changes", "preview", "candidates", "fields", "title", "kind", "owner", "priority", "tags", "evidence", "dueExpression", "followupExpression", "warnings", "unresolved", "due", "followup", "atMs", "timeZone", "precision", "expression", "ok", "type", "text", "content", "role", "id", "<redacted>"}
+DIAGNOSTIC_REASONS = {"raw-type", "raw-size", "json", "object-type", "object-keys", "text", "kind", "priority", "tags", "evidence", "date-evidence", "task-kind", "changes-empty", "followup", "model-error", "contract"}
+KINDS = {"extract", "revise", "trial"}
+
+
+def diagnostic_shape(value, depth=0, count=None):
+    if count is None:
+        count = [0]
+    count[0] += 1
+    if count[0] > 64 or depth > 6 or not isinstance(value, dict) or value.get("type") not in {"null", "string", "number", "boolean", "array", "object", "truncated", "invalid-json"}:
+        gate.fail("LIVE_DIAGNOSTIC_SHAPE_INVALID")
+    kind = value["type"]
+    expected = {"type"}
+    if kind == "string":
+        expected.add("bytes")
+    elif kind == "number":
+        expected.add("finite")
+    elif kind == "array":
+        expected.update({"length", "items"})
+    elif kind == "object":
+        expected.update({"entryCount", "entries"})
+    if set(value) != expected:
+        gate.fail("LIVE_DIAGNOSTIC_SHAPE_INVALID")
+    for key in {"bytes", "length", "entryCount"} & set(value):
+        if type(value[key]) is not int or not 0 <= value[key] <= gate.MAX_BODY:
+            gate.fail("LIVE_DIAGNOSTIC_SHAPE_INVALID")
+    if kind == "number" and type(value["finite"]) is not bool:
+        gate.fail("LIVE_DIAGNOSTIC_SHAPE_INVALID")
+    if kind in {"object", "array"}:
+        children = value["entries" if kind == "object" else "items"]
+        if not isinstance(children, list) or len(children) > 64:
+            gate.fail("LIVE_DIAGNOSTIC_SHAPE_INVALID")
+        for child in children:
+            if kind == "object":
+                if not isinstance(child, dict) or set(child) != {"key", "value"} or child["key"] not in SHAPE_KEYS:
+                    gate.fail("LIVE_DIAGNOSTIC_SHAPE_INVALID")
+                child = child["value"]
+            diagnostic_shape(child, depth + 1, count)
+
+
+def collect_diagnostics(base, evidence, secret, calls=None, slots=None):
+    manifest = {"version": 1, "complete": False, "errors": [], "node": [], "host": None, "responses": [], "matches": []}
+    nodes, responses, host, copies = {}, [], None, []
+    try:
+        base_identity = gate.identity(gate.private_directory(base))
+        gate.private_directory(evidence)
+    except BaseException:
+        manifest["errors"].append("ownership")
+        return manifest
+
+    def read(path, maximum):
+        if gate.identity(gate.private_directory(base)) != base_identity or path.resolve() != path or not path.is_relative_to(base):
+            gate.fail("LIVE_DIAGNOSTIC_OWNERSHIP_INVALID")
+        descriptor, metadata = gate.private_open(path)
+        try:
+            data = os.read(descriptor, maximum + 1)
+            if len(data) > maximum or gate.identity(os.fstat(descriptor)) != gate.identity(metadata) or gate.identity(path.lstat()) != gate.identity(metadata):
+                gate.fail("LIVE_DIAGNOSTIC_SIZE_INVALID")
+            value = gate.strict_json(data)
+            gate.secret_scan(value, secret)
+            return value, {"sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data)}
+        finally:
+            os.close(descriptor)
+
+    def fingerprint(value):
+        return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None
+
+    def run_id(value):
+        return isinstance(value, str) and re.fullmatch(r"[A-Za-z0-9_-]{1,128}", value) is not None
+
+    def retain(value, reference, filename):
+        retained = (json.dumps(value, ensure_ascii=False) + "\n").encode()
+        reference.update({"sourceSha256": reference["sha256"], "sourceBytes": reference["bytes"], "sha256": hashlib.sha256(retained).hexdigest(), "bytes": len(retained)})
+        reference["path"] = "diagnostics/" + filename
+        copies.append((filename, value))
+        return reference
+
+    runs = base / "workspace/runs"
+    if runs.exists() or runs.is_symlink():
+        try:
+            gate.private_directory(base / "workspace")
+            gate.private_directory(runs)
+            children = list(runs.iterdir())
+            if len(children) > 16:
+                gate.fail("LIVE_DIAGNOSTIC_RUNS_INVALID")
+            for directory in sorted(children):
+                try:
+                    if not run_id(directory.name):
+                        gate.fail("LIVE_DIAGNOSTIC_RUNS_INVALID")
+                    gate.private_directory(directory)
+                    path = directory / "output-diagnostic.json"
+                    if not path.exists() and not path.is_symlink():
+                        continue
+                    value, reference = read(path, 16384)
+                    if not isinstance(value, dict) or set(value) != {"version", "runId", "kind", "outcome", "reason", "raw", "canonicalShape"} or type(value["version"]) is not int or value["version"] != 1 or value["runId"] != directory.name or value["kind"] not in KINDS or value["outcome"] not in {"validated", "rejected", "unavailable"}:
+                        gate.fail("LIVE_DIAGNOSTIC_NODE_INVALID")
+                    if (value["outcome"] == "validated" and value["reason"] is not None) or (value["outcome"] != "validated" and value["reason"] not in DIAGNOSTIC_REASONS):
+                        gate.fail("LIVE_DIAGNOSTIC_NODE_INVALID")
+                    raw = value["raw"]
+                    if raw is not None:
+                        if not isinstance(raw, dict) or set(raw) != {"sha256", "bytes", "shape"} or not fingerprint(raw["sha256"]) or type(raw["bytes"]) is not int or not 0 <= raw["bytes"] <= gate.MAX_BODY:
+                            gate.fail("LIVE_DIAGNOSTIC_NODE_INVALID")
+                        diagnostic_shape(raw["shape"])
+                    if value["canonicalShape"] is not None:
+                        diagnostic_shape(value["canonicalShape"])
+                    if value["outcome"] == "validated" and (raw is None or value["canonicalShape"] is None):
+                        gate.fail("LIVE_DIAGNOSTIC_NODE_INVALID")
+                    nodes[value["runId"]] = value
+                    manifest["node"].append(retain(value, {**reference, "runId": value["runId"], "kind": value["kind"]}, "node-" + value["runId"] + ".json"))
+                except BaseException:
+                    manifest["errors"].append("node")
+        except BaseException:
+            manifest["errors"].append("runsOwnership")
+    path = base / "output-diagnostics.json"
+    if path.exists() or path.is_symlink():
+        try:
+            value, reference = read(path, 16384)
+            if not isinstance(value, dict) or set(value) != {"version", "events"} or type(value["version"]) is not int or value["version"] != 1 or not isinstance(value["events"], list) or len(value["events"]) > 64:
+                gate.fail("LIVE_DIAGNOSTIC_HOST_INVALID")
+            for event in value["events"]:
+                if not isinstance(event, dict) or set(event) != {"runId", "kind", "stage", "outcome", "code"} or not run_id(event["runId"]) or event["kind"] not in KINDS or event["stage"] not in {"runtime-result", "rust-decode", "rust-publish"} or event["outcome"] not in {"ok", "error"} or event["code"] not in {None, "MODEL_INVALID_OUTPUT", "RUNTIME_REJECTED", "STORE_REJECTED"} or (event["outcome"] == "ok" and event["code"] is not None):
+                    gate.fail("LIVE_DIAGNOSTIC_HOST_INVALID")
+            host = value
+            manifest["host"] = retain(value, reference, "host.json")
+        except BaseException:
+            manifest["errors"].append("host")
+    try:
+        paths = list(base.glob("response-*.json"))
+        if len(paths) > gate.LIMIT:
+            gate.fail("LIVE_DIAGNOSTIC_RESPONSE_INVALID")
+        for path in sorted(paths):
+            try:
+                value, reference = read(path, 2048)
+                if not isinstance(value, dict) or set(value) != {"version", "slot", "contentSha256", "contentBytes", "finishReason", "toolCallCount"} or type(value["version"]) is not int or value["version"] != 1 or type(value["slot"]) is not int or not 1 <= value["slot"] <= gate.LIMIT or path.name != f"response-{value['slot']}.json" or not fingerprint(value["contentSha256"]) or type(value["contentBytes"]) is not int or not 0 <= value["contentBytes"] <= gate.MAX_BODY or value["finishReason"] not in {"stop", "tool_calls"} or type(value["toolCallCount"]) is not int or not 0 <= value["toolCallCount"] <= 256 or (value["finishReason"] == "stop") != (value["toolCallCount"] == 0):
+                    gate.fail("LIVE_DIAGNOSTIC_RESPONSE_INVALID")
+                responses.append(value)
+                manifest["responses"].append(retain(value, {**reference, "slot": value["slot"]}, path.name))
+            except BaseException:
+                manifest["errors"].append("response")
+    except BaseException:
+        manifest["errors"].append("responses")
+    if calls is not None:
+        try:
+            identifiers = [call["runId"] for call in calls]
+            if len(identifiers) != 3 or len(set(identifiers)) != 3 or set(identifiers) != set(nodes) or {node["kind"] for node in nodes.values()} != KINDS or host is None:
+                gate.fail("LIVE_DIAGNOSTIC_INCOMPLETE")
+            if len(responses) < 6 or (slots is not None and sorted(response["slot"] for response in responses) != slots):
+                gate.fail("LIVE_DIAGNOSTIC_INCOMPLETE")
+            stops = sorted((response for response in responses if response["finishReason"] == "stop"), key=lambda response: response["slot"])
+            ordered = sorted(nodes.values(), key=lambda node: ["extract", "revise", "trial"].index(node["kind"]))
+            if len(stops) != 3:
+                gate.fail("LIVE_DIAGNOSTIC_INCOMPLETE")
+            expected_events = []
+            for node, response in zip(ordered, stops):
+                raw = node["raw"]
+                if node["outcome"] != "validated" or raw is None or raw["sha256"] != response["contentSha256"] or raw["bytes"] != response["contentBytes"]:
+                    gate.fail("LIVE_DIAGNOSTIC_CORRELATION_INVALID")
+                manifest["matches"].append({"runId": node["runId"], "kind": node["kind"], "slot": response["slot"]})
+                expected_events.extend({"runId": node["runId"], "kind": node["kind"], "stage": stage, "outcome": "ok", "code": None} for stage in ["runtime-result", "rust-decode", "rust-publish"])
+            if host["events"] != expected_events:
+                gate.fail("LIVE_DIAGNOSTIC_CORRELATION_INVALID")
+            manifest["complete"] = not manifest["errors"]
+        except BaseException:
+            manifest["errors"].append("correlation")
+    try:
+        if gate.identity(gate.private_directory(base)) != base_identity:
+            gate.fail("LIVE_DIAGNOSTIC_OWNERSHIP_INVALID")
+        destination = evidence / "diagnostics"
+        destination.mkdir(mode=0o700)
+        gate.private_directory(destination)
+        for filename, value in copies:
+            private_write(destination / filename, value)
+        private_write(destination / "manifest.json", manifest)
+    except BaseException:
+        manifest["complete"] = False
+        manifest["errors"].append("retention")
+    return manifest
 
 
 def inventory():
@@ -266,12 +446,20 @@ def main():
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--real", action="store_true")
     mode.add_argument("--synthetic", action="store_true")
+    mode.add_argument("--check-admission", action="store_true")
     arguments = parser.parse_args()
+    if arguments.check_admission:
+        try:
+            admission()
+        except BaseException:
+            gate.fail("LIVE_ADMISSION_REQUIRED")
+        print(json.dumps({"version": 1, "conclusion": "pass"}, separators=(",", ":")))
+        return
     layer = "real-budgeted" if arguments.real else "synthetic-budgeted"
-    evidence = gate.REPOSITORY / "build/p5-formal-20261101" / f"{layer}-{time.time_ns()}"
+    evidence = gate.REPOSITORY / "build/p5-revise-20261101" / f"{layer}-{time.time_ns()}"
     evidence.mkdir(mode=0o700, parents=True)
     directory = gate.REPOSITORY / "build/s0-runtime"
-    relay = relay_thread = reader = model = child = budget = None
+    relay = relay_thread = reader = model = child = budget = base = None
     stop_reader, relay_failed = threading.Event(), threading.Event()
     owned, captured = {}, []
     captured_size = 0
@@ -300,6 +488,8 @@ def main():
             budget = gate.Budget(counter)
         before = budget.inspect()
         outcome["before"] = before
+        if arguments.real and before["remaining"] < 6:
+            gate.fail("LIVE_BUDGET_REMAINING")
         outcome["failureStage"] = "prepare"
         executable = prepare(evidence)
         native = native_binding(executable)
@@ -323,7 +513,7 @@ def main():
             model = subprocess.Popen([str(directory / "node"), str(gate.REPOSITORY / "tests/fixtures/mcp-trial.mjs"), "model", str(base / "model.jsonl"), "normal"], cwd=gate.REPOSITORY, env={"PATH": "/usr/bin:/bin"}, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
             upstream = model_ready(model)
             secret, model_id = gate.FAKE_KEY, "synthetic"
-        relay = gate.Relay(budget, base, upstream, secret, model_id, "P5" if arguments.real else "test")
+        relay = gate.Relay(budget, base, upstream, secret, model_id, "P5" if arguments.real else "test", diagnostics=True)
         def serve():
             try:
                 relay.serve_forever(poll_interval=0.1)
@@ -507,6 +697,14 @@ def main():
                     gate.fail("LIVE_NATIVE_INPUT_CHANGED")
             except BaseException:
                 cleanup_errors.append("nativeSnapshot")
+        if base is not None:
+            try:
+                slots = list(range(before["reserved"] + 1, outcome["after"]["reserved"] + 1)) if "after" in outcome else None
+                outcome["diagnostics"] = collect_diagnostics(base, evidence, secret, outcome.get("native", {}).get("calls"), slots)
+                if outcome["diagnostics"]["errors"] or (succeeded and not outcome["diagnostics"]["complete"]):
+                    gate.fail("LIVE_DIAGNOSTICS_INVALID")
+            except BaseException:
+                cleanup_errors.append("diagnostics")
         if cleanup_errors:
             succeeded = False
             outcome.update({"conclusion": "fail", "cleanupErrors": cleanup_errors})
