@@ -41,7 +41,7 @@ lines.on('line',line=>{
     }else if(mcpControl&&!mcpControl.receive(value))throw new Error('RUNTIME_PROTOCOL');
   }catch{rejectInput(new Error('RUNTIME_PROTOCOL'));abort();}
 });
-const allowed=new Set(['MODEL_INVALID_OUTPUT','CANCELLED','MODEL_TIMEOUT','RUNTIME_PROTOCOL','INVALID_TIMEZONE','UNSUPPORTED_MODEL_PARAMETERS','MCP_PROTOCOL','MCP_TIMEOUT','MCP_CATALOG_INVALID','MCP_PRIVATE_OUTPUT','MCP_CLEANUP','MCP_RESULT_INVALID']);
+const allowed=new Set(['MODEL_INVALID_OUTPUT','CANCELLED','MODEL_TIMEOUT','RUNTIME_PROTOCOL','INVALID_TIMEZONE','UNSUPPORTED_MODEL_PARAMETERS','MCP_PROTOCOL','MCP_TIMEOUT','MCP_CATALOG_INVALID','MCP_PRIVATE_OUTPUT','MCP_CLEANUP','MCP_RESULT_INVALID','MCP_HTTP_AUTH','MCP_HTTP_HEADER','MCP_HTTP_REDIRECT','MCP_HTTP_SESSION','MCP_HTTP_STATUS','MCP_HTTP_LIMIT']);
 function category(error){
   if(mcp?.error&&allowed.has(mcp.error))return mcp.error;
   if(timedOut)return 'MODEL_TIMEOUT';if(cancelled)return 'CANCELLED';if(allowed.has(error?.message))return error.message;
@@ -94,7 +94,7 @@ try{
     mcpControl=new McpControl({runId,hostNonce,deadline,send:frame=>new Promise((resolve,reject)=>{
       const line=JSON.stringify(frame)+'\n';if(Buffer.byteLength(line)>1200000){reject(new Error('MCP_PROTOCOL'));return;}process.stdout.write(line,error=>error?reject(new Error('MCP_PROTOCOL')):resolve());
     })});
-    const sensitive=[request.apiKey,...request.mcp.servers.flatMap(server=>(server.sensitiveNames||[]).map(name=>server.env[name]).filter(Boolean))];
+    const sensitive=[request.apiKey,...request.mcp.servers.flatMap(server=>server.transport==='http'?(server.sensitiveValues||[]):(server.sensitiveNames||[]).map(name=>server.env[name]).filter(Boolean))];
     mcp=new McpTrial({runId,directory,cwd:request.cwd,deadline,servers:request.mcp.servers,control:mcpControl,sensitive,onFatal:()=>{agent?.abort();bash?.close();}});
     tools.push(...await mcp.connect());
     for(const tool of tools){const execute=tool.execute;tool.execute=(...args)=>{mcp.guard(args[2]);return execute(...args);};}

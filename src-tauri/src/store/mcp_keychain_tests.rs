@@ -432,11 +432,17 @@ fn mcp_keychain_store_partial_and_uncertain_writes_preserve_base_without_compens
         a.port.writes.set(0);
         a.port.fault.set(fault);
         let mut replacement = input(&s, Some(id.clone()), OP2, NEXT);
-        replacement.edit.server.env.push(McpEnvironment {
-            name: "ALPHA".into(),
-            source: "keychain".into(),
-            value: String::new(),
-        });
+        replacement
+            .edit
+            .server
+            .stdio_mut()
+            .unwrap()
+            .env
+            .push(McpEnvironment {
+                name: "ALPHA".into(),
+                source: "keychain".into(),
+                value: String::new(),
+            });
         replacement.values.insert("ALPHA".into(), NEXT.into());
         let error = s.save_mcp_secrets_with(replacement, &a).unwrap_err();
         assert_eq!(error.code, "MCP_CREDENTIAL_UNAVAILABLE");

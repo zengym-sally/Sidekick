@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { McpClient } from '@sidekick/pi-mcp-client';
 import { ManagedMcpTransport } from './managed-mcp.mjs';
+import { ManagedHttpTransport } from './managed-mcp-http.mjs';
 import { normalizeCatalog } from './mcp-catalog.mjs';
 import { canonicalArguments, checkArguments, checkMcpResult, modelToolName } from './mcp-tool-contract.mjs';
 
@@ -24,12 +25,15 @@ export class McpTrial {
     for (const server of this.servers) {
       this.guard();
       const connectDeadline = Math.min(this.deadline, Date.now() + server.connectTimeoutMs);
-      const control = (action, owner) => this.control.request(action, { ...owner, serverId: server.id }, action === 'end' ? this.cleanupDeadline : connectDeadline);
-      const transport = new ManagedMcpTransport({ ...server, runId: this.runId, directory: this.directory, runDirectory: this.cwd, deadline: this.deadline, totalDeadline: this.deadline }, { prepare: owner => control('prepare', owner), own: owner => control('owner', owner), end: owner => control('end', owner), callGuard: () => this.guard() });
+      const identity = server.transport === 'http' ? { transport: 'http', run: this.runId, nonce: server.sessionNonce, endpointSha256: server.endpointSha256, configurationRevision: server.configurationRevision } : {};
+      const control = (action, owner) => this.control.request(action, { ...identity, ...owner, serverId: server.id }, action === 'end' ? this.cleanupDeadline : connectDeadline);
+      const config = { ...server, runId: this.runId, directory: this.directory, runDirectory: this.cwd, deadline: this.deadline, totalDeadline: this.deadline + (server.transport === 'http' ? 5000 : 0) };
+      const callbacks = { open: owner => control('http_open', owner), prepare: owner => control('prepare', owner), own: owner => control('owner', owner), end: owner => control('end', owner), callGuard: () => this.guard(), sensitive: value => this.sensitive.push(value) };
+      const transport = server.transport === 'http' ? new ManagedHttpTransport(config, callbacks) : new ManagedMcpTransport(config, callbacks);
       const client = new McpClient({ name: 'Sidekick', version: '0.3.0', capabilities: {}, requestTimeoutMs: Math.max(1, connectDeadline - Date.now()) });
-      const session = { server, transport, client }; this.sessions.push(session);
-      client.onError(() => { this.fail(); transport.fail(); });
-      client.onNotification('notifications/tools/list_changed', () => { this.refreshRequired = true; });
+      const session = { server, transport, client, identity }; this.sessions.push(session);
+      client.onError(() => { this.fail(transport.code || 'MCP_PROTOCOL'); transport.fail(); });
+      client.onNotification('notifications/tools/list_changed', () => { this.fail('MCP_CATALOG_INVALID'); transport.fail(); });
       let timer;
       try {
         const discover = async () => {
@@ -50,7 +54,8 @@ export class McpTrial {
         const catalog = await Promise.race([discover(), new Promise((_, reject) => { timer = setTimeout(() => { this.fail('MCP_TIMEOUT'); void transport.close().catch(() => {}); reject(new Error('MCP_TIMEOUT')); }, Math.max(1, connectDeadline - Date.now())); })]);
         this.catalogBytes += Buffer.byteLength(JSON.stringify(catalog)); this.toolCount += catalog.tools.length;
         if (this.catalogBytes > 524288 || this.toolCount > 256) throw new Error('MCP_CATALOG_INVALID');
-        const ack = await this.control.request('catalog', { serverId: server.id, catalog }, connectDeadline);
+        this.guard();
+        const ack = await this.control.request('catalog', { ...identity, serverId: server.id, catalog }, connectDeadline);
         if (!Array.isArray(ack.mapping) || ack.mapping.length !== catalog.tools.length) throw new Error('MCP_PROTOCOL');
         for (let index = 0; index < catalog.tools.length; index++) {
           const tool = catalog.tools[index], binding = ack.mapping[index], name = modelToolName(server.id, tool.name);
@@ -59,7 +64,7 @@ export class McpTrial {
           tools.push({ name, label: `${server.id}/${tool.name}`, description: tool.description || `MCP ${server.id}/${tool.name}`, parameters: tool.inputSchema, executionMode: 'sequential', execute: (modelCallId, args, signal) => this.call(session, binding, modelCallId, args, signal) });
         }
       } catch (error) {
-        this.fail(['MCP_TIMEOUT', 'MCP_CATALOG_INVALID', 'MCP_PRIVATE_OUTPUT'].includes(error?.message) ? error.message : 'MCP_PROTOCOL');
+        this.fail(['MCP_TIMEOUT', 'MCP_CATALOG_INVALID', 'MCP_PRIVATE_OUTPUT', 'MCP_HTTP_AUTH', 'MCP_HTTP_HEADER', 'MCP_HTTP_REDIRECT', 'MCP_HTTP_SESSION', 'MCP_HTTP_STATUS', 'MCP_HTTP_LIMIT'].includes(transport.code || error?.message) ? transport.code || error.message : 'MCP_PROTOCOL');
         throw new Error(this.error);
       } finally { clearTimeout(timer); }
     }
@@ -73,13 +78,13 @@ export class McpTrial {
     const combined = signal ? AbortSignal.any([signal, controller.signal]) : controller.signal;
     const timer = setTimeout(() => controller.abort(), Math.max(1, deadline - Date.now()));
     try {
-      await this.control.request('call_begin', { serverId: binding.serverId, callId, input: { id: callId, modelCallId, modelName: binding.modelName, configurationRevision: session.server.configurationRevision, schemaSha256: binding.schemaSha256, argumentsJson } }, deadline);
+      await this.control.request('call_begin', { ...session.identity, serverId: binding.serverId, callId, input: { id: callId, modelCallId, modelName: binding.modelName, configurationRevision: session.server.configurationRevision, schemaSha256: binding.schemaSha256, argumentsJson } }, deadline);
       this.guard(combined, deadline);
       session.transport.grantCall(binding.toolName, args, deadline);
       const raw = await session.client.callTool(binding.toolName, JSON.parse(argumentsJson), { signal: combined, timeoutMs: Math.max(1, deadline - Date.now()) });
       this.guard(combined, deadline);
       const checked = checkMcpResult(raw, this.sensitive, this.resultBytes); this.resultBytes += checked.bytes;
-      await this.control.request('call_response', { serverId: binding.serverId, callId, result: checked.result }, deadline);
+      await this.control.request('call_response', { ...session.identity, serverId: binding.serverId, callId, result: checked.result }, deadline);
       this.guard(combined, deadline);
       return { content: checked.content, ...(raw.structuredContent === undefined ? {} : { structuredContent: raw.structuredContent }), ...(checked.isError ? { isError: true } : {}) };
     } catch (error) {

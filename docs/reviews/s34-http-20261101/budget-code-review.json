@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-11-01T11:29:16.475903+00:00",
+  "mode": "Inspect",
+  "reviewSurface": "全新局部上下文独立代码评审；作者未提供代码评审结论，本报告依据三源、批准约束与原始证据作出判断",
+  "originalRequest": "S3.4 完整门禁连续两次在未改动的预算重启用例出现 ECONNRESET，当前已停止、未提交。是否授权增加一个独立预算回归修复项：先复现并定位，再最小修复和回归，保持现有额度与授权语义；继续只用合成资料、本机受控服务和临时账本，通过后恢复原 S3.4 复核及本地提交、不推送？",
+  "userAuthorization": "授权独立预算回归诊断与最小修复（推荐）",
+  "baseCommit": "8b7fbcc2c79e1ea65741df92cd78d581d06277de",
+  "scope": [
+    "scripts/probes/model_budget.py",
+    "tests/probes/model-budget-faults.py",
+    "tests/integration/model-budget.test.mjs"
+  ],
+  "scale": {
+    "classification": "非批量",
+    "reason": "一个监听容量缺陷，三个源文件组成同一可逆补丁；无逐对象状态操作"
+  },
+  "risk": {
+    "authorClassification": "R2",
+    "reviewerClassification": "R2",
+    "challenged": true,
+    "reason": "修改共享受控 Relay 的监听并发容量，须按 R2 评审；现有 TCP/HTTP 请求契约、额度、认证、凭据访问、schema 与生产边界均未改变，因此未触发仓库 R3 跨进程契约或安全边界条件。只改变 socket 传给 OS 的 backlog 下限。"
+  },
+  "artifactGate": "批准的 repair-plan-v2 与 test-seam-delta 已供约束；本报告是交付代码只读评审，不替代独立验证或 owner 授权",
+  "verdict": "APPROVE",
+  "result": "pass",
+  "findings": [],
+  "binding": {
+    "sourceFreezePath": "build/budget-restart-fix-20261101/source-freeze.json",
+    "sourceFreezeSha256": "c7cfa3f1a5d2e9ed60f5966a993339cd3017f006eb107520f048ef08daf6ef23",
+    "sourceFreezeCount": 50,
+    "all50CurrentSourcesMatched": true,
+    "reviewedSourceSha256": {
+      "scripts/probes/model_budget.py": "862e12ece474a682e5f9aa491dda62a247d10f0c77c54e929c68413ef5f54053",
+      "tests/probes/model-budget-faults.py": "0ed4dbc1f899832ccafb8e8390f8da307718c67e2d60acacaa1c9bef2f39e024",
+      "tests/integration/model-budget.test.mjs": "f1ccfd3299771c998615809688ff77d7cac2d270f2a772825aa30f6a8dc6538c"
+    },
+    "evidenceSha256": {
+      "system-python-node24-focused.log": "54099f73c7f442cccfc3727720d97b926633704f17a4900d8ef0b8bfc6458e70",
+      "system-python-queue16.log": "56199239806c439c193cb1b437ac5b1f38e0157fe46466257823545c7afc27ac",
+      "homebrew-python-queue5.log": "cc4987bfad1bf26d463408d9740ab97a5f988195717ae13aa1921cec2ef720f7",
+      "maintained-red.log": "21152fff1dd288f256a1ad7bd8c64467826b063fa4d0aa1071292f74921822c3",
+      "maintained-red-attempt2.log": "30505d4dfcb34ad660da98a17f1de95a2792e756361ea52a6ae7ee8599a93837",
+      "maintained-deterministic-red.log": "7f065d2b663ecec2a787085b4b9bcdc211ea66cc3a880c3146e3bbc79e5a874d",
+      "maintained-green.log": "589b8bd1c3a428d54449d4cc043f0509ad0d596f64302feaf5361bfb9813087b",
+      "actual-listen-green.json": "c59a88e1de3d385c9e3c5ef5c461fcc9caf440ed7953ab8a3e25f20bde56e3c4",
+      "repair-plan-v2.json": "8dd6c6fe8eff21ff98adc9ca0718849925b885ad6222ad5b278087a8e4247e8c",
+      "plan-review/test-seam-delta.json": "bf07aae31136733041d1137e75a3448651e122cefeb04c8a58f38821250ac6e8"
+    }
+  },
+  "dimensions": [
+    {
+      "dimension": "规格与范围",
+      "result": "pass",
+      "locations": [
+        "scripts/probes/model_budget.py:508-519",
+        "tests/probes/model-budget-faults.py:271-300",
+        "tests/integration/model-budget.test.mjs:192-197"
+      ],
+      "evidence": "生产源剔除新增 request_queue_size 一行后与 HEAD 字节完全相同。低/高继承默认、真实连接、无预留、清理均符合已批准 v2。"
+    },
+    {
+      "dimension": "监听容量与并发",
+      "result": "pass",
+      "locations": [
+        "scripts/probes/model_budget.py:510",
+        "scripts/probes/model_budget.py:519",
+        "scripts/probes/model_budget.py:538-558"
+      ],
+      "evidence": "队列下限16且保留更高继承默认；处理器 BoundedSemaphore(16) 及其 acquire/release 未改。系统 TCPServer.server_activate 直接调用 self.socket.listen(self.request_queue_size)。"
+    },
+    {
+      "dimension": "真实 OS 与测试有效性",
+      "result": "pass",
+      "locations": [
+        "tests/probes/model-budget-faults.py:274-288"
+      ],
+      "evidence": "ListenerSocket 继承原 socket.socket，listen 记录实参后调用 super；patch 仅覆盖实际 Relay 构造，客户端连接前恢复。两解释器独立执行均观察 [16,128] 和32条真实本机TCP连接；未模拟内核队列。"
+    },
+    {
+      "dimension": "加载、mock 还原与清理",
+      "result": "pass",
+      "locations": [
+        "tests/probes/model-budget-faults.py:18-21",
+        "tests/probes/model-budget-faults.py:280-300"
+      ],
+      "evidence": "在继承默认 patch 范围内重新执行实际模块，模块名不是 __main__。with 恢复继承类属性及 socket；finally 关闭所有成功客户端/Relay，成功才删临时根，失败保留。两解释器实跑断言 socket 恢复、继承默认恢复、成功根已删除。系统 TCPServer 构造器自身在 bind/activate 异常时 server_close。"
+    },
+    {
+      "dimension": "额度、授权与敏感资料",
+      "result": "pass",
+      "locations": [
+        "scripts/probes/model_budget.py:142-146",
+        "scripts/probes/model_budget.py:195-206",
+        "scripts/probes/model_budget.py:687",
+        "scripts/probes/model_budget.py:707-740",
+        "tests/probes/model-budget-faults.py:279-290"
+      ],
+      "evidence": "新增路径使用 initialize(base) 与 Budget(base) 的 synthetic 默认；未启动 serve_forever、未发HTTP，因而无处理器或上游调用；预留0实际读取断言。LIMIT10、reserve/mark、认证、超时、重试与真实配置入口均未改。评审未读真实env、真实账本或用户根。"
+    },
+    {
+      "dimension": "回归证据与因果边界",
+      "result": "pass",
+      "locations": [
+        "build/budget-restart-fix-20261101/system-python-node24-focused.log",
+        "build/budget-restart-fix-20261101/system-python-queue16.log",
+        "build/budget-restart-fix-20261101/homebrew-python-queue5.log",
+        "build/budget-restart-fix-20261101/maintained-deterministic-red.log",
+        "build/budget-restart-fix-20261101/maintained-green.log"
+      ],
+      "evidence": "原HTTP重启系统Python失败为 connect ECONNRESET54；仅强制queue16后通过，Homebrew仅降queue5后同症状失败。首次TCP-only意外通过和第二次connect54失败均保留。加固后修前红定位实际listen参数不变量，修后维护测试及原HTTP重启共2/2绿；未把参数断言红称作每次复现ECONNRESET。历史完整门禁实际Python仍未知，不能据此追认。"
+    },
+    {
+      "dimension": "精简与仓库边界",
+      "result": "pass",
+      "locations": [
+        "scripts/probes/model_budget.py",
+        "tests/probes/model-budget-faults.py",
+        "tests/integration/model-budget.test.mjs"
+      ],
+      "evidence": "只有一个生产类属性，没有新抽象、配置、依赖、重试或超时放宽；测试沿用既有 probe/runner，路径及脚本名未改。"
+    },
+    {
+      "dimension": "干净检出输入可得性",
+      "result": "pass",
+      "locations": [
+        "package.json",
+        "tests/probes/model-budget-faults.py:1-21",
+        "tests/integration/model-budget.test.mjs:1-21"
+      ],
+      "evidence": "三个输入均 git ls-files 确认已跟踪。新增探针仅用 Python 标准库及仓库内实际源；Node测试仅依赖已存在的 faultProbe 与标准库，不读取 build 下诊断替身、忽略文件或真实配置。未执行干净检出完整构建。"
+    }
+  ],
+  "actualChecks": [
+    {
+      "command": "/usr/bin/python3 -B -",
+      "stdin": "import importlib.util, json, pathlib, socket, http.server, sys\nspec=importlib.util.spec_from_file_location('probe_under_review','tests/probes/model-budget-faults.py')\np=importlib.util.module_from_spec(spec);spec.loader.exec_module(p)\noriginal_socket=socket.socket\noriginal_queue=http.server.ThreadingHTTPServer.request_queue_size\ncreated=[]\noriginal_temporary=p.temporary\ndef temporary():\n base=original_temporary();created.append(base);return base\np.temporary=temporary\np.listener_burst()\nassert socket.socket is original_socket\nassert http.server.ThreadingHTTPServer.request_queue_size == original_queue\nassert len(created)==1 and not created[0].exists()\nprint(json.dumps({'python':sys.version.split()[0],'socketRestored':True,'inheritedQueueRestored':original_queue,'temporaryRootRemoved':True}))\n",
+      "result": {
+        "python": "3.9.6",
+        "connected": 32,
+        "listen_backlogs": [
+          16,
+          128
+        ],
+        "reserved": 0,
+        "real_model_requests": 0,
+        "socketRestored": true,
+        "inheritedQueueRestored": 5,
+        "temporaryRootRemoved": true
+      }
+    },
+    {
+      "command": "/opt/homebrew/bin/python3 -B -",
+      "stdin": "import importlib.util, json, pathlib, socket, http.server, sys\nspec=importlib.util.spec_from_file_location('probe_under_review','tests/probes/model-budget-faults.py')\np=importlib.util.module_from_spec(spec);spec.loader.exec_module(p)\noriginal_socket=socket.socket\noriginal_queue=http.server.ThreadingHTTPServer.request_queue_size\ncreated=[]\noriginal_temporary=p.temporary\ndef temporary():\n base=original_temporary();created.append(base);return base\np.temporary=temporary\np.listener_burst()\nassert socket.socket is original_socket\nassert http.server.ThreadingHTTPServer.request_queue_size == original_queue\nassert len(created)==1 and not created[0].exists()\nprint(json.dumps({'python':sys.version.split()[0],'socketRestored':True,'inheritedQueueRestored':original_queue,'temporaryRootRemoved':True}))\n",
+      "result": {
+        "python": "3.15.1",
+        "connected": 32,
+        "listen_backlogs": [
+          16,
+          128
+        ],
+        "reserved": 0,
+        "real_model_requests": 0,
+        "socketRestored": true,
+        "inheritedQueueRestored": 128,
+        "temporaryRootRemoved": true
+      }
+    },
+    {
+      "command": "node --check tests/integration/model-budget.test.mjs",
+      "result": "无语法错误输出"
+    },
+    {
+      "command": "git diff --check -- scripts/probes/model_budget.py tests/probes/model-budget-faults.py tests/integration/model-budget.test.mjs",
+      "result": "无空白错误输出"
+    },
+    {
+      "command": "/usr/bin/python3 -B - (hashlib/source-freeze/exact-delta assertions)",
+      "result": "50源匹配 c7cfa3f1a5d2e9ed60f5966a993339cd3017f006eb107520f048ef08daf6ef23；生产源变化恰为一行队列策略；三评审源已跟踪"
+    }
+  ],
+  "executionNote": "以上短检查所在 shell 调用实际 exit code 0；两个 Python 探针均输出结果且通过随后还原/清理断言。未新增或修改源码。",
+  "explicitlySkipped": [
+    "未运行完整 npm run check、Cargo、bundle、GUI 或真实模型；独立代码评审不替代验证方的完整门禁。",
+    "未运行或预填在途两解释器原 npm run test:model-budget 的最终结果；其结果不是本报告通过前提。",
+    "未评审其余 S3.4 授权改动；旧 sealed 证据未改写或重签。",
+    "迁移、schema、vendor、identifier、前端UI和生产部署维度无本次代码变化，跳过对应动态验证。"
+  ],
+  "limitations": [
+    "32条连接只证明本机受控TCP可连通性；内核实际排队数及所有调度不由参数spy证明。",
+    "没有原完整门禁实际Python解析记录，不能把历史失败完全归因到某个具体解释器。",
+    "本结论仅对绑定三源的代码正确性与测试设计有效；S3.4恢复/收口仍需验证方的新完整门禁及其独立结论。",
+    "失败finally清理路径经源码和标准库构造器核对，未额外注入失败；成功路径清理已实际验证。"
+  ]
+}

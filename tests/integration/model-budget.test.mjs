@@ -189,6 +189,13 @@ test('PF05 partial request headers have bounded time and concurrent handlers', (
   assert.match(faultProbe('header-limits'), /"reserved": 0/);
 });
 
+test('the relay listener accepts a handler-sized startup burst with a low inherited queue default', () => {
+  const result = JSON.parse(faultProbe('listener-burst'));
+  assert.equal(result.connected, 32);
+  assert.equal(result.reserved, 0);
+  assert.equal(result.real_model_requests, 0);
+});
+
 test('initialization write, sync and commit faults retain enrollment and refuse reinitialization', () => {
   assert.match(faultProbe('initialization-faults'), /"faults_refused_without_reinitialization": 16/);
 });

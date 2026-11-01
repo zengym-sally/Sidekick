@@ -323,7 +323,7 @@ fn input() -> TextInput {
         time_zone: "UTC".into(),
     }
 }
-fn roundtrip(
+pub(super) fn roundtrip(
     local: &LocalState,
     runtime: &RuntimeState,
     directory: &Path,
@@ -542,7 +542,7 @@ fn service_mode(fixture: &TrialFixture, mode: &str) {
             let configuration = store.mcp_configuration()?;
             let server = &configuration.servers[0];
             let mut settings = server.settings.clone();
-            settings.args[3] = mode.into();
+            settings.stdio_mut().unwrap().args[3] = mode.into();
             store.save_mcp_server(McpServerInput {
                 id: Some(server.id.clone()),
                 expected_revision: configuration.revision,
@@ -790,7 +790,7 @@ fn formal_configuration_snapshot_survives_edits_and_active_delete_is_blocked() {
         )
         .is_err());
     let mut settings = config.servers[0].settings.clone();
-    settings.command = "/never-executed".into();
+    settings.stdio_mut().unwrap().command = "/never-executed".into();
     settings.enabled = false;
     fixture
         .local
@@ -1584,7 +1584,8 @@ fn formal_enabled_mcp_preparation_failure_does_not_silently_skip_the_service() {
         .access(|store| {
             let configuration = store.mcp_configuration()?;
             let mut settings = configuration.servers[0].settings.clone();
-            settings.command = "/sidekick-synthetic-command-does-not-exist".into();
+            settings.stdio_mut().unwrap().command =
+                "/sidekick-synthetic-command-does-not-exist".into();
             store.save_mcp_server(McpServerInput {
                 id: Some(configuration.servers[0].id.clone()),
                 expected_revision: configuration.revision,

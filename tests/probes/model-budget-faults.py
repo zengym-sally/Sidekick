@@ -268,6 +268,38 @@ def commit_faults():
     print(json.dumps({"case": "commit-faults", "faults_refused_without_refund": tested}))
 
 
+def listener_burst():
+    base, succeeded = temporary(), False
+    relays, clients, backlogs = [], [], []
+    class ListenerSocket(socket.socket):
+        def listen(self, backlog):
+            backlogs.append(backlog)
+            return super().listen(backlog)
+    try:
+        mb.initialize(base)
+        for inherited in (5, 128):
+            with mock.patch.object(mb.http.server.ThreadingHTTPServer, "request_queue_size", inherited), mock.patch.object(mb.socket, "socket", ListenerSocket):
+                spec.loader.exec_module(mb)
+                relay = mb.Relay(mb.Budget(base), base, "http://127.0.0.1:1/v1", mb.FAKE_KEY, "synthetic")
+                relays.append(relay)
+            assert backlogs[-1] >= 16, "the listener must queue the existing sixteen-handler capacity"
+            assert backlogs[-1] >= inherited, "a higher inherited listener capacity must be retained"
+            for _ in range(16):
+                clients.append(socket.create_connection(relay.server_address, timeout=0.5))
+        assert mb.Budget(base).inspect()["reserved"] == 0
+        print(json.dumps({"case": "listener-burst", "connected": len(clients), "listen_backlogs": backlogs, "reserved": 0, "real_model_requests": 0}))
+        succeeded = True
+    except BaseException as error:
+        raise AssertionError(f"{error}; synthetic evidence retained: {base}") from error
+    finally:
+        for client in clients:
+            client.close()
+        for relay in relays:
+            relay.server_close()
+        if succeeded:
+            shutil.rmtree(base)
+
+
 def header_limits():
     base, succeeded = temporary(), False
     relay = None
@@ -432,7 +464,7 @@ def real_initialization_admission_future():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    cases = {"locked-identity": locked_identity, "deadline-after-identity": deadline_after_identity, "scanner-mutation": scanner_mutation, "initialization-faults": initialization_faults, "commit-faults": commit_faults, "header-limits": header_limits, "private-model-metadata": private_model_metadata, "revised-configuration": revised_configuration, "real-initialization-admission": real_initialization_admission, "real-initialization-admission-future": real_initialization_admission_future}
+    cases = {"locked-identity": locked_identity, "deadline-after-identity": deadline_after_identity, "scanner-mutation": scanner_mutation, "initialization-faults": initialization_faults, "commit-faults": commit_faults, "listener-burst": listener_burst, "header-limits": header_limits, "private-model-metadata": private_model_metadata, "revised-configuration": revised_configuration, "real-initialization-admission": real_initialization_admission, "real-initialization-admission-future": real_initialization_admission_future}
     parser.add_argument("case", choices=cases)
     args = parser.parse_args()
     cases[args.case]()

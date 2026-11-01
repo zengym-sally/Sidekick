@@ -189,10 +189,9 @@ fn mcp_config_validates_fields_environment_and_encoded_budget() {
     ] {
         let mut v = serde_json::to_value(draft()).unwrap();
         v[key] = value;
-        assert!(
-            save(&s, None, serde_json::from_value(v).unwrap()).is_err(),
-            "{key}"
-        );
+        if let Ok(server) = serde_json::from_value(v) {
+            assert!(save(&s, None, server).is_err(), "{key}");
+        }
     }
     for env in [
         json!([{"name":"BAD=NAME","source":"literal","value":"v"}]),
@@ -209,11 +208,19 @@ fn mcp_config_validates_fields_environment_and_encoded_budget() {
     let mut configured = serde_json::to_value(draft()).unwrap();
     configured["env"] = json!([{"name":"NORMAL","source":"literal","value":"non-secret"},{"name":"REFERENCE","source":"environment","value":"SIDEKICK_SYNTHETIC_UNREAD"}]);
     let saved = save(&s, None, serde_json::from_value(configured).unwrap()).unwrap();
-    assert_eq!(saved.configuration.servers[0].settings.env.len(), 2);
+    assert_eq!(
+        saved.configuration.servers[0]
+            .settings
+            .stdio()
+            .unwrap()
+            .env
+            .len(),
+        2
+    );
     let path = s.root().unwrap().join("mcp/servers.json");
     let original = fs::read(&path).unwrap();
     let mut big = draft();
-    big.args = vec!["明".repeat(1300); 80];
+    big.stdio_mut().unwrap().args = vec!["明".repeat(1300); 80];
     assert!(save(&s, None, big).is_err());
     assert_eq!(fs::read(path).unwrap(), original);
     for _ in 1..20 {

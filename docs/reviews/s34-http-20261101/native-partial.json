@@ -1,0 +1,108 @@
+{
+  "layer": "native verification App; synthetic model; owned loopback HTTP only",
+  "status": "partial; required native matrix unverified after capture failure",
+  "sourceManifest": "h2-source-freeze.json",
+  "executableSha256": "19e40eeb0d8c10ad9a3cfacd2b58cdb566f7a97c01c0807e37bb6590488486c6",
+  "fixtureSha256": "da2c79e4bf7964692d366fb9ec4f7677bdaaa4ed4e359ca49bb140ec815fca60",
+  "launches": [
+    {
+      "pid": 95403,
+      "requested": [
+        1440,
+        1000
+      ],
+      "actual": {
+        "height": 1000,
+        "width": 1440
+      },
+      "geometryConfirmed": true,
+      "reopen": false
+    },
+    {
+      "pid": 44282,
+      "requested": [
+        640,
+        900
+      ],
+      "actual": {
+        "height": 900,
+        "width": 640
+      },
+      "geometryConfirmed": true,
+      "reopen": true
+    }
+  ],
+  "observedFromCuaToolOutputs": [
+    "JSON identified one HTTP service, zero header references",
+    "Service configuration saved",
+    "Latest diagnostic completed, local connection closed, 1 tool lookup discovered",
+    "Full wide UI frames were displayed by CUA but not saved to disk",
+    "CUA targeted Command-Q exited initial App before strict same-root reopen"
+  ],
+  "notVerified": [
+    "native missing host variable rejection UI",
+    "native active disconnect/cancel UI",
+    "native trial and unknown rendering/cold-open UI",
+    "native wide/narrow saved screenshots, keyboard and scroll matrix",
+    "native static header authentication positive; no safe host injection configured"
+  ],
+  "captureFailures": [
+    "ScreenCaptureKit -3812 after first wide observations",
+    "Published Window Raise did not restore capture",
+    "Strict same-root reopen 640x900 then ScreenCaptureKit -3811",
+    "Fresh CUA REPL and bundle-id/path selection still -3811"
+  ],
+  "substitution": "SQL and runner geometry are not a substitute for missing native visual evidence",
+  "probes": [
+    {
+      "status": "succeeded",
+      "errorCode": null,
+      "result": {
+        "tools": [
+          {
+            "name": "lookup",
+            "schemaSha256": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a"
+          }
+        ],
+        "catalogSha256": "8d3cad93610e401b4b35fd4a816d8dff522a065f6dbde2042c2ec8ad3d96fbcc",
+        "remoteClose": "confirmed"
+      }
+    }
+  ],
+  "counts": {
+    "sources": 0,
+    "candidates": 0,
+    "todos": 0,
+    "todo_events": 0,
+    "tool_calls": 0
+  },
+  "privateConfigurationSha256": "1738f4495aec4d69cbb4df725609e89d9bddcf0b992451cafea46f72d98a493f",
+  "cleanup": [
+    {
+      "kind": "owned narrow App; lifecycle cleanup after CUA failure",
+      "pid": 44282,
+      "exited": true
+    },
+    {
+      "kind": "owned HTTP normal",
+      "pid": 94620,
+      "exited": true
+    },
+    {
+      "kind": "owned HTTP wait",
+      "pid": 95968,
+      "exited": true
+    },
+    {
+      "kind": "owned HTTP lost",
+      "pid": 97265,
+      "exited": true
+    },
+    {
+      "kind": "owned native runner/model cleanup",
+      "pid": 93476,
+      "exited": true
+    }
+  ],
+  "modelExited": true
+}

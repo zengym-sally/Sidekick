@@ -68,3 +68,20 @@ test('persisted unknown has an explicit external-result warning without a retry 
   assert.match(message, /核对外部结果/);
   assert.doesNotMatch(message, /重试/);
 });
+
+test('HTTP ACKs bind transport endpoint revision and session identity', async () => {
+  const sent = [], control = new McpControl({ runId: 'run-http', hostNonce: 'host-http', deadline: Date.now() + 1000, send: frame => sent.push(frame) });
+  const identity = { serverId: 'http-a', transport: 'http', run: 'run-http', endpointSha256: 'a'.repeat(64), configurationRevision: 'revision-a', nonce: 'b'.repeat(48) };
+  const pending = control.request('catalog', identity), request = sent[0];
+  const ack = { ...request, type: 'mcp_ack' };
+  for (const change of [{ transport: 'stdio' }, { endpointSha256: 'c'.repeat(64) }, { configurationRevision: 'old' }, { nonce: 'd'.repeat(48) }, { run: 'other-run' }]) assert.equal(control.receive({ ...ack, ...change }), false);
+  assert.equal(control.receive(ack), true); await pending; control.close();
+});
+
+test('HTTP task errors expose finite local close facts without clearing unknown', () => {
+  const run = { errorCode: 'MCP_RESULT_UNKNOWN', snapshot: { mcp: { remoteClose: { 'http-a': 'unconfirmed' } } } };
+  assert.match(runError(run), /操作可能已生效/); assert.match(runError(run), /远端会话关闭未确认/);
+  assert.doesNotMatch(runError(run), /远端.*已清理|重试整理/);
+  assert.match(runError({ errorCode: 'MCP_HTTP_AUTH' }), /工具服务认证失败/);
+  assert.match(runError({ errorCode: 'MCP_ENV_MISSING' }), /宿主变量缺失/);
+});

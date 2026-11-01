@@ -6,7 +6,7 @@ import {formatMcpJson,inspectMcpJson} from '../domain/mcpJson.ts';
 import {errorMessage} from './todos.ts';
 
 type Backend=(command:string,args?:Record<string,unknown>)=>Promise<unknown>;
-interface Draft {value:McpServerDraft;base:McpServerDraft|null;baseline:string;mode?:'form'|'json';json?:{text:string;baseline:string;selection:number;baselineSelection:number}}
+interface Draft {value:McpServerDraft;base:McpServerDraft|null;baseline:string;variants?:Partial<Record<'stdio'|'http',McpServerDraft>>;mode?:'form'|'json';json?:{text:string;baseline:string;selection:number;baselineSelection:number}}
 interface Pending {kind:'save'|'remove';key:string;id:string|null;requested:McpServerDraft|null;beforeIds:string[];revision:string;operationId?:string;values?:Record<string,string>}
 const signature=(value:unknown)=>JSON.stringify(value);
 export function createMcpSettings(api:Backend){
@@ -30,16 +30,23 @@ export function createMcpSettings(api:Backend){
  }
  function setJsonText(text:string){if(!selected.value)return;const d=ensure(selected.value);if(!d.json)throw Error('请先进入 JSON 模式。');d.json.text=text;d.json.selection=0;error.value='';notice.value='';}
  function selectJsonEntry(index:number){if(!selected.value)return;const d=ensure(selected.value);if(d.json&&Number.isInteger(index)&&index>=0&&index<jsonPreview.value.entries.length)d.json.selection=index;}
- function activeSecrets(id:string){const d=drafts[id],values:Record<string,string>=Object.create(null);for(const item of d?.value.env||[])if(item.source==='keychain'&&secretDrafts[id]?.[item.name])values[item.name]=secretDrafts[id][item.name];return values;}
+ function activeSecrets(id:string){const d=drafts[id],values:Record<string,string>=Object.create(null);if(!d||d.value.transport!=='stdio')return values;for(const item of d.value.env)if(item.source==='keychain'&&secretDrafts[id]?.[item.name])values[item.name]=secretDrafts[id][item.name];return values;}
  const dirty=computed(()=>{if(!selected.value)return false;const d=ensure(selected.value);return !d.base||signature(d.value)!==d.baseline||jsonChanged(d)||Object.keys(activeSecrets(selected.value)).length>0;});
  const entries=computed(()=>[...(configuration.value?.servers||[]).map(s=>({id:s.id,name:drafts[s.id]?.value.name||s.name,enabled:s.enabled,unsaved:!!drafts[s.id]&&(signature(drafts[s.id].value)!==drafts[s.id].baseline||jsonChanged(drafts[s.id])||Object.keys(activeSecrets(s.id)).length>0)})),...Object.entries(drafts).filter(([id])=>!find(id)).map(([id,d])=>({id,name:d.value.name||'新服务',enabled:d.value.enabled,unsaved:true}))]);
  function select(id:string){if(saving.value)return;ensure(id);selected.value=id;error.value='';notice.value='';}
- function add(){if(!ready.value||loading.value||saving.value||pending)throw Error('请先重新读取并核对 MCP 配置。');const id='draft-'+crypto.randomUUID();drafts[id]={value:mcpDraft(),base:null,baseline:''};selected.value=id;error.value='';notice.value='';}
- function setSecret(name:string,value:string){if(!selected.value||!ensure(selected.value).value.env.some(item=>item.name===name&&item.source==='keychain'))throw Error('请选择需要安全值的环境项。');(secretDrafts[selected.value]||=(Object.create(null) as Record<string,string>))[name]=value;}
+ function add(transport:'stdio'|'http'='stdio'){if(!ready.value||loading.value||saving.value||pending)throw Error('请先重新读取并核对 MCP 配置。');const id='draft-'+crypto.randomUUID();drafts[id]={value:mcpDraft(undefined,transport),base:null,baseline:''};selected.value=id;error.value='';notice.value='';}
+ function setTransport(transport:'stdio'|'http'){
+  guard();if(!selected.value)return;const d=ensure(selected.value),previous=d.value;if(previous.transport===transport)return;
+  if(d.mode==='json')throw Error('请先返回表单，再切换连接方式。');
+  if(Object.values(secretDrafts[selected.value]||{}).some(Boolean))throw Error('请先保存或放弃安全值输入，再切换连接方式。');
+  (d.variants||={})[previous.transport]=mcpClone(previous);const value=mcpClone(d.variants[transport]||mcpDraft(undefined,transport));
+  value.name=previous.name;value.enabled=previous.enabled;value.connectTimeoutMs=previous.connectTimeoutMs;value.toolTimeoutMs=previous.toolTimeoutMs;d.value=value;error.value='';notice.value='';
+ }
+ function setSecret(name:string,value:string){const draft=selected.value?ensure(selected.value).value:null;if(!draft||draft.transport!=='stdio'||!draft.env.some(item=>item.name===name&&item.source==='keychain'))throw Error('请选择需要安全值的环境项。');(secretDrafts[selected.value]||=(Object.create(null) as Record<string,string>))[name]=value;}
  function clearSecret(name:string){if(secretDrafts[selected.value])delete secretDrafts[selected.value][name];}
  function acknowledge(key:string,id:string,requested:McpServerDraft,submitted?:Record<string,string>){
   const actual=find(id);if(!actual)throw Error('保存结果不完整，请重新读取并核对。');const d=ensure(key),value=mcpDraft(actual);
-  const unchanged=signature(normalizedMcp(d.value))===signature(requested);d.base=mcpClone(value);d.baseline=signature(value);if(unchanged)d.value=value;
+  let unchanged=false;try{unchanged=signature(normalizedMcp(d.value))===signature(requested);}catch{}d.base=mcpClone(value);d.baseline=signature(value);if(unchanged)d.value=value;
   if(d.json){try{if(signature(normalizedMcp(jsonValue(d)))===signature(requested)){d.json.baseline=d.json.text;d.json.baselineSelection=d.json.selection;}}catch{}}
   for(const [name,value] of Object.entries(submitted||{}))if(secretDrafts[key]?.[name]===value)delete secretDrafts[key][name];
   if(key!==id){drafts[id]=d;delete drafts[key];if(secretDrafts[key]){secretDrafts[id]=secretDrafts[key];delete secretDrafts[key];}if(selected.value===key)selected.value=id;}
@@ -98,6 +105,6 @@ export function createMcpSettings(api:Backend){
   if(saving.value||!selected.value)return;const id=selected.value;delete drafts[id];delete secretDrafts[id];if(pending?.key===id)pending=null;
   if(!find(id))selected.value=configuration.value?.servers[0]?.id||Object.keys(drafts)[0]||'';error.value='';notice.value='';
  }
- return {configuration,selected,ready,loading,saving,error,notice,current,dirty,entries,drafts,secretDrafts,setSecret,clearSecret,load,select,add,save,remove,discard,find,currentMode,jsonText,jsonSelection,jsonPreview,setMode,setJsonText,selectJsonEntry};
+ return {configuration,selected,ready,loading,saving,error,notice,current,dirty,entries,drafts,secretDrafts,setSecret,clearSecret,load,select,add,setTransport,save,remove,discard,find,currentMode,jsonText,jsonSelection,jsonPreview,setMode,setJsonText,selectJsonEntry};
 }
 export const useMcpSettings=defineStore('mcp',()=>createMcpSettings(invoke));

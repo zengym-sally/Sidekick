@@ -35,6 +35,7 @@ const business = await build({
   nodePaths: [join(resolve(source), 'node_modules')],
   alias: {
     '@sidekick/pi-mcp-client': join(resolve(source), 'packages/mcp/src/client.ts'),
+    '@sidekick/pi-http': join(resolve(source), 'packages/mcp/src/transports/streamable-http.ts'),
     '@sidekick/pi-jsonrpc': join(resolve(source), 'packages/mcp/src/protocol/jsonrpc.ts'),
     '@sidekick/pi-bash': join(resolve(source), 'packages/coding-agent/dist/core/tools/bash.js'),
     '@sidekick/pi-read': join(resolve(source), 'packages/coding-agent/dist/core/tools/read.js'),
@@ -50,6 +51,7 @@ const mcpBuild = await build({
   nodePaths: [join(resolve(source), 'node_modules')],
   alias: {
     '@sidekick/pi-mcp-client': join(resolve(source), 'packages/mcp/src/client.ts'),
+    '@sidekick/pi-http': join(resolve(source), 'packages/mcp/src/transports/streamable-http.ts'),
     '@sidekick/pi-jsonrpc': join(resolve(source), 'packages/mcp/src/protocol/jsonrpc.ts'),
   }, logLevel: 'info', metafile: true,
 });

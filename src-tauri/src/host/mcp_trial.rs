@@ -1,9 +1,10 @@
 #[cfg(test)]
 use crate::local_store::McpCallFault;
 use crate::local_store::{
-    AppStore, McpCallInput, McpDiscoveredCatalog, McpTaskOwner, StoreError, TrialMcpTool,
+    AppStore, McpCallInput, McpDiscoveredCatalog, McpHttpClose, McpTaskOwner, PreparedMcpTransport,
+    StoreError, TrialMcpTool,
 };
-use crate::mcp_host::{self, Owner};
+use crate::mcp_host::{self, HttpScope, Owner};
 use crate::runtime_host::{Job, JobKind, RuntimeState};
 use crate::store_commands::LocalState;
 use serde_json::{json, Value};
@@ -11,15 +12,39 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 use std::sync::mpsc::SyncSender;
 
-#[derive(Clone, Default)]
-struct Session {
+#[derive(Clone)]
+struct StdioSession {
     nonce: String,
     owner: Option<Owner>,
     ended: bool,
 }
+#[derive(Clone)]
+enum Session {
+    Stdio(StdioSession),
+    Http {
+        scope: HttpScope,
+        ended: bool,
+        close: McpHttpClose,
+    },
+}
+impl Session {
+    fn active(&self) -> bool {
+        match self {
+            Self::Stdio(s) => s.owner.is_some() && !s.ended,
+            Self::Http { ended, .. } => !ended,
+        }
+    }
+    fn ended(&self) -> bool {
+        match self {
+            Self::Stdio(s) => s.ended,
+            Self::Http { ended, .. } => *ended,
+        }
+    }
+}
 #[derive(Default)]
 pub(crate) struct TrialState {
     pub(crate) servers: BTreeSet<String>,
+    http: BTreeMap<String, HttpScope>,
     sessions: BTreeMap<String, Session>,
 }
 impl TrialState {
@@ -32,6 +57,28 @@ impl TrialState {
                 .filter_map(|server| server["id"].as_str().map(String::from))
                 .collect(),
             sessions: BTreeMap::new(),
+            http: payload["mcp"]["servers"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .filter(|server| server["transport"] == "http")
+                .map(|server| {
+                    let id = server["id"].as_str().unwrap_or_default().to_string();
+                    (
+                        id.clone(),
+                        HttpScope {
+                            run: payload["runId"].as_str().unwrap_or_default().into(),
+                            server: id,
+                            revision: server["configurationRevision"]
+                                .as_str()
+                                .unwrap_or_default()
+                                .into(),
+                            nonce: server["sessionNonce"].as_str().unwrap_or_default().into(),
+                            endpoint: server["endpointSha256"].as_str().unwrap_or_default().into(),
+                        },
+                    )
+                })
+                .collect(),
         }
     }
 }
@@ -74,7 +121,27 @@ fn prepare_task(
             });
         }
         let p = mcp_host::resolve_command(server.prepared, directory)?;
-        servers.push(json!({"id":server.server.id,"configurationRevision":prepared.revision,"command":p.command,"args":p.args,"cwd":p.cwd,"env":p.env,"sensitiveNames":p.sensitive_names,"connectTimeoutMs":server.server.settings.connect_timeout_ms,"toolTimeoutMs":server.server.settings.tool_timeout_ms}));
+        let mut value = match p.transport {
+            PreparedMcpTransport::Stdio {
+                command,
+                args,
+                cwd,
+                env,
+                sensitive_names,
+            } => {
+                json!({"command":command,"args":args,"cwd":cwd,"env":env,"sensitiveNames":sensitive_names})
+            }
+            PreparedMcpTransport::Http { url, headers } => {
+                let scope =
+                    mcp_host::HttpScope::new(run, &server.server.id, &prepared.revision, &url)?;
+                json!({"transport":"http","url":url,"httpHeaders":headers,"sensitiveValues":headers.values().collect::<Vec<_>>(),"sessionNonce":scope.nonce,"endpointSha256":scope.endpoint})
+            }
+        };
+        value["id"] = json!(server.server.id);
+        value["configurationRevision"] = json!(prepared.revision);
+        value["connectTimeoutMs"] = json!(server.server.settings.connect_timeout_ms);
+        value["toolTimeoutMs"] = json!(server.server.settings.tool_timeout_ms);
+        servers.push(value);
     }
     Ok(json!({"revision":prepared.revision,"servers":servers}))
 }
@@ -161,6 +228,14 @@ impl<'a> TrialControl<'a> {
     ) -> Self {
         let mut sensitive = vec![payload["apiKey"].as_str().unwrap_or_default().to_string()];
         for server in payload["mcp"]["servers"].as_array().into_iter().flatten() {
+            sensitive.extend(
+                server["sensitiveValues"]
+                    .as_array()
+                    .into_iter()
+                    .flatten()
+                    .filter_map(Value::as_str)
+                    .map(String::from),
+            );
             for name in server["sensitiveNames"]
                 .as_array()
                 .into_iter()
@@ -232,6 +307,19 @@ impl<'a> TrialControl<'a> {
         if !ownership.servers.contains(server) {
             return Err(protocol());
         }
+        if let Some(scope) = ownership.http.get(server) {
+            if !scope.matches(frame)
+                || !["http_open", "end", "catalog", "call_begin", "call_response"].contains(&action)
+                || (action != "http_open"
+                    && !ownership.sessions.get(server).is_some_and(Session::active))
+            {
+                return Err(protocol());
+            }
+        } else if frame.get("transport").is_some_and(|v| v != "stdio")
+            || frame.get("endpointSha256").is_some()
+        {
+            return Err(protocol());
+        }
         let mut ack = json!({"type":"mcp_ack","action":action,"requestId":request,"runId":self.job.run_id,"hostNonce":self.job.nonce,"serverId":server});
         for key in [
             "callId",
@@ -239,12 +327,29 @@ impl<'a> TrialControl<'a> {
             "guardian",
             "keeper",
             "configurationRevision",
+            "transport",
+            "endpointSha256",
+            "run",
         ] {
             if let Some(value) = frame.get(key) {
                 ack[key] = value.clone();
             }
         }
         match action {
+            "http_open" => {
+                let scope = ownership.http.get(server).cloned().ok_or_else(protocol)?;
+                if ownership.sessions.contains_key(server) {
+                    return Err(protocol());
+                }
+                ownership.sessions.insert(
+                    server.into(),
+                    Session::Http {
+                        scope,
+                        ended: false,
+                        close: McpHttpClose::Unconfirmed,
+                    },
+                );
+            }
             "prepare" => {
                 let owner: Owner = serde_json::from_value(frame.clone()).map_err(|_| protocol())?;
                 if ownership.sessions.contains_key(server)
@@ -257,16 +362,18 @@ impl<'a> TrialControl<'a> {
                 }
                 ownership.sessions.insert(
                     server.into(),
-                    Session {
+                    Session::Stdio(StdioSession {
                         nonce: owner.nonce,
                         owner: None,
                         ended: false,
-                    },
+                    }),
                 );
             }
             "owner" => {
                 let owner: Owner = serde_json::from_value(frame.clone()).map_err(|_| protocol())?;
-                let session = ownership.sessions.get_mut(server).ok_or_else(protocol)?;
+                let Some(Session::Stdio(session)) = ownership.sessions.get_mut(server) else {
+                    return Err(protocol());
+                };
                 if session.owner.is_some()
                     || session.ended
                     || session.nonce != owner.nonce
@@ -284,27 +391,46 @@ impl<'a> TrialControl<'a> {
                 );
             }
             "end" => {
-                let owner: Owner = serde_json::from_value(frame.clone()).map_err(|_| protocol())?;
-                let session = ownership.sessions.get_mut(server).ok_or_else(protocol)?;
-                if session.ended
-                    || !session.owner.as_ref().is_some_and(|old| {
-                        old.guardian == owner.guardian
-                            && old.keeper == owner.keeper
-                            && old.nonce == owner.nonce
-                            && old.run == owner.run
-                    })
-                    || !mcp_host::group_gone(owner.guardian)
+                if let Some(Session::Http { ended, close, .. }) = ownership.sessions.get_mut(server)
                 {
-                    return Err(protocol());
+                    let actual: McpHttpClose = serde_json::from_value(frame["remoteClose"].clone())
+                        .map_err(|_| protocol())?;
+                    self.local
+                        .access(|store| {
+                            store.record_mcp_task_close(
+                                task_owner,
+                                &self.job.run_id,
+                                server,
+                                actual,
+                            )
+                        })
+                        .map_err(|e| e.code.to_string())?;
+                    *ended = true;
+                    *close = actual;
+                    ack["remoteClose"] = json!(actual);
+                } else {
+                    let owner: Owner =
+                        serde_json::from_value(frame.clone()).map_err(|_| protocol())?;
+                    let Some(Session::Stdio(session)) = ownership.sessions.get_mut(server) else {
+                        return Err(protocol());
+                    };
+                    if session.ended
+                        || !session.owner.as_ref().is_some_and(|old| {
+                            old.guardian == owner.guardian
+                                && old.keeper == owner.keeper
+                                && old.nonce == owner.nonce
+                                && old.run == owner.run
+                        })
+                        || !mcp_host::group_gone(owner.guardian)
+                    {
+                        return Err(protocol());
+                    }
+                    session.ended = true;
+                    session.owner = None;
                 }
-                session.ended = true;
-                session.owner = None;
             }
             "catalog" => {
-                if !ownership
-                    .sessions
-                    .get(server)
-                    .is_some_and(|s| s.owner.is_some() && !s.ended)
+                if !ownership.sessions.get(server).is_some_and(Session::active)
                     || !self.catalogs.insert(server.into())
                 {
                     return Err(protocol());
@@ -336,10 +462,7 @@ impl<'a> TrialControl<'a> {
             }
             "call_begin" => {
                 if self.catalogs.len() != ownership.servers.len()
-                    || !ownership
-                        .sessions
-                        .get(server)
-                        .is_some_and(|s| s.owner.is_some() && !s.ended)
+                    || !ownership.sessions.get(server).is_some_and(Session::active)
                 {
                     return Err(protocol());
                 }
@@ -452,15 +575,38 @@ pub(crate) fn test_trial_owners(job: &Job) -> Vec<Owner> {
         .expect("controlled owners lock")
         .sessions
         .values()
-        .filter_map(|session| session.owner.clone())
+        .filter_map(|session| match session {
+            Session::Stdio(s) => s.owner.clone(),
+            Session::Http { .. } => None,
+        })
         .collect()
 }
 
 pub(crate) fn ended(job: &Job) -> bool {
     job.mcp_trial.lock().is_ok_and(|state| {
-        state.servers.len() == state.sessions.len()
-            && state.sessions.values().all(|session| session.ended)
+        state.servers.len() == state.sessions.len() && state.sessions.values().all(Session::ended)
     })
+}
+pub(crate) fn has_http(job: &Job) -> bool {
+    job.mcp_trial
+        .lock()
+        .is_ok_and(|state| !state.http.is_empty())
+}
+pub(crate) fn record_closes(job: &Job, local: &LocalState) -> Result<(), String> {
+    let state = job.mcp_trial.lock().map_err(|_| protocol())?;
+    let owner = if job.kind == JobKind::Trial {
+        McpTaskOwner::Trial
+    } else {
+        McpTaskOwner::Business
+    };
+    for (server, session) in &state.sessions {
+        if let Session::Http { close, .. } = session {
+            local
+                .access(|store| store.record_mcp_task_close(owner, &job.run_id, server, *close))
+                .map_err(|e| e.code.to_string())?;
+        }
+    }
+    Ok(())
 }
 pub(crate) fn cleanup(job: &Job, directory: &Path) -> bool {
     let Ok(state) = job.mcp_trial.lock() else {
@@ -471,15 +617,26 @@ pub(crate) fn cleanup(job: &Job, directory: &Path) -> bool {
     let mut owners = Vec::new();
     let mut complete = true;
     for session in sessions {
-        if session.ended {
+        if session.ended() {
             continue;
         }
-        if let Some(owner) = session.owner {
-            owners.push(owner);
-        } else {
-            match mcp_host::discover_intent(&job.run_id, &session.nonce, directory) {
-                Ok(found) => owners.extend(found),
-                Err(_) => complete = false,
+        match session {
+            Session::Http { scope, .. } => {
+                if scope.run != job.run_id
+                    || !mcp_host::group_gone(job.pid.load(std::sync::atomic::Ordering::SeqCst))
+                {
+                    complete = false;
+                }
+            }
+            Session::Stdio(session) => {
+                if let Some(owner) = session.owner {
+                    owners.push(owner);
+                } else {
+                    match mcp_host::discover_intent(&job.run_id, &session.nonce, directory) {
+                        Ok(found) => owners.extend(found),
+                        Err(_) => complete = false,
+                    }
+                }
             }
         }
     }
@@ -487,8 +644,13 @@ pub(crate) fn cleanup(job: &Job, directory: &Path) -> bool {
     if cleaned && complete {
         if let Ok(mut state) = job.mcp_trial.lock() {
             for session in state.sessions.values_mut() {
-                session.ended = true;
-                session.owner = None;
+                match session {
+                    Session::Stdio(s) => {
+                        s.ended = true;
+                        s.owner = None;
+                    }
+                    Session::Http { ended, .. } => *ended = true,
+                }
             }
         }
     }

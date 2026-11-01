@@ -1,0 +1,60 @@
+{
+  "kind": "Selected faithful summary of independent delivery review faces",
+  "faces": [
+    {
+      "face": "A",
+      "verdict": "APPROVE / pass",
+      "openP0P3": 0,
+      "sourceManifestSha256": "eaeac3156bc15d8546bdfc6a724271120983026fb02913aa3cc1d20d611dda7f",
+      "independentChecks": {
+        "HTTP": 62,
+        "configuration": 60,
+        "contract": 9,
+        "ACKSeams": 5
+      },
+      "rawReport": "build/s34-http-20261101/delivery-a/review.md",
+      "rawReportSha256": "36ef3b899eebc0e41444d20648b756b5fb2ad2828e17e1c350a59763899d3999",
+      "rawConclusionSha256": "c9e6d60ec3fb22d86ee8d192bb251bf2d743c27150ae074fafe2e60a74d51ae8",
+      "sealSha256": "4941bfe95ba45e1c4d6e1c0fc202c904d9fb807a519443ecfe8a83444caa56b7"
+    },
+    {
+      "face": "B",
+      "verdict": "APPROVE / pass",
+      "openP0P3": 0,
+      "sourceManifestSha256": "eaeac3156bc15d8546bdfc6a724271120983026fb02913aa3cc1d20d611dda7f",
+      "independentChecks": {
+        "Node": 216,
+        "mjsSyntax": 16
+      },
+      "rawReport": "build/s34-http-20261101/delivery-b/review.md",
+      "rawReportSha256": "31f2a7b4bc70af8d433d96d8e9337407215883f49545d19e48071bcb99d7f9f7",
+      "rawConclusionSha256": "ee94764838c4c86a31a5e804ceabc1cf2c693a3a8d92c29478c7b45668ec1140",
+      "sealSha256": "9bb2e7293876133e7a3bceaf25ab0a62574b0b73e655b2deb563b6c300e71624"
+    }
+  ],
+  "limitation": "Implementation/controlled evidence only. Native gaps remain open; neither whole S3.4 nor native nor production is signed pass. Original full check, both candidate packages and exact-HEAD checkout require separate actual verification.",
+  "version": "historical delivery source v1",
+  "currentSourceChange": "Historical v1 implementation review plus fresh v2 review of the sole test-loader delta; old reports remain unchanged.",
+  "impactV2": {
+    "sourceManifestSha256": "6239621bb4bf2aacb28ef83cfeaf9fff3d3edf4dd7153cdc9c8bc95eddada9da",
+    "changedSource": "tests/integration/mcp-http.test.mjs",
+    "unchangedSourceCount": 46,
+    "faces": [
+      {
+        "face": "A",
+        "verdict": "APPROVE / pass",
+        "openP0P3": 0,
+        "rawConclusion": "build/s34-http-20261101/loader-impact-a/report.json",
+        "rawConclusionSha256": "fc4e31f4088d783cfca0a1641c6d426a506645a1346553beb87b7d4d04e1c5c8"
+      },
+      {
+        "face": "B",
+        "verdict": "APPROVE / pass",
+        "openP0P3": 0,
+        "rawConclusion": "build/s34-http-20261101/loader-impact-b/report.json",
+        "rawConclusionSha256": "fb1e7e47ca97182ab045f21fc8c8e57d62ffbcddc18fe55b42776495c94ff514"
+      }
+    ],
+    "limitation": "R1 loader fix only; original full attempt2 and native gaps remain separate"
+  }
+}

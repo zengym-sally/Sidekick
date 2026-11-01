@@ -40,11 +40,11 @@ function diagnosticFixture(command:string,args?:Record<string,unknown>):unknown{
  if(storageVersion<4)throw {code:'MCP_SCHEMA_REQUIRED'};
  if(active)throw {code:'RUNTIME_BUSY'};
  const service=configuration.servers.find(s=>s.id===serverId);if(!service||args?.expectedRevision!==configuration.revision)throw {code:'MCP_VERSION_CONFLICT'};
- const id='probe-'+crypto.randomUUID();const failed=service.command.includes('missing');const p:McpProbe={id,agentId:null,purpose:'mcp_probe',status:failed?'failed':'running',snapshot:{serverId,configurationRevision:configuration.revision,connectTimeoutMs:service.connectTimeoutMs},input:{serverId},result:null,errorCode:failed?'MCP_COMMAND_MISSING':null,createdAtMs:Date.now(),finishedAtMs:failed?Date.now():null};probes[id]=p;active=failed?null:id;persistProbes();
- if(!failed&&!service.args.includes('wait-list'))setTimeout(()=>{if(active!==id)return;probes[id]={...p,status:'succeeded',result:{tools:fixtureCatalog().tools.map(t=>({name:t.name,schemaSha256:'a'.repeat(64)})),catalogSha256:'b'.repeat(64)},finishedAtMs:Date.now()};active=null;persistProbes();},350);
+ const id='probe-'+crypto.randomUUID();const failed=service.transport==='stdio'?service.command.includes('missing'):service.url.includes('missing')||service.headers.length>0;const p:McpProbe={id,agentId:null,purpose:'mcp_probe',status:failed?'failed':'running',snapshot:{serverId,configurationRevision:configuration.revision,connectTimeoutMs:service.connectTimeoutMs,...(service.transport==='http'?{transport:'http' as const}:{})},input:{serverId},result:null,errorCode:failed?(service.transport==='http'?'MCP_ENV_MISSING':'MCP_COMMAND_MISSING'):null,createdAtMs:Date.now(),finishedAtMs:failed?Date.now():null};probes[id]=p;active=failed?null:id;persistProbes();
+ if(!failed&&!(service.transport==='stdio'&&service.args.includes('wait-list')))setTimeout(()=>{if(active!==id)return;probes[id]={...p,status:'succeeded',result:{tools:fixtureCatalog().tools.map(t=>({name:t.name,schemaSha256:'a'.repeat(64)})),catalogSha256:'b'.repeat(64),...(service.transport==='http'?{remoteClose:'confirmed' as const}:{})},finishedAtMs:Date.now()};active=null;persistProbes();},350);
  if(startUncertain){startUncertain=false;throw Error('synthetic lost start response');}return parameters.has('mcpDelayStartReceipt')?new Promise(resolve=>setTimeout(()=>resolve(clone(p)),4000)):clone(p);
 }
-function view(){const result=clone(configuration);result.secureStorageAvailable=secureAvailable;result.credentialStatus={};for(const service of result.servers){for(const item of service.env){if(item.source==='keychain'){(result.credentialStatus[service.id]||=Object.create(null))[item.name]=secureAvailable?(secureValues.has(service.id+'/'+item.name)?'stored':'missing'):'unavailable';item.value='';}}}return result;}
+function view(){const result=clone(configuration);result.secureStorageAvailable=secureAvailable;result.credentialStatus={};for(const service of result.servers){for(const item of service.transport==='stdio'?service.env:[]){if(item.source==='keychain'){(result.credentialStatus[service.id]||=Object.create(null))[item.name]=secureAvailable?(secureValues.has(service.id+'/'+item.name)?'stored':'missing'):'unavailable';item.value='';}}}return result;}
 export function mcpFixture(command:string,args?:Record<string,unknown>){
  const upgrade=upgradeFixture(command,args);if(upgrade!==undefined)return upgrade;
  const diagnostic=diagnosticFixture(command,args);if(diagnostic!==undefined)return diagnostic;
@@ -65,7 +65,7 @@ export function mcpFixture(command:string,args?:Record<string,unknown>){
   configuration.servers=input.id?configuration.servers.map(s=>s.id===id?service:s):[...configuration.servers,service];
  }
  else configuration.servers=configuration.servers.filter(s=>s.id!==id);
- configuration={...configuration,revision:'fixture-'+crypto.randomUUID()};
+ configuration={...configuration,version:configuration.servers.some(s=>s.transport==='http')?2:configuration.version,revision:'fixture-'+crypto.randomUUID()};
  localStorage.setItem(key,JSON.stringify(configuration));
  if(uncertain){uncertain=false;throw {code:'MCP_SAVE_UNCERTAIN',message:'合成场景：响应丢失，请重新读取并核对服务列表。'};}
  return {configuration:view(),serverId:command!=='remove_mcp_server'?id:null,warning:null};

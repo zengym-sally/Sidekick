@@ -682,7 +682,7 @@ fn mcp_calls_business_preparation_failure_is_not_silently_no_services() {
         .remove(0)
         .settings;
     let missing = format!("SIDEKICK_SYNTHETIC_MISSING_{}", nonce());
-    settings.env.push(McpEnvironment {
+    settings.stdio_mut().unwrap().env.push(McpEnvironment {
         name: "SYNTHETIC_VALUE".into(),
         source: "environment".into(),
         value: missing,

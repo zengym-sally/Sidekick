@@ -1,11 +1,12 @@
 use crate::local_store::{
-    AppStore, McpConfigSave, McpDiscoveredCatalog, McpProbe, McpProbeFailure, McpRemoveInput,
-    PreparedMcpProbe, StoreError,
+    AppStore, McpConfigSave, McpDiscoveredCatalog, McpHttpClose, McpProbe, McpProbeFailure,
+    McpRemoveInput, PreparedMcpProbe, PreparedMcpTransport, StoreError,
 };
 use crate::runtime_host::{Job, JobKind, RuntimeState, Sink};
 use crate::store_commands::LocalState;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::io::{BufRead, BufReader, Read, Write};
 use std::os::unix::process::CommandExt;
@@ -40,6 +41,41 @@ pub(crate) struct Owner {
     pub(crate) keeper: u32,
     pub(crate) run: String,
     pub(crate) nonce: String,
+}
+#[derive(Clone)]
+pub(crate) struct HttpScope {
+    pub(crate) run: String,
+    pub(crate) server: String,
+    pub(crate) revision: String,
+    pub(crate) nonce: String,
+    pub(crate) endpoint: String,
+}
+impl HttpScope {
+    pub(crate) fn new(run: &str, server: &str, revision: &str, url: &str) -> Result<Self> {
+        let nonce = nonce();
+        if nonce.is_empty() {
+            return Err(error("MCP_PROCESS"));
+        }
+        Ok(Self {
+            run: run.into(),
+            server: server.into(),
+            revision: revision.into(),
+            nonce,
+            endpoint: format!("{:x}", Sha256::digest(url.as_bytes())),
+        })
+    }
+    pub(crate) fn value(&self) -> Value {
+        json!({"transport":"http","run":self.run,"serverId":self.server,"configurationRevision":self.revision,"nonce":self.nonce,"endpointSha256":self.endpoint})
+    }
+    pub(crate) fn matches(&self, body: &Value) -> bool {
+        self.value().as_object().is_some_and(|expected| {
+            expected
+                .iter()
+                .all(|(key, value)| body.get(key) == Some(value))
+        }) && ["guardian", "keeper", "pid"]
+            .iter()
+            .all(|key| body.get(*key).is_none())
+    }
 }
 fn process(pid: u32) -> Option<(u32, u32, String)> {
     if pid <= 1 {
@@ -359,13 +395,12 @@ impl RuntimeState {
         let state = self.clone();
         let id = run.id.clone();
         let timeout = run.snapshot.connect_timeout_ms;
+        let revision = run.snapshot.configuration_revision.clone();
         std::thread::spawn(move || {
-            let sensitive = prepared
-                .sensitive_names
-                .iter()
-                .filter_map(|name| prepared.env.get(name).cloned())
-                .collect::<Vec<_>>();
-            let (result, cleaned) = execute(&job, &state, &directory, prepared, timeout, started);
+            let sensitive = prepared.sensitive_values();
+            let (result, cleaned, close) = execute(
+                &job, &state, &directory, prepared, timeout, started, &revision,
+            );
             let mut stored = Err(error("MCP_CLEANUP"));
             if let Ok(mut slot) = state.slot.lock() {
                 if slot
@@ -377,27 +412,46 @@ impl RuntimeState {
                             return s.fail_mcp_probe(&id, McpProbeFailure::Cleanup);
                         }
                         if job.cancel.load(Ordering::SeqCst) {
-                            return s.cancel_mcp_probe(&id);
+                            return if let Some(close) = close {
+                                s.cancel_http_mcp_probe(&id, close)
+                            } else {
+                                s.cancel_mcp_probe(&id)
+                            };
                         }
                         match result {
                             Ok(catalog) if cleaned => {
-                                match s.publish_mcp_catalog(&id, catalog, &sensitive) {
+                                let published = if let Some(close) = close {
+                                    s.publish_mcp_http_catalog(&id, catalog, &sensitive, close)
+                                } else {
+                                    s.publish_mcp_catalog(&id, catalog, &sensitive)
+                                };
+                                match published {
                                     Ok(run) => Ok(run),
                                     Err(e) if e.code == "MCP_PROBE_SAVE_UNCERTAIN" => Err(e),
-                                    Err(e) => s.fail_mcp_probe(
-                                        &id,
-                                        match e.code {
+                                    Err(e) => {
+                                        let failure = match e.code {
                                             "MCP_CATALOG_INVALID" => {
                                                 McpProbeFailure::InvalidCatalog
                                             }
                                             "MCP_PRIVATE_OUTPUT" => McpProbeFailure::PrivateOutput,
                                             _ => McpProbeFailure::Save,
-                                        },
-                                    ),
+                                        };
+                                        if let Some(close) = close {
+                                            s.fail_http_mcp_probe(&id, failure, close)
+                                        } else {
+                                            s.fail_mcp_probe(&id, failure)
+                                        }
+                                    }
                                 }
                             }
                             Ok(_) => s.fail_mcp_probe(&id, McpProbeFailure::Cleanup),
-                            Err(code) => s.fail_mcp_probe(&id, failure(code)),
+                            Err(code) => {
+                                if let Some(close) = close {
+                                    s.fail_http_mcp_probe(&id, failure(code), close)
+                                } else {
+                                    s.fail_mcp_probe(&id, failure(code))
+                                }
+                            }
                         }
                     });
                     if cleaned {
@@ -420,6 +474,12 @@ impl RuntimeState {
 }
 fn failure(code: &str) -> McpProbeFailure {
     match code {
+        "MCP_HTTP_AUTH" => McpProbeFailure::HttpAuth,
+        "MCP_HTTP_HEADER" => McpProbeFailure::HttpHeader,
+        "MCP_HTTP_REDIRECT" => McpProbeFailure::HttpRedirect,
+        "MCP_HTTP_SESSION" => McpProbeFailure::HttpSession,
+        "MCP_HTTP_STATUS" => McpProbeFailure::HttpStatus,
+        "MCP_HTTP_LIMIT" => McpProbeFailure::HttpLimit,
         "MCP_COMMAND_MISSING" => McpProbeFailure::CommandMissing,
         "MCP_DIRECTORY_MISSING" => McpProbeFailure::DirectoryMissing,
         "MCP_ENV_MISSING" => McpProbeFailure::EnvironmentMissing,
@@ -440,10 +500,16 @@ pub(crate) fn resolve_command(
     directory: &Path,
 ) -> Result<PreparedMcpProbe> {
     use std::os::unix::fs::PermissionsExt;
+    let PreparedMcpTransport::Stdio {
+        command, cwd, env, ..
+    } = &mut p.transport
+    else {
+        return Ok(p);
+    };
     let path = format!(
         "{}:{}:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
         directory.display(),
-        p.env.get("PATH").map(String::as_str).unwrap_or_default()
+        env.get("PATH").map(String::as_str).unwrap_or_default()
     );
     let executable = |path: &Path| {
         path.is_file()
@@ -451,26 +517,26 @@ pub(crate) fn resolve_command(
                 .metadata()
                 .is_ok_and(|m| m.permissions().mode() & 0o111 != 0)
     };
-    let command = PathBuf::from(&p.command);
-    let found = if p.command.contains('/') {
-        let c = if command.is_absolute() {
-            command
+    let path_command = PathBuf::from(&*command);
+    let found = if command.contains('/') {
+        let c = if path_command.is_absolute() {
+            path_command
         } else {
-            p.cwd.join(command)
+            cwd.join(path_command)
         };
         executable(&c).then_some(c)
     } else {
         std::env::split_paths(&path)
             .map(|d| {
                 if d.is_absolute() {
-                    d.join(&p.command)
+                    d.join(&*command)
                 } else {
-                    p.cwd.join(d).join(&p.command)
+                    cwd.join(d).join(&*command)
                 }
             })
             .find(|c| executable(c))
     };
-    p.command = found
+    *command = found
         .ok_or_else(|| error("MCP_COMMAND_MISSING"))?
         .to_string_lossy()
         .into_owned();
@@ -505,9 +571,11 @@ fn execute(
     p: PreparedMcpProbe,
     timeout: u32,
     started: Instant,
+    revision: &str,
 ) -> (
     std::result::Result<McpDiscoveredCatalog, &'static str>,
     bool,
+    Option<McpHttpClose>,
 ) {
     #[cfg(feature = "s33-mcp-verification")]
     let policy = crate::mcp_verification::take_policy();
@@ -521,19 +589,57 @@ fn execute(
     let budget_ms = 120000_u64;
     let remaining = budget_ms.saturating_sub(started.elapsed().as_millis() as u64);
     if remaining < 1 {
-        return (Err("MCP_TIMEOUT"), true);
+        return (Err("MCP_TIMEOUT"), true, None);
     }
     let mut command = Command::new(directory.join("node"));
     configure_probe_command(&mut command, directory, &job.run_id, &job.nonce);
     #[cfg(feature = "s33-mcp-verification")]
     if crate::mcp_verification::inherit_audit(&mut command).is_err() {
-        return (Err("MCP_PROCESS"), true);
+        return (Err("MCP_PROCESS"), true, None);
     }
     let Ok(mut child) = command.spawn() else {
-        return (Err("MCP_PROCESS"), true);
+        return (Err("MCP_PROCESS"), true, None);
     };
     job.pid.store(child.id(), Ordering::SeqCst);
-    let input = json!({"runId":job.run_id,"hostNonce":job.nonce,"command":p.command,"args":p.args,"cwd":p.cwd,"runDirectory":p.run_directory,"env":p.env,"sensitiveNames":p.sensitive_names,"directory":directory,"totalDeadline":SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_millis() as u64 + remaining,"connectTimeoutMs":timeout});
+    let mut input = json!({"runId":job.run_id,"hostNonce":job.nonce,"runDirectory":p.run_directory,"directory":directory,"totalDeadline":SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_millis() as u64 + remaining,"connectTimeoutMs":timeout});
+    let http = match &p.transport {
+        PreparedMcpTransport::Stdio {
+            command,
+            args,
+            cwd,
+            env,
+            sensitive_names,
+        } => {
+            input["command"] = json!(command);
+            input["args"] = json!(args);
+            input["cwd"] = json!(cwd);
+            input["env"] = json!(env);
+            input["sensitiveNames"] = json!(sensitive_names);
+            None
+        }
+        PreparedMcpTransport::Http { url, headers } => {
+            let scope = HttpScope::new(
+                &job.run_id,
+                job.server_id.as_deref().unwrap_or_default(),
+                revision,
+                url,
+            );
+            let Ok(scope) = scope else {
+                let _ = child.kill();
+                let _ = child.wait();
+                return (Err("MCP_PROCESS"), true, None);
+            };
+            input["transport"] = "http".into();
+            input["url"] = json!(url);
+            input["httpHeaders"] = json!(headers);
+            input["sensitiveValues"] = json!(headers.values().collect::<Vec<_>>());
+            input["serverId"] = json!(scope.server);
+            input["configurationRevision"] = json!(scope.revision);
+            input["sessionNonce"] = json!(scope.nonce);
+            input["endpointSha256"] = json!(scope.endpoint);
+            Some(scope)
+        }
+    };
     let (tx, rx) = mpsc::sync_channel::<Vec<u8>>(4);
     let mut stdin = child.stdin.take().expect("piped stdin");
     let writer = std::thread::spawn(move || {
@@ -551,7 +657,7 @@ fn execute(
         let _ = child.wait();
         drop(tx);
         let _ = writer.join();
-        return (Err("MCP_PROTOCOL"), true);
+        return (Err("MCP_PROTOCOL"), true, None);
     }
     let stdout = child.stdout.take().expect("piped stdout");
     let stderr = child.stderr.take().expect("piped stderr");
@@ -628,6 +734,7 @@ fn execute(
     });
     let mut owner: Option<Owner> = None;
     let mut ended = false;
+    let mut remote_close = None;
     let mut prepared = false;
     let mut result = None;
     let mut code = None;
@@ -654,8 +761,68 @@ fn execute(
             if frame.run_id != job.run_id || frame.host_nonce != job.nonce {
                 continue;
             }
+            if http
+                .as_ref()
+                .is_some_and(|scope| !scope.matches(&frame.body))
+            {
+                code.get_or_insert("MCP_PROTOCOL");
+                continue;
+            }
             match frame.kind.as_str() {
-                "prepare" if !prepared && owner.is_none() && !ended && terminating.is_none() => {
+                "http_open"
+                    if code.is_none()
+                        && http.is_some()
+                        && !prepared
+                        && !ended
+                        && terminating.is_none()
+                        && !job.cancel.load(Ordering::SeqCst) =>
+                {
+                    let slot = state.slot.lock().expect("runtime slot");
+                    if !slot
+                        .as_ref()
+                        .is_some_and(|j| j.run_id == job.run_id && j.nonce == job.nonce)
+                    {
+                        code.get_or_insert("MCP_PROTOCOL");
+                        continue;
+                    }
+                    prepared = true;
+                    remote_close = Some(McpHttpClose::Unconfirmed);
+                    if ack_value(
+                        &tx,
+                        job,
+                        "http_open",
+                        http.as_ref().expect("HTTP scope").value(),
+                    )
+                    .is_err()
+                    {
+                        code.get_or_insert("MCP_PROTOCOL");
+                    }
+                }
+                "end" if http.is_some() && prepared && !ended => {
+                    match serde_json::from_value::<McpHttpClose>(frame.body["remoteClose"].clone())
+                    {
+                        Ok(close) => {
+                            remote_close = Some(close);
+                            ended = true;
+                            let mut value = http.as_ref().expect("HTTP scope").value();
+                            value["remoteClose"] = json!(close);
+                            if ack_value(&tx, job, "end", value).is_err() {
+                                code.get_or_insert("MCP_PROTOCOL");
+                            }
+                        }
+                        Err(_) => {
+                            code.get_or_insert("MCP_PROTOCOL");
+                        }
+                    }
+                }
+                "prepare"
+                    if code.is_none()
+                        && http.is_none()
+                        && !prepared
+                        && owner.is_none()
+                        && !ended
+                        && terminating.is_none() =>
+                {
                     let slot = state.slot.lock().expect("runtime slot");
                     if !slot
                         .as_ref()
@@ -685,7 +852,9 @@ fn execute(
                     }
                 }
                 "owner"
-                    if prepared
+                    if code.is_none()
+                        && http.is_none()
+                        && prepared
                         && owner.is_none()
                         && !ended
                         && terminating.is_none()
@@ -759,7 +928,7 @@ fn execute(
                         code.get_or_insert("MCP_PROTOCOL");
                     }
                 }
-                "end" if owner.is_some() && !ended => {
+                "end" if http.is_none() && owner.is_some() && !ended => {
                     let parsed = serde_json::from_value::<Owner>(frame.body);
                     if let Ok(o) = parsed {
                         let old = owner.as_ref().expect("owner present");
@@ -800,6 +969,12 @@ fn execute(
                         Some("MCP_CATALOG_INVALID") => "MCP_CATALOG_INVALID",
                         Some("MCP_PRIVATE_OUTPUT") => "MCP_PRIVATE_OUTPUT",
                         Some("MCP_CLEANUP") => "MCP_CLEANUP",
+                        Some("MCP_HTTP_AUTH") => "MCP_HTTP_AUTH",
+                        Some("MCP_HTTP_HEADER") => "MCP_HTTP_HEADER",
+                        Some("MCP_HTTP_REDIRECT") => "MCP_HTTP_REDIRECT",
+                        Some("MCP_HTTP_SESSION") => "MCP_HTTP_SESSION",
+                        Some("MCP_HTTP_STATUS") => "MCP_HTTP_STATUS",
+                        Some("MCP_HTTP_LIMIT") => "MCP_HTTP_LIMIT",
                         _ => "MCP_PROTOCOL",
                     };
                     code.get_or_insert(c);
@@ -819,7 +994,8 @@ fn execute(
             terminating = Some(Instant::now());
             shutdown(job, directory);
         }
-        if terminating.is_some_and(|t| t.elapsed() > Duration::from_millis(500)) {
+        let cleanup_ms = if http.is_some() { 1500 } else { 500 };
+        if terminating.is_some_and(|t| t.elapsed() > Duration::from_millis(cleanup_ms)) {
             let _ = child.kill();
         }
         if exit_status.is_none() {
@@ -872,14 +1048,26 @@ fn execute(
         code.get_or_insert("MCP_PROCESS");
     }
     if let Some(code) = code {
-        (Err(code), cleaned)
+        (Err(code), cleaned, remote_close)
     } else {
-        (result.ok_or("MCP_PROTOCOL"), cleaned)
+        (result.ok_or("MCP_PROTOCOL"), cleaned, remote_close)
     }
 }
 use std::time::{SystemTime, UNIX_EPOCH};
 fn ack(tx: &mpsc::SyncSender<Vec<u8>>, job: &Job, kind: &str, owner: &Owner) -> Result<()> {
-    let mut value = serde_json::to_value(owner).map_err(|_| error("MCP_PROTOCOL"))?;
+    ack_value(
+        tx,
+        job,
+        kind,
+        serde_json::to_value(owner).map_err(|_| error("MCP_PROTOCOL"))?,
+    )
+}
+fn ack_value(
+    tx: &mpsc::SyncSender<Vec<u8>>,
+    job: &Job,
+    kind: &str,
+    mut value: Value,
+) -> Result<()> {
     value["type"] = kind.into();
     value["runId"] = job.run_id.clone().into();
     value["hostNonce"] = job.nonce.clone().into();
@@ -977,5 +1165,39 @@ mod audit_environment_tests {
         assert!(output.status.success());
         assert_eq!(output.stdout, b"unset");
         std::fs::remove_dir_all(root).unwrap();
+    }
+}
+
+#[cfg(test)]
+mod http_scope_tests {
+    use super::*;
+    #[test]
+    fn http_scope_checks_each_binding_and_never_accepts_process_identity() {
+        let scope = HttpScope {
+            run: "owned-run".into(),
+            server: "mcp-owned".into(),
+            revision: "fixed-revision".into(),
+            nonce: "b".repeat(48),
+            endpoint: "a".repeat(64),
+        };
+        let body = json!({"transport":"http","run":"owned-run","serverId":"mcp-owned","configurationRevision":"fixed-revision","nonce":"b".repeat(48),"endpointSha256":"a".repeat(64)});
+        assert!(scope.matches(&body));
+        for key in [
+            "transport",
+            "run",
+            "serverId",
+            "configurationRevision",
+            "nonce",
+            "endpointSha256",
+        ] {
+            let mut bad = body.clone();
+            bad[key] = "foreign".into();
+            assert!(!scope.matches(&bad));
+        }
+        for key in ["guardian", "keeper", "pid"] {
+            let mut bad = body.clone();
+            bad[key] = 0.into();
+            assert!(!scope.matches(&bad));
+        }
     }
 }

@@ -1321,6 +1321,9 @@ pub use mcp_security::{McpConfigurationView, McpSecretInput, PreparedMcpEnvironm
 #[cfg(test)]
 #[path = "mcp_config_tests.rs"]
 mod mcp_config_tests;
+#[cfg(test)]
+#[path = "mcp_http_tests.rs"]
+mod mcp_http_tests;
 
 #[cfg(test)]
 #[path = "mcp_security_tests.rs"]
@@ -1347,7 +1350,9 @@ pub use mcp_probe::*;
 
 #[path = "mcp_catalog.rs"]
 mod mcp_catalog;
-pub use mcp_catalog::{McpDiscoveredCatalog, McpDiscoveredTool, PreparedMcpProbe};
+pub use mcp_catalog::{
+    McpDiscoveredCatalog, McpDiscoveredTool, PreparedMcpProbe, PreparedMcpTransport,
+};
 
 #[path = "mcp_calls.rs"]
 mod mcp_calls;

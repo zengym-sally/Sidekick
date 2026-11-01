@@ -44,13 +44,14 @@ test('JSON blocks secret export and ambiguous existing literals without changing
   const d={...mcpDraft(),name:'demo',command:'node',env},before=structuredClone(d);assert.throws(()=>formatMcpJson(d));assert.deepEqual(d,before);
  }
 });
-test('JSON detects remote transports without making them executable or dropping headers',()=>{
- for(const entry of [{type:'http',url:'https://example.invalid/mcp',headers:{Authorization:'synthetic-private'}},{url:'https://example.invalid/mcp'},{type:'streamable-http',url:'https://example.invalid/mcp'},{type:'sse',url:'https://example.invalid/sse'}]){
-  const r=inspectMcpJson(JSON.stringify({remote:entry}));assert.equal(r.entries[0].draft,undefined);assert.match(r.entries[0].error,/尚未接入/);assert.equal(JSON.stringify(r).includes('synthetic-private'),false);
+test('JSON rejects literal HTTP credentials and legacy SSE without dropping them into an executable draft',()=>{
+ for(const entry of [{type:'http',url:'https://example.invalid/mcp',headers:{Authorization:'synthetic-private'}},{type:'sse',url:'https://example.invalid/sse'}]){
+  const r=inspectMcpJson(JSON.stringify({remote:entry}));assert.equal(r.entries[0].draft,undefined);assert.ok(r.entries[0].error);assert.equal(JSON.stringify(r).includes('synthetic-private'),false);
  }
+ for(const entry of [{url:'https://example.invalid/mcp'},{type:'streamable-http',url:'https://example.invalid/mcp'}])assert.equal(inspectMcpJson(JSON.stringify({remote:entry})).entries[0].draft.transport,'http');
 });
 test('JSON isolates valid and unsupported entries for explicit single selection',()=>{
- const r=inspectMcpJson(JSON.stringify({mcpServers:{local:{command:'node'},remote:{url:'https://example.invalid'}}}));
+ const r=inspectMcpJson(JSON.stringify({mcpServers:{local:{command:'node'},remote:{type:'sse',url:'https://example.invalid'}}}));
  assert.equal(r.entries.length,2);assert.ok(r.entries[0].draft);assert.equal(r.entries[1].draft,undefined);
 });
 test('JSON rejects duplicate keys, ambiguous wrappers and oversized inputs',()=>{
@@ -97,9 +98,9 @@ test('JSON saves only the selected entry to the stable current ID and never diag
  assert.equal(f.calls.length,1);assert.equal(f.calls[0].args.input.id,'a');assert.equal(f.config().servers.length,2);assert.equal(m.current.value.name,'second');assert.equal(m.dirty.value,false);
  const reopened=createMcpSettings(f.api);await reopened.load();assert.equal(reopened.find('a').command,'second');assert.equal(reopened.find('b').command,'node');
 });
-test('JSON invalid or remote input cannot save or mutate the structured draft',async()=>{
+test('JSON invalid or unsupported transport input cannot save or mutate the structured draft',async()=>{
  const f=fixture(),m=createMcpSettings(f.api);await m.load();const original=JSON.parse(JSON.stringify(m.current.value));m.setMode('json');m.setJsonText('{broken');await assert.rejects(m.save());assert.deepEqual(m.current.value,original);
- m.setJsonText('{"remote":{"url":"https://example.invalid"}}');await assert.rejects(m.save());assert.equal(f.calls.length,0);assert.deepEqual(m.current.value,original);
+ m.setJsonText('{"remote":{"type":"sse","url":"https://example.invalid"}}');await assert.rejects(m.save());assert.equal(f.calls.length,0);assert.deepEqual(m.current.value,original);
 });
 test('JSON unknown save preserves raw input and reconciles by existing receipt semantics',async()=>{
  const f=fixture(),m=createMcpSettings(f.api);await m.load();m.setMode('json');const text='{"changed": {"command": "node", "args": ["one argument", ""]}}';m.setJsonText(text);f.after(()=>{throw {code:'MCP_SAVE_UNCERTAIN'};});await assert.rejects(m.save());

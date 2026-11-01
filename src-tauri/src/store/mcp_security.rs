@@ -358,7 +358,7 @@ impl AppStore {
     fn validate_mcp_document(&self, document: &McpConfiguration) -> Result<()> {
         check_configuration(document)?;
         for server in &document.servers {
-            for item in &server.settings.env {
+            for item in server.settings.stdio().into_iter().flat_map(|s| &s.env) {
                 if item.source == "keychain" {
                     self.validate_reference(&server.id, &item.name, &item.value)?;
                 }
@@ -397,7 +397,10 @@ impl AppStore {
         let scope = self.mcp_scope()?;
         for server in &mut servers {
             let mut fields = BTreeMap::new();
-            for item in &mut server.settings.env {
+            for item in match &mut server.settings.transport {
+                McpTransportConfig::Stdio(s) => &mut s.env,
+                McpTransportConfig::Http(_) => continue,
+            } {
                 if item.source == "keychain" {
                     self.validate_reference(&server.id, &item.name, &item.value)?;
                     let state = if !backend.available() {
@@ -451,8 +454,15 @@ impl AppStore {
             return Err(conflict());
         }
         input.server.name = input.server.name.trim().into();
-        input.server.command = input.server.command.trim().into();
-        input.server.cwd = input.server.cwd.filter(|s| !s.trim().is_empty());
+        match &mut input.server.transport {
+            McpTransportConfig::Stdio(s) => {
+                s.command = s.command.trim().into();
+                s.cwd = s.cwd.take().filter(|s| !s.trim().is_empty());
+            }
+            McpTransportConfig::Http(h) => {
+                h.url = super::mcp_config::checked_http_url(h.url.trim())?;
+            }
+        }
         check_server(&input.server)?;
         let previous = if let Some(id) = &input.id {
             Some(
@@ -482,6 +492,7 @@ impl AppStore {
         for name in new_names {
             if !input
                 .server
+                .stdio()?
                 .env
                 .iter()
                 .any(|item| &item.name == name && item.source == "keychain")
@@ -489,25 +500,27 @@ impl AppStore {
                 return Err(config_error());
             }
         }
-        for item in &mut input.server.env {
-            if item.source == "keychain" {
-                if !item.value.is_empty() {
-                    return Err(scope_error());
+        if let McpTransportConfig::Stdio(stdio) = &mut input.server.transport {
+            for item in &mut stdio.env {
+                if item.source == "keychain" {
+                    if !item.value.is_empty() {
+                        return Err(scope_error());
+                    }
+                    item.value =
+                        if new_names.contains(&item.name) {
+                            self.new_reference(&id, &item.name)?
+                        } else {
+                            previous
+                                .as_ref()
+                                .and_then(|s| {
+                                    s.settings.stdio().ok()?.env.iter().find(|old| {
+                                        old.name == item.name && old.source == "keychain"
+                                    })
+                                })
+                                .map(|old| old.value.clone())
+                                .ok_or_else(missing)?
+                        };
                 }
-                item.value = if new_names.contains(&item.name) {
-                    self.new_reference(&id, &item.name)?
-                } else {
-                    previous
-                        .as_ref()
-                        .and_then(|s| {
-                            s.settings
-                                .env
-                                .iter()
-                                .find(|old| old.name == item.name && old.source == "keychain")
-                        })
-                        .map(|old| old.value.clone())
-                        .ok_or_else(missing)?
-                };
             }
         }
         let server = McpServer {
@@ -524,6 +537,9 @@ impl AppStore {
         } else {
             document.servers.push(server);
         }
+        if document.servers.iter().any(|s| s.settings.kind() == "http") {
+            document.version = 2;
+        }
         document.revision = revision(&document.revision);
         self.validate_mcp_document(&document)?;
         Ok((document, id))
@@ -534,6 +550,17 @@ impl AppStore {
         server_id: Option<String>,
     ) -> Result<McpConfigSave> {
         self.validate_mcp_document(&target)?;
+        if target.version == 2 {
+            if let Some(before) =
+                self.read_mcp_private(Directory::Mcp, "servers.json", CONFIG_LIMIT)?
+            {
+                let document: McpConfiguration =
+                    serde_json::from_slice(&before).map_err(|_| config_error())?;
+                if document.version == 1 {
+                    self.backup_mcp_v1(&before)?;
+                }
+            }
+        }
         let written = (|| {
             #[cfg(test)]
             if self.mcp_write_fault == Some(McpWriteFault::BeforeReplace) {
@@ -572,6 +599,42 @@ impl AppStore {
             (Err(error), Ok(_)) => Err(error),
             _ => Err(uncertain()),
         }
+    }
+    fn backup_mcp_v1(&self, bytes: &[u8]) -> Result<()> {
+        let failure = || {
+            StoreError::new(
+                "MCP_BACKUP_FAILED",
+                "HTTP配置升级前备份失败，原配置未覆盖。请核对后重试。",
+            )
+        };
+        let name = format!("mcp-servers-v1-{}.json", digest(bytes));
+        let (parent, directory) = self
+            .mcp_directory(Directory::Backups)
+            .map_err(|_| failure())?;
+        match OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .mode(0o600)
+            .open(parent.join(&name))
+        {
+            Ok(mut file) => {
+                self.verify_mcp_paths().map_err(|_| failure())?;
+                file.write_all(bytes).map_err(|_| failure())?;
+                file.sync_all().map_err(|_| failure())?;
+            }
+            Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {}
+            Err(_) => return Err(failure()),
+        }
+        directory.sync_all().map_err(|_| failure())?;
+        if self
+            .read_mcp_private(Directory::Backups, &name, CONFIG_LIMIT)
+            .map_err(|_| failure())?
+            .as_deref()
+            != Some(bytes)
+        {
+            return Err(failure());
+        }
+        Ok(())
     }
     pub fn save_mcp_server(&self, input: McpServerInput) -> Result<McpConfigSave> {
         self.reconcile_mcp_journal()?;
@@ -637,6 +700,8 @@ impl AppStore {
         for item in &journal.new_refs {
             if !server
                 .settings
+                .stdio()
+                .map_err(|_| uncertain())?
                 .env
                 .iter()
                 .any(|e| e.name == item.name && e.source == "keychain" && e.value == item.reference)
@@ -776,9 +841,11 @@ impl AppStore {
                 .iter()
                 .filter(|s| s.id == id)
                 .flat_map(|s| {
-                    s.settings
-                        .env
-                        .iter()
+                    let env: &[McpEnvironment] = match &s.settings.transport {
+                        McpTransportConfig::Stdio(value) => &value.env,
+                        McpTransportConfig::Http(_) => &[],
+                    };
+                    env.iter()
                         .filter(|e| {
                             e.source == "keychain"
                                 && (!new_only || input.values.contains_key(&e.name))
@@ -872,6 +939,69 @@ impl AppStore {
             &ProcessEnvironment,
         )
     }
+    pub(crate) fn prepare_mcp_http_headers(
+        &self,
+        id: &str,
+        revision: &str,
+        diagnostic: bool,
+    ) -> Result<BTreeMap<String, String>> {
+        self.prepare_mcp_http_headers_with(id, revision, diagnostic, &ProcessEnvironment)
+    }
+    pub(super) fn prepare_mcp_http_headers_with(
+        &self,
+        id: &str,
+        revision: &str,
+        diagnostic: bool,
+        environment: &dyn McpEnvironmentSource,
+    ) -> Result<BTreeMap<String, String>> {
+        self.reconcile_mcp_journal()?;
+        let document = self.read_mcp_document()?;
+        if document.revision != revision {
+            return Err(conflict());
+        }
+        let server = document
+            .servers
+            .iter()
+            .find(|s| s.id == id && (diagnostic || s.settings.enabled))
+            .ok_or_else(|| StoreError::new("MCP_NOT_FOUND", "服务不存在或已禁用，请核对配置。"))?;
+        let McpTransportConfig::Http(http) = &server.settings.transport else {
+            return Err(config_error());
+        };
+        let mut headers = BTreeMap::new();
+        let mut bytes = 0;
+        for header in &http.headers {
+            let value = environment
+                .get(&header.value)
+                .filter(|v| !v.is_empty())
+                .ok_or_else(|| {
+                    StoreError::new(
+                        "MCP_ENV_MISSING",
+                        "配置的宿主变量缺失，请核对变量名与应用启动环境。",
+                    )
+                })?;
+            if value.len() > VALUE_LIMIT
+                || value.starts_with(' ')
+                || value.ends_with(' ')
+                || value
+                    .chars()
+                    .any(|c| c < ' ' || c == '\u{7f}' || c > '\u{ff}')
+            {
+                return Err(StoreError::new(
+                    "MCP_HTTP_HEADER",
+                    "请求头引用值无效、会被规范化或超过4KiB，请核对完整变量值。",
+                ));
+            }
+            bytes += header.name.len() + value.len() + 4;
+            if bytes > 14336 {
+                return Err(StoreError::new(
+                    "MCP_HTTP_HEADER",
+                    "请求头引用值总量超出预算，未建立连接。",
+                ));
+            }
+            headers.insert(header.name.clone(), value);
+        }
+        Ok(headers)
+    }
     pub(super) fn prepare_mcp_environment_with(
         &self,
         id: &str,
@@ -915,7 +1045,7 @@ impl AppStore {
         let scope = self.mcp_scope()?;
         let mut values = BTreeMap::new();
         let mut total = 0;
-        for item in &server.settings.env {
+        for item in &server.settings.stdio()?.env {
             let value = match item.source.as_str() {
                 "literal" => item.value.clone(),
                 "environment" => environment

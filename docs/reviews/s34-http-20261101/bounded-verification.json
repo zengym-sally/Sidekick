@@ -1,0 +1,19 @@
+{
+  "kind": "selected bounded verification disposition",
+  "rawReport": "build/s34-http-20261101/budget-gate-adjudication/report.json",
+  "rawReportSha256": "87f6cf69f41de9a46561fdea56f4b1116cc4c162df66beb544ed2f8a7783c523",
+  "decision": "B / APPROVE: exactly one additional unchanged original npm run check",
+  "scope": {
+    "candidateTree": "f7ed135ece2b0e4656426dd2f5c5dc1b26ac4150",
+    "sourceManifestSha256": "6239621bb4bf2aacb28ef83cfeaf9fff3d3edf4dd7153cdc9c8bc95eddada9da",
+    "unchanged": "source, script, test, timeout, concurrency, candidate"
+  },
+  "stop": "Any failure, interruption or incomplete result exhausts this one allowance; no further full retry or scope expansion",
+  "passRequirement": "complete exit 0 plus independent postchecks",
+  "openRisk": "ECONNRESET cause remains unknown; do not call fixed, environment or regression ruled out",
+  "rejected": "20 focused passes cannot replace complete gate",
+  "lateDocs": "separate cheap/cached verification; not covered by candidate full output",
+  "productionAndNative": "not signed pass",
+  "allowanceExhausted": true,
+  "actualOutcome": "attempt3 exit1 / needs_revision; same ECONNRESET; stopped"
+}

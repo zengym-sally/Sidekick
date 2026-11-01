@@ -111,7 +111,7 @@ fn mcp_calls_environment_values_are_private_and_missing_references_fail() {
         .servers
         .remove(0)
         .settings;
-    draft.env.push(McpEnvironment {
+    draft.stdio_mut().unwrap().env.push(McpEnvironment {
         name: "SYNTHETIC_VALUE".into(),
         source: "environment".into(),
         value: variable.clone(),
@@ -134,8 +134,11 @@ fn mcp_calls_environment_values_are_private_and_missing_references_fail() {
     std::env::remove_var(&variable);
     assert!(!prepared.revision.is_empty());
     assert_eq!(prepared.servers[0].server.settings.name, "environment");
+    let PreparedMcpTransport::Stdio { env, .. } = &prepared.servers[0].prepared.transport else {
+        panic!("stdio private payload required");
+    };
     assert_eq!(
-        prepared.servers[0].prepared.env["SYNTHETIC_VALUE"],
+        env["SYNTHETIC_VALUE"],
         "synthetic-secret-only-in-private-payload"
     );
     let snapshot = store.agent_run(&id).unwrap().snapshot.to_string();

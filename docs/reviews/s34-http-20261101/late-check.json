@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-11-01T11:47:49.298010+00:00",
+  "scope": "late documentation/evidence cheap checks after independently sealed candidate full; before local commit",
+  "result": "pass",
+  "commands": [
+    {
+      "argv": [
+        "npm",
+        "run",
+        "check:docs"
+      ],
+      "exitCode": 0,
+      "output": "✓ docs link check passed (15 files, 196 local links resolved).",
+      "logSha256": "cd9c6c7838cba40bb7e67a3b77e88a0a6e3f69de34b44d6f03162effd892fa37"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": "",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "sourceCount": 50,
+  "sourceFreezeSha256": "c7cfa3f1a5d2e9ed60f5966a993339cd3017f006eb107520f048ef08daf6ef23",
+  "originalHttp47Unchanged": true,
+  "coreSha256": "b429231121cacdd394ee654049efb8ad98c91b5daf0b8e782865ead859af3346",
+  "candidateIndexTree": "8d070431438a90dceb4c109a9c42c23f74d76fa6",
+  "candidateAllInputCount": 4234,
+  "rootAllInputCount": 4236,
+  "changedInputCount": 72,
+  "lateChangedPathsExcludingThisRecord": [
+    "docs/product/05-第一阶段实施计划.md",
+    "docs/reviews/README.md",
+    "docs/reviews/s34-http-20261101.md",
+    "docs/reviews/s34-http-20261101/budget-full-check.json",
+    "docs/reviews/s34-http-20261101/budget-restart-fix.json"
+  ],
+  "lateDifferencesOnlyDocs": true,
+  "lateDocumentSha256ExcludingThisRecord": {
+    "docs/product/05-第一阶段实施计划.md": "fa281887ae967ef66261aff053e7182e2e0b307432976a44bae9a6ccbc2be737",
+    "docs/reviews/README.md": "849a5c333a99ed2c7f90e793a96583681406ff7a3058289e74a3e9839ea2ed4e",
+    "docs/reviews/s34-http-20261101.md": "0deec8a4703db04cf20fcce2f3c57b19af78004cd3f4cb3fc29186c3459a9d5a",
+    "docs/reviews/s34-http-20261101/budget-full-check.json": "cbef91bf3993200b3dca57fd9ba1d28e35b1c4d4ec46349fcebb33bb9f856aa3",
+    "docs/reviews/s34-http-20261101/budget-restart-fix.json": "cd4e82c976f66461e6c45d7a367ccc6ff0b8962c97f9df635ae3b351ad6f0d81"
+  },
+  "selfContentHashExcluded": true,
+  "selectedJsonParsedCountIncludingThisRecord": 16,
+  "privateAbsolutePathMatches": 0,
+  "checkerControls": {
+    "docsOnlyPositiveAndSourceNegative": true,
+    "privatePathPositiveAndRelativePathNegative": true
+  },
+  "protectedDiffPaths": [],
+  "mainIndexEmpty": true,
+  "oldAndNewSeals": {
+    "full-independent-clean": {
+      "sha256": "c56b7ca9b913f753143f5740603587d6fca291ba2f2679d89fecbf6d5a33a403",
+      "memberCount": 29,
+      "allMembersMatch": true
+    },
+    "full-independent-attempt2": {
+      "sha256": "83e4ff848b0ffec3a29ec0f92a246f0302c29bacf4991e642a5bdb8fe8fb2d76",
+      "memberCount": 33,
+      "allMembersMatch": true
+    },
+    "full-independent-attempt3": {
+      "sha256": "dbad319df2fc2a87891c936567e84540d4d193a815cf918ec6e961205e215e6f",
+      "memberCount": 20,
+      "allMembersMatch": true
+    },
+    "full-independent": {
+      "sha256": "384b3e7bc643367c9ea067e0610e1205a12fd15d1bdc5d3377fd2d5aefa635a4",
+      "memberCount": 77,
+      "allMembersMatch": true
+    }
+  },
+  "realBudgetOpaqueShaMatches": 4,
+  "realBudgetSqliteOpened": false,
+  "productionMcpKeychainEnabled": false,
+  "realModelRequests": 0,
+  "guiInvocations": 0,
+  "independentFullReportSha256": "dd7c260f6e8fe65f5c6873b96fa4adefc1feaa6354d85c24cfb52c2509140771",
+  "unverified": "native H3, production/real-model/real-service/root/platform acceptance remain open; commit and exact HEAD follow-up occur after this snapshot"
+}

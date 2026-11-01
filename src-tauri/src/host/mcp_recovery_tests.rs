@@ -296,7 +296,7 @@ fn modes(fixture: &TrialFixture, mode: &str) {
             let servers = store.mcp_configuration()?.servers;
             for server in servers {
                 let mut settings = server.settings;
-                settings.args[3] = mode.into();
+                settings.stdio_mut().unwrap().args[3] = mode.into();
                 store.save_mcp_server(McpServerInput {
                     id: Some(server.id),
                     expected_revision: store.mcp_configuration()?.revision,

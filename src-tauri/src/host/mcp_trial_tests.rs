@@ -478,7 +478,7 @@ fn active_configuration_edits_preserve_snapshot_and_prevent_deletion() {
         .is_err());
     let server = &configuration.servers[0];
     let mut draft = server.settings.clone();
-    draft.command = "/never-executed".into();
+    draft.stdio_mut().unwrap().command = "/never-executed".into();
     draft.enabled = false;
     fixture
         .local

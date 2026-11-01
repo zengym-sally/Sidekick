@@ -1,0 +1,30 @@
+{
+  "attempt": 2,
+  "candidateTree": "f7ed135ece2b0e4656426dd2f5c5dc1b26ac4150",
+  "sourceManifestSha256": "6239621bb4bf2aacb28ef83cfeaf9fff3d3edf4dd7153cdc9c8bc95eddada9da",
+  "command": "npm run check",
+  "exitCode": 1,
+  "seconds": 70.762,
+  "node": {
+    "tests": 440,
+    "pass": 439,
+    "fail": 1
+  },
+  "failure": {
+    "file": "tests/integration/model-budget.test.mjs",
+    "line": 240,
+    "name": "concurrent reservations and restart cannot exceed ten upstream requests",
+    "error": "fetch connect ECONNRESET 127.0.0.1",
+    "rootCause": "unconfirmed"
+  },
+  "rustAndBothPackages": "not executed",
+  "ownedSyntheticFixture": {
+    "spent": 6,
+    "completed": 6,
+    "readOnlyInspectionPreservedDatabaseSha": true,
+    "processStderrAndExitHistory": "not retained by original fixture; unavailable"
+  },
+  "rawEvidence": "build/s34-http-20261101/full-independent-attempt2/",
+  "sealSha256": "83e4ff848b0ffec3a29ec0f92a246f0302c29bacf4991e642a5bdb8fe8fb2d76",
+  "sourceAndInputsStable": true
+}

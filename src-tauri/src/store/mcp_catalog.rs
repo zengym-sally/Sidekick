@@ -23,12 +23,36 @@ pub struct McpDiscoveredCatalog {
     pub tools: Vec<McpDiscoveredTool>,
 }
 pub struct PreparedMcpProbe {
-    pub command: String,
-    pub args: Vec<String>,
-    pub cwd: PathBuf,
     pub run_directory: PathBuf,
-    pub env: BTreeMap<String, String>,
-    pub sensitive_names: Vec<String>,
+    pub transport: PreparedMcpTransport,
+}
+pub enum PreparedMcpTransport {
+    Stdio {
+        command: String,
+        args: Vec<String>,
+        cwd: PathBuf,
+        env: BTreeMap<String, String>,
+        sensitive_names: Vec<String>,
+    },
+    Http {
+        url: String,
+        headers: BTreeMap<String, String>,
+    },
+}
+impl PreparedMcpProbe {
+    pub(crate) fn sensitive_values(&self) -> Vec<String> {
+        match &self.transport {
+            PreparedMcpTransport::Stdio {
+                env,
+                sensitive_names,
+                ..
+            } => sensitive_names
+                .iter()
+                .filter_map(|name| env.get(name).cloned())
+                .collect(),
+            PreparedMcpTransport::Http { headers, .. } => headers.values().cloned().collect(),
+        }
+    }
 }
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -233,6 +257,7 @@ impl McpDiscoveredCatalog {
         Ok(McpProbeCatalog {
             tools,
             catalog_sha256: None,
+            remote_close: None,
         })
     }
 }
@@ -286,9 +311,14 @@ impl AppStore {
             .iter()
             .find(|s| s.id == probe.input.server_id)
             .ok_or_else(invalid_catalog)?;
-        let env = self
-            .prepare_probe_environment(&server.id, &configuration.revision)?
-            .into_values();
+        let values = match &server.settings.transport {
+            McpTransportConfig::Stdio(_) => self
+                .prepare_probe_environment(&server.id, &configuration.revision)?
+                .into_values(),
+            McpTransportConfig::Http(_) => {
+                self.prepare_mcp_http_headers(&server.id, &configuration.revision, true)?
+            }
+        };
         let (runs, held) = self.probe_runs()?;
         let path = runs.join(id);
         fs::DirBuilder::new()
@@ -300,31 +330,40 @@ impl AppStore {
         identity(&path, &directory)?;
         held.sync_all().map_err(io_error)?;
         self.mcp_probe_directories.insert(id.into(), directory);
-        let cwd = server
-            .settings
-            .cwd
-            .as_ref()
-            .map(PathBuf::from)
-            .unwrap_or(path.clone());
-        if !cwd.is_dir() {
-            return Err(StoreError::new(
-                "MCP_DIRECTORY_MISSING",
-                "服务工作目录不可用。",
-            ));
-        }
+        let transport = match &server.settings.transport {
+            McpTransportConfig::Stdio(stdio) => {
+                let cwd = stdio
+                    .cwd
+                    .as_ref()
+                    .map(PathBuf::from)
+                    .unwrap_or_else(|| path.clone());
+                if !cwd.is_dir() {
+                    return Err(StoreError::new(
+                        "MCP_DIRECTORY_MISSING",
+                        "服务工作目录不可用。",
+                    ));
+                }
+                PreparedMcpTransport::Stdio {
+                    command: stdio.command.clone(),
+                    args: stdio.args.clone(),
+                    cwd,
+                    env: values,
+                    sensitive_names: stdio
+                        .env
+                        .iter()
+                        .filter(|e| e.source != "literal")
+                        .map(|e| e.name.clone())
+                        .collect(),
+                }
+            }
+            McpTransportConfig::Http(http) => PreparedMcpTransport::Http {
+                url: super::mcp_config::checked_http_url(&http.url)?,
+                headers: values,
+            },
+        };
         Ok(PreparedMcpProbe {
-            command: server.settings.command.clone(),
-            args: server.settings.args.clone(),
-            cwd,
             run_directory: path,
-            env,
-            sensitive_names: server
-                .settings
-                .env
-                .iter()
-                .filter(|e| e.source != "literal")
-                .map(|e| e.name.clone())
-                .collect(),
+            transport,
         })
     }
     pub fn publish_mcp_catalog(
@@ -333,11 +372,30 @@ impl AppStore {
         catalog: McpDiscoveredCatalog,
         sensitive: &[String],
     ) -> Result<McpProbe> {
+        self.publish_mcp_catalog_with_close(id, catalog, sensitive, None)
+    }
+    pub(crate) fn publish_mcp_http_catalog(
+        &mut self,
+        id: &str,
+        catalog: McpDiscoveredCatalog,
+        sensitive: &[String],
+        close: McpHttpClose,
+    ) -> Result<McpProbe> {
+        self.publish_mcp_catalog_with_close(id, catalog, sensitive, Some(close))
+    }
+    fn publish_mcp_catalog_with_close(
+        &mut self,
+        id: &str,
+        catalog: McpDiscoveredCatalog,
+        sensitive: &[String],
+        close: Option<McpHttpClose>,
+    ) -> Result<McpProbe> {
         let probe = self.mcp_probe(id)?;
-        if probe.status != "running" {
+        if probe.status != "running" || (probe.snapshot.transport == "http") != close.is_some() {
             return Err(invalid_catalog());
         }
         let mut receipt = catalog.validate(sensitive)?;
+        receipt.remote_close = close;
         let artifact = Artifact {
             version: 1,
             probe_id: id.into(),

@@ -507,6 +507,7 @@ def checked_payload(data, allow, model, synthetic=True, history=None):
 
 class Relay(http.server.ThreadingHTTPServer):
     daemon_threads = True
+    request_queue_size = max(16, http.server.ThreadingHTTPServer.request_queue_size)
 
     def __init__(self, budget, base, upstream, key, model, phase="test", fault=None, diagnostics=False):
         self.budget, self.base, self.upstream, self.key, self.model, self.phase, self.fault = budget, base, upstream, key, model, phase, fault

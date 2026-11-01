@@ -1,0 +1,37 @@
+{
+  "baseline": "8b7fbcc2c79e1ea65741df92cd78d581d06277de",
+  "risk": "R3",
+  "coreSha256": "b429231121cacdd394ee654049efb8ad98c91b5daf0b8e782865ead859af3346",
+  "checkpoints": [
+    {
+      "checkpoint": "H0",
+      "verdict": "APPROVE / pass",
+      "evidence": "117/117 maintained + independent",
+      "rawReport": "build/s34-http-20261101/h0-independent-v2/report.json",
+      "rawReportSha256": "2f28a9f383ca6a24ccfcbf70c20c9b519401b7928b38f739625b33be96457a5a"
+    },
+    {
+      "checkpoint": "H1",
+      "verdict": "APPROVE / pass",
+      "evidence": "5/5 independent fault paths; 60/7/18 + type",
+      "rawReport": "build/s34-http-20261101/h1-review-successor/final-review.json",
+      "rawReportSha256": "3dd54edbdc615188db9857561e6df867680fdd19d048a9a850f66cc2869fa2d9"
+    },
+    {
+      "checkpoint": "H2",
+      "verdict": "APPROVE / pass",
+      "evidence": "9/9 contract, 9/9 seam; runtime kill and close-metadata fault",
+      "rawReport": "build/s34-http-20261101/h2-review-first/sealed-review.json",
+      "rawReportSha256": "6bb2fe29ab80ff298cb1afce797ed76eae88e998617b4ae0562050b76a7d0cd9"
+    }
+  ],
+  "h1EvidenceException": "Reviewer overwrote first raw cancel output. Recovered actual tool transcript is explicitly not original raw. Maintained regression red logs remain intact; fresh final independent checks are separate.",
+  "native": "partial; see native-partial.json; no native visual-matrix pass",
+  "realModelRequests": 0,
+  "productionMcpKeychain": "disabled",
+  "finalDeliveryReview": "Historical v1 implementation A/B plus fresh v2 R1 loader-impact A/B APPROVE/pass; native/whole-delivery limitation remains",
+  "independentOriginalFullCheck": "attempt1 structure fail repaired; attempt2 and the sole bounded attempt3 both model-budget ECONNRESET fail; root cause open, downstream not executed",
+  "exactHeadCleanCheckout": "not executed; no commit",
+  "overallConclusion": "fail / needs_revision",
+  "executionState": "stopped; no further diagnosis, functional tests, full reruns or commit without owner direction"
+}

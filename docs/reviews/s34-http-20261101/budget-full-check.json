@@ -1,0 +1,947 @@
+{
+  "schemaVersion": 1,
+  "role": "fresh-context non-implementer independent full verifier",
+  "mode": "Inspect",
+  "result": "pass",
+  "conclusionScope": "original complete npm run check and static/postflight/package verification only",
+  "riskContext": {
+    "S34Delivery": "R3 per cross-process/security repository rule",
+    "budgetMinimalRepair": "R2 local shared listener capacity; existing quota/authorization unchanged"
+  },
+  "originalUserRequest": "S3.4 完整门禁连续两次在未改动的预算重启用例出现 ECONNRESET，当前已停止、未提交。是否授权增加一个独立预算回归修复项：先复现并定位，再最小修复和回归，保持现有额度与授权语义；继续只用合成资料、本机受控服务和临时账本，通过后恢复原 S3.4 复核及本地提交、不推送？",
+  "userAuthorization": "授权独立预算回归诊断与最小修复（推荐）",
+  "generatedAt": "2026-11-01T11:45:31.111734+00:00",
+  "postflightSampledAt": "2026-11-01T11:44:13.242654+00:00",
+  "candidate": "<candidate-or-setup-root>",
+  "rootHead": "8b7fbcc2c79e1ea65741df92cd78d581d06277de",
+  "candidateHead": "8b7fbcc2c79e1ea65741df92cd78d581d06277de",
+  "rootIndexTree": "2215d7c55620c381f4aeaaf445f49b951cde154e",
+  "candidateIndexTree": "8d070431438a90dceb4c109a9c42c23f74d76fa6",
+  "inputBinding": {
+    "allInputCount": 4234,
+    "changedTrackedCount": 45,
+    "untrackedCount": 25,
+    "changedInputCount": 70,
+    "manifestPath": "after-manifest-fix/root-all-inputs-before.json",
+    "manifestSha256": "2e9c889f1bf9eb1cd303c4b77f8d6a97d055ea60aa818eb7fec1f37d0dacf0d5",
+    "changedInputManifestSha256": "65bbc2ab94595b2628ac4bb370164c1d9fcc118b49e8c303d3f360765210e52d",
+    "sourceCount": 50,
+    "sourceFreezePath": "build/budget-restart-fix-20261101/source-freeze.json",
+    "sourceFreezeSha256": "c7cfa3f1a5d2e9ed60f5966a993339cd3017f006eb107520f048ef08daf6ef23",
+    "old47FreezeSha256": "6239621bb4bf2aacb28ef83cfeaf9fff3d3edf4dd7153cdc9c8bc95eddada9da",
+    "reviewReportSha256": "794cf73a2fb567a54165955fa572a2aa7b1a487ba2741cfbabe2a029e1d82e72",
+    "reviewVerdict": "APPROVE",
+    "candidateInputsStaged": true,
+    "allActualUntrackedRunnerFixturesIncluded": true,
+    "copiedIgnoredDependenciesBuildsOrEnv": false
+  },
+  "commands": [
+    {
+      "label": "01-npm-ci",
+      "argv": [
+        "npm",
+        "ci",
+        "--ignore-scripts"
+      ],
+      "cwd": "<candidate-or-setup-root>",
+      "exitCode": 0,
+      "pid": 31328,
+      "pgid": 31328,
+      "startedAt": "2026-11-01T11:32:19.898627+00:00",
+      "endedAt": "2026-11-01T11:32:23.000853+00:00",
+      "elapsedSeconds": 3.102,
+      "runtime": {
+        "pythonWhich": "/usr/bin/python3",
+        "pythonExecutable": "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "pythonVersion": "3.9.6",
+        "pythonInheritedRequestQueueSize": 5,
+        "commands": {
+          "node": "v24.20.0",
+          "npm": "12.2.1",
+          "cargo": "cargo 1.89.0 (c24e10642 2025-06-23)",
+          "rustc": "rustc 1.89.0 (29483883e 2025-08-04)"
+        },
+        "which": {
+          "node": "<home>/.nvm/versions/node/v24.20.0/bin/node",
+          "npm": "<home>/.nvm/versions/node/v24.20.0/bin/npm",
+          "cargo": "<home>/.cargo/bin/cargo",
+          "rustc": "<home>/.cargo/bin/rustc"
+        },
+        "PATH": "<home>/.nvm/versions/node/v24.20.0/bin:<home>/.cargo/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin",
+        "CARGO_TARGET_DIR": "<candidate-or-setup-root>/src-tauri/target",
+        "environmentKeys": [
+          "CARGO_TARGET_DIR",
+          "CPATH",
+          "HOME",
+          "LANG",
+          "LC_ALL",
+          "LIBRARY_PATH",
+          "LOGNAME",
+          "MANPATH",
+          "PATH",
+          "SDKROOT",
+          "TMPDIR",
+          "USER",
+          "__CF_USER_TEXT_ENCODING"
+        ]
+      },
+      "passedEnvironmentKeys": [
+        "CARGO_TARGET_DIR",
+        "HOME",
+        "LANG",
+        "LC_ALL",
+        "LOGNAME",
+        "PATH",
+        "TMPDIR",
+        "USER"
+      ],
+      "logSha256": "4c34bd7711380fcf6a75efbd0242835eff7c3a20a9a8bb07fadfcd1ba8c42da9",
+      "realModelRequests": 0,
+      "guiInvocations": 0
+    },
+    {
+      "label": "02-prepare-cli",
+      "argv": [
+        "npm",
+        "run",
+        "probe:prepare-cli"
+      ],
+      "cwd": "<candidate-or-setup-root>",
+      "exitCode": 0,
+      "pid": 36925,
+      "pgid": 36925,
+      "startedAt": "2026-11-01T11:32:25.154903+00:00",
+      "endedAt": "2026-11-01T11:32:35.307209+00:00",
+      "elapsedSeconds": 10.152,
+      "runtime": {
+        "pythonWhich": "/usr/bin/python3",
+        "pythonExecutable": "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "pythonVersion": "3.9.6",
+        "pythonInheritedRequestQueueSize": 5,
+        "commands": {
+          "node": "v24.20.0",
+          "npm": "12.2.1",
+          "cargo": "cargo 1.89.0 (c24e10642 2025-06-23)",
+          "rustc": "rustc 1.89.0 (29483883e 2025-08-04)"
+        },
+        "which": {
+          "node": "<home>/.nvm/versions/node/v24.20.0/bin/node",
+          "npm": "<home>/.nvm/versions/node/v24.20.0/bin/npm",
+          "cargo": "<home>/.cargo/bin/cargo",
+          "rustc": "<home>/.cargo/bin/rustc"
+        },
+        "PATH": "<home>/.nvm/versions/node/v24.20.0/bin:<home>/.cargo/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin",
+        "CARGO_TARGET_DIR": "<candidate-or-setup-root>/src-tauri/target",
+        "environmentKeys": [
+          "CARGO_TARGET_DIR",
+          "CPATH",
+          "HOME",
+          "LANG",
+          "LC_ALL",
+          "LIBRARY_PATH",
+          "LOGNAME",
+          "MANPATH",
+          "PATH",
+          "SDKROOT",
+          "TMPDIR",
+          "USER",
+          "__CF_USER_TEXT_ENCODING"
+        ]
+      },
+      "passedEnvironmentKeys": [
+        "CARGO_TARGET_DIR",
+        "HOME",
+        "LANG",
+        "LC_ALL",
+        "LOGNAME",
+        "PATH",
+        "TMPDIR",
+        "USER"
+      ],
+      "logSha256": "fd99633583e44f2654b4b2c91ea530daa8c13f1a6ed8199ca14bbd3d3306904d",
+      "realModelRequests": 0,
+      "guiInvocations": 0
+    },
+    {
+      "label": "03-prepare-pi",
+      "argv": [
+        "npm",
+        "run",
+        "probe:prepare-pi"
+      ],
+      "cwd": "<candidate-or-setup-root>",
+      "exitCode": 0,
+      "pid": 61353,
+      "pgid": 61353,
+      "startedAt": "2026-11-01T11:32:46.009796+00:00",
+      "endedAt": "2026-11-01T11:33:03.391617+00:00",
+      "elapsedSeconds": 17.382,
+      "runtime": {
+        "pythonWhich": "/usr/bin/python3",
+        "pythonExecutable": "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "pythonVersion": "3.9.6",
+        "pythonInheritedRequestQueueSize": 5,
+        "commands": {
+          "node": "v24.20.0",
+          "npm": "12.2.1",
+          "cargo": "cargo 1.89.0 (c24e10642 2025-06-23)",
+          "rustc": "rustc 1.89.0 (29483883e 2025-08-04)"
+        },
+        "which": {
+          "node": "<home>/.nvm/versions/node/v24.20.0/bin/node",
+          "npm": "<home>/.nvm/versions/node/v24.20.0/bin/npm",
+          "cargo": "<home>/.cargo/bin/cargo",
+          "rustc": "<home>/.cargo/bin/rustc"
+        },
+        "PATH": "<home>/.nvm/versions/node/v24.20.0/bin:<home>/.cargo/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin",
+        "CARGO_TARGET_DIR": "<candidate-or-setup-root>/src-tauri/target",
+        "environmentKeys": [
+          "CARGO_TARGET_DIR",
+          "CPATH",
+          "HOME",
+          "LANG",
+          "LC_ALL",
+          "LIBRARY_PATH",
+          "LOGNAME",
+          "MANPATH",
+          "PATH",
+          "SDKROOT",
+          "TMPDIR",
+          "USER",
+          "__CF_USER_TEXT_ENCODING"
+        ]
+      },
+      "passedEnvironmentKeys": [
+        "CARGO_TARGET_DIR",
+        "HOME",
+        "LANG",
+        "LC_ALL",
+        "LOGNAME",
+        "PATH",
+        "TMPDIR",
+        "USER"
+      ],
+      "logSha256": "f77488339fd94489da91f862ceecdb0ab95ebbd4a62688fe38e36a4b689e965b",
+      "realModelRequests": 0,
+      "guiInvocations": 0
+    },
+    {
+      "label": "04-full-check",
+      "argv": [
+        "npm",
+        "run",
+        "check"
+      ],
+      "cwd": "<candidate-or-setup-root>",
+      "exitCode": 0,
+      "pid": 96401,
+      "pgid": 96401,
+      "startedAt": "2026-11-01T11:33:15.852460+00:00",
+      "endedAt": "2026-11-01T11:44:04.733728+00:00",
+      "elapsedSeconds": 648.879,
+      "runtime": {
+        "pythonWhich": "/usr/bin/python3",
+        "pythonExecutable": "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "pythonVersion": "3.9.6",
+        "pythonInheritedRequestQueueSize": 5,
+        "commands": {
+          "node": "v24.20.0",
+          "npm": "12.2.1",
+          "cargo": "cargo 1.89.0 (c24e10642 2025-06-23)",
+          "rustc": "rustc 1.89.0 (29483883e 2025-08-04)"
+        },
+        "which": {
+          "node": "<home>/.nvm/versions/node/v24.20.0/bin/node",
+          "npm": "<home>/.nvm/versions/node/v24.20.0/bin/npm",
+          "cargo": "<home>/.cargo/bin/cargo",
+          "rustc": "<home>/.cargo/bin/rustc"
+        },
+        "PATH": "<home>/.nvm/versions/node/v24.20.0/bin:<home>/.cargo/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin",
+        "CARGO_TARGET_DIR": "<candidate-or-setup-root>/src-tauri/target",
+        "environmentKeys": [
+          "CARGO_TARGET_DIR",
+          "CPATH",
+          "HOME",
+          "LANG",
+          "LC_ALL",
+          "LIBRARY_PATH",
+          "LOGNAME",
+          "MANPATH",
+          "PATH",
+          "SDKROOT",
+          "TMPDIR",
+          "USER",
+          "__CF_USER_TEXT_ENCODING"
+        ]
+      },
+      "passedEnvironmentKeys": [
+        "CARGO_TARGET_DIR",
+        "HOME",
+        "LANG",
+        "LC_ALL",
+        "LOGNAME",
+        "PATH",
+        "TMPDIR",
+        "USER"
+      ],
+      "logSha256": "8979f3168929bea7e97822b682064021795959f2078c14ae267b8664ea3d4435",
+      "realModelRequests": 0,
+      "guiInvocations": 0
+    }
+  ],
+  "fullAttemptCount": 1,
+  "fullScriptsTimeoutConcurrencyAndOrderUnmodified": true,
+  "preparationHarnessStops": [
+    {
+      "command": "/usr/bin/python3 -B full-independent/prepare.py",
+      "exitCode": 1,
+      "reason": "overbroad full0777 comparison: 406 permission-only 0600/0644 differences; SHA/size/executable equal",
+      "evidence": [
+        "preparation-stop.json",
+        "input-mismatch.json",
+        "input-mismatch-summary.json"
+      ],
+      "originalCandidatePreserved": "<candidate-or-setup-root>",
+      "targetNpmStarted": false,
+      "recovery": "coordinator minimal prepare-v2 delta; independent actual AST positive/content/executable controls3/3; new clone"
+    },
+    {
+      "command": "/usr/bin/python3 -B full-independent/run-command.py ... 01-npm-ci npm ci --ignore-scripts",
+      "exitCode": 1,
+      "reason": "sys.executable literal path assertion rejected system /usr/bin/python3 launcher resolving to CLT; actual3.9.6/queue5 correct",
+      "evidence": [
+        "run-command.py",
+        "01-npm-ci.started",
+        "01-npm-ci-environment.log"
+      ],
+      "targetNpmStarted": false,
+      "recovery": "new run-command-v2 and new output directory; source target argv/env/test parameters unchanged"
+    }
+  ],
+  "counts": {
+    "nodeBlocks": [
+      {
+        "block": 1,
+        "firstTest": "✔ manual dates preserve UTC, timezone, expression and unchanged values (13.189375ms)",
+        "lastSummaryLine": 55,
+        "tests": 15,
+        "suites": 0,
+        "pass": 15,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 127.430458,
+        "lastObservedNpmMarker": "test:s1-domain",
+        "actualTestScopeFromOriginalCheckOrder": "test:s1-domain"
+      },
+      {
+        "block": 2,
+        "firstTest": "✔ managed Bash preserves output and exit status while redacting the active credential (73.393792ms)",
+        "lastSummaryLine": 112,
+        "tests": 47,
+        "suites": 0,
+        "pass": 47,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 822.226625,
+        "lastObservedNpmMarker": "test:s2-domain",
+        "actualTestScopeFromOriginalCheckOrder": "test:s2-domain"
+      },
+      {
+        "block": 3,
+        "firstTest": "✔ late role reads cannot select a previous role or replace a newer draft (1.105584ms)",
+        "lastSummaryLine": 147,
+        "tests": 25,
+        "suites": 0,
+        "pass": 25,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 134.182791,
+        "lastObservedNpmMarker": "test:s31-domain",
+        "actualTestScopeFromOriginalCheckOrder": "test:s31-domain"
+      },
+      {
+        "block": 4,
+        "firstTest": "✔ civil calendar is independent of host DST and skipped days (3.291833ms)",
+        "lastSummaryLine": 171,
+        "tests": 14,
+        "suites": 0,
+        "pass": 14,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 145.609917,
+        "lastObservedNpmMarker": "test:layout-domain",
+        "actualTestScopeFromOriginalCheckOrder": "test:layout-domain"
+      },
+      {
+        "block": 5,
+        "firstTest": "✔ scan errors retain the visible index and disable restoration until successful reread (1.025125ms)",
+        "lastSummaryLine": 209,
+        "tests": 28,
+        "suites": 0,
+        "pass": 28,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 14247.63475,
+        "lastObservedNpmMarker": "test:s32-domain",
+        "actualTestScopeFromOriginalCheckOrder": "test:s32-domain"
+      },
+      {
+        "block": 6,
+        "firstTest": "✔ HTTP JSON http imports only whole host-variable references (1.745792ms)",
+        "lastSummaryLine": 279,
+        "tests": 60,
+        "suites": 0,
+        "pass": 60,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 125.617125,
+        "lastObservedNpmMarker": "test:s33-config-domain",
+        "actualTestScopeFromOriginalCheckOrder": "test:s33-config-domain"
+      },
+      {
+        "block": 7,
+        "firstTest": "✔ secure input uses a dedicated command and never sends a persisted credential reference (3.446458ms)",
+        "lastSummaryLine": 296,
+        "tests": 7,
+        "suites": 0,
+        "pass": 7,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 121.919541,
+        "lastObservedNpmMarker": "test:s33-security-domain",
+        "actualTestScopeFromOriginalCheckOrder": "test:s33-security-domain"
+      },
+      {
+        "block": 8,
+        "firstTest": "✔ diagnosis uses saved identity, waits for verified catalog, cancels only the owned run (1.490208ms)",
+        "lastSummaryLine": 324,
+        "tests": 18,
+        "suites": 0,
+        "pass": 18,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 132.596583,
+        "lastObservedNpmMarker": "test:s33-ui-domain",
+        "actualTestScopeFromOriginalCheckOrder": "test:s33-ui-domain"
+      },
+      {
+        "block": 9,
+        "firstTest": "✔ loading and cancelling confirmation issue no upgrade; explicit consent enables once (1.56325ms)",
+        "lastSummaryLine": 342,
+        "tests": 8,
+        "suites": 0,
+        "pass": 8,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 110.645625,
+        "lastObservedNpmMarker": "test:s33-upgrade-domain",
+        "actualTestScopeFromOriginalCheckOrder": "test:s33-upgrade-domain"
+      },
+      {
+        "block": 10,
+        "firstTest": "✔ MCP names bind stable server identity and exact tool name within model limits (0.62575ms)",
+        "lastSummaryLine": 361,
+        "tests": 9,
+        "suites": 0,
+        "pass": 9,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 105.597792,
+        "lastObservedNpmMarker": "test:mcp-contract",
+        "actualTestScopeFromOriginalCheckOrder": "test:mcp-contract"
+      },
+      {
+        "block": 11,
+        "firstTest": "✔ fixed Pi HTTP json initializes, discovers and calls with a one-shot permit (28.8725ms)",
+        "lastSummaryLine": 434,
+        "tests": 62,
+        "suites": 0,
+        "pass": 62,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 1497.419459,
+        "lastObservedNpmMarker": "test:mcp-http",
+        "actualTestScopeFromOriginalCheckOrder": "test:mcp-http"
+      },
+      {
+        "block": 12,
+        "firstTest": "✔ real Runtime/Pi seam has a successful positive control (215.1635ms)",
+        "lastSummaryLine": 459,
+        "tests": 14,
+        "suites": 0,
+        "pass": 14,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 5680.41225,
+        "lastObservedNpmMarker": "test:mcp-recovery",
+        "actualTestScopeFromOriginalCheckOrder": "test:mcp-recovery"
+      },
+      {
+        "block": 13,
+        "firstTest": "✔ cleanup failure still attempts every owned resource and retains failed evidence (167.082375ms)",
+        "lastSummaryLine": 620,
+        "tests": 134,
+        "suites": 0,
+        "pass": 134,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 42466.810625,
+        "lastObservedNpmMarker": "test:model-budget",
+        "actualTestScopeFromOriginalCheckOrder": "test:model-budget"
+      },
+      {
+        "block": 14,
+        "firstTest": "✔ contract rejection keeps its public code and identifies empty changes (0.6665ms)",
+        "lastSummaryLine": 646,
+        "tests": 16,
+        "suites": 0,
+        "pass": 16,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 68.925,
+        "lastObservedNpmMarker": "test:model-output-diagnostics",
+        "actualTestScopeFromOriginalCheckOrder": "test:model-output-diagnostics"
+      },
+      {
+        "block": 15,
+        "firstTest": "✔ native fixture rejects missing or mismatched synthetic credentials and nonce before accepting model HTTP (90.653458ms)",
+        "lastSummaryLine": 682,
+        "tests": 26,
+        "suites": 0,
+        "pass": 26,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 4735.321333,
+        "lastObservedNpmMarker": "test:mcp-native-fetch",
+        "actualTestScopeFromOriginalCheckOrder": "test:mcp-native-fetch"
+      },
+      {
+        "block": 16,
+        "firstTest": "✔ verification reopen rejects a valid outer marker whose bootstrap redirects to another synthetic root (749.181542ms)",
+        "lastSummaryLine": 1172,
+        "tests": 5,
+        "suites": 0,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 1256.973584,
+        "lastObservedNpmMarker": "test:s33-ui-safety",
+        "actualTestScopeFromOriginalCheckOrder": "test:s33-ui-safety"
+      },
+      {
+        "block": 17,
+        "firstTest": "✔ actual Rust/Pi HTTP json discovers without tool calls and reopens its catalog (1592.261167ms)",
+        "lastSummaryLine": 1322,
+        "tests": 77,
+        "suites": 0,
+        "pass": 77,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 58460.805,
+        "lastObservedNpmMarker": "probe:bundle",
+        "actualTestScopeFromOriginalCheckOrder": "test:s33-discovery"
+      },
+      {
+        "block": 18,
+        "firstTest": "✔ ownership ends once after close (0.78525ms)",
+        "lastSummaryLine": 1404,
+        "tests": 12,
+        "suites": 0,
+        "pass": 12,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 6020.438541,
+        "lastObservedNpmMarker": "probe:bundle",
+        "actualTestScopeFromOriginalCheckOrder": "test:s33-lifecycle"
+      },
+      {
+        "block": 19,
+        "firstTest": "✔ source packages come from the same pinned workspace (2.593125ms)",
+        "lastSummaryLine": 1425,
+        "tests": 9,
+        "suites": 0,
+        "pass": 9,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 1703.199208,
+        "lastObservedNpmMarker": "probe:runtime",
+        "actualTestScopeFromOriginalCheckOrder": "probe:runtime"
+      },
+      {
+        "block": 20,
+        "firstTest": "✔ complete is explicit and duplicate delivery takes effect once (0.393958ms)",
+        "lastSummaryLine": 1441,
+        "tests": 4,
+        "suites": 0,
+        "pass": 4,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 46.881375,
+        "lastObservedNpmMarker": "probe:card",
+        "actualTestScopeFromOriginalCheckOrder": "probe:card"
+      },
+      {
+        "block": 21,
+        "firstTest": "✔ SIGINT stops only the owned child and preserves the interruption status (28.562083ms)",
+        "lastSummaryLine": 1459,
+        "tests": 6,
+        "suites": 0,
+        "pass": 6,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 2139.275167,
+        "lastObservedNpmMarker": "probe:contracts",
+        "actualTestScopeFromOriginalCheckOrder": "probe:contracts"
+      },
+      {
+        "block": 22,
+        "firstTest": "✔ bundled Pi calls the API model ID and returns validated dated candidates without leaking credentials (888.526167ms)",
+        "lastSummaryLine": 1733,
+        "tests": 7,
+        "suites": 0,
+        "pass": 7,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 2685.714916,
+        "lastObservedNpmMarker": "probe:bundle",
+        "actualTestScopeFromOriginalCheckOrder": "test:s2-runtime"
+      },
+      {
+        "block": 23,
+        "firstTest": "✔ trial uses the actual role model and preferences with no tools or business sink (136.317583ms)",
+        "lastSummaryLine": 1743,
+        "tests": 2,
+        "suites": 0,
+        "pass": 2,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 295.960917,
+        "lastObservedNpmMarker": "probe:bundle",
+        "actualTestScopeFromOriginalCheckOrder": "node --test --test-timeout=15000 tests/integration/s31-runtime.test.mjs"
+      },
+      {
+        "block": 24,
+        "firstTest": "✔ bundled Runtime forwards model sampling, output cap and three reasoning states for OpenAI and DeepSeek (756.166875ms)",
+        "lastSummaryLine": 1753,
+        "tests": 2,
+        "suites": 0,
+        "pass": 2,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 935.172208,
+        "lastObservedNpmMarker": "probe:bundle",
+        "actualTestScopeFromOriginalCheckOrder": "node --test --test-timeout=20000 tests/integration/layout-runtime.test.mjs"
+      },
+      {
+        "block": 25,
+        "firstTest": "✔ bundled Agent reads two skill contexts sequentially and runs Bash (293.727ms)",
+        "lastSummaryLine": 1764,
+        "tests": 3,
+        "suites": 0,
+        "pass": 3,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 1075.771625,
+        "lastObservedNpmMarker": "probe:bundle",
+        "actualTestScopeFromOriginalCheckOrder": "node --test --test-timeout=20000 tests/integration/s32-runtime.test.mjs"
+      },
+      {
+        "block": 26,
+        "firstTest": "✔ special-then-ordinary bundles keep the controlled service out of ordinary resources (292.859042ms)",
+        "lastSummaryLine": 2161,
+        "tests": 2,
+        "suites": 0,
+        "pass": 2,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 4398.368417,
+        "lastObservedNpmMarker": "test:s33-ui-artifacts",
+        "actualTestScopeFromOriginalCheckOrder": "test:s33-ui-artifacts"
+      },
+      {
+        "block": 27,
+        "firstTest": "✔ noncanonical base is rejected before any launch, child creation, root creation, or model HTTP (3060.789584ms)",
+        "lastSummaryLine": 2204,
+        "tests": 33,
+        "suites": 0,
+        "pass": 33,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 9746.08125,
+        "lastObservedNpmMarker": "test:mcp-native-launcher",
+        "actualTestScopeFromOriginalCheckOrder": "test:mcp-native-launcher"
+      }
+    ],
+    "nodeTotal": {
+      "tests": 645,
+      "pass": 645,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "rustRuns": [
+      {
+        "npmStage": "test:s33-verification-guards",
+        "line": 1348,
+        "result": "ok",
+        "passed": 17,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 222,
+        "durationSeconds": 35.21,
+        "output": "test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 222 filtered out; finished in 35.21s"
+      },
+      {
+        "npmStage": "probe:native",
+        "line": 1690,
+        "result": "ok",
+        "passed": 220,
+        "failed": 0,
+        "ignored": 2,
+        "measured": 0,
+        "filtered": 0,
+        "durationSeconds": 284.05,
+        "output": "test result: ok. 220 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 284.05s"
+      }
+    ],
+    "rustIgnoredOutputs": [
+      {
+        "line": 1681,
+        "output": "test runtime_host::tests::s2_live_text_preview_sign_and_restart ... ignored, explicit real model integration using the owner-selected private file"
+      },
+      {
+        "line": 1682,
+        "output": "test runtime_host::tests::s31_live_isolated_organizer_trial_and_configuration_reopen ... ignored, explicit real model trial using the owner-selected private file"
+      }
+    ]
+  },
+  "focusedBudget": {
+    "block": 13,
+    "firstTest": "✔ cleanup failure still attempts every owned resource and retains failed evidence (167.082375ms)",
+    "lastSummaryLine": 620,
+    "tests": 134,
+    "suites": 0,
+    "pass": 134,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 42466.810625,
+    "lastObservedNpmMarker": "test:model-budget",
+    "actualTestScopeFromOriginalCheckOrder": "test:model-budget"
+  },
+  "syntheticBudget": {
+    "layer": "synthetic-budgeted",
+    "conclusion": "pass",
+    "occupiedSlots": 6,
+    "possiblyForwarded": 6,
+    "completed": 6,
+    "remaining": 4,
+    "realModelRequests": 0,
+    "realModelRequestUpperBound": 0,
+    "evidence": "build/p5-revise-20261101/synthetic-budgeted-1793533336148676000"
+  },
+  "toolchainProbe": {
+    "status": "passed",
+    "cases": [
+      {
+        "case": "configured",
+        "loaded": false,
+        "error": "mis-aligned LINKEDIT string pool"
+      },
+      {
+        "case": "host",
+        "loaded": true,
+        "error": null
+      },
+      {
+        "case": "wrapped",
+        "loaded": true,
+        "error": null
+      }
+    ],
+    "workaroundNeededOnThisHost": true
+  },
+  "packages": {
+    "Sidekick MCP Verify.app": {
+      "executableSha256": "193fa5d8f61a8bbd1e064b7d6ca19decc23ff1295e37cff2ce3153b8e19c774b",
+      "resourceEntryCount": 559,
+      "mcpHttpFixtureExcluded": true,
+      "serviceFixtureMatches": true,
+      "trialFixtureMatches": true
+    },
+    "Sidekick.app": {
+      "executableSha256": "a54bbd34c0d419e69a333c083e4548c5b9eb4b2c63daca55bae397a14745205e",
+      "resourceEntryCount": 556,
+      "mcpHttpFixtureExcluded": true,
+      "allControlledServicesExcluded": true
+    },
+    "fullGateAssertions": [
+      {
+        "layer": "actual macOS bundles; no GUI or MCP launch",
+        "ordinaryResourceEntries": 556,
+        "controlledServiceExcluded": true,
+        "signatures": "both deep strict verified"
+      },
+      {
+        "layer": "ordinary executable negative entry; no ordinary-root startup",
+        "exitCode": 2,
+        "stderr": "MCP UI verification is not enabled in this package"
+      }
+    ]
+  },
+  "outputClassificationPath": "after-manifest-fix/output-classification.json",
+  "unexplainedNewWarnings": [],
+  "staticReview": {
+    "mode": "Inspect; static only during sole full run",
+    "protectedPaths": [
+      "package-lock.json",
+      "src-tauri/Cargo.toml",
+      "src-tauri/Cargo.lock",
+      "src-tauri/tauri.conf.json",
+      "src-tauri/migrations",
+      "src-tauri/src/store/mcp_schema.rs",
+      "vendor/pi",
+      "resources/skills",
+      "src-tauri/src/store/mcp_keychain.rs"
+    ],
+    "protectedTrackedDiffExitCode": 0,
+    "protectedChangedPaths": [],
+    "dependenciesUnchanged": true,
+    "packageManager": "npm@12.2.1",
+    "migrationAndSchemaSourceUnchanged": true,
+    "productionMcpKeychainFactory": "pub(super) fn production_credentials() -> impl McpCredentialBackend {\n    McpKeychain {\n        enabled: false,\n        port: NativeKeychainPort,\n    }\n}",
+    "productionMcpKeychainEnabled": false,
+    "rootWhitespace": {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    "candidateWhitespace": {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exitCode": 0,
+      "output": ""
+    },
+    "oldPackageScriptPaths": [],
+    "renameOrMoveSummary": "",
+    "moveSampling": "not applicable; this delivery has no rename or move",
+    "newDependencies": false,
+    "realEnvironmentFilesRead": false,
+    "guiInvocations": 0,
+    "realModelRequests": 0,
+    "nativeScope": "no GUI; ordinary verification flag negative entry and guarded launcher tests are part of original npm check; no production MCP credential positive test"
+  },
+  "postflight": {
+    "rootHead": "8b7fbcc2c79e1ea65741df92cd78d581d06277de",
+    "candidateHead": "8b7fbcc2c79e1ea65741df92cd78d581d06277de",
+    "rootIndexTree": "2215d7c55620c381f4aeaaf445f49b951cde154e",
+    "candidateIndexTree": "8d070431438a90dceb4c109a9c42c23f74d76fa6",
+    "rootIndexSha256": "dfed2a3714c7647d1af1377cc91ef5751ca28e8ce4704e791881cbccf2a96e7b",
+    "rootIndexEmpty": true,
+    "rootInputsUnchanged": true,
+    "candidateInputsUnchanged": true,
+    "rootUntrackedSetUnchanged": true,
+    "source50MatchesRoot": true,
+    "source50MatchesCandidate": true,
+    "sourceFreezeSha256": "c7cfa3f1a5d2e9ed60f5966a993339cd3017f006eb107520f048ef08daf6ef23",
+    "oldSealsUnchanged": true,
+    "opaqueBudgetSha256": {
+      "build/night-20261031/model-budget.sqlite": "c44789d2767db0296665b04e01f4815b8b5be1d42b02dea72713f957704869e6",
+      "build/night-20261031/model-budget.enrollment.json": "4dbcf2db45e744cff5627c2986213d3c848a88764297d5437cf58370dbac6edc",
+      "build/p5-revise-20261101/budget/model-budget.sqlite": "8090a0fb60bad4c3f7c5be8bdc1374fc9ba34e5e08413f3958e709154aac8603",
+      "build/p5-revise-20261101/budget/model-budget.enrollment.json": "3fd27dbc75d04e1b7bb74a4f90d7d5d5375c864f128727f5578ee7115c13bce2"
+    },
+    "opaqueBudgetsUnchanged": true,
+    "headAndIndexTreesUnchanged": true
+  },
+  "processCheck": {
+    "fullPid": 96401,
+    "fullPgid": 96401,
+    "remainingOwnedProcesses": [],
+    "scope": "full process group and commands bound to the fresh candidate path; no unrelated processes signalled"
+  },
+  "realModelRequests": 0,
+  "guiInvocations": 0,
+  "realBudgetAccess": "opaque SHA256 only; no SQLite read or reset",
+  "commit": false,
+  "push": false,
+  "limitations": [
+    "Two original real-model integration tests are ignored; no owner private model file was read.",
+    "Native H3 remains unverified: missing-variable UI, active cancellation, persisted trial unknown, cold-open UI, wide/narrow screenshots, keyboard/scroll and credential positive flows. Historical ScreenCaptureKit -3812/-3811 obstruction was not retried; no GUI or OS permission change.",
+    "Production MCP Keychain factory remains enabled:false; synthetic unit and legacy separately authorized S0 keychain probes do not establish production credential positive coverage.",
+    "Both apps are local ad-hoc signed, non-notarized macOS arm64 artifacts; stable macOS host and other-platform verification remain open.",
+    "This pass binds the frozen 50 sources plus the exact 4234-input snapshot and candidate staged tree; it does not sign all S3.4/native/production acceptance or any later documentation/commit.",
+    "No commit or push was executed by this verifier; exact committed-HEAD clean-clone validation requires the separately instructed follow-up."
+  ],
+  "_selectedCopy": {
+    "rawIndependentReportSha256": "dd7c260f6e8fe65f5c6873b96fa4adefc1feaa6354d85c24cfb52c2509140771",
+    "rawSealSha256": "384b3e7bc643367c9ea067e0610e1205a12fd15d1bdc5d3377fd2d5aefa635a4",
+    "redaction": "Only workspace, home and temporary-root path prefixes replaced with descriptive placeholders. All source hashes, counters and conclusions retained.",
+    "asOf": "candidate verification before local commit"
+  }
+}

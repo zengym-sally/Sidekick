@@ -284,6 +284,11 @@ impl RuntimeState {
             if !cleaned {
                 result = Err("MCP_CLEANUP".into());
             }
+            if cleaned {
+                if let Err(error) = crate::mcp_trial::record_closes(&job, &local) {
+                    result = Err(error);
+                }
+            }
             #[cfg(test)]
             state.record_output_diagnostic(
                 &id,
@@ -666,7 +671,12 @@ fn execute(
                 let _ = writer_tx.try_send(cancel);
                 cancelled_at = Some(Instant::now());
             }
-            if cancelled_at.is_some_and(|at| at.elapsed() > Duration::from_millis(500)) {
+            let cleanup_ms = if crate::mcp_trial::has_http(job) {
+                1500
+            } else {
+                500
+            };
+            if cancelled_at.is_some_and(|at| at.elapsed() > Duration::from_millis(cleanup_ms)) {
                 signal_group(child.id(), "-STOP");
                 signal_group(child.id(), "-KILL");
                 reap_workers(job, directory);
@@ -879,6 +889,10 @@ mod mcp_formal_tests;
 #[cfg(test)]
 #[path = "mcp_trial_tests.rs"]
 mod mcp_trial_tests;
+
+#[cfg(test)]
+#[path = "mcp_http_task_tests.rs"]
+mod mcp_http_task_tests;
 
 #[cfg(test)]
 mod tests {

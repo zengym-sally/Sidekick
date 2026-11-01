@@ -72,6 +72,7 @@ if (role === 'model') {
       else if (request.method === 'tools/call') {
         calls++;
         note({ type: 'call', name: request.params.name, arguments: request.params.arguments });
+        if (mode === 'list-changed') process.stdout.write('{"jsonrpc":"2.0","method":"notifications/tools/list_changed"}\n');
         if (mode === 'lost' || mode === 'recovery-retry') continue;
         if (mode.startsWith('recovery-late-')) { waiting.set(request.id, true); continue; }
         if (mode === 'recovery-progress') {

@@ -1,0 +1,17 @@
+{
+  "scope": "unchanged original synthetic test only",
+  "command": [
+    "node",
+    "--test",
+    "--test-timeout=30000",
+    "--test-name-pattern=^concurrent reservations and restart cannot exceed ten upstream requests$",
+    "tests/integration/model-budget.test.mjs"
+  ],
+  "runs": 20,
+  "passed": 20,
+  "sourceChanged": false,
+  "budgetModuleChanged": false,
+  "realBudgetFiles": "opaque SHA only, unchanged",
+  "inference": "Cause remains unknown. Focused passes do not close the original failure or replace the complete gate. No request retries, timeout changes or tests skipped.",
+  "next": "stopped after the one additional full attempt3 failed in the same case; owner direction required before separate budget diagnosis/minimal-fix scope"
+}

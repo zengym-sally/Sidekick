@@ -1,0 +1,16 @@
+{
+  "attempt": 1,
+  "candidateTree": "3585c0da00f1f936bf5cf97576dc21c8fbb4053c",
+  "sourceManifestSha256": "eaeac3156bc15d8546bdfc6a724271120983026fb02913aa3cc1d20d611dda7f",
+  "command": "npm run check",
+  "exitCode": 1,
+  "seconds": 0.44,
+  "firstGate": {
+    "selfTest": "18 violation classes and 8 individual reference negatives passed",
+    "failure": "ref.missing tests/integration/mcp-http.test.mjs:4 -> ../../build/mcp-http/probe/entry.mjs"
+  },
+  "laterNodeRustAndBothPackages": "not executed",
+  "rawEvidence": "build/s34-http-20261101/full-independent-clean/",
+  "sealSha256": "c56b7ca9b913f753143f5740603587d6fca291ba2f2679d89fecbf6d5a33a403",
+  "sourceAndInputsStableDuringAttempt": true
+}

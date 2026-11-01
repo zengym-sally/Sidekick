@@ -100,7 +100,10 @@ fn mcp_security_fake_credentials_are_bound_redacted_and_resolved_only_inside_hos
         .save_mcp_secrets_with(secret_input(&s, None, OP1, SECRET), &vault)
         .unwrap();
     let id = saved.server_id.clone().unwrap();
-    assert_eq!(saved.configuration.servers[0].settings.env[0].value, "");
+    assert_eq!(
+        saved.configuration.servers[0].settings.stdio().unwrap().env[0].value,
+        ""
+    );
     assert_eq!(
         saved.configuration.credential_status[&id]["TOKEN"],
         "stored"
@@ -201,7 +204,7 @@ fn mcp_security_foreign_service_root_field_and_model_references_are_rejected_bef
         "MCP_CREDENTIAL_SCOPE"
     );
     let mut input = draft();
-    input.env[0].value = reference;
+    input.stdio_mut().unwrap().env[0].value = reference;
     assert_eq!(
         s.save_mcp_server(McpServerInput {
             id: saved.server_id,
@@ -219,7 +222,7 @@ fn mcp_security_explicit_environment_does_not_inherit_or_expand_and_missing_valu
     let mut s = f.store();
     s.initialize(None, "UTC").unwrap();
     let mut d = draft();
-    d.env = vec![
+    d.stdio_mut().unwrap().env = vec![
         McpEnvironment {
             name: "PLAIN".into(),
             source: "literal".into(),
@@ -446,7 +449,7 @@ fn mcp_security_utf8_value_item_and_input_budgets_precede_backend_io() {
         );
     }
     let mut input = secret_input(&s, None, OP2, SECRET);
-    input.edit.server.args = vec!["x".repeat(4096); 128];
+    input.edit.server.stdio_mut().unwrap().args = vec!["x".repeat(4096); 128];
     assert!(serde_json::to_vec(&input).unwrap().len() > 512 * 1024);
     assert_eq!(
         s.save_mcp_secrets_with(input, &vault).unwrap_err().code,
@@ -473,7 +476,7 @@ fn mcp_security_64_values_and_resolved_environment_256k_exact_boundary() {
     s.initialize(None, "UTC").unwrap();
     let vault = MemoryCredentials::default();
     let mut input = secret_input(&s, None, OP1, SECRET);
-    input.edit.server.env = (0..64)
+    input.edit.server.stdio_mut().unwrap().env = (0..64)
         .map(|n| McpEnvironment {
             name: format!("V{n}"),
             source: "keychain".into(),
@@ -499,7 +502,7 @@ fn mcp_security_64_values_and_resolved_environment_256k_exact_boundary() {
     assert_eq!(values.values().map(String::len).sum::<usize>(), 256 * 1024);
     // Explicit host lookup has the same byte boundary and rejects +1.
     let mut d = draft();
-    d.env = vec![McpEnvironment {
+    d.stdio_mut().unwrap().env = vec![McpEnvironment {
         name: "E".into(),
         source: "environment".into(),
         value: "SOURCE".into(),
@@ -612,7 +615,7 @@ fn mcp_security_same_field_retains_reference_rename_requires_new_value_and_revis
         "MCP_VERSION_CONFLICT"
     );
     assert_eq!(*vault.reads.lock().unwrap(), reads);
-    d.env[0].name = "RENAMED".into();
+    d.stdio_mut().unwrap().env[0].name = "RENAMED".into();
     assert_eq!(
         s.save_mcp_server(McpServerInput {
             id: Some(id),
@@ -763,7 +766,13 @@ fn mcp_security_directory_permission_change_is_not_repaired_and_plaintext_is_rej
     s.initialize(None, "UTC").unwrap();
     let vault = MemoryCredentials::default();
     let mut input = secret_input(&s, None, OP1, SECRET);
-    input.edit.server.args.push(SECRET.into());
+    input
+        .edit
+        .server
+        .stdio_mut()
+        .unwrap()
+        .args
+        .push(SECRET.into());
     assert_eq!(
         s.save_mcp_secrets_with(input, &vault).unwrap_err().code,
         "MCP_PLAIN_CREDENTIAL"
@@ -846,7 +855,7 @@ fn mcp_security_complete_input_512k_exact_and_plus_one_independent_of_target_bud
     s.initialize(None, "UTC").unwrap();
     let vault = MemoryCredentials::default();
     let mut ordinary = draft();
-    ordinary.env.clear();
+    ordinary.stdio_mut().unwrap().env.clear();
     s.save_mcp_server(McpServerInput {
         id: None,
         expected_revision: String::new(),
@@ -856,7 +865,7 @@ fn mcp_security_complete_input_512k_exact_and_plus_one_independent_of_target_bud
     let path = s.root().unwrap().join("mcp/servers.json");
     let before = fs::read(&path).unwrap();
     let mut input = secret_input(&s, None, OP1, SECRET);
-    input.edit.server.env = (0..64)
+    input.edit.server.stdio_mut().unwrap().env = (0..64)
         .map(|n| McpEnvironment {
             name: format!("V{n}"),
             source: "keychain".into(),

@@ -19,8 +19,8 @@ test('special-then-ordinary bundles keep the controlled service out of ordinary 
  assert.deepEqual(await readFile(join(resources(verification), 's33-ui/service.mjs')), await readFile('tests/fixtures/s33-discovery/service.mjs'));
  assert.deepEqual(await readFile(join(resources(verification), 's33-ui/mcp-trial.mjs')), await readFile('tests/fixtures/mcp-trial.mjs'));
  const names = await entries(resources(ordinary));
- assert.ok(!names.some(n => /s33-ui|s33-discovery|mcp-trial|service\.mjs/.test(n)), JSON.stringify(names));
- assert.ok(!(await entries('build/s0-runtime')).some(n => /s33-ui|s33-discovery|mcp-trial|service\.mjs/.test(n)));
+ assert.ok(!names.some(n => /s33-ui|s33-discovery|mcp-trial|mcp-http|service\.mjs/.test(n)), JSON.stringify(names));
+ assert.ok(!(await entries('build/s0-runtime')).some(n => /s33-ui|s33-discovery|mcp-trial|mcp-http|service\.mjs/.test(n)));
  for (const bundle of [verification, ordinary]) execFileSync('/usr/bin/codesign', ['--verify', '--deep', '--strict', bundle], { stdio: 'pipe' });
  console.log(JSON.stringify({ layer: 'actual macOS bundles; no GUI or MCP launch', ordinaryResourceEntries: names.length, controlledServiceExcluded: true, signatures: 'both deep strict verified' }));
 });

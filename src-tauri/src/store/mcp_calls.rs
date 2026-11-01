@@ -98,6 +98,12 @@ struct TrialMcpSnapshot {
     servers: Vec<McpServer>,
     catalogs: BTreeMap<String, McpDiscoveredCatalog>,
     mapping: Vec<TrialMcpTool>,
+    #[serde(
+        default,
+        rename = "remoteClose",
+        skip_serializing_if = "BTreeMap::is_empty"
+    )]
+    remote_close: BTreeMap<String, McpHttpClose>,
 }
 
 fn invalid_call() -> StoreError {
@@ -207,6 +213,26 @@ pub(super) fn recover_business_mcp(db: &Connection) -> Result<()> {
 }
 
 impl AppStore {
+    pub(crate) fn record_mcp_task_close(
+        &mut self,
+        owner: McpTaskOwner,
+        id: &str,
+        server: &str,
+        close: McpHttpClose,
+    ) -> Result<()> {
+        let mut snapshot = running_snapshot(self.db()?, owner, id)?;
+        let mut mcp = frozen(&snapshot)?;
+        if !mcp
+            .servers
+            .iter()
+            .any(|s| s.id == server && s.settings.kind() == "http")
+        {
+            return Err(invalid_call());
+        }
+        mcp.remote_close.insert(server.into(), close);
+        snapshot["mcp"] = serde_json::to_value(mcp).map_err(|_| invalid_call())?;
+        write_snapshot(self.db()?, owner, id, &snapshot)
+    }
     pub(crate) fn prepare_mcp_task(
         &mut self,
         owner: McpTaskOwner,
@@ -231,35 +257,48 @@ impl AppStore {
             .into_iter()
             .filter(|s| s.settings.enabled)
         {
-            let env = self
-                .prepare_mcp_environment(&server.id, &configuration.revision)?
-                .into_values();
             let run_directory = self.run_directory(id)?;
-            let cwd = server
-                .settings
-                .cwd
-                .as_ref()
-                .map(PathBuf::from)
-                .unwrap_or_else(|| run_directory.clone());
-            if !cwd.is_dir() {
-                return Err(StoreError::new(
-                    "MCP_DIRECTORY_MISSING",
-                    "服务工作目录不可用。",
-                ));
-            }
+            let transport = match &server.settings.transport {
+                McpTransportConfig::Stdio(stdio) => {
+                    let env = self
+                        .prepare_mcp_environment(&server.id, &configuration.revision)?
+                        .into_values();
+                    let cwd = stdio
+                        .cwd
+                        .as_ref()
+                        .map(PathBuf::from)
+                        .unwrap_or_else(|| run_directory.clone());
+                    if !cwd.is_dir() {
+                        return Err(StoreError::new(
+                            "MCP_DIRECTORY_MISSING",
+                            "服务工作目录不可用。",
+                        ));
+                    }
+                    PreparedMcpTransport::Stdio {
+                        command: stdio.command.clone(),
+                        args: stdio.args.clone(),
+                        cwd,
+                        env,
+                        sensitive_names: stdio
+                            .env
+                            .iter()
+                            .filter(|e| e.source != "literal")
+                            .map(|e| e.name.clone())
+                            .collect(),
+                    }
+                }
+                McpTransportConfig::Http(http) => PreparedMcpTransport::Http {
+                    url: super::mcp_config::checked_http_url(&http.url)?,
+                    headers: self.prepare_mcp_http_headers(
+                        &server.id,
+                        &configuration.revision,
+                        false,
+                    )?,
+                },
+            };
             let prepared = PreparedMcpProbe {
-                command: server.settings.command.clone(),
-                args: server.settings.args.clone(),
-                cwd,
                 run_directory,
-                env,
-                sensitive_names: server
-                    .settings
-                    .env
-                    .iter()
-                    .filter(|e| e.source != "literal")
-                    .map(|e| e.name.clone())
-                    .collect(),
+                transport,
             };
             public.push(server.clone());
             servers.push(PreparedTrialMcpServer { server, prepared });
@@ -270,6 +309,7 @@ impl AppStore {
             servers: public,
             catalogs: BTreeMap::new(),
             mapping: Vec::new(),
+            remote_close: BTreeMap::new(),
         })
         .map_err(|_| invalid_call())?;
         write_snapshot(self.db()?, owner, id, &snapshot)?;

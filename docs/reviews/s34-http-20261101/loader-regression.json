@@ -1,0 +1,72 @@
+{
+  "initialBuildAbsent": true,
+  "command": [
+    "npm",
+    "run",
+    "check:structure"
+  ],
+  "redExit": 1,
+  "seconds": 0.259,
+  "assertion": "[ref.missing] tests/integration/mcp-http.test.mjs:4 -> ../../build/mcp-http/probe/entry.mjs",
+  "fixedChecks": [
+    {
+      "name": "prepared-red",
+      "command": [
+        "npm",
+        "run",
+        "check:structure"
+      ],
+      "exit": 1,
+      "expectedExit": 1,
+      "seconds": 0.304,
+      "buildAbsent": true,
+      "log": "build/s34-http-20261101/clean-preflight-prepared-red.log"
+    },
+    {
+      "name": "green",
+      "command": [
+        "npm",
+        "run",
+        "check:structure"
+      ],
+      "exit": 0,
+      "expectedExit": 0,
+      "seconds": 0.295,
+      "buildAbsent": true,
+      "log": "build/s34-http-20261101/clean-preflight-green.log"
+    },
+    {
+      "name": "missing-entry-negative",
+      "command": [
+        "node",
+        "--test",
+        "--test-timeout=15000",
+        "tests/integration/mcp-http.test.mjs"
+      ],
+      "exit": 1,
+      "expectedExit": 1,
+      "seconds": 0.087,
+      "buildAbsent": true,
+      "log": "build/s34-http-20261101/clean-preflight-missing-entry-negative.log"
+    },
+    {
+      "name": "self-prepare-green",
+      "command": [
+        "npm",
+        "run",
+        "test:mcp-http"
+      ],
+      "exit": 0,
+      "expectedExit": 0,
+      "seconds": 1.748,
+      "buildAbsent": false,
+      "log": "build/s34-http-20261101/clean-preflight-self-prepare-green.log"
+    }
+  ],
+  "testChangeOnly": "tests/integration/mcp-http.test.mjs",
+  "guardUnchanged": true,
+  "negativeError": "ERR_MODULE_NOT_FOUND",
+  "layer": "new clean checkout with only configured Pi preparation; no root build until test script ran",
+  "sourceManifestSha256": "6239621bb4bf2aacb28ef83cfeaf9fff3d3edf4dd7153cdc9c8bc95eddada9da",
+  "unchangedSourceCount": 46
+}

@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "item": "independent budget restart regression minimal fix",
+  "risk": "R2",
+  "conclusion": "pass for budget repair and candidate precommit mechanical verification; native/production not accepted",
+  "baseCommit": "8b7fbcc2c79e1ea65741df92cd78d581d06277de",
+  "sourceManifestSha256": "c7cfa3f1a5d2e9ed60f5966a993339cd3017f006eb107520f048ef08daf6ef23",
+  "sourceCount": 50,
+  "priorHttpSource47Unchanged": true,
+  "sourceDelta": {
+    "scripts/probes/model_budget.py": "862e12ece474a682e5f9aa491dda62a247d10f0c77c54e929c68413ef5f54053",
+    "tests/probes/model-budget-faults.py": "0ed4dbc1f899832ccafb8e8390f8da307718c67e2d60acacaa1c9bef2f39e024",
+    "tests/integration/model-budget.test.mjs": "f1ccfd3299771c998615809688ff77d7cac2d270f2a772825aa30f6a8dc6538c"
+  },
+  "observedDefect": "An inherited listener backlog5 can reset connections before the existing16-handler capacity and before reservation. Fixed Node24 original restart case fails with system Python3.9/default5 and passes with only queue16; Homebrew3.15/default128 passes and forcing queue5 reproduces connectECONNRESET.",
+  "historicalAttribution": "The actual Python/PATH of the old full failures was not persisted. This repair demonstrates and fixes the low-default portability defect; it does not retrospectively prove which interpreter those attempts used.",
+  "change": "One production line sets listener backlog to at least16 and retains higher defaults. No capacity, budget, reserve/mark, auth, deadline, timeout or retry change.",
+  "regression": {
+    "initialTcpOnly": "First result passed, second failed connect54; all raw logs retained. This was refined instead of misreported as deterministic.",
+    "deterministicRed": {
+      "command": "node --test --test-timeout=30000 --test-name-pattern='relay listener accepts' tests/integration/model-budget.test.mjs",
+      "exitCode": 1,
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "reason": "actual delegated OS listen argument below existing16-handler capacity"
+    },
+    "green": {
+      "exitCode": 0,
+      "tests": 2,
+      "pass": 2,
+      "fail": 0,
+      "includes": "new listener regression and unchanged original HTTP restart case"
+    },
+    "actualListener": {
+      "case": "listener-burst",
+      "connected": 32,
+      "listen_backlogs": [
+        16,
+        128
+      ],
+      "reserved": 0,
+      "real_model_requests": 0
+    },
+    "configuredScripts": [
+      {
+        "command": "npm run test:model-budget",
+        "python": "3.9.6",
+        "inheritedDefaultQueue": 5,
+        "node": "v24.20.0",
+        "exitCode": 0,
+        "tests": 134,
+        "pass": 134,
+        "fail": 0,
+        "elapsedSeconds": 42.323
+      },
+      {
+        "command": "npm run test:model-budget",
+        "python": "3.15.1",
+        "inheritedDefaultQueue": 128,
+        "node": "v24.20.0",
+        "exitCode": 0,
+        "tests": 134,
+        "pass": 134,
+        "fail": 0,
+        "elapsedSeconds": 21.612
+      }
+    ]
+  },
+  "planReviews": {
+    "initial": {
+      "verdict": "APPROVE",
+      "conclusion": "pass",
+      "planSha256": "2e755587f2145971a63188e556c492bae15ad87a1ddff129ffa3f791c8b7d750",
+      "reportSha256": "6ae27188aca57955048309d87370a15e782fafc00d046c54c0d9eff9d84bf6a3"
+    },
+    "testSeamDelta": {
+      "verdict": "APPROVE",
+      "conclusion": "pass",
+      "planSha256": "8dd6c6fe8eff21ff98adc9ca0718849925b885ad6222ad5b278087a8e4247e8c",
+      "reportSha256": "bf07aae31136733041d1137e75a3448651e122cefeb04c8a58f38821250ac6e8"
+    }
+  },
+  "independentCodeReview": {
+    "verdict": "APPROVE",
+    "result": "pass",
+    "report": "budget-code-review.json",
+    "reportSha256": "794cf73a2fb567a54165955fa572a2aa7b1a487ba2741cfbabe2a029e1d82e72",
+    "sourceManifestSha256": "c7cfa3f1a5d2e9ed60f5966a993339cd3017f006eb107520f048ef08daf6ef23",
+    "openFindings": 0
+  },
+  "independentFullCheck": {
+    "result": "pass",
+    "conclusionScope": "original complete npm run check and static/postflight/package verification only",
+    "report": "budget-full-check.json",
+    "rawReportSha256": "dd7c260f6e8fe65f5c6873b96fa4adefc1feaa6354d85c24cfb52c2509140771",
+    "rawSealSha256": "384b3e7bc643367c9ea067e0610e1205a12fd15d1bdc5d3377fd2d5aefa635a4",
+    "argv": [
+      "npm",
+      "run",
+      "check"
+    ],
+    "exitCode": 0,
+    "elapsedSeconds": 648.879,
+    "attemptCount": 1,
+    "node": {
+      "tests": 645,
+      "pass": 645,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "rust": [
+      {
+        "npmStage": "test:s33-verification-guards",
+        "line": 1348,
+        "result": "ok",
+        "passed": 17,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 222,
+        "durationSeconds": 35.21,
+        "output": "test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 222 filtered out; finished in 35.21s"
+      },
+      {
+        "npmStage": "probe:native",
+        "line": 1690,
+        "result": "ok",
+        "passed": 220,
+        "failed": 0,
+        "ignored": 2,
+        "measured": 0,
+        "filtered": 0,
+        "durationSeconds": 284.05,
+        "output": "test result: ok. 220 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 284.05s"
+      }
+    ],
+    "candidateIndexTree": "8d070431438a90dceb4c109a9c42c23f74d76fa6",
+    "allInputCount": 4234,
+    "changedInputCount": 70,
+    "sourceManifestSha256": "c7cfa3f1a5d2e9ed60f5966a993339cd3017f006eb107520f048ef08daf6ef23",
+    "packages": {
+      "Sidekick MCP Verify.app": {
+        "executableSha256": "193fa5d8f61a8bbd1e064b7d6ca19decc23ff1295e37cff2ce3153b8e19c774b",
+        "resourceEntryCount": 559,
+        "mcpHttpFixtureExcluded": true,
+        "serviceFixtureMatches": true,
+        "trialFixtureMatches": true
+      },
+      "Sidekick.app": {
+        "executableSha256": "a54bbd34c0d419e69a333c083e4548c5b9eb4b2c63daca55bae397a14745205e",
+        "resourceEntryCount": 556,
+        "mcpHttpFixtureExcluded": true,
+        "allControlledServicesExcluded": true
+      },
+      "fullGateAssertions": [
+        {
+          "layer": "actual macOS bundles; no GUI or MCP launch",
+          "ordinaryResourceEntries": 556,
+          "controlledServiceExcluded": true,
+          "signatures": "both deep strict verified"
+        },
+        {
+          "layer": "ordinary executable negative entry; no ordinary-root startup",
+          "exitCode": 2,
+          "stderr": "MCP UI verification is not enabled in this package"
+        }
+      ]
+    },
+    "nativeOrProductionAcceptance": false
+  },
+  "safety": {
+    "realModelRequests": 0,
+    "realEnvReads": 0,
+    "realBudgetAccess": "opaque SHA only; four unchanged",
+    "productionMcpKeychainEnabled": false,
+    "realUserRootOpened": false,
+    "commit": false,
+    "push": false
+  },
+  "evidenceAsOf": "2026-11-01T11:44:13.242654+00:00 candidate postflight, before local commit"
+}

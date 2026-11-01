@@ -1,0 +1,102 @@
+[
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:mcp-calls"
+    ],
+    "exitCode": 0,
+    "seconds": 7.271,
+    "log": "build/s34-http-20261101/h2-neighborhood-0.log"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:mcp-trial"
+    ],
+    "exitCode": 0,
+    "seconds": 45.368,
+    "log": "build/s34-http-20261101/h2-neighborhood-1.log"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:mcp-recovery-host"
+    ],
+    "exitCode": 0,
+    "seconds": 61.454,
+    "log": "build/s34-http-20261101/h2-neighborhood-2.log"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:mcp-formal"
+    ],
+    "exitCode": 0,
+    "seconds": 76.102,
+    "log": "build/s34-http-20261101/h2-neighborhood-3.log"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:mcp-recovery"
+    ],
+    "exitCode": 0,
+    "seconds": 5.881,
+    "log": "build/s34-http-20261101/h2-neighborhood-4.log"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "test:mcp-http"
+    ],
+    "exitCode": 0,
+    "seconds": 1.74,
+    "log": "build/s34-http-20261101/h2-neighborhood-5.log"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "check:rust"
+    ],
+    "exitCode": 0,
+    "seconds": 5.035,
+    "log": "build/s34-http-20261101/h2-neighborhood-6.log"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "check:s33-verification"
+    ],
+    "exitCode": 0,
+    "seconds": 4.252,
+    "log": "build/s34-http-20261101/h2-neighborhood-7.log"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "check:structure"
+    ],
+    "exitCode": 0,
+    "seconds": 0.301,
+    "log": "build/s34-http-20261101/h2-neighborhood-8.log"
+  },
+  {
+    "command": [
+      "npm",
+      "run",
+      "check:docs"
+    ],
+    "exitCode": 0,
+    "seconds": 0.144,
+    "log": "build/s34-http-20261101/h2-neighborhood-9.log"
+  }
+]

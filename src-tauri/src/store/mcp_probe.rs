@@ -14,6 +14,22 @@ pub struct McpProbeCatalog {
     pub tools: Vec<McpProbeTool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub catalog_sha256: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub remote_close: Option<McpHttpClose>,
+}
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum McpHttpClose {
+    Confirmed,
+    Unsupported,
+    Unconfirmed,
+    NotNeeded,
+}
+fn default_transport() -> String {
+    "stdio".into()
+}
+fn stdio_transport(value: &str) -> bool {
+    value == "stdio"
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -21,6 +37,8 @@ pub struct McpProbeSnapshot {
     pub server_id: String,
     pub configuration_revision: String,
     pub connect_timeout_ms: u32,
+    #[serde(default = "default_transport", skip_serializing_if = "stdio_transport")]
+    pub transport: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -54,6 +72,12 @@ pub enum McpProbeFailure {
     Cleanup,
     PrivateOutput,
     Save,
+    HttpAuth,
+    HttpHeader,
+    HttpRedirect,
+    HttpSession,
+    HttpStatus,
+    HttpLimit,
 }
 impl McpProbeFailure {
     fn code(self) -> &'static str {
@@ -70,6 +94,12 @@ impl McpProbeFailure {
             Self::Cleanup => "MCP_CLEANUP",
             Self::PrivateOutput => "MCP_PRIVATE_OUTPUT",
             Self::Save => "MCP_CATALOG_SAVE",
+            Self::HttpAuth => "MCP_HTTP_AUTH",
+            Self::HttpHeader => "MCP_HTTP_HEADER",
+            Self::HttpRedirect => "MCP_HTTP_REDIRECT",
+            Self::HttpSession => "MCP_HTTP_SESSION",
+            Self::HttpStatus => "MCP_HTTP_STATUS",
+            Self::HttpLimit => "MCP_HTTP_LIMIT",
         }
     }
 }
@@ -139,6 +169,7 @@ impl AppStore {
             server_id: server_id.into(),
             configuration_revision: configuration.revision,
             connect_timeout_ms: server.settings.connect_timeout_ms,
+            transport: server.settings.kind().into(),
         };
         let input = McpProbeInput {
             server_id: server_id.into(),
@@ -189,17 +220,43 @@ impl AppStore {
                     | "MCP_CLEANUP"
                     | "MCP_PRIVATE_OUTPUT"
                     | "MCP_CATALOG_SAVE"
+                    | "MCP_HTTP_AUTH"
+                    | "MCP_HTTP_HEADER"
+                    | "MCP_HTTP_REDIRECT"
+                    | "MCP_HTTP_SESSION"
+                    | "MCP_HTTP_STATUS"
+                    | "MCP_HTTP_LIMIT"
             )
         );
+        let close_only = snapshot.transport == "http"
+            && result.as_ref().is_some_and(|r: &McpProbeCatalog| {
+                r.tools.is_empty() && r.catalog_sha256.is_none() && r.remote_close.is_some()
+            });
         let state_valid = match row.1.as_str() {
             "running" => result.is_none() && code.is_none() && row.7.is_none(),
-            "succeeded" => result.is_some() && code.is_none() && row.7.is_some(),
-            "failed" => result.is_none() && known_failure && row.7.is_some(),
-            "cancelled" => result.is_none() && code == Some("CANCELLED") && row.7.is_some(),
+            "succeeded" => {
+                result.is_some()
+                    && code.is_none()
+                    && row.7.is_some()
+                    && (snapshot.transport == "stdio"
+                        || result.as_ref().is_some_and(|r| {
+                            r.catalog_sha256.is_some() && r.remote_close.is_some()
+                        }))
+            }
+            "failed" => (result.is_none() || close_only) && known_failure && row.7.is_some(),
+            "cancelled" => {
+                (result.is_none() || close_only) && code == Some("CANCELLED") && row.7.is_some()
+            }
             "interrupted" => result.is_none() && code == Some("INTERRUPTED") && row.7.is_some(),
             _ => false,
         };
-        if !state_valid || row.6 < 0 || row.7.is_some_and(|time| time < row.6) {
+        if !["stdio", "http"].contains(&snapshot.transport.as_str())
+            || (snapshot.transport == "stdio"
+                && result.as_ref().is_some_and(|r| r.remote_close.is_some()))
+            || !state_valid
+            || row.6 < 0
+            || row.7.is_some_and(|time| time < row.6)
+        {
             return Err(invalid_probe());
         }
         Ok(McpProbe {
@@ -223,6 +280,18 @@ impl AppStore {
     pub fn complete_mcp_probe(&mut self, id: &str, catalog: McpProbeCatalog) -> Result<McpProbe> {
         self.require_mcp_schema()?;
         check_catalog(&catalog)?;
+        let probe =
+            self.mcp_probe(id)
+                .map_err(|e| if e.code == "NOT_FOUND" { stopped() } else { e })?;
+        if probe.status != "running" {
+            return Err(stopped());
+        }
+        if (probe.snapshot.transport == "http"
+            && (catalog.catalog_sha256.is_none() || catalog.remote_close.is_none()))
+            || (probe.snapshot.transport == "stdio" && catalog.remote_close.is_some())
+        {
+            return Err(invalid_probe());
+        }
         let n=self.db()?.execute("UPDATE agent_runs SET status='succeeded',result_json=?2,finished_at_ms=?3 WHERE id=?1 AND purpose='mcp_probe' AND agent_id IS NULL AND status='running'",params![id,serde_json::to_string(&catalog).map_err(|_|invalid_probe())?,now_ms()?]).map_err(db_error)?;
         if n != 1 {
             return Err(stopped());
@@ -235,9 +304,50 @@ impl AppStore {
     pub fn cancel_mcp_probe(&mut self, id: &str) -> Result<McpProbe> {
         self.end_mcp_probe(id, "cancelled", "CANCELLED")
     }
+    pub(crate) fn fail_http_mcp_probe(
+        &mut self,
+        id: &str,
+        failure: McpProbeFailure,
+        close: McpHttpClose,
+    ) -> Result<McpProbe> {
+        self.end_mcp_probe_with_close(id, "failed", failure.code(), Some(close))
+    }
+    pub(crate) fn cancel_http_mcp_probe(
+        &mut self,
+        id: &str,
+        close: McpHttpClose,
+    ) -> Result<McpProbe> {
+        self.end_mcp_probe_with_close(id, "cancelled", "CANCELLED", Some(close))
+    }
     fn end_mcp_probe(&mut self, id: &str, status: &str, code: &str) -> Result<McpProbe> {
+        self.end_mcp_probe_with_close(id, status, code, None)
+    }
+    fn end_mcp_probe_with_close(
+        &mut self,
+        id: &str,
+        status: &str,
+        code: &str,
+        close: Option<McpHttpClose>,
+    ) -> Result<McpProbe> {
         self.require_mcp_schema()?;
-        let n=self.db()?.execute("UPDATE agent_runs SET status=?2,error_code=?3,finished_at_ms=?4 WHERE id=?1 AND purpose='mcp_probe' AND agent_id IS NULL AND status='running'",params![id,status,code,now_ms()?]).map_err(db_error)?;
+        let probe =
+            self.mcp_probe(id)
+                .map_err(|e| if e.code == "NOT_FOUND" { stopped() } else { e })?;
+        if probe.status != "running" {
+            return Err(stopped());
+        }
+        if close.is_some() && probe.snapshot.transport != "http" {
+            return Err(invalid_probe());
+        }
+        let result = close
+            .map(|remote_close| McpProbeCatalog {
+                tools: Vec::new(),
+                catalog_sha256: None,
+                remote_close: Some(remote_close),
+            })
+            .map(|value| serde_json::to_string(&value).map_err(|_| invalid_probe()))
+            .transpose()?;
+        let n=self.db()?.execute("UPDATE agent_runs SET status=?2,error_code=?3,finished_at_ms=?4,result_json=?5 WHERE id=?1 AND purpose='mcp_probe' AND agent_id IS NULL AND status='running'",params![id,status,code,now_ms()?,result]).map_err(db_error)?;
         if n != 1 {
             return Err(stopped());
         }

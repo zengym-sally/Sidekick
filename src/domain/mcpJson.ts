@@ -1,4 +1,4 @@
-import {mcpDraft,type McpServerDraft} from './mcp.ts';
+import {mcpDraft,normalizedMcp,type McpServerDraft,type McpHttpDraft} from './mcp.ts';
 
 export interface McpJsonEntry {name:string;transport:string;draft?:McpServerDraft;error:string}
 export interface McpJsonPreview {format:string;entries:McpJsonEntry[];error:string}
@@ -90,7 +90,8 @@ export function inspectMcpJson(input:string,fallbackName=''):McpJsonPreview {
     if(raw.type!==undefined&&typeof raw.type!=='string')fail('type 必须是传输类型字符串。');
     const type=typeof raw.type==='string'?raw.type:hasUrl?'http':'stdio';
     transport=['stdio','http','streamable-http','streamable_http','sse'].includes(type)?type:'未知';
-    if(['http','streamable-http','streamable_http','sse'].includes(transport))fail('已识别远程传输；HTTP / SSE 当前尚未接入，不能保存或诊断。请使用 stdio 配置。');
+    if(transport==='sse')fail('旧 HTTP＋SSE 传输尚未接入；请使用 Streamable HTTP 或 stdio。');
+    if(['http','streamable-http','streamable_http'].includes(transport))return {name,transport:'http',draft:http(raw,name),error:''};
     if(transport!=='stdio')fail('当前只支持 stdio 传输；请核对 type。');
     return {name,transport,draft:stdio(raw,name),error:''};
    }catch(error){return {name,transport,error:message(error)};}
@@ -98,7 +99,29 @@ export function inspectMcpJson(input:string,fallbackName=''):McpJsonPreview {
   return {format,entries,error:''};
  }catch(error){return {format:'',entries:[],error:message(error)};}
 }
+function http(value:Record<string,unknown>,name:string):McpHttpDraft {
+ const allowed=['name','type','url','headers','enabled','timeout','timeoutMs','connectTimeoutMs','toolTimeoutMs','startup_timeout_sec','tool_timeout_sec'];
+ if(Object.keys(value).some(key=>!allowed.includes(key)))fail('HTTP 配置含未知或 stdio 字段，未忽略后保存。');
+ const result=mcpDraft(undefined,'http');result.name=text(value.name??name,'服务名称').trim();
+ if(!result.name||Array.from(result.name).length>100||control.test(result.name))fail('请填写不超过 100 字的服务名称。');
+ if(value.name!==undefined&&name&&value.name!==name)fail('对象内名称与服务名不一致，请只保留一致的名称。');
+ result.url=text(value.url,'HTTP 服务地址');
+ if(value.enabled!==undefined&&typeof value.enabled!=='boolean')fail('enabled 必须为 true 或 false。');result.enabled=(value.enabled??true) as boolean;
+ result.connectTimeoutMs=timeout(value,[['startup_timeout_sec',1000],['connectTimeoutMs',1],['timeoutMs',1]],10000,30000);
+ result.toolTimeoutMs=timeout(value,[['timeout',1000],['tool_timeout_sec',1000],['toolTimeoutMs',1],['timeoutMs',1]],30000,60000);
+ if(value.headers!==undefined&&!object(value.headers))fail('HTTP 请求头需为名称与整值宿主引用组成的对象。');
+ for(const [name,raw] of Object.entries(value.headers??{})){
+  const reference=typeof raw==='string'&&/^\$\{(?:env:)?([A-Za-z_][A-Za-z0-9_]{0,127})\}$/.exec(raw);
+  if(!reference)fail('HTTP 请求头仅接受整值 ${HOST_VARIABLE} 引用；完整头值由变量提供，不导入明文或内插。');
+  result.headers.push({name,source:'environment',value:reference[1]});
+ }
+ return normalizedMcp(result) as McpHttpDraft;
+}
 export function formatMcpJson(draft:McpServerDraft):string {
+ if(draft.transport==='http'){
+  const value=normalizedMcp(draft) as McpHttpDraft,headers=Object.fromEntries(value.headers.map(h=>[h.name,`\${${h.value}}`]));
+  return JSON.stringify({mcpServers:{[value.name||'new-server']:{type:'http',url:value.url,...(value.headers.length?{headers}:{}),enabled:value.enabled,startup_timeout_sec:value.connectTimeoutMs/1000,tool_timeout_sec:value.toolTimeoutMs/1000}}},null,2);
+ }
  const env:Record<string,string>=Object.create(null);
  for(const item of draft.env){
   if(Object.hasOwn(env,item.name))fail('环境项名称重复，请先在表单中合并，再切换 JSON。');
