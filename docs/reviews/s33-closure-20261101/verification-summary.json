@@ -1,0 +1,207 @@
+{
+  "baseHead": "baedbd22babd11d0644bf93f474ed7e243c33360",
+  "conclusion": "pass for candidate correction and independent fresh-checkout full verification",
+  "productionChangedFiles": [
+    "src/stores/mcp.ts"
+  ],
+  "regressionChangedFiles": [
+    "tests/unit/s33-config.test.mjs"
+  ],
+  "sourceFileCount": 231,
+  "sourceSha256": "74b68aa24b3e6f230382ddf8524508de68e7e8bc60df3828d90b412955c8ca4e",
+  "red": {
+    "command": "npm run test:s33-config-domain",
+    "exitCode": 1,
+    "tests": 36,
+    "pass": 34,
+    "fail": 2,
+    "cause": "stale untested-connection notice after succeeded and failed diagnosis"
+  },
+  "focused": [
+    {
+      "command": "npm run test:s33-config-domain",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:s33-security-domain",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:s33-ui-domain",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0
+    }
+  ],
+  "ui": {
+    "layer": "actual Vue components with synthetic browser IPC",
+    "scenarios": [
+      "save then diagnosis succeeded",
+      "save then diagnosis failed"
+    ],
+    "passed": 2,
+    "consoleWarnings": 0,
+    "consoleErrors": 0,
+    "nativeGui": false,
+    "artifactSha256": {
+      "ui-success.txt": "2bc5c75a4d62197c85ca1a80f975c3d498d7f73985f79f070f5d703cecab5b6d",
+      "ui-success.jpg": "e899ff9a476e735d7b8a23e7cb1f704406b5f105b689db6a8476fa4b68d07b7d",
+      "ui-failure.txt": "bc7ad2d0caffea1b802eccde403713d8c1670548875d1a454e8299c173fe61a4",
+      "ui-failure.jpg": "e770cb1fae842f93145a85317fad30e0bcf3e97e36197c52ad34183300a9c057"
+    }
+  },
+  "realModelRequests": 0,
+  "realBudgetFilesUnchanged": true,
+  "fullCheck": {
+    "conclusion": "pass",
+    "phase": "independent fresh checkout with staged two-file candidate; full original check completed; post-commit exact-HEAD verification not yet executed",
+    "baselineHead": "baedbd22babd11d0644bf93f474ed7e243c33360",
+    "candidatePatchSha256": "791bedd5865ef490585f67e7db463724c17633243f3e1ea77750e5a05a22b430",
+    "candidateManifestSha256": "dc143c97699390bc797deca0047d7078f20651877359b5446c832b03150bd2b5",
+    "candidateInputCount": 4206,
+    "inputMismatchesBeforeAndAfter": 0,
+    "indexPaths": [
+      "src/stores/mcp.ts",
+      "tests/unit/s33-config.test.mjs"
+    ],
+    "worktreeVsIndexDiff": "",
+    "command": "npm run check",
+    "exitCode": 0,
+    "durationSeconds": 526.316,
+    "startedAt": "2026-11-01T04:22:41.323527+00:00",
+    "finishedAt": "2026-11-01T04:31:27.650360+00:00",
+    "node": {
+      "nodeBlocks": 26,
+      "nodeTests": 545,
+      "nodePass": 545,
+      "nodeFail": 0,
+      "nodeSkipped": 0,
+      "nodeCancelled": 0,
+      "nodeTodo": 0
+    },
+    "rust": {
+      "ordinaryPassed": 198,
+      "ordinaryFailed": 0,
+      "explicitRealModelIgnored": 2,
+      "dualFeatureGuardsPassed": 17,
+      "controlledNativeCasePassed": 1
+    },
+    "runtime": {
+      "bundleInvocations": 6,
+      "generatedMjsModules": 6
+    },
+    "packages": {
+      "verificationResourceEntries": 559,
+      "ordinaryResourceEntries": 556,
+      "controlledServiceExcludedFromOrdinary": true,
+      "bothCodesignDeepStrictVerified": true,
+      "adHocSigned": true,
+      "notarized": false,
+      "normalAppOrGuiOpened": false,
+      "ordinaryBinarySpecialFlagNegativeEntryExitCode": 2
+    },
+    "controlledChain": {
+      "kind": "real packaged Pi + Rust host + fake local model HTTP + synthetic local stdio",
+      "stages": [
+        "extract",
+        "revise",
+        "apply",
+        "sign",
+        "trial"
+      ],
+      "fakeHttpRequestsCompleted": 6,
+      "realModelRequests": 0,
+      "realModelRequestUpperBound": 0,
+      "toolCallsResponded": 3,
+      "lookupCalls": 3,
+      "businessCounts": {
+        "todoEvents": 1,
+        "todoSources": 1,
+        "todos": 1
+      },
+      "trialBusinessUnchanged": true,
+      "naturalCleanup": true,
+      "diagnosticsComplete": true,
+      "diagnosticResponseCount": 6,
+      "nodeRustBoundaryKinds": [
+        "extract",
+        "revise",
+        "trial"
+      ],
+      "sourceBindingInputsStable": 252
+    },
+    "budgetFilesOpaqueShaUnchanged": 4,
+    "productionMcpKeychain": "enabled:false unchanged",
+    "s0SyntheticKeychainRoundtrip": "passed under existing runbook permission; not MCP production-backend evidence",
+    "protectedGroupsStable": {
+      "vendor/pi/": 2404,
+      "resources/skills/": 444,
+      "src-tauri/": 56,
+      "runtime/": 18,
+      "shared/": 2,
+      "scripts/": 11
+    },
+    "warnings": {
+      "preparation": {
+        "npmDeprecated": [
+          "inflight@1.0.6",
+          "glob@7.2.3",
+          "prebuild-install@7.1.3",
+          "node-domexception@1.0.0"
+        ],
+        "attribution": "unchanged fixed vendor Pi dependency graph; all preparation commands exit0",
+        "evidence": "05-prepare-pi.log"
+      },
+      "fullCheck": {
+        "esbuildRuntimeSizeMarkers": 12,
+        "viteChunkSizeWarnings": 2,
+        "skippedNotarizationWarnings": 2,
+        "adHocSigning": 6,
+        "rustCompilerWarnings": 0,
+        "baselineAttribution": "Runtime/chunk size and ad-hoc/unnotarized output are named nonblocking baseline categories in docs/engineering/verification.md; no warning category introduced by two-file candidate."
+      },
+      "expectedNegativeOutput": {
+        "controlledVerificationFailedStderr": 17,
+        "attribution": "model-budget/launcher rejection fixtures; their Node tests all pass, not gate failures"
+      },
+      "packagingInfo": {
+        "hostProcMacroWorkaround": 2,
+        "attribution": "existing build-app script informational path; target settings unchanged"
+      }
+    },
+    "evidence": {
+      "directory": "build/s33-closure-20261101/clean-verify",
+      "fullLog": "06-full-check.log",
+      "controlledSummary": "../checkout/build/p5-revise-20261101/synthetic-budgeted-1793507385878266000/summary.json",
+      "inputProof": "after-full-input-stability.json",
+      "artifactProof": "artifacts.json",
+      "budgetProof": "budgets-after-full.json"
+    },
+    "limitations": [
+      "Baseline HEAD plus staged candidate, not a clean HEAD already containing the fix.",
+      "Standard npm/Cargo download caches allowed; no cold-cache or air-gapped claim.",
+      "No main-workspace ignored build/dist/target/node_modules artifacts copied.",
+      "No env/credential/private budget files copied; only main-repository budget byte hashes read.",
+      "No real model, native GUI, normal App startup, real user root, CI, or production credential acceptance.",
+      "Later root documentation updates are separate from the frozen 4206-input candidate and require their own docs/index review; this checkout remains unchanged.",
+      "Historical real-model failure root cause is not resolved by this synthetic run."
+    ]
+  },
+  "unverified": [
+    "historical real revise rejection root cause",
+    "native GUI rerun of this notice change",
+    "production MCP Keychain",
+    "real user roots",
+    "CI",
+    "cold-cache or network clone reproducibility",
+    "real Feishu services"
+  ],
+  "postCommitExactHeadVerification": "Not yet executed in this frozen evidence snapshot; recorded separately after the authorized local commit.",
+  "reviewEvidence": {
+    "plan": "APPROVE / pass, no findings",
+    "delivery": "APPROVE / pass, no findings",
+    "fullVerification": "pass"
+  }
+}

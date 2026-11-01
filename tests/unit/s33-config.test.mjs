@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createMcpSettings} from '../../src/stores/mcp.ts';
+import {createMcpDiagnostics} from '../../src/stores/mcpDiagnostics.ts';
 
 const clone=value=>structuredClone(value);
 const server=(id,name=id)=>({id,name,transport:'stdio',enabled:true,command:'/synthetic/not-executed',args:['one argument',''],cwd:null,env:[],connectTimeoutMs:10000,toolTimeoutMs:30000});
@@ -64,4 +65,27 @@ test('MCP failed read cannot fabricate an empty ready configuration',async()=>{
 test('MCP discarding an uncertain draft does not skip the required reread',async()=>{
  const host=backend(),model=createMcpSettings(async(command,args)=>{const result=await host.api(command,args);if(command==='save_mcp_server')throw {code:'MCP_SAVE_UNCERTAIN',message:'合成响应丢失'};return result;});
  await model.load();model.add();model.current.value.name='已保存但未确认';model.current.value.command='/synthetic/not-executed';await assert.rejects(model.save());model.discard();assert.equal(model.ready.value,false);assert.throws(()=>model.add());await model.load();assert.equal(model.configuration.value.servers.length,1);assert.equal(model.ready.value,true);
+});
+
+for(const status of ['succeeded','failed'])test(`MCP saved notice stays factual after a ${status} diagnosis`,async()=>{
+ const host=backend([server('a')]);let probe=null;
+ const api=async(command,args)=>{
+  if(command==='active_mcp_probe')return null;
+  if(command==='latest_mcp_probe')return probe;
+  if(command==='start_mcp_probe')return probe={id:'probe-synthetic',agentId:null,purpose:'mcp_probe',status:'running',snapshot:{serverId:args.serverId,configurationRevision:args.expectedRevision,connectTimeoutMs:10000},input:{serverId:args.serverId},result:null,errorCode:null,createdAtMs:1,finishedAtMs:null};
+  if(command==='read_mcp_catalog')return {tools:[{name:'lookup',inputSchema:{type:'object'}}]};
+  return host.api(command,args);
+ };
+ const model=createMcpSettings(api);await model.load();model.current.value.name='已保存的合成服务';await model.save();
+ assert.deepEqual(host.calls.map(c=>c.command),['read_mcp_configuration','save_mcp_server']);
+ const diagnostics=createMcpDiagnostics(api,()=>({serverId:model.selected.value,revision:model.configuration.value.revision}));
+ await diagnostics.start();probe={...probe,status,result:status==='succeeded'?{tools:[{name:'lookup',schemaSha256:'a'.repeat(64)}],catalogSha256:'b'.repeat(64)}:null,errorCode:status==='failed'?'MCP_COMMAND_MISSING':null,finishedAtMs:2};
+ await diagnostics.reconcile('a');assert.equal(diagnostics.rows.a.run.status,status);assert.equal(diagnostics.passed('a'),status==='succeeded');
+ assert.equal(model.notice.value,'服务配置已保存。');assert.equal(model.dirty.value,false);
+});
+
+test('MCP save notice preserves backend warnings',async()=>{
+ const host=backend([server('a')]),warning='合成警告：请重新核对配置。';
+ const model=createMcpSettings(async(command,args)=>{const result=await host.api(command,args);return command==='save_mcp_server'?{...result,warning}:result;});
+ await model.load();model.current.value.name='保存警告';await model.save();assert.equal(model.notice.value,warning);assert.equal(model.dirty.value,false);
 });

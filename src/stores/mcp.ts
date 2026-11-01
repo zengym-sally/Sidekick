@@ -77,7 +77,7 @@ export function createMcpSettings(api:Backend){
    configuration.value=result.configuration;
    if(operation.kind==='save'){if(!result.serverId||(operation.operationId&&find(result.serverId)?.lastSecretOperation!==operation.operationId))throw Error('保存结果不完整，请重新读取。');acknowledge(operation.key,result.serverId,operation.requested!,operation.values);}
    else{delete drafts[operation.key];delete secretDrafts[operation.key];if(selected.value===operation.key)selected.value=result.configuration.servers[0]?.id||Object.keys(drafts)[0]||'';}
-   notice.value=result.warning||'服务配置已保存；尚未测试连接。';
+   notice.value=result.warning||'服务配置已保存。';
   }catch(e){
    error.value=errorMessage(e);const code=e&&typeof e==='object'&&'code' in e?String(e.code):'';
    if(!['MCP_CONFIG_INVALID','MCP_PLAIN_CREDENTIAL','MCP_LIMIT','MCP_CREDENTIAL_MISSING','MCP_CREDENTIAL_UNAVAILABLE','WORKSPACE_IO'].includes(code))ready.value=false;
