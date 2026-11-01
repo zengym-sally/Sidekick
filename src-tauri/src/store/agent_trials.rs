@@ -29,6 +29,26 @@ fn invalid_tracker() -> StoreError {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(
+    tag = "kind",
+    rename_all = "lowercase",
+    rename_all_fields = "camelCase",
+    deny_unknown_fields
+)]
+pub enum AgentRoleResult {
+    Tracker {
+        version: u32,
+        suggestions: Vec<TrackerSuggestion>,
+    },
+    Advisor {
+        version: u32,
+        snapshot_id: String,
+        date: String,
+        time_zone: String,
+        ranking: Vec<AdvisorRecommendation>,
+    },
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AgentRun {
     pub id: String,
@@ -38,7 +58,7 @@ pub struct AgentRun {
     pub snapshot: serde_json::Value,
     pub input: TextInput,
     pub result: Option<Vec<CandidateDraft>>,
-    pub role_result: Option<TrackerTrialResult>,
+    pub role_result: Option<AgentRoleResult>,
     pub error_code: Option<String>,
     pub created_at_ms: i64,
     pub finished_at_ms: Option<i64>,
@@ -49,7 +69,7 @@ fn trial_stopped() -> StoreError {
 impl AppStore {
     pub fn agent_run(&self, id: &str) -> Result<AgentRun> {
         let r=self.db()?.query_row("SELECT id,agent_id,purpose,status,snapshot_json,input_json,result_json,error_code,created_at_ms,finished_at_ms FROM agent_runs WHERE id=?1 AND purpose='role_trial'",[id],|r|Ok((r.get::<_,String>(0)?,r.get::<_,String>(1)?,r.get::<_,String>(2)?,r.get::<_,String>(3)?,r.get::<_,String>(4)?,r.get::<_,String>(5)?,r.get::<_,Option<String>>(6)?,r.get::<_,Option<String>>(7)?,r.get::<_,i64>(8)?,r.get::<_,Option<i64>>(9)?))).map_err(db_error)?;
-        let (result, role_result) = if r.1 == "tracker" {
+        let (result, role_result) = if ["tracker", "advisor"].contains(&r.1.as_str()) {
             (
                 None,
                 r.6.as_ref()
@@ -64,10 +84,13 @@ impl AppStore {
                 None,
             )
         };
-        if role_result
-            .as_ref()
-            .is_some_and(|value: &TrackerTrialResult| value.kind != "tracker" || value.version != 1)
-        {
+        if role_result.as_ref().is_some_and(|value| {
+            !matches!(
+                (r.1.as_str(), value),
+                ("tracker", AgentRoleResult::Tracker { version: 1, .. })
+                    | ("advisor", AgentRoleResult::Advisor { version: 1, .. })
+            )
+        }) {
             return Err(invalid_tracker());
         }
         Ok(AgentRun {
@@ -106,10 +129,10 @@ impl AppStore {
     pub(crate) fn begin_prepared_agent_trial(
         &mut self,
         id: &str,
-        input: TextInput,
+        mut input: TextInput,
         mut snapshot: serde_json::Value,
     ) -> Result<AgentRun> {
-        if !["organizer", "tracker"].contains(&id) {
+        if !["organizer", "tracker", "advisor"].contains(&id) {
             return Err(StoreError::new(
                 "AGENT_TRIAL_UNAVAILABLE",
                 "这个角色暂未开放试跑，可先保存偏好。",
@@ -134,6 +157,14 @@ impl AppStore {
         }
         let created = now_ms()?;
         let key = format!("trial-{}-{}", std::process::id(), nonce());
+        if id == "advisor" {
+            if snapshot["agent"]["agentId"] != "advisor" {
+                return Err(invalid());
+            }
+            input.time_zone = "Asia/Shanghai".into();
+            input.source_at_ms = Some(1793581200000);
+            snapshot["advisorSample"] = super::advisor_trials::advisor_sample(&key);
+        }
         self.db()?.execute("INSERT INTO agent_runs(id,agent_id,purpose,status,snapshot_json,input_json,created_at_ms) VALUES(?1,?2,'role_trial','running',?3,?4,?5)",params![key,id,serde_json::to_string(&snapshot).map_err(|_|invalid())?,serde_json::to_string(&input).map_err(|_|invalid())?,created]).map_err(db_error)?;
         self.agent_run(&key)
     }

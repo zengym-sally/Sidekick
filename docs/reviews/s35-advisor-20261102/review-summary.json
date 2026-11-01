@@ -1,0 +1,63 @@
+{
+  "scope": "N2 advisor synthetic role trial; independent delivery only, full/exact HEAD/native not signed",
+  "coreSha256": "e9bc28b5418ce5f4a7f203d117b6faf891c464e952eb64455fe2cdcccdf72491",
+  "sourceSha256": "a911efe01696156ccfcbf2e35dafd0a040f002c1f605582117812da66540ffa6",
+  "sourceManifestSha256": "0231d9dea00e430aaff9fa635847da2689de61552f06a423fe4869da76ba00c7",
+  "reviewRounds": 3,
+  "thirdRoundInterruptedBeforeVerdictForOwnerVueEvidence": true,
+  "finalConclusions": {
+    "A": "APPROVE / pass",
+    "B": "APPROVE / pass"
+  },
+  "unclosedFindings": 0,
+  "reports": [
+    {
+      "side": "A",
+      "round": 1,
+      "path": "build/night-20261101-s35/n2-delivery/a1.md",
+      "bytes": 12589,
+      "sha256": "5d404b80ca0a68d908229724c0bb8f3fbf10ac0273180c66ba3da63cf7980d8f",
+      "conclusion": "BLOCK / needs_revision"
+    },
+    {
+      "side": "B",
+      "round": 1,
+      "path": "build/night-20261101-s35/n2-delivery/b1.md",
+      "bytes": 13592,
+      "sha256": "cd74ad0f08966aa5e5c096752a14ab665fa85c4355108570a5264e7fca31445d",
+      "conclusion": "APPROVE_WITH_CHANGES / needs_revision"
+    },
+    {
+      "side": "A",
+      "round": 2,
+      "path": "build/night-20261101-s35/n2-delivery/a2.md",
+      "bytes": 11890,
+      "sha256": "917450a83e58f57ed0eb61108530fedba1f1b2fa6344de5140e7d2cd75a0358f",
+      "conclusion": "APPROVE_WITH_CHANGES / needs_revision"
+    },
+    {
+      "side": "B",
+      "round": 2,
+      "path": "build/night-20261101-s35/n2-delivery/b2.md",
+      "bytes": 13054,
+      "sha256": "c55d2def28227937ffd9f06bd7943b2c7d5ea86dd4c6072fe3be912aa68f1a88",
+      "conclusion": "APPROVE_WITH_CHANGES / needs_revision"
+    },
+    {
+      "side": "A",
+      "round": 3,
+      "path": "build/night-20261101-s35/n2-delivery/a3.md",
+      "bytes": 10347,
+      "sha256": "f3a67bd1ee5630f5843c1c1743546c9ef7afc207bc339f5c6b312df90e694e84",
+      "conclusion": "APPROVE / pass"
+    },
+    {
+      "side": "B",
+      "round": 3,
+      "path": "build/night-20261101-s35/n2-delivery/b3.md",
+      "bytes": 12372,
+      "sha256": "3ed648642d7065aec9fe7a8e6b47018d90058df9929156bcd6cba67fbd8202dd",
+      "conclusion": "APPROVE / pass"
+    }
+  ]
+}

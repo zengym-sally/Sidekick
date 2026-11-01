@@ -27,3 +27,7 @@ S3.2工具页在同一夹具中展示合成技能、修改／坏包诊断和恢�
 P2配置首步：工具 → MCP服务，可测试新增／编辑／禁用／移除、参数和环境引用表单。配置只存此来源的`sidekick-mcp-ui-fixture` localStorage；不执行任何命令或解析变量，不访问真实工作根／钥匙串。`mcpUncertain=1`模拟每次重载后的首次保存／移除已生效但响应丢失，`mcpConflict=1`模拟首次修订冲突，`mcpReadError=1`与`mcpSaveError=1`分别模拟读取／保存失败。所有“已保存”仅指夹具状态，不表示真实文件或连接成功。本轮可用`npm run dev:profile-ui -- --port 1481`隔离端口验收，具体记录见[P2首步](../../../docs/reviews/s33-p2-config-20261030.md)。
 
 S3.5 tracker：智能体→进展跟踪可用固定合成事项与线索试跑，结果只由IPC替身产生，不发模型请求、不读正式库。`trackerEmpty=1`／`trackerError=1`分别检查空建议／非法输出失败；只证Vue状态与布局，真实Pi及宿主存储另由纳管测试验证。
+
+S3.5 advisor：智能体→工作参谋→开始隔离试跑，展示固定2026-11-02／Asia/Shanghai合成场景、宿主事实／统计，以及两种合法模型选择之一的只读排序／多条依据。`advisorEmpty=1`显示无建议并保留事实，`advisorError=1`显示安全失败并保留事实，`advisorRunning=1`用于切角色／活动运行取消；仅真实Vue与合成IPC，不启动模型或Tauri，不代表持久化／native／真实今日建议。
+
+`agentUnknownRecovery=1`仅模拟organizer状态核对：开始一次合成试跑后自动poll发生临时读取失败，重新点击“事项整理”由latest读回同ID持久unknown；再点“重新核对状态”成功读取，临时错误消失，原unknown风险和原输入／设置保留。此流程只走纳管IPC替身，不直接灌store、不发模型／工具请求，不重放旧任务。

@@ -27,7 +27,8 @@
 | `s2-runtime.test.mjs` | integration | 打包 organizer Runtime 的提取流程 |
 | `s31-client.test.mjs` | unit | 智能体偏好配置、同run未知结果／终态吸收及真实Pinia store |
 | `tracker-contract.test.mjs` | unit | tracker独立结果、样本引用、未知字段／控制字符／重复与工具载荷拒绝 |
-| `s31-runtime.test.mjs` | integration | 打包 Runtime 的隔离试跑 |
+| `advisor-contract.test.mjs` | unit | advisor完整固定事实、快照／日期／时区、多合法排序与解释、谓词／比较及工具载荷拒绝 |
+| `s31-runtime.test.mjs` | integration | 打包 Runtime 的三角色隔离试跑及advisor联网前拒绝正反控 |
 | `layout-domain.test.mjs` | unit | 布局/表单/设置域模型与控件绑定 |
 | `layout-runtime.test.mjs` | integration | 打包 Runtime 的采样与推理参数透传 |
 | `s32-skills.test.mjs` | unit | Skills 扫描、冻结与内置包 |
@@ -77,3 +78,5 @@ P6原生入口`npm run probe:mcp-native`只启动专用包、新根／nonce和�
 无交互stdin时，冷重开用`node scripts/probes/run-mcp-native.mjs --reopen <本轮证据目录> 640 900`或1440 1000；必须先经GUI退出旧App。独立入口只读已有私有receipt并验证原模型owner／marker／scope，不创建新根或模型Child；实际尺寸确认后才发布ready。`test:mcp-native-launcher`在完整check的两包构建之后运行，所有负例由测试包装器阻止OS open，不能冒充原生启动证据。
 
 HTTP任务矩阵在`host/mcp_http_task_tests.rs`，聚焦`npm run test:mcp-http-task`：真实Rust／随包Pi／本机合成模型与HTTP CLI fixture，覆盖混合同名、正式闭环、声明头与session脱敏、配置冻结、ACK／落库故障、unknown冷启和迟到不发布；随原`probe:native`进入完整门禁。`fixtures/mcp-http.mjs`既可作为in-process受控HTTP服务，也可由测试自建Child启动；产品仅关闭连接，不终止服务。
+
+S3.5 advisor宿主矩阵在`host/advisor_trial_tests.rs`，聚焦`npm run probe:native -- advisor_trial_tests`：真实Rust／随包Pi／本机合成模型，非空正式五表与tool_calls逐行不变、旧恢复先行、配置冻结、多种排序／说明、空／失败／取消与冷重开。固定日期场景与模型回答输入在`fixtures/advisor-trial.mjs`及自包含`mcp-trial.mjs`中；全部仅合成，不代表原生或真实今日建议。advisor最终接收反例随稳定`test:s31-store`，契约及客户端随`test:s31-domain`，直接Runtime随`test:s31-runtime`及完整check执行。

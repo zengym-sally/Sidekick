@@ -340,6 +340,24 @@ impl RuntimeState {
                                     }
                                     return Ok(());
                                 }
+                                if store.agent_run(&id)?.agent_id == "advisor" {
+                                    #[derive(serde::Deserialize)]
+                                    #[serde(rename_all = "camelCase", deny_unknown_fields)]
+                                    struct AdvisorOutput {
+                                        role_result: crate::local_store::AdvisorTrialResult,
+                                    }
+                                    let applied = serde_json::from_value::<AdvisorOutput>(value)
+                                        .map_err(|_| {
+                                            error("MODEL_INVALID_OUTPUT", "参谋建议格式不正确。")
+                                        })
+                                        .and_then(|output| {
+                                            store.complete_advisor_trial(&id, output.role_result)
+                                        });
+                                    if let Err(e) = applied {
+                                        store.finish_agent_trial_error(&id, e.code)?;
+                                    }
+                                    return Ok(());
+                                }
                                 let decoded = serde_json::from_value(
                                     value.get("candidates").cloned().unwrap_or(Value::Null),
                                 )
@@ -494,10 +512,10 @@ impl RuntimeState {
         if slot.is_some() {
             return Err(busy());
         }
-        if !["organizer", "tracker"].contains(&agent_id) {
+        if !["organizer", "tracker", "advisor"].contains(&agent_id) {
             return Err(error(
                 "AGENT_TRIAL_UNAVAILABLE",
-                "当前工作参谋尚未开放试跑，可先保存配置。",
+                "这个角色暂未开放试跑，可先保存配置。",
             ));
         }
         let (run, payload) = local.access(|store| {
@@ -906,6 +924,9 @@ mod mcp_recovery_tests;
 #[path = "mcp_formal_tests.rs"]
 mod mcp_formal_tests;
 
+#[cfg(test)]
+#[path = "advisor_trial_tests.rs"]
+mod advisor_trial_tests;
 #[cfg(test)]
 #[path = "tracker_trial_tests.rs"]
 mod tracker_trial_tests;

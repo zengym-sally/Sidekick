@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "baseHead": "951d500f49bbe987de7bd99d8ecc29ebe2e48c50",
+  "corePath": "build/night-20261101-s35/n2-design/core-v1.md",
+  "coreSha256": "e9bc28b5418ce5f4a7f203d117b6faf891c464e952eb64455fe2cdcccdf72491",
+  "sourceSha256": "a6d578b941bc5a159f9d4827ea2badf598607c11d8bb64e67518a910f13a2173",
+  "aggregateFormat": "SHA256 of files JSON; ensure_ascii=false, sort_keys=true, separators comma/colon",
+  "files": [
+    {
+      "path": "package.json",
+      "bytes": 11843,
+      "sha256": "61c6855395a47c47bf7a968125602024ad83c55270c0d6675a858b554557a2dd",
+      "ownerExecutable": false
+    },
+    {
+      "path": "runtime/entries/organizer-entry.mjs",
+      "bytes": 16790,
+      "sha256": "9724467367a043ee3063ebb2fedf6b6b9ae37273a9f50fb7616da414c1f764b1",
+      "ownerExecutable": false
+    },
+    {
+      "path": "runtime/lib/advisor-contract.mjs",
+      "bytes": 5077,
+      "sha256": "d931b12722797053b2aa2a2518ee63610721f6a06ac48939b1f9464ae82ffa82",
+      "ownerExecutable": false
+    },
+    {
+      "path": "src-tauri/src/host/advisor_trial_tests.rs",
+      "bytes": 14453,
+      "sha256": "f7869e83cb9a474b527461282509a14819ce6b251fb4c310b87c82f15e75bde6",
+      "ownerExecutable": false
+    },
+    {
+      "path": "src-tauri/src/host/runtime_host.rs",
+      "bytes": 57004,
+      "sha256": "9af8ae6f0cd71a998e93e2cf9886af4c26fbff186dff3639fe812136039986a8",
+      "ownerExecutable": false
+    },
+    {
+      "path": "src-tauri/src/host/tracker_trial_tests.rs",
+      "bytes": 11486,
+      "sha256": "cb26c990fa2b27ad98831af0da57528880230ae398e486d3fa5ceaa0346f8f34",
+      "ownerExecutable": false
+    },
+    {
+      "path": "src-tauri/src/store/advisor_trials.rs",
+      "bytes": 7010,
+      "sha256": "f18aa1532cc275aa7cf9412f6c486cefb3b34107a2ab03f493993fb3579f0cfe",
+      "ownerExecutable": false
+    },
+    {
+      "path": "src-tauri/src/store/agent_config_tests.rs",
+      "bytes": 29627,
+      "sha256": "d6ec15f926b21e10de6a4ff54fc0af5f8fe1a4869869109995bc34bd307db996",
+      "ownerExecutable": false
+    },
+    {
+      "path": "src-tauri/src/store/agent_trials.rs",
+      "bytes": 12222,
+      "sha256": "5c6ac1ba3716820d6c9e748c46ef1e7811da6ca8f53d6e6be70088ea969dc867",
+      "ownerExecutable": false
+    },
+    {
+      "path": "src-tauri/src/store/local_store.rs",
+      "bytes": 49997,
+      "sha256": "718e079410c133df8c2d44824b33c045b9adc2160c4d1b3e4ac66fb319bc8f77",
+      "ownerExecutable": false
+    },
+    {
+      "path": "src-tauri/src/store/mcp_formal_calls_tests.rs",
+      "bytes": 32011,
+      "sha256": "a4f423f75c1327f35b5abcd7e66f6b50c3a45c196bde8600d71a2af22f01ab1c",
+      "ownerExecutable": false
+    },
+    {
+      "path": "src/components/AgentSettingsPanel.vue",
+      "bytes": 13701,
+      "sha256": "e289bae48e7a09a61f208d4cf0c238fa0c8dec1f88d44c474331527e2d9d7630",
+      "ownerExecutable": false
+    },
+    {
+      "path": "src/domain/agents.ts",
+      "bytes": 2921,
+      "sha256": "9e8f0ffef486f5eefc36032565ffb697668bfd74552cac6b2db99016519e670b",
+      "ownerExecutable": false
+    },
+    {
+      "path": "src/stores/agents.ts",
+      "bytes": 7579,
+      "sha256": "45b6bfbf9ed11a0b477fde9c703ce45e7e42691492b59bcf0acb5dde65603ec1",
+      "ownerExecutable": false
+    },
+    {
+      "path": "tests/fixtures/advisor-trial.mjs",
+      "bytes": 1560,
+      "sha256": "926e021ad6cafecf0006751dc0cc92baf8b2d93aa4a78ec6ad942eb09d0c3178",
+      "ownerExecutable": false
+    },
+    {
+      "path": "tests/fixtures/mcp-trial.mjs",
+      "bytes": 11017,
+      "sha256": "84f5fa8186e9561bb25f8b0523653d9432df8636c165e979022c6a64938586de",
+      "ownerExecutable": false
+    },
+    {
+      "path": "tests/fixtures/profile-ui/agents.ts",
+      "bytes": 3930,
+      "sha256": "1f77171516a5952935934b638d0a6910f2b5848eac7a556edbd3f0a4ac65d90b",
+      "ownerExecutable": false
+    },
+    {
+      "path": "tests/integration/s31-runtime.test.mjs",
+      "bytes": 15166,
+      "sha256": "a612da03b349c26d3026178ba0df49ae2ab825c79516a4d86fdc0bb745e21b08",
+      "ownerExecutable": false
+    },
+    {
+      "path": "tests/unit/advisor-contract.test.mjs",
+      "bytes": 6846,
+      "sha256": "a8e27cb7807fd9e84a9e399ad17127308aa42fee04621d3918e5ff822f59d75f",
+      "ownerExecutable": false
+    },
+    {
+      "path": "tests/unit/s31-client.test.mjs",
+      "bytes": 26459,
+      "sha256": "ebb83e7bd209d497ce133077287c5a1a7ffc991278a3d20c772774d2b79cb9fc",
+      "ownerExecutable": false
+    }
+  ],
+  "supersedesSourceSha256": "7c2b23547c042f7695d6d4af1da012f93cddca4617ea90c57ac2dcdec551dc89"
+}

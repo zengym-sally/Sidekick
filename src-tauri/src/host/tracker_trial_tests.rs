@@ -170,7 +170,7 @@ fn tracker_real_pi_keeps_nonempty_formal_rows_and_config_snapshot() {
     assert_eq!(result.status, "succeeded", "{:?}", result.error_code);
     assert!(result.result.is_none());
     assert_eq!(
-        result.role_result.as_ref().unwrap().suggestions[0].change,
+        serde_json::to_value(&result.role_result).unwrap()["suggestions"][0]["change"],
         "submission"
     );
     assert_eq!(
@@ -191,7 +191,13 @@ fn tracker_real_pi_keeps_nonempty_formal_rows_and_config_snapshot() {
     assert!(!f.root.join("forbidden-marker").exists());
     assert_eq!(rows(&f.database()), before);
     let reopened = f.reopen(&run.id);
-    assert_eq!(reopened.role_result.unwrap().suggestions.len(), 1);
+    assert_eq!(
+        serde_json::to_value(&reopened.role_result).unwrap()["suggestions"]
+            .as_array()
+            .unwrap()
+            .len(),
+        1
+    );
 }
 #[test]
 fn tracker_invalid_model_result_and_cancelled_late_result_never_publish() {

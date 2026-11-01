@@ -1301,6 +1301,9 @@ pub use agent_config::*;
 #[path = "agent_trials.rs"]
 mod agent_trials;
 pub use agent_trials::*;
+#[path = "advisor_trials.rs"]
+mod advisor_trials;
+pub use advisor_trials::*;
 
 #[path = "app_settings.rs"]
 mod app_settings;

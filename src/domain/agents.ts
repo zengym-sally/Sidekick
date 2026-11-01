@@ -10,6 +10,12 @@ export interface AgentDraft {modelId:string|null;preferences:{detail:string;focu
 export interface TrackerSuggestion {todoId:string;todoVersion:number;change:'progress'|'submission'|'acceptance'|'risk';summary:string;evidence:string}
 export interface TrackerTrialResult {kind:'tracker';version:1;suggestions:TrackerSuggestion[]}
 export interface TrackerSampleTodo {id:string;version:number;title:string;kind:'action'|'followup';owner:string;status:'open';submission:string;acceptance:string}
-export interface AgentTrial {id:string;agentId:AgentId;purpose:'role_trial';status:ModelRun['status'];snapshot:Record<string,unknown>;input:{text:string;timeZone:string;sourceAtMs:number|null};result:CandidateDraft[]|null;roleResult?:TrackerTrialResult|null;errorCode:string|null;createdAtMs:number;finishedAtMs:number|null}
+export type AdvisorReasonCode='due_today'|'followup_today'|'upcoming_due'|'undated'|'open_action'|'open_followup'|'earlier_due';
+export interface AdvisorReason {code:AdvisorReasonCode;relatedTodoId:string|null;relatedTodoVersion:number|null}
+export interface AdvisorRecommendation {todoId:string;todoVersion:number;reasons:AdvisorReason[]}
+export interface AdvisorTrialResult {kind:'advisor';version:1;snapshotId:string;date:string;timeZone:string;ranking:AdvisorRecommendation[]}
+export interface AdvisorSampleTodo {id:string;version:number;title:string;kind:'action'|'followup';owner:string;status:'open'|'done';dueDate:string|null;followupDate:string|null}
+export interface AdvisorSample {version:1;snapshotId:string;date:string;timeZone:string;anchorAtMs:number;todos:AdvisorSampleTodo[];counts:{total:number;open:number;done:number;dueToday:number;followupToday:number;undated:number}}
+export interface AgentTrial {id:string;agentId:AgentId;purpose:'role_trial';status:ModelRun['status'];snapshot:Record<string,unknown>;input:{text:string;timeZone:string;sourceAtMs:number|null};result:CandidateDraft[]|null;roleResult?:TrackerTrialResult|AdvisorTrialResult|null;errorCode:string|null;createdAtMs:number;finishedAtMs:number|null}
 export function configDraft(c:AgentConfig):AgentDraft{return {modelId:c.modelId,preferences:{...c.preferences},supplementalInstructions:c.supplementalInstructions};}
 export function agentSignature(d:AgentDraft):string{return JSON.stringify(d);}

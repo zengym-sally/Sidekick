@@ -262,30 +262,48 @@ fn mcp_calls_business_scope_rejects_test_other_roles_and_model_supplied_scope() 
         );
     }
     for agent in ["organizer", "tracker", "advisor"] {
-        let id = if agent != "advisor" {
-            let mut prepared = snapshot(true);
-            prepared["agent"]["agentId"] = agent.into();
+        let mut prepared = snapshot(true);
+        prepared["agent"]["agentId"] = agent.into();
+        let run = store
+            .begin_prepared_agent_trial(agent, text(), prepared)
+            .unwrap();
+        assert_eq!(run.agent_id, agent);
+        assert_eq!(run.snapshot["agent"]["agentId"], agent);
+        assert_eq!(
             store
-                .begin_prepared_agent_trial(agent, text(), prepared)
+                .prepare_mcp_task(McpTaskOwner::Business, &run.id)
+                .err()
                 .unwrap()
-                .id
+                .code,
+            "MCP_CALL_INVALID"
+        );
+        if agent == "organizer" {
+            assert_eq!(
+                store
+                    .prepare_mcp_task(McpTaskOwner::Trial, &run.id)
+                    .unwrap()
+                    .servers
+                    .len(),
+                1
+            );
         } else {
             assert_eq!(
                 store
-                    .begin_prepared_agent_trial(agent, text(), snapshot(true))
-                    .unwrap_err()
+                    .prepare_mcp_task(McpTaskOwner::Trial, &run.id)
+                    .err()
+                    .unwrap()
                     .code,
-                "AGENT_TRIAL_UNAVAILABLE"
+                "MCP_CALL_INVALID"
             );
-            let id = format!("unsupported-{agent}");
-            store.db().unwrap().execute("INSERT INTO agent_runs(id,agent_id,purpose,status,snapshot_json,input_json,created_at_ms) VALUES(?1,?2,'role_trial','running',?3,?4,1)",params![id,agent,snapshot(true).to_string(),serde_json::to_string(&text()).unwrap()]).unwrap();
-            id
-        };
-        assert!(store.prepare_mcp_task(McpTaskOwner::Business, &id).is_err());
-        if agent != "organizer" {
-            assert!(store.prepare_mcp_task(McpTaskOwner::Trial, &id).is_err());
         }
     }
+    assert_eq!(
+        store
+            .begin_prepared_agent_trial("fourth", text(), snapshot(true))
+            .unwrap_err()
+            .code,
+        "AGENT_TRIAL_UNAVAILABLE"
+    );
     store
         .db()
         .unwrap()

@@ -20,15 +20,27 @@ if (role === 'model') {
       const user = body.messages.findLast(message => message.role === 'user');
       const userText = typeof user?.content === 'string' ? user.content : (user?.content || []).filter(block => block.type === 'text').map(block => block.text).join('');
       const context = JSON.parse(userText || '{}');
-      const finalData = mode.startsWith('tracker')&&context.syntheticTodos ? {suggestions:[{todoId:mode==='tracker-invalid'?'forged-formal-id':'sample-followup',todoVersion:1,change:'submission',summary:'提交待验收',evidence:'林川已提交SDK鉴权修复'}]} : context.task === 'connection test' ? { ok: true } : context.instruction ? { changes: mode === 'diagnostic-invalid-revise' ? {} : { title: '核对合成清单' } } : null;
+      let finalData = mode.startsWith('tracker')&&context.syntheticTodos ? {suggestions:[{todoId:mode==='tracker-invalid'?'forged-formal-id':'sample-followup',todoVersion:1,change:'submission',summary:'提交待验收',evidence:'林川已提交SDK鉴权修复'}]} : context.task === 'connection test' ? { ok: true } : context.instruction ? { changes: mode === 'diagnostic-invalid-revise' ? {} : { title: '核对合成清单' } } : null;
+      if(mode.startsWith('advisor')&&context.syntheticAdvice){
+        const advice=context.syntheticAdvice,reason=code=>({code,relatedTodoId:null,relatedTodoVersion:null});
+        const action={todoId:'advisor-action',todoVersion:2,reasons:[reason('due_today'),{code:'earlier_due',relatedTodoId:'advisor-followup',relatedTodoVersion:3}]};
+        const followup={todoId:'advisor-followup',todoVersion:3,reasons:mode==='advisor-alternate'?[reason('upcoming_due'),reason('open_followup')]:[reason('followup_today')]};
+        const undated={todoId:'advisor-undated',todoVersion:1,reasons:[reason('undated')]};
+        finalData={snapshotId:advice.snapshotId,date:advice.date,timeZone:advice.timeZone,ranking:mode==='advisor-empty'?[]:mode==='advisor-alternate'?[followup,undated,action]:[action,followup,undated]};
+        if(mode==='advisor-invalid')action.todoId='forged-formal-id';
+        if(mode==='advisor-invalid-reason')action.reasons[0].code='followup_today';
+        if(mode==='advisor-invalid-date')finalData.date='2026-02-30';
+        if(mode==='advisor-invalid-identity')finalData.snapshotId='stale-run';
+      }
       const names = (body.tools || []).map(tool => tool.function.name).filter(name => name.startsWith('mcp_'));
       requests++;
       const readPath = ['recovery-retry', 'recovery-read-control'].includes(mode) ? /<location>([^<]+)<\/location>/.exec(body.messages.filter(message => message.role === 'system').map(message => message.content).join('\n'))?.[1] : undefined;
       if (['recovery-retry', 'recovery-read-control'].includes(mode) && (!readPath || !(body.tools || []).some(tool => tool.function.name === 'read'))) throw new Error('Controlled Read target unavailable.');
-      note({ type: 'model', model:body.model, tracker:!!context.syntheticTodos, detail:/DETAIL_LEVEL=detailed/.test(body.messages.filter(message=>message.role==='system').map(message=>message.content).join('\n')), names, allNames: (body.tools || []).map(tool => tool.function.name), hasSkills: /<available_skills>|<location>/.test(body.messages.filter(message => message.role === 'system').map(message => message.content).join('\n')), request: requests, results: results.map(message => String(message.content)), ...(readPath ? { readPath } : {}) });
-      if (mode === 'tracker-tool-injection' && requests === 1) { stream(response, [{name:'bash',args:{command:`/usr/bin/touch '${marker}'`}}]); return; }
+      note({ type: 'model', model:body.model, tracker:!!context.syntheticTodos, detail:/DETAIL_LEVEL=detailed/.test(body.messages.filter(message=>message.role==='system').map(message=>message.content).join('\n')), names, allNames: (body.tools || []).map(tool => tool.function.name), hasSkills: /<available_skills>|<location>/.test(body.messages.filter(message => message.role === 'system').map(message => message.content).join('\n')), request: requests, results: results.map(message => String(message.content)), ...(readPath ? { readPath } : {}),...(context.syntheticAdvice?{advisor:true,advisorSample:context.syntheticAdvice}: {}) });
+      if (['tracker-tool-injection','advisor-tool-injection'].includes(mode) && requests === 1) { stream(response, [{name:'bash',args:{command:`/usr/bin/touch '${marker}'`}}]); return; }
       if (mode === 'recovery-read-control' && !results.length) { stream(response, [{ name: 'read', args: { path: readPath } }]); return; }
-      if (['freeze','tracker-freeze'].includes(mode) && !results.length) {
+      if(mode==='advisor-service-error'){response.writeHead(500);response.end('{}');return;}
+      if (['freeze','tracker-freeze','advisor-freeze'].includes(mode) && !results.length) {
         const deadline = Date.now() + 5000;
         while (!existsSync(`${marker}.continue`) && Date.now() < deadline) await new Promise(resolve => setTimeout(resolve, 10));
       }

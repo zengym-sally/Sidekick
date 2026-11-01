@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "conclusion": "pass: frozen N2 synthetic candidate only; committed exact HEAD not yet verified",
+  "baseHead": "951d500f49bbe987de7bd99d8ecc29ebe2e48c50",
+  "candidateIndexTree": "9efff357717392213cf883cbc264e8b017a14a36",
+  "coreSha256": "e9bc28b5418ce5f4a7f203d117b6faf891c464e952eb64455fe2cdcccdf72491",
+  "sourceSha256": "a911efe01696156ccfcbf2e35dafd0a040f002c1f605582117812da66540ffa6",
+  "sourceCount": 20,
+  "fullOverlayCount": 30,
+  "archiveSha256": "0169f24d8f433397c149a808922dafc4c763d91d05f9fdf2e4fe61ba37d6017c",
+  "full": {
+    "command": [
+      "npm",
+      "run",
+      "check"
+    ],
+    "fullAttempt": 1,
+    "startedUtc": "2026-11-01T18:41:25.449562+00:00",
+    "finishedUtc": "2026-11-01T18:52:36.402037+00:00",
+    "exitCode": 0,
+    "elapsedSeconds": 670.952
+  },
+  "node": {
+    "tests": 811,
+    "suites": 0,
+    "pass": 811,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "summaryGroups": 27
+  },
+  "rust": [
+    {
+      "line": 1506,
+      "text": "test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 239 filtered out; finished in 34.66s",
+      "passed": 17,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filteredOut": 239
+    },
+    {
+      "line": 1865,
+      "text": "test result: ok. 237 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 290.59s",
+      "passed": 237,
+      "failed": 0,
+      "ignored": 2,
+      "measured": 0,
+      "filteredOut": 0
+    }
+  ],
+  "toolchainVersions": {
+    "node": "24.20.0",
+    "npm": "12.2.1",
+    "rust": "1.89.0",
+    "cargo": "1.89.0",
+    "fullPython": "3.9.6"
+  },
+  "toolchainProbe": {
+    "status": "passed",
+    "cases": [
+      {
+        "case": "configured",
+        "loaded": false,
+        "error": "mis-aligned LINKEDIT string pool"
+      },
+      {
+        "case": "host",
+        "loaded": true,
+        "error": null
+      },
+      {
+        "case": "wrapped",
+        "loaded": true,
+        "error": null
+      }
+    ],
+    "workaroundNeededOnThisHost": true
+  },
+  "bundles": [
+    {
+      "name": "Sidekick MCP Verify.app",
+      "identifier": "com.sidekick.s33.ui.verify",
+      "resourceEntryCount": 559,
+      "resourceFileCount": 481,
+      "resourceDirectoryCount": 78,
+      "runtimeFilesMatchPreparedBytesAndOwnerExec": true,
+      "emptyPreparedRuntimeDirectoriesOmitted": [
+        "licenses/@earendil-works_pi-agent-core",
+        "licenses/@earendil-works_pi-ai",
+        "licenses/@earendil-works_pi-coding-agent",
+        "licenses/@earendil-works_pi-mcp",
+        "licenses/@earendil-works_pi-telemetry",
+        "licenses/@earendil-works_pi-tui",
+        "licenses/ignore",
+        "licenses/sidekick"
+      ],
+      "executableSha256": "6fa77b6b5ad7a48b0b771a5918fc51d86408256f4bea5f7a24ee9aee90ae1166",
+      "executableBytes": 17317664,
+      "deepStrictExitCode": 0
+    },
+    {
+      "name": "Sidekick.app",
+      "identifier": "com.sidekick.s0",
+      "resourceEntryCount": 556,
+      "resourceFileCount": 479,
+      "resourceDirectoryCount": 77,
+      "runtimeFilesMatchPreparedBytesAndOwnerExec": true,
+      "emptyPreparedRuntimeDirectoriesOmitted": [
+        "licenses/@earendil-works_pi-agent-core",
+        "licenses/@earendil-works_pi-ai",
+        "licenses/@earendil-works_pi-coding-agent",
+        "licenses/@earendil-works_pi-mcp",
+        "licenses/@earendil-works_pi-telemetry",
+        "licenses/@earendil-works_pi-tui",
+        "licenses/ignore",
+        "licenses/sidekick"
+      ],
+      "executableSha256": "ce1ba5616091f55df82724cf41fa02a22cedae6f6b6f06d936e7d7f51ec8cc3e",
+      "executableBytes": 17296192,
+      "deepStrictExitCode": 0
+    }
+  ],
+  "licenseCheckScope": "strict prepared-to-bundle bytes/ownerExec/nonempty subtree; no claim of general license obligations or dependency security",
+  "requiredLicenseFileCount": 18,
+  "originalFullBundleEvidence": [
+    {
+      "line": 2333,
+      "value": {
+        "layer": "actual macOS bundles; no GUI or MCP launch",
+        "ordinaryResourceEntries": 556,
+        "controlledServiceExcluded": true,
+        "signatures": "both deep strict verified"
+      }
+    },
+    {
+      "line": 2334,
+      "value": {
+        "layer": "ordinary executable negative entry; no ordinary-root startup",
+        "exitCode": 2,
+        "stderr": "MCP UI verification is not enabled in this package"
+      }
+    }
+  ],
+  "realModelRequests": 0,
+  "syntheticBudget": {
+    "layer": "synthetic-budgeted",
+    "conclusion": "pass",
+    "occupiedSlots": 6,
+    "possiblyForwarded": 6,
+    "completed": 6,
+    "remaining": 4,
+    "realModelRequests": 0,
+    "realModelRequestUpperBound": 0,
+    "evidence": "build/p5-revise-20261101/synthetic-budgeted-1793559022816596000",
+    "rustChildTestSummaries": [
+      "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 238 filtered out; finished in 3.82s"
+    ]
+  },
+  "productionMcpKeychain": "OFF; S0-only synthetic roundtrip is separate",
+  "report": {
+    "path": "build/night-20261101-s35/n2-full/report.json",
+    "bytes": 32734,
+    "sha256": "7805ad5da548ea02e562a4a8106631964861dda9331b4772c86f7d5d1b69be72"
+  },
+  "reportMarkdown": {
+    "path": "build/night-20261101-s35/n2-full/report.md",
+    "bytes": 4837,
+    "sha256": "02b100d1bffa27515866a9e37f24a097cbb8fb814058b67ef975f33b0f156c8a"
+  },
+  "seal": {
+    "path": "build/night-20261101-s35/n2-full/evidence-seal.json",
+    "bytes": 23084,
+    "sha256": "36f6621bb6fdb8b3deb8e3e5add546ea157a11388e95227b1de5480766da18c2"
+  },
+  "sealFileCount": 116,
+  "sealFilesManifestSha256": "583041955651c371be0c7d2194f03aefdaabaed4db784c3a791d7fd74eaf442a",
+  "writerRecheckedEverySealedFile": true,
+  "postcheckIndexMetadata": {
+    "root": {
+      "allTrackedRowsExactlyEqual": true,
+      "headStable": true,
+      "indexEntriesStable": true,
+      "indexRawBeforePostchecks": "b9dfb979ad1c6c9b1712e132618ec827c58a9d04a6f5d5e2769e3346ec8cacd7",
+      "indexRawAfterPostchecks": "b9dfb979ad1c6c9b1712e132618ec827c58a9d04a6f5d5e2769e3346ec8cacd7",
+      "indexTree": null,
+      "rawIndexStable": true
+    },
+    "candidate": {
+      "allTrackedRowsExactlyEqual": true,
+      "headStable": true,
+      "indexEntriesStable": true,
+      "indexRawBeforePostchecks": "18a49173a2845d86b7158e6c3caf35066ba0200afadd91e451075d83dc0b907a",
+      "indexRawAfterPostchecks": "a31228fa7f49eb0aae83b8af83228b85c1c0c59457661004dffef7807912845a",
+      "indexTree": "9efff357717392213cf883cbc264e8b017a14a36",
+      "rawIndexStable": false
+    },
+    "classification": "candidate serialized index stat/cache metadata changed after read-only Git postchecks; exact staged path/mode/blob/stage entries and tree unchanged; raw index bytes were stable through original full; root raw index stable throughout"
+  },
+  "processCleanup": {
+    "recordedOwnedProcessIdentityCount": 64,
+    "recordedOwnedProcessesRemaining": [],
+    "action": "none required; no process-name-based signalling performed",
+    "candidateContainerRetainedForEvidence": true
+  },
+  "warningScope": "Existing Runtime/Vite size, fixed Pi preparation deprecations, host wrapper and ad-hoc/unnotarized classes; no newly unexplained warning; no dependency/license obligations audit",
+  "notExecuted": [
+    "post-commit exact HEAD fresh clone (awaiting Root commit)",
+    "real model/live commands",
+    "MCP production Keychain",
+    "real user root / migration",
+    "native GUI / OS settings / installation / release",
+    "N3 today use"
+  ],
+  "attributionCorrection": {
+    "requester": "Root coordinator",
+    "purpose": "minimal representative Vue reconciliation evidence before third delivery verdict",
+    "notNewOwnerAuthorization": true,
+    "historicalFrozenMetadataKept": "Earlier owner wording in frozen manifests/reports denotes this Root coordination request; hashes were not rewritten"
+  }
+}
