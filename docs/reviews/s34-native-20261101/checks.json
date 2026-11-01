@@ -1,0 +1,39 @@
+{
+  "at": "2026-11-01T13:19:54.677516+00:00",
+  "commands": [
+    {
+      "command": [
+        "npm",
+        "run",
+        "check:docs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.178155,
+      "stdout": "✓ docs link check passed (15 files, 201 local links resolved).\n",
+      "stderr": "npm notice run sidekick@0.3.0 check:docs\nnpm notice run node scripts/checks/check-docs.mjs\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "seconds": 0.017163,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "selectedJsonParsed": [
+    "docs/reviews/s34-native-20261101/design-reviews.json",
+    "docs/reviews/s34-native-20261101/image-hashes.json",
+    "docs/reviews/s34-native-20261101/native-summary.json",
+    "docs/reviews/s34-native-20261101/observer-command.json",
+    "docs/reviews/s34-native-20261101/source-package-stability.json"
+  ],
+  "missingLocalEvidenceLinks": [],
+  "sourceAndPackageStability": "source-package-stability.json",
+  "fullCheck": "not rerun; production and carrier source unchanged; source-bound 741 historical full and exact-HEAD focused evidence reused",
+  "nativeVerdict": "partial; H3 remains unverified",
+  "checksRole": "documentation and evidence hygiene only"
+}

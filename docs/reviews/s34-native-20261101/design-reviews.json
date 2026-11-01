@@ -1,0 +1,68 @@
+{
+  "latestCoreVersion": 4,
+  "latestCoreSha256": "88b55b900d3288dff261f1dc9871ab222a3053e94d4533cba30ad53689ccb039",
+  "reviews": [
+    {
+      "version": 2,
+      "surface": "A",
+      "artifactSha256": "ba0b50cd172ae0c6dbbaaf35ec23235bf643e4901e91952645bfbdef6f4222b3",
+      "verdict": "APPROVE",
+      "openFindings": 0,
+      "reportSha256": "1b504ba85d81cacbd33cee89070bba37ac894070401785acd47d2e90aaee5f5d",
+      "rawReport": "build/s34-native-20261101/core-review-v2-a.json",
+      "role": "design artifact gate only; not final native acceptance"
+    },
+    {
+      "version": 2,
+      "surface": "B",
+      "artifactSha256": "ba0b50cd172ae0c6dbbaaf35ec23235bf643e4901e91952645bfbdef6f4222b3",
+      "verdict": "APPROVE_WITH_CHANGES",
+      "openFindings": 1,
+      "reportSha256": "93509c20aac3b283064643bf31a1952da714e677834a44bc1f222f69cdf301a4",
+      "rawReport": "build/s34-native-20261101/core-review-v2-b.json",
+      "role": "design artifact gate only; not final native acceptance"
+    },
+    {
+      "version": 3,
+      "surface": "A",
+      "artifactSha256": "69a3e8cf3aa493f19f07ec36284d504e4f0a281b236e6e8acdeaf850fc959d8c",
+      "verdict": "APPROVE",
+      "openFindings": 0,
+      "reportSha256": "ade61a605801b74a09ab3e68fcfdb3fc13a31aa01da6a845d78bfc7f2ef85bf1",
+      "rawReport": "build/s34-native-20261101/core-review-v3-a.json",
+      "role": "design artifact gate only; not final native acceptance"
+    },
+    {
+      "version": 3,
+      "surface": "B",
+      "artifactSha256": "69a3e8cf3aa493f19f07ec36284d504e4f0a281b236e6e8acdeaf850fc959d8c",
+      "verdict": "APPROVE",
+      "openFindings": 0,
+      "reportSha256": "969dfd661cafd0a28306e607e6a1c896f310b75f340905f700bffed22428cb6f",
+      "rawReport": "build/s34-native-20261101/core-review-v3-b.json",
+      "role": "design artifact gate only; not final native acceptance"
+    },
+    {
+      "version": 4,
+      "surface": "A",
+      "artifactSha256": "88b55b900d3288dff261f1dc9871ab222a3053e94d4533cba30ad53689ccb039",
+      "verdict": "APPROVE",
+      "openFindings": 0,
+      "reportSha256": "f459a15985213c1c1a99ec77aa85e3109ebd3523a6004d61eae4a4677b367d2e",
+      "rawReport": "build/s34-native-20261101/core-review-v4-a.json",
+      "role": "design artifact gate only; not final native acceptance"
+    },
+    {
+      "version": 4,
+      "surface": "B",
+      "artifactSha256": "88b55b900d3288dff261f1dc9871ab222a3053e94d4533cba30ad53689ccb039",
+      "verdict": "APPROVE",
+      "openFindings": 0,
+      "reportSha256": "daedb5d42542ea4eb03547b81b340ab602d109474634c1af557cd096b59b6160",
+      "rawReport": "build/s34-native-20261101/core-review-v4-b.json",
+      "role": "design artifact gate only; not final native acceptance"
+    }
+  ],
+  "v2BDisposition": "Major B-01 accepted: pre-CUA 0600 uid/lstart/full command baseline; TERM/KILL compare separately; missing/changed baseline signals nothing",
+  "nativeAcceptance": "partial; remaining matrix unverified"
+}

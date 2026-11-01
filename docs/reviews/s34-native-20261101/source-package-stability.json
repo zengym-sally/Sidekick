@@ -1,0 +1,16 @@
+{
+  "at": "2026-11-01T13:17:07.483775+00:00",
+  "head": "74173010c158d663b2bc40533ec3c8ffd8f4351a",
+  "sourceManifestSha256": "c7cfa3f1a5d2e9ed60f5966a993339cd3017f006eb107520f048ef08daf6ef23",
+  "sourceCount": 50,
+  "sourceDiffs": [],
+  "originalCoreSha256": "b429231121cacdd394ee654049efb8ad98c91b5daf0b8e782865ead859af3346",
+  "incrementalCoreSha256": "88b55b900d3288dff261f1dc9871ab222a3053e94d4533cba30ad53689ccb039",
+  "packageEntries": 566,
+  "packageDiffs": [],
+  "packageManifestSha256": "46f42532cb04db8a2f1f0b2e73311c0749acb92bc97f6cf26731be86386e6455",
+  "executableSha256": "193fa5d8f61a8bbd1e064b7d6ca19decc23ff1295e37cff2ce3153b8e19c774b",
+  "historicalFullReportSha256": "dd7c260f6e8fe65f5c6873b96fa4adefc1feaa6354d85c24cfb52c2509140771",
+  "historicalFullSealSha256": "384b3e7bc643367c9ea067e0610e1205a12fd15d1bdc5d3377fd2d5aefa635a4",
+  "historicalExactHeadReportSha256": "0d0467cc0b4f55ce562cd28437c4689f6604a1281c6e88f7cf0c17de5a6d7ed1"
+}

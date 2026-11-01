@@ -1,0 +1,47 @@
+{
+  "layer": "One-off observation command invoking the tracked controlledHttp API; not native UI evidence by itself",
+  "program": "import { pathToFileURL } from 'node:url';\nimport { resolve } from 'node:path';\nimport { createInterface } from 'node:readline';\nimport { writeFileSync } from 'node:fs';\nconst { controlledHttp } = await import(pathToFileURL(resolve('tests/fixtures/mcp-http.mjs')).href);\nconst service = await controlledHttp({ mode: process.argv[1] });\nconst snapshot = () => ({ requests: service.requests.map(r => ({ method: r.method, rpc: r.message?.method ?? null, responseType: r.responseType ?? null })), calls: service.calls(), sockets: service.sockets.size });\nprocess.stdout.write(JSON.stringify({ ready: true, url: service.url, pid: process.pid, mode: process.argv[1], nonce: process.argv[2] }) + '\\n');\nprocess.on('SIGTERM', () => { void service.close().then(() => process.exit(0)); });\nfor await (const line of createInterface({ input: process.stdin })) {\n if (line === 'snapshot') { const value = snapshot(); writeFileSync(process.argv[3], JSON.stringify(value, null, 2) + '\\n', { mode: 0o600 }); process.stdout.write(JSON.stringify(value) + '\\n'); }\n else if (line === 'stop') { await service.close(); process.exit(0); }\n else throw new Error('Controlled HTTP operation refused.');\n}",
+  "programSha256": "5a08377d80442950525e44422aa2a517e6e11e156792e284602cfaaa12e7c2cd",
+  "cwd": "Repository root of a clean checkout",
+  "argvTemplate": [
+    "/usr/bin/env",
+    "-i",
+    "PATH=/usr/bin:/bin",
+    "TMPDIR=<owned-private-base>",
+    "<dedicated-bundled-node>",
+    "--input-type=module",
+    "-e",
+    "<program from this JSON>",
+    "<mode>",
+    "<owned-nonce-48-hex>",
+    "<owned-private-snapshot-path>"
+  ],
+  "modesUsed": [
+    "json",
+    "auth",
+    "wait-list",
+    "sse-all"
+  ],
+  "operations": [
+    "snapshot",
+    "stop"
+  ],
+  "outputPolicy": "Only HTTP method, RPC method, finite responseType, calls and sockets; no headers, body or session values",
+  "ownership": "Before use, verify uid/lstart/full command, canonical cwd and fixture resolution, nonce, exact LISTEN; bind the GUI-saved server ID/revision/URL to this exact child",
+  "controls": {
+    "manualPositive": "One direct GET to owned json endpoint returned 405, counted as one GET with calls0 and sockets0",
+    "nativeMissingVariable": "GUI missing-variable run produced zero request delta from that separate manual baseline",
+    "zeroBaseline": "Fresh auth and wait-list children reported empty requests/calls0/sockets0 before GUI"
+  },
+  "cleanCheckoutInputs": [
+    "tests/fixtures/mcp-http.mjs",
+    "this JSON program; no ignored source file is executed"
+  ],
+  "limitations": [
+    "Does not establish native behavior without separate official CUA, SQLite and configuration binding evidence",
+    "The manual GET is a separate control request and is excluded from native request deltas"
+  ],
+  "startedButNotExercised": [
+    "tool-error"
+  ]
+}

@@ -1,0 +1,83 @@
+[
+  {
+    "path": "n0-wide-initial.jpg",
+    "sha256": "b04093f54882879fcd1fbd33a1b728ddabf46aea7967e636757d3f5d949c5d73",
+    "bytes": 96059,
+    "format": "JPEG",
+    "width": 1440,
+    "height": 1000,
+    "layer": "official CUA original bytes, no conversion or cropping"
+  },
+  {
+    "path": "n1-http-json-diagnostic.jpg",
+    "sha256": "9d42fd44fb5d083502b9bac59f6063364a8bbbc96e4b1230b285b28357c6f5ef",
+    "bytes": 115704,
+    "format": "JPEG",
+    "width": 1440,
+    "height": 1000,
+    "layer": "official CUA original bytes, no conversion or cropping"
+  },
+  {
+    "path": "n1-http-missing-observed.jpg",
+    "sha256": "54ded2ef9e015834f85de4aaa60458e8cff2bccd3d29d6507aa48ac54abdf90d",
+    "bytes": 129602,
+    "format": "JPEG",
+    "width": 1440,
+    "height": 1000,
+    "layer": "official CUA original bytes, no conversion or cropping"
+  },
+  {
+    "path": "n1-http-401.jpg",
+    "sha256": "84c2cd990789b124d8c60c96693f31d6d0f4b257c916843bb4fe97722e12bed5",
+    "bytes": 125595,
+    "format": "JPEG",
+    "width": 1440,
+    "height": 1000,
+    "layer": "official CUA original bytes, no conversion or cropping"
+  },
+  {
+    "path": "n1-http-active-before-disconnect.jpg",
+    "sha256": "fa1e284e737e311c33b19e5f4c0445c5a4e043e0f5b8ca1af2768161260ad406",
+    "bytes": 122978,
+    "format": "JPEG",
+    "width": 1440,
+    "height": 1000,
+    "layer": "official CUA original bytes, no conversion or cropping"
+  },
+  {
+    "path": "n1-http-disconnected.jpg",
+    "sha256": "d4c4fe37b92c73a257d8a33d8086366ebca34c64b3b9dde0c4a5f5afcd843c89",
+    "bytes": 122216,
+    "format": "JPEG",
+    "width": 1440,
+    "height": 1000,
+    "layer": "official CUA original bytes, no conversion or cropping"
+  },
+  {
+    "path": "n2-sse-diagnostic.jpg",
+    "sha256": "4f83325be0d3b0f00996a24b3a9bc39e37a13723ad9522981a075a1f7ea6740f",
+    "bytes": 123892,
+    "format": "JPEG",
+    "width": 1440,
+    "height": 1000,
+    "layer": "official CUA original bytes, no conversion or cropping"
+  },
+  {
+    "path": "n2-formal-baseline.jpg",
+    "sha256": "f229ee1f2ea0e9f71806759200bbb0b56e75c472f28f2de7a14cf1ba3cdda0e0",
+    "bytes": 76945,
+    "format": "JPEG",
+    "width": 1440,
+    "height": 1000,
+    "layer": "official CUA original bytes, no conversion or cropping"
+  },
+  {
+    "path": "n2-sse-trial-complete.jpg",
+    "sha256": "fe1965b9661546db4940e806755dbc7eba67040d52408b9fd74b7829c05f4f6d",
+    "bytes": 108210,
+    "format": "JPEG",
+    "width": 1440,
+    "height": 1000,
+    "layer": "official CUA original bytes, no conversion or cropping"
+  }
+]

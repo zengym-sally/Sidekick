@@ -1,0 +1,520 @@
+{
+  "status": "partial; native exit remains unverified after official capture failure",
+  "baseHead": "74173010c158d663b2bc40533ec3c8ffd8f4351a",
+  "sourceCodeChanged": false,
+  "sourceBinding": {
+    "at": "2026-11-01T13:17:07.483775+00:00",
+    "head": "74173010c158d663b2bc40533ec3c8ffd8f4351a",
+    "sourceManifestSha256": "c7cfa3f1a5d2e9ed60f5966a993339cd3017f006eb107520f048ef08daf6ef23",
+    "sourceCount": 50,
+    "sourceDiffs": [],
+    "originalCoreSha256": "b429231121cacdd394ee654049efb8ad98c91b5daf0b8e782865ead859af3346",
+    "incrementalCoreSha256": "88b55b900d3288dff261f1dc9871ab222a3053e94d4533cba30ad53689ccb039",
+    "packageEntries": 566,
+    "packageDiffs": [],
+    "packageManifestSha256": "46f42532cb04db8a2f1f0b2e73311c0749acb92bc97f6cf26731be86386e6455",
+    "executableSha256": "193fa5d8f61a8bbd1e064b7d6ca19decc23ff1295e37cff2ce3153b8e19c774b",
+    "historicalFullReportSha256": "dd7c260f6e8fe65f5c6873b96fa4adefc1feaa6354d85c24cfb52c2509140771",
+    "historicalFullSealSha256": "384b3e7bc643367c9ea067e0610e1205a12fd15d1bdc5d3377fd2d5aefa635a4",
+    "historicalExactHeadReportSha256": "0d0467cc0b4f55ce562cd28437c4689f6604a1281c6e88f7cf0c17de5a6d7ed1"
+  },
+  "scope": {
+    "syntheticModelHttp": 2,
+    "realModelHttp": 0,
+    "productionMcpKeychain": "kept OFF; no keychain operations",
+    "realUserRoot": "not accessed",
+    "ordinaryApp": "not launched",
+    "s35": "not implemented",
+    "globalEnvironmentAndOsSettings": "not changed",
+    "syntheticHeaderInjection": "not implemented or attempted"
+  },
+  "approvedCore": {
+    "sha256": "88b55b900d3288dff261f1dc9871ab222a3053e94d4533cba30ad53689ccb039",
+    "a": "APPROVE",
+    "b": "APPROVE",
+    "openFindings": 0,
+    "v2MajorClosed": "App initial uid/lstart/full command baseline saved before CUA; TERM/KILL must each compare it"
+  },
+  "verified": {
+    "n0": {
+      "saved": true,
+      "format": "JPEG",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "b04093f54882879fcd1fbd33a1b728ddabf46aea7967e636757d3f5d949c5d73",
+      "identityChain": "canonical package selection, unique Verify process and unchanged pre-CUA identity, official isolated title/image dimensions; official API does not directly print PID/globalrect"
+    },
+    "jsonDiagnostic": {
+      "lookupCount": 1,
+      "toolsCalls": 0,
+      "modelHttp": 0,
+      "formalCountsAtThatTime": {
+        "sources": 0,
+        "candidates": 0,
+        "todos": 0,
+        "todo_events": 0
+      }
+    },
+    "missingVariable": {
+      "status": "failed",
+      "errorCode": "MCP_ENV_MISSING",
+      "serverId": "mcp-b990fad6fbf838b175cf6741",
+      "configurationRevision": "rev-b7340c6b77a654dfcacf056fea65324ab16513433a55c61d931499127e44444a",
+      "url": "http://127.0.0.1:55715/mcp",
+      "observerPid": 30250,
+      "manualControlRequests": 1,
+      "before": {
+        "requests": [
+          {
+            "method": "GET",
+            "rpc": null,
+            "responseType": null
+          }
+        ],
+        "calls": 0,
+        "sockets": 0
+      },
+      "after": {
+        "requests": [
+          {
+            "method": "GET",
+            "rpc": null,
+            "responseType": null
+          }
+        ],
+        "calls": 0,
+        "sockets": 0
+      },
+      "nativeRequestDelta": 0,
+      "nativeCallsDelta": 0
+    },
+    "unauthorized401": {
+      "status": "failed",
+      "errorCode": "MCP_HTTP_AUTH",
+      "serverId": "mcp-b990fad6fbf838b175cf6741",
+      "configurationRevision": "rev-3aba7a621dce5ac4fc019c4738454dda72f6b855e15b834add8b0c34c4a1c214",
+      "url": "http://127.0.0.1:56521/mcp",
+      "observerPid": 53522,
+      "before": {
+        "requests": [],
+        "calls": 0,
+        "sockets": 0
+      },
+      "after": {
+        "requests": [
+          {
+            "method": "POST",
+            "rpc": null,
+            "responseType": null
+          }
+        ],
+        "calls": 0,
+        "sockets": 0
+      },
+      "nativeRequestDelta": 1,
+      "nativeCallsDelta": 0
+    },
+    "activeDiagnosticDisconnect": {
+      "status": "cancelled",
+      "errorCode": "CANCELLED",
+      "serverId": "mcp-b990fad6fbf838b175cf6741",
+      "configurationRevision": "rev-e7c40df37868b197fa8fa5027c819f0f99c3e72748da6f7dd7e4b6416a93b8f4",
+      "url": "http://127.0.0.1:57269/mcp",
+      "observerPid": 74731,
+      "connectTimeoutMs": 30000,
+      "durationMs": 27393,
+      "active": {
+        "requests": [
+          {
+            "method": "POST",
+            "rpc": "initialize",
+            "responseType": "application/json"
+          },
+          {
+            "method": "POST",
+            "rpc": "notifications/initialized",
+            "responseType": null
+          },
+          {
+            "method": "GET",
+            "rpc": null,
+            "responseType": null
+          },
+          {
+            "method": "POST",
+            "rpc": "tools/list",
+            "responseType": null
+          }
+        ],
+        "calls": 0,
+        "sockets": 2
+      },
+      "after": {
+        "requests": [
+          {
+            "method": "POST",
+            "rpc": "initialize",
+            "responseType": "application/json"
+          },
+          {
+            "method": "POST",
+            "rpc": "notifications/initialized",
+            "responseType": null
+          },
+          {
+            "method": "GET",
+            "rpc": null,
+            "responseType": null
+          },
+          {
+            "method": "POST",
+            "rpc": "tools/list",
+            "responseType": null
+          },
+          {
+            "method": "DELETE",
+            "rpc": null,
+            "responseType": null
+          }
+        ],
+        "calls": 0,
+        "sockets": 0
+      },
+      "remoteClose": "confirmed",
+      "nonterminalRuns": 0,
+      "serviceOwnerStillAliveBeforeOwnCleanup": true
+    },
+    "sseDiagnostic": {
+      "status": "succeeded",
+      "mode": "sse-all",
+      "snapshot": {
+        "requests": [
+          {
+            "method": "POST",
+            "rpc": "initialize",
+            "responseType": "text/event-stream"
+          },
+          {
+            "method": "POST",
+            "rpc": "notifications/initialized",
+            "responseType": null
+          },
+          {
+            "method": "GET",
+            "rpc": null,
+            "responseType": null
+          },
+          {
+            "method": "POST",
+            "rpc": "tools/list",
+            "responseType": "text/event-stream"
+          },
+          {
+            "method": "DELETE",
+            "rpc": null,
+            "responseType": null
+          }
+        ],
+        "calls": 0,
+        "sockets": 0
+      },
+      "remoteClose": "confirmed"
+    },
+    "sseOrganizerTrial": {
+      "status": "succeeded",
+      "purpose": "role_trial",
+      "previewCount": 1,
+      "configurationRevision": "rev-e9bf965f12b56e47ec25b66ecd31fc67aa653f22d69cc2888c917dbfa48f4fb5",
+      "serverId": "mcp-b990fad6fbf838b175cf6741",
+      "observerPid": 19807,
+      "after": {
+        "requests": [
+          {
+            "method": "POST",
+            "rpc": "initialize",
+            "responseType": "text/event-stream"
+          },
+          {
+            "method": "POST",
+            "rpc": "notifications/initialized",
+            "responseType": null
+          },
+          {
+            "method": "GET",
+            "rpc": null,
+            "responseType": null
+          },
+          {
+            "method": "POST",
+            "rpc": "tools/list",
+            "responseType": "text/event-stream"
+          },
+          {
+            "method": "DELETE",
+            "rpc": null,
+            "responseType": null
+          },
+          {
+            "method": "POST",
+            "rpc": "initialize",
+            "responseType": "text/event-stream"
+          },
+          {
+            "method": "POST",
+            "rpc": "notifications/initialized",
+            "responseType": null
+          },
+          {
+            "method": "GET",
+            "rpc": null,
+            "responseType": null
+          },
+          {
+            "method": "POST",
+            "rpc": "tools/list",
+            "responseType": "text/event-stream"
+          },
+          {
+            "method": "POST",
+            "rpc": "tools/call",
+            "responseType": "text/event-stream"
+          },
+          {
+            "method": "DELETE",
+            "rpc": null,
+            "responseType": null
+          }
+        ],
+        "calls": 1,
+        "sockets": 0
+      },
+      "toolCalls": [
+        {
+          "id": "baaae3ae-6ee8-4699-9580-acf9600adf25",
+          "run_id": null,
+          "agent_run_id": "trial-47342-1793538466069943000",
+          "model_call_id": "synthetic-call-0",
+          "configuration_revision": "rev-e9bf965f12b56e47ec25b66ecd31fc67aa653f22d69cc2888c917dbfa48f4fb5",
+          "schema_sha256": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a",
+          "server_id": "mcp-b990fad6fbf838b175cf6741",
+          "tool_name": "lookup",
+          "arguments_sha256": "668650030d7fb427fddbd19e0fa36453383a84dc5bf082cb5f3ad512bc7e7781",
+          "send_state": "responded",
+          "response_category": "success",
+          "response_summary": null,
+          "created_at_ms": 1793538466980,
+          "finished_at_ms": 1793538466992
+        }
+      ],
+      "modelHttpTotal": 2,
+      "allToolNamesMcpOnly": true,
+      "hasSkills": false,
+      "formalCounts": {
+        "sources": 0,
+        "candidates": 0,
+        "todos": 1,
+        "todo_events": 1
+      },
+      "formalContentSha256": "d0f9ec8b3d0e939fb84dfbcf4f34bcfb1d0051398cb67aba6c25295db83f2da7",
+      "formalTablesUnchanged": true
+    }
+  },
+  "captureFailure": {
+    "first": "fresh official getAXState failed with server -10005 / ScreenCaptureKit -3812 before isError case click",
+    "reselection": "bundle identifier rejected before selection as ambiguous; same bounded retry corrected to the owned canonical full path",
+    "final": "canonical full-path selection still failed with ScreenCaptureKit -3812",
+    "noFurtherFunctionalAction": true,
+    "noBlindCommandQ": true,
+    "noAlternativeBackendOrOsChange": true
+  },
+  "unverified": [
+    "native form and JSON full consistency including saved configuration cold reopen",
+    "native explicit refresh action",
+    "native valid tool isError trial",
+    "native active trial cancellation",
+    "native lost-response unknown, same-run retry/follow-up blocking and same-root cold reopen/no replay",
+    "native complete 1440x1000 and 640x900 keyboard/focus/scroll/bottom-bar matrix; only wide functional screenshots captured",
+    "native synthetic static-header authentication positive; no injection implemented",
+    "real model, real business service, OAuth, production MCP Keychain, real user root, other platforms/CI and historical P5 cause"
+  ],
+  "finalReadback": {
+    "ownedActiveCount": 0,
+    "allOwnedListenClosed": true,
+    "rootAndReceiptPreserved": true,
+    "formalTablesUnchanged": true,
+    "formalContentSha256": "d0f9ec8b3d0e939fb84dfbcf4f34bcfb1d0051398cb67aba6c25295db83f2da7",
+    "counts": {
+      "sources": 0,
+      "candidates": 0,
+      "todos": 1,
+      "todo_events": 1,
+      "tool_calls": 1,
+      "agent_runs": 7
+    },
+    "modelHttpTotal": 2,
+    "realModelHttp": 0,
+    "databaseQuickCheck": "ok",
+    "foreignKeyViolations": 0,
+    "unconfiguredIsErrorServiceSnapshot": {
+      "requests": [],
+      "calls": 0,
+      "sockets": 0
+    }
+  },
+  "cleanup": [
+    {
+      "kind": "App",
+      "pid": 47342,
+      "pidAbsent": true
+    },
+    {
+      "kind": "runner",
+      "pid": 46885,
+      "pidAbsent": true
+    },
+    {
+      "kind": "model",
+      "pid": 47054,
+      "pidAbsent": true,
+      "portHasNoListener": true
+    },
+    {
+      "kind": "http-json-owner",
+      "pid": 71994,
+      "pidAbsent": true,
+      "portHasNoListener": true
+    },
+    {
+      "kind": "http-observed-owner",
+      "pid": 92053,
+      "pidAbsent": true,
+      "portHasNoListener": true
+    },
+    {
+      "kind": "observed-auth-owner",
+      "pid": 53522,
+      "pidAbsent": true,
+      "portHasNoListener": true
+    },
+    {
+      "kind": "observed-json-owner",
+      "pid": 30250,
+      "pidAbsent": true,
+      "portHasNoListener": true
+    },
+    {
+      "kind": "observed-wait-owner",
+      "pid": 74731,
+      "pidAbsent": true,
+      "portHasNoListener": true
+    },
+    {
+      "kind": "observed-error-owner",
+      "pid": 94661,
+      "pidAbsent": true,
+      "portHasNoListener": true
+    },
+    {
+      "kind": "observed-sse-owner",
+      "pid": 19807,
+      "pidAbsent": true,
+      "portHasNoListener": true
+    }
+  ],
+  "images": [
+    {
+      "path": "n0-wide-initial.jpg",
+      "sha256": "b04093f54882879fcd1fbd33a1b728ddabf46aea7967e636757d3f5d949c5d73",
+      "bytes": 96059,
+      "format": "JPEG",
+      "width": 1440,
+      "height": 1000,
+      "layer": "official CUA original bytes, no conversion or cropping"
+    },
+    {
+      "path": "n1-http-json-diagnostic.jpg",
+      "sha256": "9d42fd44fb5d083502b9bac59f6063364a8bbbc96e4b1230b285b28357c6f5ef",
+      "bytes": 115704,
+      "format": "JPEG",
+      "width": 1440,
+      "height": 1000,
+      "layer": "official CUA original bytes, no conversion or cropping"
+    },
+    {
+      "path": "n1-http-missing-observed.jpg",
+      "sha256": "54ded2ef9e015834f85de4aaa60458e8cff2bccd3d29d6507aa48ac54abdf90d",
+      "bytes": 129602,
+      "format": "JPEG",
+      "width": 1440,
+      "height": 1000,
+      "layer": "official CUA original bytes, no conversion or cropping"
+    },
+    {
+      "path": "n1-http-401.jpg",
+      "sha256": "84c2cd990789b124d8c60c96693f31d6d0f4b257c916843bb4fe97722e12bed5",
+      "bytes": 125595,
+      "format": "JPEG",
+      "width": 1440,
+      "height": 1000,
+      "layer": "official CUA original bytes, no conversion or cropping"
+    },
+    {
+      "path": "n1-http-active-before-disconnect.jpg",
+      "sha256": "fa1e284e737e311c33b19e5f4c0445c5a4e043e0f5b8ca1af2768161260ad406",
+      "bytes": 122978,
+      "format": "JPEG",
+      "width": 1440,
+      "height": 1000,
+      "layer": "official CUA original bytes, no conversion or cropping"
+    },
+    {
+      "path": "n1-http-disconnected.jpg",
+      "sha256": "d4c4fe37b92c73a257d8a33d8086366ebca34c64b3b9dde0c4a5f5afcd843c89",
+      "bytes": 122216,
+      "format": "JPEG",
+      "width": 1440,
+      "height": 1000,
+      "layer": "official CUA original bytes, no conversion or cropping"
+    },
+    {
+      "path": "n2-sse-diagnostic.jpg",
+      "sha256": "4f83325be0d3b0f00996a24b3a9bc39e37a13723ad9522981a075a1f7ea6740f",
+      "bytes": 123892,
+      "format": "JPEG",
+      "width": 1440,
+      "height": 1000,
+      "layer": "official CUA original bytes, no conversion or cropping"
+    },
+    {
+      "path": "n2-formal-baseline.jpg",
+      "sha256": "f229ee1f2ea0e9f71806759200bbb0b56e75c472f28f2de7a14cf1ba3cdda0e0",
+      "bytes": 76945,
+      "format": "JPEG",
+      "width": 1440,
+      "height": 1000,
+      "layer": "official CUA original bytes, no conversion or cropping"
+    },
+    {
+      "path": "n2-sse-trial-complete.jpg",
+      "sha256": "fe1965b9661546db4940e806755dbc7eba67040d52408b9fd74b7829c05f4f6d",
+      "bytes": 108210,
+      "format": "JPEG",
+      "width": 1440,
+      "height": 1000,
+      "layer": "official CUA original bytes, no conversion or cropping"
+    }
+  ],
+  "checksNotRerun": [
+    "original full npm run check; code unchanged and historical source-bound full/exact-HEAD evidence reused",
+    "Rust and new package builds; no source/carrier implementation change"
+  ],
+  "localEvidenceErrorsRetained": [
+    "file-count versus entry-count mismatch rejected before launch, corrected with real positive and negative controls",
+    "CUA binding ReferenceError before screenshot API, local PNG assertion rejected original JPEG, missing PIL import; corrected without dependency install or re-encoding",
+    "initial auth observer duplicate -e exited9 before binding; corrected invocation retained",
+    "initial cancellation readback expected MCP_CANCELLED instead of existing CANCELLED, exit1 then corrected",
+    "initial trial readback guessed purpose=trial instead of role_trial, exit1 then corrected",
+    "initial image name n2-sse-trial-success describes starting state; only n2-sse-trial-complete used for terminal evidence"
+  ],
+  "asOfCleanup": "2026-11-01T13:15:04.817890+00:00"
+}
