@@ -22,3 +22,9 @@ build/
 
 # AgentTeams coordination state (never committed)
 .agent-teams/
+
+# Local document drafts and Python probe caches
+/draft_*_folder/
+__pycache__/
+*.pyc
+*.pyo
