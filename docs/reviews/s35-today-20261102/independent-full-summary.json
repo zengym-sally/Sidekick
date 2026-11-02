@@ -1,0 +1,285 @@
+{
+  "scope": "Frozen v3 controlled synthetic independent full/post verification; precommit checkpoint, no native or real-environment assertion",
+  "asOfUtc": "2026-11-02T07:16:08.275899+00:00",
+  "conclusion": "pass",
+  "baseHead": "c783c8560cde2269eed721ee206d53b0f7e022cf",
+  "candidateIndexTree": "3d2754baf00589bd09daaa774d8cd17e2dc23273",
+  "sourceCount": 38,
+  "candidateInputCount": 53,
+  "sourceFreeze": {
+    "path": "build/night-20261101-s35/n3-delivery/source-freeze-v3.json",
+    "bytes": 7796,
+    "sha256": "c8b92b1e54ebddd950228405b403a53a94347f928d740ed763f1bcfa0f012de3",
+    "ownerExec": false
+  },
+  "normativeCoreSha256": "e966f760add123b5d452420f6ddf8aaf32e9cb3c2080aca26d69643d49284da5",
+  "deliveryRound": 3,
+  "deliveryApproval": {
+    "path": "build/night-20261101-s35/n3-delivery/round3-approval.json",
+    "bytes": 1514,
+    "sha256": "09262bb52ddee019ac9f402872df2aded6e89c2ebb387aa7da174e69133e10d7",
+    "ownerExec": false
+  },
+  "preparation": [
+    {
+      "name": "npm-ci",
+      "command": [
+        "npm",
+        "ci",
+        "--ignore-scripts"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 3.027
+    },
+    {
+      "name": "prepare-cli",
+      "command": [
+        "npm",
+        "run",
+        "probe:prepare-cli"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 9.801
+    },
+    {
+      "name": "prepare-pi",
+      "command": [
+        "npm",
+        "run",
+        "probe:prepare-pi"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 14.99
+    },
+    {
+      "name": "prepare-bundle",
+      "command": [
+        "npm",
+        "run",
+        "probe:bundle"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 1.077
+    },
+    {
+      "name": "focused-structure",
+      "command": [
+        "npm",
+        "run",
+        "check:structure"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.287
+    }
+  ],
+  "full": {
+    "command": [
+      "npm",
+      "run",
+      "check"
+    ],
+    "fullAttempt": 2,
+    "startedUtc": "2026-11-02T06:55:55.192822+00:00",
+    "finishedUtc": "2026-11-02T07:08:14.715048+00:00",
+    "exitCode": 0,
+    "elapsedSeconds": 739.519
+  },
+  "node": {
+    "tests": 842,
+    "suites": 0,
+    "pass": 842,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "summaryGroups": 29
+  },
+  "rust": [
+    {
+      "line": 1550,
+      "text": "test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 273 filtered out; finished in 34.72s",
+      "passed": 17,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filteredOut": 273
+    },
+    {
+      "line": 1947,
+      "text": "test result: ok. 270 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 322.83s",
+      "passed": 270,
+      "failed": 0,
+      "ignored": 3,
+      "measured": 0,
+      "filteredOut": 0
+    }
+  ],
+  "rustIgnored": [
+    {
+      "line": 1916,
+      "text": "test runtime_host::tests::s2_live_text_preview_sign_and_restart ... ignored, explicit real model integration using the owner-selected private file"
+    },
+    {
+      "line": 1917,
+      "text": "test runtime_host::tests::s31_live_isolated_organizer_trial_and_configuration_reopen ... ignored, explicit real model trial using the owner-selected private file"
+    },
+    {
+      "line": 1919,
+      "text": "test runtime_host::today_advice_tests::today_child_crash_harness ... ignored, controlled subprocess entry only; invoked by today_real_host_crash_cold_reopen"
+    }
+  ],
+  "syntheticBudget": {
+    "conclusion": "pass",
+    "occupiedSlots": 6,
+    "possiblyForwarded": 6,
+    "completed": 6,
+    "remaining": 4,
+    "realModelRequests": 0,
+    "realModelRequestUpperBound": 0,
+    "rustChildTestSummaries": [
+      "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 272 filtered out; finished in 4.10s"
+    ]
+  },
+  "toolchainProbe": {
+    "status": "passed",
+    "cases": [
+      {
+        "case": "configured",
+        "loaded": false,
+        "error": "mis-aligned LINKEDIT string pool"
+      },
+      {
+        "case": "host",
+        "loaded": true,
+        "error": null
+      },
+      {
+        "case": "wrapped",
+        "loaded": true,
+        "error": null
+      }
+    ],
+    "workaroundNeededOnThisHost": true
+  },
+  "bundles": [
+    {
+      "name": "Sidekick MCP Verify.app",
+      "identifier": "com.sidekick.s33.ui.verify",
+      "resourceEntryCount": 560,
+      "resourceFileCount": 482,
+      "resourceDirectoryCount": 78,
+      "runtimeFilesMatchPreparedBytesAndOwnerExec": true,
+      "emptyPreparedRuntimeDirectoriesOmitted": [
+        "licenses/@earendil-works_pi-agent-core",
+        "licenses/@earendil-works_pi-ai",
+        "licenses/@earendil-works_pi-coding-agent",
+        "licenses/@earendil-works_pi-mcp",
+        "licenses/@earendil-works_pi-telemetry",
+        "licenses/@earendil-works_pi-tui",
+        "licenses/ignore",
+        "licenses/sidekick"
+      ],
+      "executableSha256": "84244ccaec39aff1ecaf5e9ad4d1f1d85a53c487dd58ac5bafd776b79aa31e09",
+      "executableBytes": 17890944,
+      "deepStrictExitCode": 0,
+      "adHoc": true,
+      "notarized": false
+    },
+    {
+      "name": "Sidekick.app",
+      "identifier": "com.sidekick.s0",
+      "resourceEntryCount": 557,
+      "resourceFileCount": 480,
+      "resourceDirectoryCount": 77,
+      "runtimeFilesMatchPreparedBytesAndOwnerExec": true,
+      "emptyPreparedRuntimeDirectoriesOmitted": [
+        "licenses/@earendil-works_pi-agent-core",
+        "licenses/@earendil-works_pi-ai",
+        "licenses/@earendil-works_pi-coding-agent",
+        "licenses/@earendil-works_pi-mcp",
+        "licenses/@earendil-works_pi-telemetry",
+        "licenses/@earendil-works_pi-tui",
+        "licenses/ignore",
+        "licenses/sidekick"
+      ],
+      "executableSha256": "9519974eddbc6311ecd931973038c69750add0b171092798d8379ebfb6224b2c",
+      "executableBytes": 17714352,
+      "deepStrictExitCode": 0,
+      "adHoc": true,
+      "notarized": false
+    }
+  ],
+  "preparedRuntime": {
+    "entries": 563,
+    "files": 479,
+    "nonemptyStrictLicenseFiles": 18,
+    "licenseScope": "strict prepared-to-bundle bytes/ownerExec/nonempty subtree; no claim of general license obligations or dependency security"
+  },
+  "packageControls": {
+    "positive": 2,
+    "negative": 7
+  },
+  "sourceInputControls": {
+    "positive": 2,
+    "negative": 10,
+    "totalInputRows": 4302,
+    "rawGitBlobOwnerExecStable": true,
+    "candidateIndexCacheBytesChangedOnly": true
+  },
+  "artifactStability": {
+    "timestampUtc": "2026-11-02T07:08:55.385484+00:00",
+    "conclusion": "pass",
+    "initialArtifactSealSha256": "ea41eae56c9dbca1f2cef94ac96692cc3cea9df3a0ab6fb17bd6dd4bcb38256e",
+    "preparedRuntimeDistBundleResourcesExecutableAndInfoPlistStable": true
+  },
+  "cleanup": {
+    "sampledIdentityCount": 86,
+    "owned0": true,
+    "unknown0": true,
+    "portsOwned0": true,
+    "heavy": "CLEAR",
+    "action": "no signalling required"
+  },
+  "warnings": {
+    "unexplainedNew": 0,
+    "classes": [
+      "Fixed-upstream preparation deprecation",
+      "Existing Runtime/Vite size notices",
+      "Existing host proc-macro wrapper",
+      "Ad-hoc unnotarized build"
+    ],
+    "configuredLoaderSuccessClaim": false
+  },
+  "rawReports": [
+    {
+      "path": "build/night-20261101-s35/n3-full-attempt2/report.md",
+      "bytes": 4365,
+      "sha256": "d5f36aece599ceffa8d2edcbd4defcea904e36a91ff1f4c2bedf794ecab19d87",
+      "ownerExec": false
+    },
+    {
+      "path": "build/night-20261101-s35/n3-full-attempt2/report.json",
+      "bytes": 57431,
+      "sha256": "8ad3c04ff5af5580c1663e83a1c3abf0a1616ab5328f24e64588e3270c0467b0",
+      "ownerExec": false
+    },
+    {
+      "path": "build/night-20261101-s35/n3-full-attempt2/evidence-seal.json",
+      "bytes": 30402,
+      "sha256": "dfcbe68cc5465406415a0b3c32f0a404e4a7d8484e04a31b84f93081af5b10a4",
+      "ownerExec": false
+    }
+  ],
+  "previousAttempt1": {
+    "exitCode": 101,
+    "elapsedSeconds": 627.434,
+    "remainsFailed": true,
+    "sealSha256": "4b27951faa38407620857ad193a1dcf617b4bfd2f2e586ea2bb6343f86154f04",
+    "exactHistoricalTimingNotReconstructed": true
+  },
+  "remaining": [
+    "Root local commit, no push",
+    "Same independent verifier NEW exactHEAD clone standard preparation and necessary focus",
+    "Native GUI/real model/production MCP Keychain/real user root/install/release not validated"
+  ]
+}

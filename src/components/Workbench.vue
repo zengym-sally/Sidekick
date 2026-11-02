@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 import { open } from '@tauri-apps/plugin-dialog';
 import SkButton from './ui/SkButton.vue';
@@ -18,6 +18,8 @@ import InboxView from './InboxView.vue';
 import TextIntake from './TextIntake.vue';
 import { useOrganizer } from '../stores/organizer';
 import {useAgents} from '../stores/agents';
+import {useTodayAdvice} from '../stores/today';
+import TodayAdvice from './TodayAdvice.vue';
 import {useSkills} from '../stores/skills';
 import { timeDraft,draftPoint } from '../domain/time';
 import SettingsPanel from './SettingsPanel.vue';
@@ -27,6 +29,7 @@ import pet from '../assets/brand/banban-idle.svg';
 
 const settings=useApplicationSettings(),modelSettings=useModelSettings();
 const store=useTodos(),profile=useProfile(),organizer=useOrganizer(),agents=useAgents(),skills=useSkills();
+const todayAdvice=useTodayAdvice();
 const captureMode=ref<'manual'|'text'>('manual');
 const settingsTab=ref<'profile'|'general'|'models'|'agents'|'tools'|'about'>('profile');
 const address=computed(()=>profile.ready?profile.saved.address:'BOSS');
@@ -39,6 +42,7 @@ function captureText(){if(!timeReady())return;captureMode.value='text';editing.v
 async function sourceSubmitted(id:string){formDialog.value?.close();page.value='inbox';try{await organizer.select(id);}catch{}}
 function signed(){page.value='today';notify('事项已签收，班班开始盯着了。');}
 const page=ref<'today'|'inbox'|'all'|'settings'>('today'),booting=ref(true),startupError=ref(''),initializing=ref(false),setupError=ref('');
+watch(page,value=>{if(value==='today'&&!store.workspace?.needsSetup&&!booting.value)void todayAdvice.load().catch(()=>{});});
 const now=ref(Date.now()),toast=ref(''),formDialog=ref<HTMLDialogElement>(),detailDialog=ref<HTMLDialogElement>(),deleteDialog=ref<HTMLDialogElement>();
 const filters=reactive({kind:'all',status:'all',date:'all',owner:'',tag:'',query:''});
 const today=computed(()=>todayLists(store.rows,now.value));
@@ -55,11 +59,16 @@ const events=ref<TodoEvent[]>([]),historyBusy=ref(false),historyError=ref('');
 const form=reactive({title:'',kind:'action' as TodoInput['kind'],owner:'我',priority:'medium' as TodoInput['priority'],due:timeDraft(null),followup:timeDraft(null),tags:''});
 const formError=ref('');
 let organizerUnlisten:UnlistenFn|undefined,poller:ReturnType<typeof setInterval>|undefined;
+let factsTimer:ReturnType<typeof setTimeout>|undefined,factsTimerGeneration=0,workbenchAlive=true;
+function scheduleFactsRead(){now.value=Date.now();clearTimeout(factsTimer);factsTimer=undefined;const generation=++factsTimerGeneration,basis=todayAdvice.data;if(!workbenchAlive||!basis||todayAdvice.loading||!todayAdvice.currentVerified)return;if(!todayAdvice.checkCurrentness())return;const until=basis.factsValidUntilMs;if(until===null)return;factsTimer=setTimeout(()=>{if(!workbenchAlive||generation!==factsTimerGeneration||todayAdvice.data!==basis)return;factsTimer=undefined;if(!todayAdvice.checkCurrentness()){todayAdvice.invalidateCurrentness();if(!todayAdvice.loading)void todayAdvice.load().catch(()=>{});}else scheduleFactsRead();},Math.max(0,until-Date.now()));}
+function checkVisibleFacts(){if(document.visibilityState==='visible'&&workbenchAlive&&!booting.value&&!!store.workspace&&!store.workspace.needsSetup){todayAdvice.checkCurrentness();if(!todayAdvice.loading)void todayAdvice.load().catch(()=>{});}}
+function checkRestoredFacts(event:PageTransitionEvent){if(event.persisted)checkVisibleFacts();}
+watch(()=>[todayAdvice.data,todayAdvice.currentVerified,todayAdvice.loading,todayAdvice.starting],scheduleFactsRead);
 let operationId='',signature='',deleteOperation='',historyRequest=0,lastFocus:HTMLElement|null=null,unlisten:UnlistenFn|undefined,clock:ReturnType<typeof setInterval>|undefined,toastTimer:ReturnType<typeof setTimeout>|undefined;
 const actionNames:Record<string,string>={create:'手工录入',update:'修改事项',complete:'标记完成',reopen:'重新打开',delete:'删除事项',link:'关联来源'};
 
-async function boot(){booting.value=true;startupError.value='';try{await store.boot();if(!store.workspace?.needsSetup){await settings.load();void modelSettings.load().catch(()=>{});void agents.load('organizer').catch(()=>{});void skills.scan().catch(()=>{});void profile.load();void organizer.refresh().catch(()=>{});}}catch(e){startupError.value=errorMessage(e);}finally{booting.value=false;}}
-async function initialize(path:string|null){initializing.value=true;setupError.value='';try{await store.initialize(path);await settings.load();void modelSettings.load().catch(()=>{});void agents.load('organizer').catch(()=>{});void skills.scan().catch(()=>{});void profile.load();void organizer.refresh().catch(()=>{});}catch(e){setupError.value=errorMessage(e);}finally{initializing.value=false;}}
+async function boot(){booting.value=true;startupError.value='';try{await store.boot();if(!store.workspace?.needsSetup){await settings.load();void modelSettings.load().catch(()=>{});void agents.load('organizer').catch(()=>{});void agents.load('advisor').catch(()=>{});void todayAdvice.load().catch(()=>{});void skills.scan().catch(()=>{});void profile.load();void organizer.refresh().catch(()=>{});}}catch(e){startupError.value=errorMessage(e);}finally{booting.value=false;}}
+async function initialize(path:string|null){initializing.value=true;setupError.value='';try{await store.initialize(path);await settings.load();void modelSettings.load().catch(()=>{});void agents.load('organizer').catch(()=>{});void agents.load('advisor').catch(()=>{});void todayAdvice.load().catch(()=>{});void skills.scan().catch(()=>{});void profile.load();void organizer.refresh().catch(()=>{});}catch(e){setupError.value=errorMessage(e);}finally{initializing.value=false;}}
 async function chooseDirectory(){
   setupError.value='';initializing.value=true;
   try{const path=await open({directory:true,multiple:false,title:'选择跟班工作目录'});if(typeof path==='string')await initialize(path);}
@@ -91,12 +100,12 @@ async function viewSource(id:string){detailDialog.value?.close();page.value='inb
 async function toggle(todo:Todo){try{await store.setCompleted(todo,todo.status!=='completed',crypto.randomUUID());notify(todo.status==='completed'?'事项已重新打开。':'事项已完成。');if(detailDialog.value?.open)await loadHistory(todo.id);}catch(e){notify(errorMessage(e));}}
 function askDelete(todo:Todo){deleteTarget.value=todo;deleteOperation=crypto.randomUUID();if(detailDialog.value?.open)detailDialog.value.close();show(deleteDialog.value);}
 async function remove(){if(!deleteTarget.value||store.saving)return;try{await store.deleteTodo(deleteTarget.value,deleteOperation);deleteDialog.value?.close();notify('事项已删除，本地历史仍保留。');}catch(e){notify(errorMessage(e));}}
-async function refresh(){try{if(page.value==='inbox')await Promise.all([organizer.refresh(),store.refresh()]);else await store.refresh();notify('清单已刷新。');}catch{}}
+async function refresh(){try{if(page.value==='inbox')await Promise.all([organizer.refresh(),store.refresh()]);else await store.refresh();if(page.value==='today')await todayAdvice.load();notify('清单已刷新。');}catch{}}
 async function openDirectory(){try{await store.openDirectory();}catch(e){notify(errorMessage(e));}}
 function keyboard(event:KeyboardEvent){if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k'&&!store.workspace?.needsSetup&&!booting.value&&!startupError.value){event.preventDefault();if(!formDialog.value?.open&&!detailDialog.value?.open&&!deleteDialog.value?.open)capture();}}
 function showUndated(){page.value='all';Object.assign(filters,{date:'undated',status:'open',kind:'all',owner:'',tag:'',query:''});}
-onMounted(async()=>{document.addEventListener('keydown',keyboard);poller=setInterval(()=>{if(organizer.running&&!organizer.loading)void organizer.refresh().catch(()=>{});if(agents.running&&!agents.polling)void agents.refreshTrial();},1000);clock=setInterval(()=>now.value=Date.now(),60000);await boot();try{unlisten=await listen('todos-changed',()=>{if(!store.workspace?.needsSetup)void store.refresh().catch(()=>{});});organizerUnlisten=await listen<{phase:string}>('organizer-changed',event=>{organizer.phase=event.payload.phase;if(!store.workspace?.needsSetup&&['changed','started','storage_error'].includes(event.payload.phase))void organizer.refresh().catch(()=>{});});}catch{}});
-onUnmounted(()=>{document.removeEventListener('keydown',keyboard);clearInterval(clock);clearTimeout(toastTimer);clearInterval(poller);unlisten?.();organizerUnlisten?.();});
+onMounted(async()=>{document.addEventListener('keydown',keyboard);document.addEventListener('visibilitychange',checkVisibleFacts);window.addEventListener('pageshow',checkRestoredFacts);poller=setInterval(()=>{if(organizer.running&&!organizer.loading)void organizer.refresh().catch(()=>{});if(agents.running&&!agents.polling)void agents.refreshTrial();if(todayAdvice.running&&!todayAdvice.loading)void todayAdvice.load().catch(()=>{});},1000);clock=setInterval(()=>{now.value=Date.now();todayAdvice.checkCurrentness();if(!booting.value&&store.workspace&&!store.workspace.needsSetup&&!todayAdvice.loading)void todayAdvice.load().catch(()=>{});},60000);await boot();try{unlisten=await listen('todos-changed',()=>{if(!store.workspace?.needsSetup){void store.refresh().catch(()=>{});void todayAdvice.load().catch(()=>{});}});organizerUnlisten=await listen<{phase:string}>('organizer-changed',event=>{organizer.phase=event.payload.phase;if(!store.workspace?.needsSetup&&['changed','started','storage_error'].includes(event.payload.phase))void organizer.refresh().catch(()=>{});});}catch{}});
+onUnmounted(()=>{workbenchAlive=false;factsTimerGeneration++;clearTimeout(factsTimer);document.removeEventListener('visibilitychange',checkVisibleFacts);window.removeEventListener('pageshow',checkRestoredFacts);document.removeEventListener('keydown',keyboard);clearInterval(clock);clearTimeout(toastTimer);clearInterval(poller);unlisten?.();organizerUnlisten?.();});
 </script>
 
 <template>
@@ -123,7 +132,7 @@ onUnmounted(()=>{document.removeEventListener('keydown',keyboard);clearInterval(
             <section class="task-section"><div class="section-heading"><h2>待我跟进</h2><span class="count">{{ today.followup.length }} 项</span></div><ul class="task-list"><TodoRow v-for="todo in today.followup" :key="todo.id" :todo="todo" :busy="store.saving" :now="now" @detail="detail" @toggle="toggle"/></ul><p v-if="!today.followup.length" class="section-empty">今天没有安排跟进；有新事就先记下来。</p></section>
             <div v-if="undated" class="undated-note"><Icon name="clock"/><div><strong>还有 {{ undated }} 项未定期。</strong><p>没有时间的事，也替你留着了。</p></div><button class="text-button" @click="showUndated">去看看<Icon name="arrow"/></button></div>
             <div v-if="!active.length" class="first-task"><SkButton kind="entry" class="first-task-action" @click="capture()"><Icon name="plus"/>记录第一条</SkButton><p>自己要做的，或需要盯着别人交付的，都可以。</p><button class="text-button empty-text-entry" @click="captureText">或者，整理一段原文<Icon name="arrow"/></button></div>
-          </div><aside class="brief-rail" aria-label="班班简报"><h2><img :src="mark" alt="">班班简报</h2><div class="brief-message"><h3>{{ active.length?`${address}，事项都记着呢。`:`${address}，随时交给我。` }}</h3><p>{{ active.length?`目前还有 ${active.length} 项待闭环。先看时间，再看谁来处理。`:'先从一件小事开始，把靠记忆盯着的工作留下来。' }}</p><img class="brief-pet" :src="pet" alt="班班"></div><div class="rail-facts"><p><span>待我处理</span><strong>{{ active.filter(t=>t.data.kind==='action').length }}</strong></p><p><span>待我跟进</span><strong>{{ active.filter(t=>t.data.kind==='followup').length }}</strong></p><p><span>交付已逾期</span><strong :class="{danger:overdue}">{{ overdue }}</strong></p></div><p class="muted rail-note">依据已保存的本地事项统计。截止与下次跟进时间分别保留。</p></aside></div>
+          </div><aside class="brief-rail" aria-label="班班简报"><h2><img :src="mark" alt="">班班简报</h2><div class="brief-message"><h3>{{ active.length?`${address}，事项都记着呢。`:`${address}，随时交给我。` }}</h3><p>{{ active.length?`目前还有 ${active.length} 项待闭环。先看时间，再看谁来处理。`:'先从一件小事开始，把靠记忆盯着的工作留下来。' }}</p><img class="brief-pet" :src="pet" alt="班班"></div><div class="rail-facts"><p><span>待我处理</span><strong>{{ active.filter(t=>t.data.kind==='action').length }}</strong></p><p><span>待我跟进</span><strong>{{ active.filter(t=>t.data.kind==='followup').length }}</strong></p><p><span>交付已逾期</span><strong :class="{danger:overdue}">{{ overdue }}</strong></p></div><p class="muted rail-note">依据已保存的本地事项统计。截止与下次跟进时间分别保留。</p><TodayAdvice/></aside></div>
         </template>
         <InboxView v-else-if="page==='inbox'" @capture="captureText" @models="openModels" @signed="signed"/>
         <template v-else-if="page==='all'"><div class="page-intro"><h1>每件事，都有个着落。</h1><p>按执行、跟进或时间筛选；已完成和未定期的事项也在这里。</p></div>

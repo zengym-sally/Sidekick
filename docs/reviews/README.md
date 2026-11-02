@@ -13,10 +13,11 @@
 - **索引强制**：新增记录必须登记到本文件；未登记视为未收口。`check:docs` 只校验链接存在，语义一致性靠评审。
 - **新路径**：2026-10-31 结构治理后，新记录使用新路径（`runtime/{entries,lib,workers}/`、`src-tauri/src/{app,store,host,diagnostics}/`、`tests/{unit,integration,probes,fixtures}/`、`scripts/{build,checks,probes}/`）；旧记录保留原路径，按文件名仍可检索。
 
-## 2. 记录索引（32 份）
+## 2. 记录索引（33 份）
 
 | 记录 | 日期 | 范围与结论 | 证据 |
 |---|---|---|---|
+| [s35-today-20261102.md](s35-today-20261102.md) | 2026-11-02 | S3.5 N3：设计／交付最终第3轮与NEW独立原fullAttempt2及两包后验pass；本地commit／exactHEAD待（提交前时点），原full1失败保留 | `build/night-20261101-s35/n3-*`原始证据；同名目录精选规范／评审／完整验证／失败／源冻结绑定 |
 | [s35-advisor-20261102.md](s35-advisor-20261102.md) | 2026-11-02 | S3.5 N2 advisor：第3轮独立交付与新候选原完整门禁pass；提交后精确HEAD／原生真实环境待验 | `build/night-20261101-s35/n2-*`原始证据；同名目录精选冻结／评审／验证绑定 |
 | [s35-tracker-20261101.md](s35-tracker-20261101.md) | 2026-11-01 | S3.5 N1 tracker：独立A／B与新候选原完整门禁pass；原生／真实环境未验（提交前时点） | `build/night-20261101-s35/`原始证据；同名目录精选源冻结 |
 | [s34-native-20261101.md](s34-native-20261101.md) | 2026-11-01 | S3.4 原生补验：N0／N1与 SSE 正常 trial 部分实测；SCK -3812 再现后有界收尾，H3 仍未验 | `build/s34-native-20261101/` 原始证据；同名目录原图／计数与源包绑定／固定观察命令 |

@@ -19,7 +19,7 @@ src/                          # Vue 3 生产前端；品牌／字体／令牌等
   domain/                     # 纯业务规则与类型（允许 vue 响应式原语；禁止 stores／组件／IPC）
   stores/                     # Pinia 状态与 IPC 调用
 runtime/                      # 随包 Node JS Runtime（不打包进前端产物）
-  entries/                    # 任务入口：probe-entry、organizer-entry、mcp-probe-entry、skills-manager
+  entries/                    # 任务入口：probe-entry、organizer-entry、mcp-probe-entry、skills-manager、today-facts
   lib/                        # 库：managed-bash、managed-mcp、mcp-catalog、skills-store、
                               #     organizer-contract、probe-contract、skill-read
   workers/                    # 子进程：bash-worker、mcp-guardian
@@ -67,8 +67,9 @@ build/  dist/  src-tauri/target/   # 本地产物与原始证据，不入库
 - **入库卫生**：`git ls-files` 不得包含 `build/`、`dist/`、`src-tauri/target/`、`node_modules/`、`.env*`（`.env.example` 除外）。
 - **测试分层**：`tests/**.test.mjs` 只能位于 `unit/`、`integration/`、`probes/`；`fixtures/` 只放输入，不放断言。
 - **目录收敛**：`runtime/` 顶层只允许 `entries/`、`lib/`、`workers/`；`scripts/` 顶层只允许 `build/`、`checks/`、`probes/`；`src-tauri/src/` 顶层只允许 `lib.rs`、`main.rs`、`app/`、`store/`、`host/`、`diagnostics/`。
-- **打包入口存在性**：`runtime/entries/{probe-entry,organizer-entry,mcp-probe-entry,skills-manager}.mjs`、`runtime/workers/{bash-worker,mcp-guardian}.mjs` 必须存在（产物名 `probe.mjs`／`organizer.mjs`／`skills-manager.mjs`／`mcp-probe.mjs`／`bash-worker.mjs`／`mcp-guardian.mjs` 不变）。
+- **打包入口存在性**：`runtime/entries/{probe-entry,organizer-entry,mcp-probe-entry,skills-manager,today-facts}.mjs`、`runtime/workers/{bash-worker,mcp-guardian}.mjs` 必须存在（产物名 `probe.mjs`／`organizer.mjs`／`skills-manager.mjs`／`mcp-probe.mjs`／`bash-worker.mjs`／`mcp-guardian.mjs` 不变，新增窄纯事实计算产物 `today-facts.mjs`）。
 - **旧路径不得回流**：`package.json` 不得残留 `tests/s[0-9]`、`tests/layout-`、`scripts/probes/bundle-runtime` 等迁移前路径；`check` 必须包含 `check:structure` 与 `check:docs`。
+- **历史迁移字节**：001–004 的原始SHA-256由结构守卫固定；只追加新迁移，禁止原地重写历史SQL。
 - **守卫自测**：`check:structure` 带 `--self-test`，用临时目录合成违规样本逐条断言可检出，再检查仓库；规则不能只写在文档里。
 
 文档规则（`check:docs` 强制）：只校验 `README.md`、`AGENTS.md`、`DESIGN.md`、`design/README.md`、`docs/**/*.md`（`docs/reviews/**` 的历史记录除外，但包含 `docs/reviews/README.md`）；跳过代码围栏、行内代码、外部链接与锚点。新增或修改文档后本地相对链接必须存在。

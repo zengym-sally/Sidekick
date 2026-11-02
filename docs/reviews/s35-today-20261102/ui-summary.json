@@ -1,0 +1,59 @@
+{
+  "scope": "actual Vue synthetic IPC only; not Tauri/SQLite/native/model inference",
+  "primaryScenes": [
+    "wide-upgrade-confirmed",
+    "wide-upgraded",
+    "wide-success-canonical-dates",
+    "narrow-success-long",
+    "narrow-preparing-cancellable",
+    "narrow-preparing-cancelled",
+    "narrow-cancel-late-absorbed",
+    "narrow-cancel-reopened",
+    "narrow-stale-fallback-primary",
+    "narrow-empty-facts-visible",
+    "wide-empty-advice",
+    "wide-model-failure",
+    "narrow-backup-recheck",
+    "narrow-upgrade-unknown",
+    "wide-final-read-error-primary",
+    "wide-final-read-recovered-primary",
+    "wide-expiry-rail-green",
+    "wide-timer-owner-green",
+    "narrow-backup-version-unverified"
+  ],
+  "sizes": [
+    {
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "width": 640,
+      "height": 900
+    }
+  ],
+  "primarySceneCount": 19,
+  "consoleWarnError": 0,
+  "horizontalOverflow": 0,
+  "duplicateIds": 0,
+  "rawSealSha256": "0b0529dd6825614cecab50ea8af9f562c0ae344c37c6bb4ab72478a6e700e380",
+  "caveats": [
+    "Some early screenshots positioned the target below the viewport and are superseded by visible/primary captures; do not count them as visual acceptance.",
+    "One-shot read-error case was consumed by a legitimate startup read and later click recovered; narrow-read-error is not primary read-failure evidence. Alternating controlled backend provides primary success/error/recovery.",
+    "First timer-owner locator wait ended before new5s boundary; read-log events later prove exactly5002ms and no old2.5s callback.",
+    "Stale fixture re-navigation reinitialized formal rows; narrow-failure-stale-visible is not a stale control. Use unique fresh primary case."
+  ],
+  "cleanup": "Owned PID48311/PGID/start/argv verified,port1476 no LISTEN,temporary IAB tab closed and viewport reset.",
+  "backupLocationRevision": {
+    "scope": "actual Vue synthetic IPC increment after first delivery review; old19 scene seal retained",
+    "scenes": [
+      "wide-backup-before-consent",
+      "narrow-backup-before-consent",
+      "narrow-backup-confirmed",
+      "escape-focus-return"
+    ],
+    "rawSealSha256": "e941ee1e9964e5d49bacd9985582d17b258d9d5cbcd6a651f51f497771d71720",
+    "consoleWarnError": 0,
+    "horizontalOverflow": 0,
+    "ownedServiceTabViewportCleaned": true
+  }
+}

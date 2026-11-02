@@ -11,6 +11,7 @@ use tauri::{Emitter, State};
 pub struct LocalState {
     app_dir: PathBuf,
     store: Arc<Mutex<Option<AppStore>>>,
+    today_schema_unknown: Arc<std::sync::atomic::AtomicBool>,
     #[cfg(any(feature = "s33-mcp-verification", feature = "s33-mcp-ui-verification"))]
     verification: Option<Arc<crate::verification_root::VerificationRoot>>,
 }
@@ -19,6 +20,7 @@ impl LocalState {
         Self {
             app_dir,
             store: Arc::new(Mutex::new(None)),
+            today_schema_unknown: Default::default(),
             #[cfg(any(feature = "s33-mcp-verification", feature = "s33-mcp-ui-verification"))]
             verification: None,
         }
@@ -41,10 +43,28 @@ impl LocalState {
         &self,
         action: impl FnOnce(&mut AppStore) -> Result<T, StoreError>,
     ) -> Result<T, StoreError> {
+        if self
+            .today_schema_unknown
+            .load(std::sync::atomic::Ordering::SeqCst)
+        {
+            return Err(StoreError {
+                code: "TODAY_SCHEMA_UNCERTAIN",
+                message: "数据升级结果未确认，请关闭并重开应用核对。",
+            });
+        }
         let mut guard = self.store.lock().map_err(|_| StoreError {
             code: "STORAGE_UNAVAILABLE",
             message: "本地存储暂不可用，请重启应用。",
         })?;
+        if self
+            .today_schema_unknown
+            .load(std::sync::atomic::Ordering::SeqCst)
+        {
+            return Err(StoreError {
+                code: "TODAY_SCHEMA_UNCERTAIN",
+                message: "数据升级结果未确认，请关闭并重开应用核对。",
+            });
+        }
         #[cfg(any(feature = "s33-mcp-verification", feature = "s33-mcp-ui-verification"))]
         if let Some(verification) = &self.verification {
             verification.validate()?;
@@ -58,9 +78,26 @@ impl LocalState {
             *guard = Some(verification.open_native_store()?);
         }
         if guard.is_none() {
-            *guard = Some(AppStore::open(self.app_dir.clone())?);
+            match AppStore::open(self.app_dir.clone()) {
+                Ok(store) => *guard = Some(store),
+                Err(error) => {
+                    if error.code == "TODAY_SCHEMA_UNCERTAIN" {
+                        self.today_schema_unknown
+                            .store(true, std::sync::atomic::Ordering::SeqCst);
+                    }
+                    return Err(error);
+                }
+            }
         }
-        action(guard.as_mut().expect("store initialized above"))
+        let result = action(guard.as_mut().expect("store initialized above"));
+        if result
+            .as_ref()
+            .is_err_and(|error| error.code == "TODAY_SCHEMA_UNCERTAIN")
+        {
+            self.today_schema_unknown
+                .store(true, std::sync::atomic::Ordering::SeqCst);
+        }
+        result
     }
 }
 

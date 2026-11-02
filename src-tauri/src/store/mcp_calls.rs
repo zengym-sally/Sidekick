@@ -126,10 +126,10 @@ fn hash(value: &[u8]) -> String {
 }
 
 fn schema_v4(db: &Connection) -> Result<bool> {
-    Ok(db
-        .pragma_query_value(None, "user_version", |r| r.get::<_, i64>(0))
-        .map_err(db_error)?
-        == 4)
+    Ok([4, 5].contains(
+        &db.pragma_query_value(None, "user_version", |r| r.get::<_, i64>(0))
+            .map_err(db_error)?,
+    ))
 }
 
 fn running_snapshot(db: &Connection, owner: McpTaskOwner, id: &str) -> Result<Value> {

@@ -1,0 +1,396 @@
+{
+  "scope": "Implementation scoped checks plus final round3 reviews and independent fullAttempt2 pass; precommit checkpoint",
+  "baseHead": "c783c8560cde2269eed721ee206d53b0f7e022cf",
+  "coreSha256": "e966f760add123b5d452420f6ddf8aaf32e9cb3c2080aca26d69643d49284da5",
+  "realModelInferenceRequests": 0,
+  "nativeOperations": 0,
+  "checks": [
+    {
+      "name": "today-store",
+      "exitCode": 0,
+      "passed": 33,
+      "ignored": 1,
+      "logSha256": "3e79a6ee211356b43529817d32cd5cd05922e3716f1cdfd6b0978abc450d83be"
+    },
+    {
+      "name": "today-domain",
+      "exitCode": 0,
+      "passed": 26,
+      "ignored": 0,
+      "logSha256": "e3fc5015f41736d55f0f6b19adfe1d9098a855e965d99e17b89d2078093f1141"
+    },
+    {
+      "name": "today-runtime",
+      "exitCode": 0,
+      "passed": 5,
+      "ignored": 0,
+      "logSha256": "cc83d2162ece60a7efa3ca85bb119135b355c853c3ed8e73f43ba8e204d2bec8"
+    },
+    {
+      "name": "s31-runtime",
+      "exitCode": 0,
+      "passed": 10,
+      "ignored": 0,
+      "logSha256": "3ea57ce477ecea6083ad62c57947a3f74ff56df4480eca1516b2eac4b808a14c"
+    },
+    {
+      "name": "s2-runtime",
+      "exitCode": 0,
+      "passed": 7,
+      "ignored": 0,
+      "logSha256": "22fac6358f390e98efd7fd7b0a5064d7eff6da99f966e39a316d8730a612172a"
+    },
+    {
+      "name": "s32-runtime",
+      "exitCode": 0,
+      "passed": 3,
+      "ignored": 0,
+      "logSha256": "d775243c35410a15dec4b5d33b073546db7a28526126feb8b283d997212f5586"
+    },
+    {
+      "name": "agent-config",
+      "exitCode": 0,
+      "passed": 14,
+      "ignored": 0,
+      "logSha256": "cc24505c15e0e5848a37242e9a92c02340c1cbbb25eeb8b7cfa4a09cbc03efb3"
+    },
+    {
+      "name": "mcp-schema",
+      "exitCode": 0,
+      "passed": 20,
+      "ignored": 0,
+      "logSha256": "52328552821c880210c060d446053a584b9445fdab01f75a05244b9ffbbe7caf"
+    },
+    {
+      "name": "mcp-upgrade",
+      "exitCode": 0,
+      "passed": 8,
+      "ignored": 0,
+      "logSha256": "60a9a92189553fc1a34f5fa49485eac52cc3218a8f3451e64df53cf60059f0c2"
+    },
+    {
+      "name": "mcp-calls",
+      "exitCode": 0,
+      "passed": 35,
+      "ignored": 0,
+      "logSha256": "f8b88cbaa7923af699edb50b752f032fd5bafbffea3f58f15459f63054fa9878"
+    },
+    {
+      "name": "tracker-host",
+      "exitCode": 0,
+      "passed": 4,
+      "ignored": 0,
+      "logSha256": "aad988475d185d372783445f9aaa3df13cb27e99264f56f2cb23418c41b8f34e"
+    },
+    {
+      "name": "advisor-host",
+      "exitCode": 0,
+      "passed": 6,
+      "ignored": 0,
+      "logSha256": "67e810d39c27046408ecb6f94e6341fdc767b9580af75f0063eacb9b0a7a92f7"
+    },
+    {
+      "name": "mcp-http-task",
+      "exitCode": 0,
+      "passed": 12,
+      "ignored": 0,
+      "logSha256": "bacfc7d512b639cc90c232bd585b184a15bde759aac49bf60a72b2e17ea2e000"
+    },
+    {
+      "name": "mcp-formal",
+      "exitCode": 0,
+      "passed": 21,
+      "ignored": 0,
+      "logSha256": "dbfb3cfbd81b3e1925219132d0e6ca8dbb84284577058dc26093ff271eca695e"
+    }
+  ],
+  "oldOriginalGuard": {
+    "scope": "fresh independent c783 original guard only, Root verified raw + every seal",
+    "reportSha256": "5dee8186e2012221a87bcc6ac6e20e0f7afc37ff03701fbc5e38b62710b22790",
+    "sealSha256": "7fd695491534489a01f3b575b35200eac82895a78a4788732fa436c1a29b5eae",
+    "passed": 1,
+    "failed": 0,
+    "runnerSha256": "3e4f4f96a0f4e4be73196a54e83e435acfb08d770c4e724bbb138c28d58f0801",
+    "migration005Sha256": "16cf72c92f1a007bc686854d71e798265033ff26e2556744bb4be2a07aa8ea11"
+  },
+  "failureEvidenceRetained": [
+    "initial v4 CHECK refusal",
+    "compile/private fixture mistakes",
+    "typed code and semantic reason dedupe negatives",
+    "helper before-release durable-cancel failure",
+    "raw-only history reader failure",
+    "fractional monotonic SDK timeout failure",
+    "old v5-future fixture and MCP namespace failure",
+    "UI currentness/placement/canonical date/expiry rail red controls",
+    "old guard metadata/catalog setup failures and one controlled public retry"
+  ],
+  "postUiChecks": [
+    {
+      "command": "npm run typecheck",
+      "exit": 0,
+      "startedUtc": "2026-11-02T04:45:54.741111+00:00",
+      "endedUtc": "2026-11-02T04:45:58.205160+00:00",
+      "log": "build/night-20261101-s35/n3-validation/post-ui-type.log",
+      "sha256": "efc5b3a47a0d3023241a6990e4253676d9a17ce360e4d9632131e4b22aaea9c0"
+    },
+    {
+      "command": "npm run check:structure",
+      "exit": 0,
+      "startedUtc": "2026-11-02T04:45:58.206035+00:00",
+      "endedUtc": "2026-11-02T04:45:58.560671+00:00",
+      "log": "build/night-20261101-s35/n3-validation/post-ui-structure.log",
+      "sha256": "e372ffc7e481735f37c5b2b6f4dba933baf662070cf011740fcbbd83a0bd84eb"
+    },
+    {
+      "command": "npm run check:docs",
+      "exit": 0,
+      "startedUtc": "2026-11-02T04:45:58.562560+00:00",
+      "endedUtc": "2026-11-02T04:45:58.757964+00:00",
+      "log": "build/night-20261101-s35/n3-validation/post-ui-docs.log",
+      "sha256": "0ca36bcda1515c6951671b686d888c0a800ecd56546955a8654afd68de9753e0"
+    },
+    {
+      "command": "npm run check:rust",
+      "exit": 0,
+      "startedUtc": "2026-11-02T04:45:58.759734+00:00",
+      "endedUtc": "2026-11-02T04:46:04.870317+00:00",
+      "log": "build/night-20261101-s35/n3-validation/post-ui-rust.log",
+      "sha256": "c6b9155449d9f1b89cdb2f7d8492b7e9ece80b271b57e044ab176c169bfc734f"
+    },
+    {
+      "command": "npm run check:s33-verification",
+      "exit": 0,
+      "startedUtc": "2026-11-02T04:46:04.873869+00:00",
+      "endedUtc": "2026-11-02T04:46:08.513578+00:00",
+      "log": "build/night-20261101-s35/n3-validation/post-ui-dual.log",
+      "sha256": "98f83caed60e14a73e954bcc2edcb178215024c9e58ab69d7a13d6215654466a"
+    },
+    {
+      "command": "git diff --check",
+      "exit": 0,
+      "startedUtc": "2026-11-02T04:46:08.514121+00:00",
+      "endedUtc": "2026-11-02T04:46:08.557108+00:00",
+      "log": "build/night-20261101-s35/n3-validation/post-ui-diff.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "deliveryRevisionChecks": [
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:today-runtime"
+      ],
+      "exit": 0,
+      "startedUtc": "2026-11-02T05:04:02.659972+00:00",
+      "endedUtc": "2026-11-02T05:04:11.552607+00:00",
+      "log": "build/night-20261101-s35/n3-validation/delivery-runtime-green.log",
+      "sha256": "cc83d2162ece60a7efa3ca85bb119135b355c853c3ed8e73f43ba8e204d2bec8"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:today-store"
+      ],
+      "exit": 0,
+      "startedUtc": "2026-11-02T05:04:11.553394+00:00",
+      "endedUtc": "2026-11-02T05:04:58.159748+00:00",
+      "log": "build/night-20261101-s35/n3-validation/delivery-store-green.log",
+      "sha256": "3e79a6ee211356b43529817d32cd5cd05922e3716f1cdfd6b0978abc450d83be"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:s33-schema-store"
+      ],
+      "exit": 0,
+      "startedUtc": "2026-11-02T05:04:58.161063+00:00",
+      "endedUtc": "2026-11-02T05:05:02.886423+00:00",
+      "log": "build/night-20261101-s35/n3-validation/delivery-mcp-schema-green.log",
+      "sha256": "f1673e6b221e5b99745610cd62a6b07b2d6dc0b4f22aed4a5ee75631a3bab5c8"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:s33-security-store"
+      ],
+      "exit": 0,
+      "startedUtc": "2026-11-02T05:05:02.887413+00:00",
+      "endedUtc": "2026-11-02T05:05:06.981230+00:00",
+      "log": "build/night-20261101-s35/n3-validation/delivery-mcp-security-green.log",
+      "sha256": "cbb1b3f068ba661b8346aa5e592678774a037b1e895f9915c74aa0ff5a146feb"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "check:rust"
+      ],
+      "exit": 0,
+      "startedUtc": "2026-11-02T05:05:06.983097+00:00",
+      "endedUtc": "2026-11-02T05:05:11.630239+00:00",
+      "log": "build/night-20261101-s35/n3-validation/delivery-static-green.log",
+      "sha256": "9f4115ed6b8425c402864759116a5edbbae3c10be8dd0477ec2cd2b7dc3e3132"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "check:s33-verification"
+      ],
+      "exit": 0,
+      "startedUtc": "2026-11-02T05:05:11.630834+00:00",
+      "endedUtc": "2026-11-02T05:05:15.315463+00:00",
+      "log": "build/night-20261101-s35/n3-validation/delivery-dual-green.log",
+      "sha256": "8574231984bb5d1b7c105b526d8b644f3936c3892ee0d8bc52d83978b87d2a7e"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "exit": 0,
+      "startedUtc": "2026-11-02T05:05:15.316697+00:00",
+      "endedUtc": "2026-11-02T05:05:18.661093+00:00",
+      "log": "build/night-20261101-s35/n3-validation/delivery-type-green.log",
+      "sha256": "efc5b3a47a0d3023241a6990e4253676d9a17ce360e4d9632131e4b22aaea9c0"
+    }
+  ],
+  "priorScopedCounts": {
+    "today-store": 32,
+    "today-runtime": 4
+  },
+  "firstIndependentFull": "FAILED globalAttempt1, see full-attempt1-summary.json; no package results",
+  "recoveryFixtureChecks": [
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "src-tauri/Cargo.toml",
+        "--lib",
+        "runtime_host::mcp_recovery_tests::stalled_input_and_invalid_stdout_cannot_hang_or_publish_partial_success",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "pid": 78651,
+      "pgid": 78651,
+      "startedUtc": "2026-11-02T06:20:40.855904+00:00",
+      "log": "build/night-20261101-s35/n3-validation/recovery-fixture-exact-green.log",
+      "exit": 0,
+      "elapsedSeconds": 9.841,
+      "sha256": "eddf9ceef75c3ed8529b601554e2c91d124b050fd8055cf59cf49857a3164411",
+      "finishedUtc": "2026-11-02T06:20:50.693875+00:00"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:mcp-recovery-host"
+      ],
+      "pid": 90281,
+      "pgid": 90281,
+      "startedUtc": "2026-11-02T06:20:50.697927+00:00",
+      "log": "build/night-20261101-s35/n3-validation/recovery-fixture-neighbor-green.log",
+      "exit": 0,
+      "elapsedSeconds": 58.69,
+      "sha256": "0be9ba1408a9d4b02ecf74e029479e40c059d1c64d2820c8492b000fa371d48c",
+      "finishedUtc": "2026-11-02T06:21:49.385371+00:00"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:mcp-trial"
+      ],
+      "pid": 52465,
+      "pgid": 52465,
+      "startedUtc": "2026-11-02T06:21:49.388073+00:00",
+      "log": "build/night-20261101-s35/n3-validation/recovery-fixture-trial-green.log",
+      "exit": 0,
+      "elapsedSeconds": 44.54,
+      "sha256": "7e630459c0398930f6485840a8d3699fefd51a0313ae1c5bb5988f1ab55fa92b",
+      "finishedUtc": "2026-11-02T06:22:33.926189+00:00"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:mcp-formal"
+      ],
+      "pid": 404,
+      "pgid": 404,
+      "startedUtc": "2026-11-02T06:22:33.928532+00:00",
+      "log": "build/night-20261101-s35/n3-validation/recovery-fixture-formal-green.log",
+      "exit": 0,
+      "elapsedSeconds": 78.341,
+      "sha256": "59442be9bd0660323ef8c70ee5fbeeb7be8290f9ffb2b5213d70ec475dda25e4",
+      "finishedUtc": "2026-11-02T06:23:52.267582+00:00"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:today-store"
+      ],
+      "pid": 86488,
+      "pgid": 86488,
+      "startedUtc": "2026-11-02T06:23:52.270450+00:00",
+      "log": "build/night-20261101-s35/n3-validation/recovery-fixture-today-green.log",
+      "exit": 0,
+      "elapsedSeconds": 40.836,
+      "sha256": "4473b6b5c8948230be4a739977e249325251c504fd7be35e1d4167bf3de2e128",
+      "finishedUtc": "2026-11-02T06:24:33.105406+00:00"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "check:rust"
+      ],
+      "pid": 30151,
+      "pgid": 30151,
+      "startedUtc": "2026-11-02T06:24:33.109590+00:00",
+      "log": "build/night-20261101-s35/n3-validation/recovery-fixture-rust-green.log",
+      "exit": 0,
+      "elapsedSeconds": 4.324,
+      "sha256": "1af484fb462ae00ad87e79e56f25769d2ee2c97e6b44d73d4cb1664617123455",
+      "finishedUtc": "2026-11-02T06:24:37.431089+00:00"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "check:s33-verification"
+      ],
+      "pid": 35401,
+      "pgid": 35401,
+      "startedUtc": "2026-11-02T06:24:37.435349+00:00",
+      "log": "build/night-20261101-s35/n3-validation/recovery-fixture-dual-green.log",
+      "exit": 0,
+      "elapsedSeconds": 3.305,
+      "sha256": "c9066432be4b0a8c48ff02d9b1d9342725fd8fb3b640e461a231c474f9474525",
+      "finishedUtc": "2026-11-02T06:24:40.736816+00:00"
+    }
+  ],
+  "finalDeliveryFullCommit": "Final delivery3/fullAttempt2/post passed; Root localcommit and NEW exactHEAD still pending at this record time",
+  "secondIndependentFull": {
+    "summary": "independent-full-summary.json",
+    "exitCode": 0,
+    "nodePass": 842,
+    "rustPassGroups": [
+      17,
+      270,
+      1
+    ],
+    "ignored": 3,
+    "ordinaryResources": 557,
+    "dedicatedResources": 560
+  }
+}

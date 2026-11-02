@@ -1,0 +1,116 @@
+{
+  "artifact": "same N3 delivery",
+  "round": 1,
+  "coreSha256": "e966f760add123b5d452420f6ddf8aaf32e9cb3c2080aca26d69643d49284da5",
+  "faces": {
+    "A1": {
+      "verdict": "BLOCK",
+      "reportMdSha256": "75c702c148137a9b09af826c31066c22f6ffe1adec3564b1578af7cbc3ec1801",
+      "reportJsonSha256": "d27bfe0c8e3e138d6f933968b8176b84c7b3e4c0c9ad0394845c8ad5346d0e5a",
+      "sealSha256": "15be4de2a9b73366adc0fad23d33fdb4bf43171947b54c3f88c3656cc7ddb35a"
+    },
+    "B1": {
+      "verdict": "APPROVE_WITH_CHANGES",
+      "reportMdSha256": "59216f4fac8948d103e21603b12497a9bd3a965a5c50b33fd7f270fccb48cdc7",
+      "reportJsonSha256": "48746570920df2798073b75c4597a86b16955b2944b03920662c486f6042d59f",
+      "sealSha256": "20791856cd0d1ace44b079837bff211af81d38583e6e7338c4a2bf2eca868f17"
+    }
+  },
+  "mergedFindings": [
+    {
+      "id": "UTF8",
+      "severity": "P1",
+      "invariant": "T02a byte-bounded complete UTF-8 raw",
+      "redExit": 1,
+      "green": "Runtime5 including source+bundle helper ACK chunk cases"
+    },
+    {
+      "id": "DirectAppStoreBarrier",
+      "severity": "P2",
+      "invariant": "T06 all subsequent database access blocked",
+      "redExit": 101,
+      "green": "today-store33 plus MCPschema20/security20"
+    },
+    {
+      "id": "BackupLocation",
+      "severity": "P2",
+      "invariant": "T06 before-confirmation backup location",
+      "red": "original actual wide-confirmed DOM missing directory",
+      "green": "actual1440/640 before-consent directory+example with disabled submit, key/focus checks"
+    }
+  ],
+  "next": "Root localcommit/no push then same independent NEW exactHEAD verification",
+  "round2": {
+    "artifact": "same N3 delivery",
+    "round": 2,
+    "asOfUtc": "2026-11-02T05:23:10.189085+00:00",
+    "coreSha256": "e966f760add123b5d452420f6ddf8aaf32e9cb3c2080aca26d69643d49284da5",
+    "sourceFreezeSha256": "4e4786d2408ffbd8e21d419ce528d7e5cc9f2f1f13901cd32acf9a6203f0b1c9",
+    "candidateInputsSha256": "17c35584bebe61955993eab7958a19b357b3078c674d346dfb612ba7fabe9e74",
+    "faces": {
+      "A2": {
+        "verdict": "APPROVE",
+        "report": {
+          "path": "build/night-20261101-s35/n3-delivery/A2/report.md",
+          "bytes": 10374,
+          "sha256": "feb1cd8760765b0722a047e81b025308bff1721308f5013f575adafd7402e4b6"
+        },
+        "reportJsonSha256": "0ef4a0c780602c269e87eef7f201b7aeb654ba48476237a8cc9505f0640ac46a",
+        "sealSha256": "a0d5981f8ec9b6cc31fa284f5e08aff67df643218b6cde9c7b813e3297b9b868",
+        "evidenceFiles": 14
+      },
+      "B2": {
+        "verdict": "APPROVE",
+        "report": {
+          "path": "build/night-20261101-s35/n3-delivery/B2/report.md",
+          "bytes": 11772,
+          "sha256": "e29a72d50ab50739e65a5ac9c7f9f99b2f0c50b5d69c9b372eb4969a338a3196"
+        },
+        "reportJsonSha256": "7fc9c2ba16f514b85893b646b4bae1c8b824242c4e975bd6f0a922972c24d389",
+        "sealSha256": "5737b28b5916fa3dbe17c25797c15f35bf5cd42013df6b2173e5faf8a8b1e1e4",
+        "evidenceFiles": 8
+      }
+    },
+    "allCandidateInputsStable": 50,
+    "notFullVerification": true
+  },
+  "latestGate": "Final round3 A/B APPROVE0; NEW independent global fullAttempt2/post pass, see independent-full-summary.json",
+  "round3": {
+    "artifact": "same N3 delivery",
+    "round": 3,
+    "maxRounds": 3,
+    "asOfUtc": "2026-11-02T06:50:47.479521+00:00",
+    "coreSha256": "e966f760add123b5d452420f6ddf8aaf32e9cb3c2080aca26d69643d49284da5",
+    "sourceFreezeSha256": "c8b92b1e54ebddd950228405b403a53a94347f928d740ed763f1bcfa0f012de3",
+    "candidateInputsSha256": "f6f80f0451d779cbd7b32ce2211b1530c1306a2d8cc79898c61a4a1e68858826",
+    "faces": {
+      "A3": {
+        "verdict": "APPROVE",
+        "repositoryVerdict": "pass",
+        "report": {
+          "path": "build/night-20261101-s35/n3-delivery/A3/report.md",
+          "bytes": 11100,
+          "sha256": "d0558502588624a80207175702c7ddaf2b9a849633839f640a3358e458eba6bd"
+        },
+        "reportJsonSha256": "169a091f9154d9125c46d4c0b524e66544c9bc08f19e4b36fe4942e8080ca579",
+        "sealSha256": "4ea3692a2bd07fca28d1eaac527952542ad6406a7ce648d89451c652d5d8dfe6",
+        "evidenceFiles": 15
+      },
+      "B3": {
+        "verdict": "APPROVE",
+        "repositoryVerdict": "pass",
+        "report": {
+          "path": "build/night-20261101-s35/n3-delivery/B3/report.md",
+          "bytes": 11519,
+          "sha256": "da8ef17c74957e8ab5d7d2cb03ec4235c832f2ee7f8346bcdb4f59d150a4ea36"
+        },
+        "reportJsonSha256": "b40508f1c8f0c44b7db896050a933010fb89d34521670298bf0a2ccf7b758ba0",
+        "sealSha256": "ab21416994e384620caafec65bbe797c4c6e34575b4b5903f38329b7cb763fc8",
+        "evidenceFiles": 17
+      }
+    },
+    "allCandidateInputsStable": 53,
+    "originalFullAttempt1StillFailed": true,
+    "newFullAttempt2NotExecutedYet": true
+  }
+}

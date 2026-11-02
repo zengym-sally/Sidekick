@@ -19,6 +19,7 @@ pub(crate) type Sink = Arc<dyn Fn(&str, &str) + Send + Sync>;
 pub(crate) enum JobKind {
     Business,
     Trial,
+    Today,
     Probe,
 }
 #[derive(Clone)]
@@ -187,20 +188,26 @@ impl RuntimeState {
         }
     }
     pub fn shutdown(&self, directory: &Path) {
-        if let Ok(slot) = self.slot.lock() {
-            if let Some(job) = slot.as_ref() {
+        let job = self.slot.lock().ok().and_then(|slot| {
+            slot.as_ref().map(|job| {
                 job.cancel.store(true, Ordering::SeqCst);
-                let pid = job.pid.load(Ordering::SeqCst);
-                if job.kind == JobKind::Probe {
-                    crate::mcp_host::shutdown(job, directory);
-                    return;
-                }
-                if owned(pid, &directory.join("organizer.mjs"), &job.run_id, None) {
-                    signal_group(pid, "-TERM");
-                }
-                reap_workers(job, directory);
-                crate::mcp_trial::cleanup(job, directory);
+                job.clone()
+            })
+        });
+        if let Some(job) = job {
+            let pid = job.pid.load(Ordering::SeqCst);
+            if job.kind == JobKind::Probe {
+                crate::mcp_host::shutdown(&job, directory);
+                return;
             }
+            if owned(pid, &directory.join("organizer.mjs"), &job.run_id, None)
+                || job.kind == JobKind::Today
+                    && owned(pid, &directory.join("today-facts.mjs"), &job.run_id, None)
+            {
+                signal_group(pid, "-TERM");
+            }
+            reap_workers(&job, directory);
+            crate::mcp_trial::cleanup(&job, directory);
         }
     }
     pub(crate) fn start(
@@ -218,6 +225,7 @@ impl RuntimeState {
         let (run,payload)=local.access(|store|{
             store.interrupt_unowned_runs()?;
             store.interrupt_agent_trials(None)?;
+            store.interrupt_today_advice(None)?;
             let (run,zone)=match task {
                 StartTask::Extract{input,retry}=>{let zone=input.time_zone.clone();let batch=store.begin_import(input,Value::Null,retry)?;let run=batch.run.ok_or_else(||error("SOURCE_UNAVAILABLE","无法读取来源任务，请刷新。"))?;if !batch.started{return Ok((run,None));}(run,zone)},
                 StartTask::Revise{id,version,instruction,time_zone}=>{if time_zone.is_empty()||time_zone.len()>128{return Err(error("INVALID_TIMEZONE","请填写有效时区。"));}let run=store.begin_revision(&id,version,instruction,Value::Null)?;(run,time_zone)},
@@ -255,12 +263,20 @@ impl RuntimeState {
             workers: Arc::new(Mutex::new(BTreeMap::new())),
         };
         *slot = Some(job.clone());
-        self.launch(local, directory, job, payload, sink.clone());
+        self.launch(local, directory, job, payload, sink.clone(), None);
         drop(slot);
         sink(&run.id, "started");
         Ok(run)
     }
-    fn launch(&self, local: LocalState, directory: PathBuf, job: Job, payload: Value, sink: Sink) {
+    fn launch(
+        &self,
+        local: LocalState,
+        directory: PathBuf,
+        job: Job,
+        payload: Value,
+        sink: Sink,
+        deadline: Option<Instant>,
+    ) {
         let state = self.clone();
         let id = job.run_id.clone();
         let worker_sink = sink.clone();
@@ -279,6 +295,7 @@ impl RuntimeState {
                 worker_sink.clone(),
                 &local,
                 &state,
+                deadline,
             );
             let cleaned = crate::mcp_trial::cleanup(&job, &directory);
             if !cleaned {
@@ -316,6 +333,35 @@ impl RuntimeState {
                 }
             }
             let stored = local.access(|store| {
+                if job.kind == JobKind::Today {
+                    if job.cancel.load(Ordering::SeqCst) {
+                        store.cancel_today_advice(&id)?;
+                    } else {
+                        match result {
+                            Ok(value) => {
+                                #[derive(serde::Deserialize)]
+                                #[serde(rename_all = "camelCase", deny_unknown_fields)]
+                                struct TodayOutput {
+                                    role_result: crate::local_store::TodayAdviceResult,
+                                }
+                                let applied = serde_json::from_value::<TodayOutput>(value)
+                                    .map_err(|_| {
+                                        error("MODEL_INVALID_OUTPUT", "今日建议格式不正确。")
+                                    })
+                                    .and_then(|output| {
+                                        store.complete_today_advice(&id, output.role_result)
+                                    });
+                                if let Err(error) = applied {
+                                    store.finish_today_advice_error(&id, error.code)?;
+                                }
+                            }
+                            Err(code) => {
+                                store.finish_today_advice_error(&id, &code)?;
+                            }
+                        }
+                    }
+                    return Ok(());
+                }
                 if job.kind == JobKind::Trial {
                     if job.cancel.load(Ordering::SeqCst) {
                         store.cancel_agent_trial(&id)?;
@@ -471,7 +517,12 @@ impl RuntimeState {
                         .mcp_trial
                         .lock()
                         .is_ok_and(|trial| trial.servers.is_empty());
-                if cleaned && settled && slot.as_ref().is_some_and(|j| j.run_id == id) {
+                if cleaned
+                    && settled
+                    && slot
+                        .as_ref()
+                        .is_some_and(|j| j.run_id == id && j.nonce == job.nonce)
+                {
                     *slot = None;
                 }
             }
@@ -521,6 +572,7 @@ impl RuntimeState {
         let (run, payload) = local.access(|store| {
             store.interrupt_unowned_runs()?;
             store.interrupt_agent_trials(None)?;
+            store.interrupt_today_advice(None)?;
             let prepared = store.prepare_agent_model(agent_id)?;
             let mut run = store.begin_prepared_agent_trial(agent_id, input, prepared.snapshot)?;
             let cwd = store.run_directory(&run.id)?;
@@ -559,7 +611,7 @@ impl RuntimeState {
             workers: Arc::new(Mutex::new(BTreeMap::new())),
         };
         *slot = Some(job.clone());
-        self.launch(local, directory, job, payload, sink.clone());
+        self.launch(local, directory, job, payload, sink.clone(), None);
         drop(slot);
         sink(&run.id, "started");
         Ok(run)
@@ -572,6 +624,7 @@ fn execute(
     sink: Sink,
     local: &LocalState,
     state: &RuntimeState,
+    deadline: Option<Instant>,
 ) -> std::result::Result<Value, String> {
     #[cfg(test)]
     if *state.trial_policy.lock().map_err(|_| "RUNTIME_PROTOCOL")? == Some("short-io") {
@@ -635,6 +688,7 @@ fn execute(
             .unwrap_or(120000)
             .clamp(1, 120000),
     );
+    let today_snapshot = (job.kind == JobKind::Today).then(|| payload["snapshot"].clone());
     let mut bytes = serde_json::to_vec(&payload).map_err(|_| "RUNTIME_PROTOCOL")?;
     drop(payload);
     bytes.push(b'\n');
@@ -648,12 +702,84 @@ fn execute(
         }
         true
     });
-    if bytes.len() > 1600000 || writer_tx.try_send(bytes).is_err() {
+    #[cfg(test)]
+    if job.kind == JobKind::Today {
+        state.test_trial_checkpoint(job, "today_before_dispatch", json!({"pid":child.id()}));
+        let hold_started = Instant::now();
+        while *state.trial_policy.lock().map_err(|_| "RUNTIME_PROTOCOL")?
+            == Some("hold-today-before-dispatch")
+            && !job.cancel.load(Ordering::SeqCst)
+            && hold_started.elapsed() < Duration::from_secs(5)
+            && deadline.is_none_or(|end| Instant::now() < end - Duration::from_secs(1))
+        {
+            std::thread::sleep(Duration::from_millis(10));
+        }
+    }
+    let publication = if bytes.len() > 1600000 {
+        Err("RUNTIME_PROTOCOL".to_string())
+    } else if job.kind == JobKind::Today {
+        let process_owned = owned(
+            child.id(),
+            &directory.join("organizer.mjs"),
+            &job.run_id,
+            None,
+        );
+        (|| {
+            if !process_owned {
+                return Err("RUNTIME_PROTOCOL".to_string());
+            }
+            let slot = state
+                .slot
+                .lock()
+                .map_err(|_| "RUNTIME_PROTOCOL".to_string())?;
+            if !slot.as_ref().is_some_and(|active| {
+                active.kind == JobKind::Today
+                    && active.run_id == job.run_id
+                    && active.nonce == job.nonce
+                    && active.pid.load(Ordering::SeqCst) == child.id()
+            }) {
+                return Err("RUNTIME_PROTOCOL".to_string());
+            }
+            if job.cancel.load(Ordering::SeqCst) {
+                return Err("CANCELLED".to_string());
+            }
+            if deadline.is_none_or(|end| Instant::now() >= end - Duration::from_secs(1)) {
+                return Err("MODEL_TIMEOUT".to_string());
+            }
+            local
+                .access(|store| {
+                    let run = store.today_advice_run(&job.run_id)?;
+                    if run.status != "running"
+                        || run.snapshot.get("todayFacts").is_none()
+                        || run.snapshot.get("todayPreparation").is_some()
+                        || Some(&run.snapshot) != today_snapshot.as_ref()
+                    {
+                        return Err(error(
+                            "TODAY_ADVICE_STOPPED",
+                            "本次建议已结束或事实未准备完整。",
+                        ));
+                    }
+                    writer_tx
+                        .try_send(bytes)
+                        .map_err(|_| error("RUNTIME_PROTOCOL", "初始请求未能安全派发。"))
+                })
+                .map_err(|failure| failure.code.to_string())
+        })()
+    } else {
+        writer_tx
+            .try_send(bytes)
+            .map_err(|_| "RUNTIME_PROTOCOL".to_string())
+    };
+    if let Err(failure) = publication {
         let _ = child.kill();
         let _ = child.wait();
         drop(writer_tx);
         let _ = writer.join();
-        return Err("RUNTIME_PROTOCOL".into());
+        return Err(failure);
+    }
+    #[cfg(test)]
+    if job.kind == JobKind::Today {
+        state.test_trial_checkpoint(job, "today_dispatched", json!({"pid":child.id()}));
     }
     let stdout = child.stdout.take().ok_or("RUNTIME_START")?;
     let stderr = child.stderr.take().ok_or("RUNTIME_START")?;
@@ -696,7 +822,10 @@ fn execute(
     let mut failure = None;
     let mut finished = false;
     loop {
-        if started.elapsed() > run_limit && failure.is_none() {
+        if (started.elapsed() > run_limit
+            || deadline.is_some_and(|end| Instant::now() >= end - Duration::from_secs(1)))
+            && failure.is_none()
+        {
             failure = Some("MODEL_TIMEOUT".to_string());
         }
         if job.cancel.load(Ordering::SeqCst) || failure.is_some() {
@@ -1344,3 +1473,11 @@ mod tests {
         drop(cleanup);
     }
 }
+
+#[path = "today_advice.rs"]
+mod today_advice;
+pub use today_advice::*;
+
+#[cfg(test)]
+#[path = "today_advice_tests.rs"]
+mod today_advice_tests;

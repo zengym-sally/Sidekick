@@ -71,7 +71,7 @@ pub(super) fn uncertain() -> StoreError {
         "迁移结果未确认，当前MCP存储已阻断；请关闭并重开核对，勿覆盖原库或自动还原备份。",
     )
 }
-fn same_file(path: &Path, held: &File) -> Result<()> {
+pub(super) fn same_file(path: &Path, held: &File) -> Result<()> {
     let m = fs::symlink_metadata(path).map_err(|_| changed())?;
     let old = held.metadata().map_err(|_| changed())?;
     if !m.is_file()
@@ -98,7 +98,7 @@ fn open_private(path: &Path) -> Result<File> {
     }
     Ok(held)
 }
-fn same_directory(path: &Path, held: &File, private: bool) -> Result<()> {
+pub(super) fn same_directory(path: &Path, held: &File, private: bool) -> Result<()> {
     let m = fs::symlink_metadata(path).map_err(|_| changed())?;
     let old = held.metadata().map_err(|_| changed())?;
     if !m.is_dir()
@@ -171,7 +171,7 @@ pub(super) fn validate_source_files(path: &Path) -> Result<()> {
     }
     Ok(())
 }
-fn integrity(db: &Connection) -> Result<()> {
+pub(super) fn integrity(db: &Connection) -> Result<()> {
     let quick: String = db
         .query_row("PRAGMA quick_check", [], |r| r.get(0))
         .map_err(|_| unsupported())?;
@@ -185,7 +185,7 @@ fn integrity(db: &Connection) -> Result<()> {
     }
     Ok(())
 }
-fn reference(version: i64) -> Result<Connection> {
+pub(super) fn reference(version: i64) -> Result<Connection> {
     let mut db = Connection::open_in_memory().map_err(db_error)?;
     if version <= 3 {
         migrations()
@@ -206,7 +206,7 @@ fn with_four(sql: &str) -> Migrations<'_> {
         M::up(sql).foreign_key_check(),
     ])
 }
-fn objects(db: &Connection) -> Result<BTreeMap<(String, String), String>> {
+pub(super) fn objects(db: &Connection) -> Result<BTreeMap<(String, String), String>> {
     db.prepare("SELECT type,name,sql FROM sqlite_master WHERE sql IS NOT NULL AND name NOT GLOB 'sqlite_*' ORDER BY type,name").map_err(db_error)?.query_map([], |r| Ok(((r.get(0)?,r.get(1)?),r.get(2)?))).map_err(db_error)?.collect::<std::result::Result<_,_>>().map_err(db_error)
 }
 pub(super) fn validate_v4(db: &Connection) -> Result<()> {
@@ -294,20 +294,25 @@ fn preflight(db: &Connection, version: i64) -> Result<()> {
     }
     Ok(())
 }
-fn backup_database(
+pub(super) fn backup_database(
     db: &Connection,
     identity: &mut DatabaseIdentity,
     backups: &File,
     version: i64,
+    target: i64,
     _fault: McpMigrationFault,
 ) -> Result<(String, File)> {
     identity.verify(true)?;
     let directory = identity.root.join("backups");
     same_directory(&directory, backups, true)?;
-    let name = format!("before-schema-4-{}-{}.sqlite", std::process::id(), nonce());
+    let name = format!(
+        "before-schema-{target}-{}-{}.sqlite",
+        std::process::id(),
+        nonce()
+    );
     #[cfg(test)]
     let name = if _fault == McpMigrationFault::BackupCollision {
-        "before-schema-4-synthetic-collision.sqlite".into()
+        format!("before-schema-{target}-synthetic-collision.sqlite")
     } else {
         name
     };
@@ -389,14 +394,22 @@ pub(super) fn upgrade_database(
     let app: i64 = db
         .pragma_query_value(None, "application_id", |r| r.get(0))
         .map_err(db_error)?;
-    if version > 4 {
+    if version > 5 {
         return Err(StoreError::new(
             "SCHEMA_TOO_NEW",
             "数据由较新版本创建，未执行迁移。",
         ));
     }
-    if app != APPLICATION_ID || !(1..=4).contains(&version) {
+    if app != APPLICATION_ID || !(1..=5).contains(&version) {
         return Err(unsupported());
+    }
+    if version == 5 {
+        super::today_schema::validate_v5(db).map_err(|_| unsupported())?;
+        return Ok(McpSchemaUpgrade {
+            from_version: 5,
+            to_version: 5,
+            backup: None,
+        });
     }
     if version == 4 {
         validate_v4(db)?;
@@ -407,7 +420,7 @@ pub(super) fn upgrade_database(
         });
     }
     preflight(db, version)?;
-    let (backup, backup_file) = backup_database(db, identity, backups, version, _fault)?;
+    let (backup, backup_file) = backup_database(db, identity, backups, version, 4, _fault)?;
     identity.verify(true)?;
     same_directory(&identity.root.join("backups"), backups, true)?;
     same_file(&identity.root.join(&backup), &backup_file)?;
@@ -463,16 +476,18 @@ impl AppStore {
         let app = db
             .pragma_query_value(None, "application_id", |r| r.get::<_, i64>(0))
             .map_err(db_error)?;
-        if version > 4 {
+        if version > 5 {
             return Err(StoreError::new(
                 "SCHEMA_TOO_NEW",
                 "数据由较新版本创建，未执行升级。",
             ));
         }
-        if app != APPLICATION_ID || !(1..=4).contains(&version) {
+        if app != APPLICATION_ID || !(1..=5).contains(&version) {
             return Err(unsupported());
         }
-        if version == 4 {
+        if version == 5 {
+            super::today_schema::validate_v5(db).map_err(|_| unsupported())?;
+        } else if version == 4 {
             validate_v4(db)?;
         } else {
             preflight(db, version)?;
@@ -558,12 +573,12 @@ impl AppStore {
         if self.mcp_schema_uncertain {
             return Err(uncertain());
         }
-        if self
-            .db()?
-            .pragma_query_value(None, "user_version", |r| r.get::<_, i64>(0))
-            .map_err(db_error)?
-            != 4
-        {
+        if ![4, 5].contains(
+            &self
+                .db()?
+                .pragma_query_value(None, "user_version", |r| r.get::<_, i64>(0))
+                .map_err(db_error)?,
+        ) {
             return Err(StoreError::new(
                 "MCP_SCHEMA_REQUIRED",
                 "MCP诊断存储尚未显式升级；普通打开不会自动迁移到v4。",

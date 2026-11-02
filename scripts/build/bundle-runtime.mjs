@@ -56,6 +56,7 @@ const mcpBuild = await build({
   }, logLevel: 'info', metafile: true,
 });
 if (Object.keys(mcpBuild.metafile.inputs).some(input => /transports[\/]stdio\.ts$/.test(input))) throw new Error('Discovery must not bundle the SDK StdioTransport signal path.');
+await build({entryPoints:['runtime/entries/today-facts.mjs'],outfile:join(directory,'today-facts.mjs'),bundle:true,platform:'node',target:'node24',format:'esm',logLevel:'info'});
 await copyFile('runtime/workers/mcp-guardian.mjs', join(directory, 'mcp-guardian.mjs'));
 const skillManifest=JSON.parse(await readFile('resources/skills/manifest.json','utf8'));
 const {createHash}=await import('node:crypto');

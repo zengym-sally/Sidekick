@@ -10,12 +10,12 @@ const code=(e:unknown)=>e&&typeof e==='object'&&'code' in e?String(e.code):'';
 function validStatus(value:unknown):value is McpStorageStatus {
  if(!value||typeof value!=='object')return false;
  const s=value as McpStorageStatus;
- return typeof s.root==='string'&&!!s.root&&/^[a-f0-9]{64}$/.test(s.workspaceId)&&Number.isInteger(s.version)&&s.version>=1&&s.version<=4&&s.targetVersion===4&&(s.version===4?s.confirmationToken===null:typeof s.confirmationToken==='string'&&/^[a-f0-9]{64}$/.test(s.confirmationToken));
+ return typeof s.root==='string'&&!!s.root&&/^[a-f0-9]{64}$/.test(s.workspaceId)&&Number.isInteger(s.version)&&s.version>=1&&s.version<=5&&s.targetVersion===4&&(s.version>=4?s.confirmationToken===null:typeof s.confirmationToken==='string'&&/^[a-f0-9]{64}$/.test(s.confirmationToken));
 }
 export function createMcpUpgrade(api:Backend){
  const status=ref<McpStorageStatus|null>(null),loading=ref(false),busy=ref(false),unknown=ref(false),error=ref(''),backup=ref(''),notice=ref('');
  let sequence=0,unknownWorkspace:string|null=null,hardUnknown=false;
- const enabled=computed(()=>status.value?.version===4&&!loading.value&&!busy.value&&!unknown.value);
+ const enabled=computed(()=>(status.value?.version||0)>=4&&!loading.value&&!busy.value&&!unknown.value);
  const canConfirm=computed(()=>!!status.value&&status.value.version<4&&!loading.value&&!busy.value&&!unknown.value);
  async function load(){
   if(busy.value)return;
@@ -24,7 +24,7 @@ export function createMcpUpgrade(api:Backend){
    const next=await api('read_mcp_storage_status');if(request!==sequence)return;
    if(!validStatus(next))throw Error('Invalid storage status');
    if(unknown.value){
-    if(!hardUnknown&&next.workspaceId===unknownWorkspace&&next.version===4){unknown.value=false;unknownWorkspace=null;backup.value='';notice.value='已重新读取确认诊断存储开启；没有自动连接服务。';}
+    if(!hardUnknown&&next.workspaceId===unknownWorkspace&&next.version>=4){unknown.value=false;unknownWorkspace=null;backup.value='';notice.value='已重新读取确认诊断存储开启；没有自动连接服务。';}
     else {error.value=reopen;return;}
    }
    if(status.value?.workspaceId!==next.workspaceId||next.version<4)backup.value='';

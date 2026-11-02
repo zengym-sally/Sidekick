@@ -483,7 +483,7 @@ fn stalled_input_and_invalid_stdout_cannot_hang_or_publish_partial_success() {
         let before = seed(&fixture);
         let directory = fixture.root.join("fault-runtime");
         fs::create_dir(&directory).unwrap();
-        fs::copy(fixture.directory.join("node"), directory.join("node")).unwrap();
+        std::os::unix::fs::symlink(fixture.directory.join("node"), directory.join("node")).unwrap();
         fs::copy(
             PathBuf::from(env!("CARGO_MANIFEST_DIR"))
                 .join("../tests/fixtures/mcp-runtime-fault.mjs"),

@@ -5,6 +5,7 @@
 //   directory layout, expected packaging entries, package.json path hygiene.
 // - `--self-test` builds a synthetic tree under a temp directory and asserts violations are detected.
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
@@ -26,10 +27,17 @@ const EXPECTED_ENTRIES = [
   'runtime/entries/organizer-entry.mjs',
   'runtime/entries/mcp-probe-entry.mjs',
   'runtime/entries/skills-manager.mjs',
+  'runtime/entries/today-facts.mjs',
   'runtime/workers/bash-worker.mjs',
   'runtime/workers/mcp-guardian.mjs',
 ];
 
+const IMMUTABLE_MIGRATIONS = new Map([
+  ['src-tauri/migrations/001_todos.sql','eae39795f8003e8236b72056bb1b7e2eea82d82c5e2933a493c95fec09657667'],
+  ['src-tauri/migrations/002_ingestion.sql','43d9c92a8948a73cf0bc8bc08f1793c0470fee52dd3f459ebbf14d98ce08ba73'],
+  ['src-tauri/migrations/003_agent_runs.sql','b8f89eab2dc8747cbffd0e59cc7c3816439ace21ebfe977babaf7c1b79b586c9'],
+  ['src-tauri/migrations/004_mcp_runs.sql','e8960c4f529717776bba87522cc9becd3adda14544147c40135230404fe56a1b'],
+]);
 const SCAN_TOPS = ['src/', 'shared/', 'runtime/', 'tests/', 'scripts/', 'design/'];
 const CODE_EXT = /\.(?:mjs|cjs|js|mts|cts|ts|jsx|tsx|vue)$/;
 const CSS_EXT = /\.css$/;
@@ -248,6 +256,10 @@ function collect(options) {
   const { root, files, tracked, packagePath } = options;
   const violations = [];
   const add = (rule, file, line, message) => violations.push({ rule, file, line, message });
+  for (const [file, expected] of IMMUTABLE_MIGRATIONS) {
+    const path = absOf(root, file);
+    if (!existsSync(path) || createHash('sha256').update(readFileSync(path)).digest('hex') !== expected) add('schema.immutable-migration', file, 1, 'Historical migrations 001-004 must retain their original bytes; append a new migration.');
+  }
   checkTopLevel(files, add);
   checkTrackedForbidden(tracked, add);
   checkLayout(files, add);
@@ -314,6 +326,7 @@ function runSelfTest() {
   };
   try {
     write('package.json', `${JSON.stringify({ devDependencies: { tailwindcss: '0.0.0' }, scripts: { check: 'node tests/s1-domain.test.mjs && node scripts/probes/bundle-runtime.mjs && npm run probe:bundle' } }, null, 2)}\n`);
+    write('src-tauri/migrations/001_todos.sql', 'changed historical migration');
     write('.gitignore');
     write('.env.local');
     write('build/leak.txt');
@@ -368,6 +381,7 @@ function runSelfTest() {
       ['pkg.old-test-path', 'legacy flat tests/s<slice> path'],
       ['pkg.old-script-path', 'legacy scripts/probes/bundle-runtime path'],
       ['layout.entry-missing', 'missing Runtime packaging entry'],
+      ['schema.immutable-migration', 'changed historical migration'],
     ];
     const missing = expected.filter(([rule]) => !observed.has(rule));
     if (missing.length) {

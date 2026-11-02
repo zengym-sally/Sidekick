@@ -279,7 +279,7 @@ impl<'a> TrialControl<'a> {
         let task_owner = match self.job.kind {
             JobKind::Trial => McpTaskOwner::Trial,
             JobKind::Business => McpTaskOwner::Business,
-            JobKind::Probe => return Err(protocol()),
+            JobKind::Probe | JobKind::Today => return Err(protocol()),
         };
         let action = frame["action"].as_str().ok_or_else(protocol)?;
         #[cfg(test)]

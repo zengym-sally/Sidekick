@@ -32,15 +32,22 @@ if (role === 'model') {
         if(mode==='advisor-invalid-date')finalData.date='2026-02-30';
         if(mode==='advisor-invalid-identity')finalData.snapshotId='stale-run';
       }
+      if(mode.startsWith('today')&&context.todayAdvice){
+        const facts=context.todayAdvice,single=code=>({code,relatedTodoId:null,relatedTodoVersion:null});
+        const ranking=facts.todos.filter(todo=>todo.status==='open').map(todo=>({todoId:todo.id,todoVersion:todo.version,reasons:[single(todo.kind==='action'?'open_action':'open_followup'),...(todo.overdue?[single('overdue')]:todo.dueDate===null&&todo.followupDate===null?[single('undated')]:[])]}));
+        if(mode==='today-alternate')ranking.reverse();
+        finalData={snapshotId:facts.snapshotId,date:facts.date,timeZone:facts.timeZone,ranking:mode==='today-empty'?[]:ranking};
+        if(mode==='today-invalid'&&ranking.length)ranking[0].todoVersion++;
+      }
       const names = (body.tools || []).map(tool => tool.function.name).filter(name => name.startsWith('mcp_'));
       requests++;
       const readPath = ['recovery-retry', 'recovery-read-control'].includes(mode) ? /<location>([^<]+)<\/location>/.exec(body.messages.filter(message => message.role === 'system').map(message => message.content).join('\n'))?.[1] : undefined;
       if (['recovery-retry', 'recovery-read-control'].includes(mode) && (!readPath || !(body.tools || []).some(tool => tool.function.name === 'read'))) throw new Error('Controlled Read target unavailable.');
-      note({ type: 'model', model:body.model, tracker:!!context.syntheticTodos, detail:/DETAIL_LEVEL=detailed/.test(body.messages.filter(message=>message.role==='system').map(message=>message.content).join('\n')), names, allNames: (body.tools || []).map(tool => tool.function.name), hasSkills: /<available_skills>|<location>/.test(body.messages.filter(message => message.role === 'system').map(message => message.content).join('\n')), request: requests, results: results.map(message => String(message.content)), ...(readPath ? { readPath } : {}),...(context.syntheticAdvice?{advisor:true,advisorSample:context.syntheticAdvice}: {}) });
-      if (['tracker-tool-injection','advisor-tool-injection'].includes(mode) && requests === 1) { stream(response, [{name:'bash',args:{command:`/usr/bin/touch '${marker}'`}}]); return; }
+      note({ type: 'model', model:body.model, tracker:!!context.syntheticTodos, detail:/DETAIL_LEVEL=detailed/.test(body.messages.filter(message=>message.role==='system').map(message=>message.content).join('\n')), names, allNames: (body.tools || []).map(tool => tool.function.name), hasSkills: /<available_skills>|<location>/.test(body.messages.filter(message => message.role === 'system').map(message => message.content).join('\n')), request: requests, results: results.map(message => String(message.content)), ...(readPath ? { readPath } : {}),...(context.syntheticAdvice?{advisor:true,advisorSample:context.syntheticAdvice}: {}),...(context.todayAdvice?{today:true,todayFacts:context.todayAdvice}: {}) });
+      if (['tracker-tool-injection','advisor-tool-injection','today-tool-injection'].includes(mode) && requests === 1) { stream(response, [{name:'bash',args:{command:`/usr/bin/touch '${marker}'`}}]); return; }
       if (mode === 'recovery-read-control' && !results.length) { stream(response, [{ name: 'read', args: { path: readPath } }]); return; }
-      if(mode==='advisor-service-error'){response.writeHead(500);response.end('{}');return;}
-      if (['freeze','tracker-freeze','advisor-freeze'].includes(mode) && !results.length) {
+      if((['advisor-service-error','today-service-error'].includes(mode)||mode==='today-success-then-fail'&&requests>1)){response.writeHead(500);response.end('{}');return;}
+      if (['freeze','tracker-freeze','advisor-freeze','today-freeze'].includes(mode) && !results.length) {
         const deadline = Date.now() + 5000;
         while (!existsSync(`${marker}.continue`) && Date.now() < deadline) await new Promise(resolve => setTimeout(resolve, 10));
       }

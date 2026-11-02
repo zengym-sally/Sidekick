@@ -2,13 +2,18 @@ import { organizerFixture } from './organizer';
 import {agentFixture} from './agents';
 import {skillsFixture} from './skills';
 import {mcpFixture} from './mcp';
+import {todayFixture,configureTodayRows} from './today';
+import {todayRows} from '../today-advice.mjs';
 const parameters=new URLSearchParams(location.search);
 let initialized=!parameters.has('onboarding');
-const rows:unknown[]=[];
+const rows:unknown[]=parameters.has('todayFixture')&&!parameters.has('todayEmptyList')?todayRows():[];
+if(parameters.has('todayLong')&&rows.length)(rows[0] as {data:{title:string}}).data.title='合成跨部门交付与验收资料核对'.repeat(10);
 const workspace=()=>({needsSetup:!initialized,root:initialized?'/fixture/sidekick':null,defaultRoot:'/fixture/sidekick',pendingRoot:null});
 let applicationSettings={timeZone:'Asia/Shanghai'};
+configureTodayRows(rows,applicationSettings.timeZone);let todoReads=0;
 const defaults=()=>({version:1,name:'小明同学',address:'BOSS'});
 export async function invoke(command:string,args?:Record<string,unknown>){
+  const advice=await todayFixture(command,args,rows,applicationSettings.timeZone);if(advice!==undefined)return JSON.parse(JSON.stringify(advice));
   const mcp=mcpFixture(command,args);if(mcp!==undefined)return mcp;
   const skillResult=skillsFixture(command,args);if(skillResult!==undefined)return skillResult;
   if(command==='read_application_settings')return structuredClone(applicationSettings);
@@ -18,7 +23,7 @@ export async function invoke(command:string,args?:Record<string,unknown>){
   const organized=organizerFixture(command,args?JSON.parse(JSON.stringify(args)):args,rows);if(organized!==undefined)return JSON.parse(JSON.stringify(organized));
   if(command==='workspace_info')return workspace();
   if(command==='initialize_workspace'){initialized=true;return workspace();}
-  if(command==='list_todos')return structuredClone(rows);
+  if(command==='list_todos'){if(parameters.has('todayBoundaryOwnership')&&++todoReads===2)configureTodayRows(rows,applicationSettings.timeZone,true);return structuredClone(rows);}
   if(command==='create_todo'){
     const input=args?.input as {tags:string[]};
     const todo={id:crypto.randomUUID(),data:{...input,tags:input.tags.filter(Boolean)},version:1,status:'open',source:'manual',createdAtMs:Date.now(),updatedAtMs:Date.now(),completedAtMs:null,deletedAtMs:null};

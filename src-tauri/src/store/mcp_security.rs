@@ -168,6 +168,9 @@ fn contains_value(value: &serde_json::Value, secret: &str) -> bool {
 
 impl AppStore {
     pub(super) fn verify_mcp_paths(&self) -> Result<()> {
+        if self.today_schema_uncertain.get() {
+            return Err(super::today_schema::uncertain());
+        }
         if self.mcp_probe_uncertain {
             return Err(super::mcp_catalog::uncertain());
         }

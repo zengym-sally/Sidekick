@@ -1,0 +1,21 @@
+{
+  "scope": "N3 design only; implementation delivery review still pending",
+  "core": {
+    "bytes": 26640,
+    "sha256": "e966f760add123b5d452420f6ddf8aaf32e9cb3c2080aca26d69643d49284da5"
+  },
+  "round": 3,
+  "faces": {
+    "A3": {
+      "verdict": "APPROVE",
+      "reportSha256": "369bfe0a5957d8667f4a0b4e2be278b579e93b51f2ad361e29dc77e0a7595382",
+      "sealSha256": "d12987c112da19693bb7abea46c56766c278937dd6618fbc2e5c659c3144eb2a"
+    },
+    "B3": {
+      "verdict": "APPROVE",
+      "reportSha256": "2acd5114cc425edf9d9f26a178eca91703cfa6192b4741df8039f4aed72fa098",
+      "sealSha256": "aa079d25c5548230e31973de30cd825ed4e81665a0fc9d33008c059bf5ab043e"
+    }
+  },
+  "independenceLimit": "B3 disclosed accidental exposure of old non-N3 S3 summary; no N3 other-face report/author/session read; not used as approval evidence."
+}

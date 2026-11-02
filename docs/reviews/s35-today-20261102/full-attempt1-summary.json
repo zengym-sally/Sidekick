@@ -1,0 +1,66 @@
+{
+  "scope": "First independent original full FAILED; immutable historical evidence, never superseded into pass",
+  "globalFullAttempt": 1,
+  "result": {
+    "command": [
+      "npm",
+      "run",
+      "check"
+    ],
+    "fullAttempt": 1,
+    "startedUtc": "2026-11-02T05:28:15.983240+00:00",
+    "finishedUtc": "2026-11-02T05:38:43.421426+00:00",
+    "exitCode": 101,
+    "elapsedSeconds": 627.434
+  },
+  "node": {
+    "tests": 780,
+    "passed": 780,
+    "failed": 0
+  },
+  "rust": [
+    {
+      "passed": 17,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 269,
+      "failed": 1,
+      "ignored": 3
+    }
+  ],
+  "failure": {
+    "test": "runtime_host::mcp_recovery_tests::stalled_input_and_invalid_stdout_cannot_hang_or_publish_partial_success",
+    "mode": "result-tail",
+    "expected": "RUNTIME_PROTOCOL",
+    "actual": "MODEL_TIMEOUT",
+    "exactHistoricalTraceUnavailable": true
+  },
+  "reports": [
+    {
+      "path": "build/night-20261101-s35/n3-full/report.md",
+      "bytes": 4265,
+      "sha256": "55a19b775364a0e756351bc08c15950eb1ed107ea1369f82761820b0aba3cc53"
+    },
+    {
+      "path": "build/night-20261101-s35/n3-full/report.json",
+      "bytes": 51658,
+      "sha256": "34ed406ca5ea4779a9db6bbb1454b9727f74487744031fde622526b6ffcb9d41"
+    },
+    {
+      "path": "build/night-20261101-s35/n3-full/evidence-seal.json",
+      "bytes": 23216,
+      "sha256": "4b27951faa38407620857ad193a1dcf617b4bfd2f2e586ea2bb6343f86154f04"
+    }
+  ],
+  "sourceInputsBeforeAfterStrictStable": 4300,
+  "codeDelta": 37,
+  "candidateInputs": 50,
+  "preparedRuntimeEntries": 563,
+  "distAndPackagesGenerated": false,
+  "budgetToolchainRemainingRuntimePackagesNotExecuted": true,
+  "cleanup": "94 sampled identities/6 PGIDs, owned0 unknown0 ownedListeners0, no signals required",
+  "plannedNextAtFailureCheckpoint": "Fixture-only revision plus third delivery review and a new independent original full required",
+  "laterIndependentResult": "Final delivery round3 and fullAttempt2 pass; see independent-full-summary.json. Original failure and missing exact historical trace remain unchanged."
+}

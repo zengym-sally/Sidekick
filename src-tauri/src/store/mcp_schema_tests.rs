@@ -900,9 +900,17 @@ fn mcp_schema_backup_collision_and_unknown_source_never_overwrite_or_migrate() {
         raw_upgrade(&f, &mut db, McpMigrationFault::None)
             .unwrap_err()
             .code,
+        "MCP_SCHEMA_UNSUPPORTED"
+    );
+    assert_eq!(records(&db), before);
+    db.pragma_update(None, "user_version", 6).unwrap();
+    assert_eq!(
+        raw_upgrade(&f, &mut db, McpMigrationFault::None)
+            .unwrap_err()
+            .code,
         "SCHEMA_TOO_NEW"
     );
-    assert_eq!(version(&db), 5);
+    assert_eq!(version(&db), 6);
     assert_eq!(
         fs::read_dir(f.0.join("workspace/backups")).unwrap().count(),
         1

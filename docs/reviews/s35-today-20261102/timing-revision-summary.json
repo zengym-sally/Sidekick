@@ -1,0 +1,182 @@
+{
+  "scope": "Test fixture startup-cost isolation only; not original full failure replay or full pass",
+  "decision": "Fresh Tier2E recommends private symlink to this fixture canonical prepared Node; Root accepted S",
+  "expert": [
+    {
+      "path": "build/night-20261101-s35/n3-failure-diagnosis/expert/recovery-timing-adjudication/report.md",
+      "bytes": 9896,
+      "sha256": "82accfa325a41ac2cd9839cfdb0afd75dfd6f51b4aac88a965bcbf977d2f1379"
+    },
+    {
+      "path": "build/night-20261101-s35/n3-failure-diagnosis/expert/recovery-timing-adjudication/report.json",
+      "bytes": 19296,
+      "sha256": "e89fb3779f1ff8b5df18c8cdd7e785b989d39d482ed9eec2f0b678d0a6a3d0ad"
+    },
+    {
+      "path": "build/night-20261101-s35/n3-failure-diagnosis/expert/recovery-timing-adjudication/evidence-seal.json",
+      "bytes": 38184,
+      "sha256": "3dc66c2d5212834de1e6b9e8f259fe9e43bccff753b55a09084d4c7077031914"
+    }
+  ],
+  "rustMicro": {
+    "coldFirstByteAfterReaderMs": 1209.963,
+    "versionPreparedSameInodeMs": 35.09,
+    "symlinkMs": 28.483,
+    "exactFullCauseEstablished": false
+  },
+  "isolatedOriginalCase": {
+    "exitCode": 0,
+    "elapsedSeconds": 30.608,
+    "testSeconds": 8.85,
+    "reproducedOriginalFullFailure": false,
+    "artifactReuseDiagnosticOnly": true,
+    "trace": {
+      "path": "build/night-20261101-s35/n3-failure-diagnosis/forensic/original-case-trace.log",
+      "bytes": 6685,
+      "sha256": "b0e5f0c9def08e92f9e3536c30ef990d67bc1ff9aa88b40981ef0cf406dda5f5"
+    },
+    "patch": {
+      "path": "build/night-20261101-s35/n3-failure-diagnosis/forensic/diagnostic-only.patch",
+      "bytes": 5959,
+      "sha256": "694500e0515c6caa6baca79b54e4bc476798a963b10a6f0681e89ba49972f576"
+    },
+    "summary": {
+      "path": "build/night-20261101-s35/n3-failure-diagnosis/forensic/trace-summary.json",
+      "bytes": 6948,
+      "sha256": "9106d065e35cb989b9fc85dff96962291db01c7ff5ce017867675869b85d4f32"
+    }
+  },
+  "observedResultTail": {
+    "timerStartUs": 7230,
+    "timeoutElapsedUs": 1033878,
+    "firstFrameTraceUs": 1270481,
+    "badTailReadTraceUs": 1272651,
+    "readerErrorTraceUs": 1272692,
+    "receivedErrorTraceUs": 1272714,
+    "final": "RUNTIME_PROTOCOL"
+  },
+  "sourceChange": "Only mcp_recovery_tests.rs private Node copy becomes symlink to the canonical prepared Node already used for its model process",
+  "preserved": [
+    "Original fault script and independent private mode directory",
+    "Original1000ms runLimit and500ms cleanup",
+    "Exact no-read MODEL_TIMEOUT and other modes RUNTIME_PROTOCOL",
+    "Partial success, zero tool/model events, formal tables, unrelated model alive and cleanup assertions",
+    "Production execute, N3 normative core, migrations001-005 and legacy runner"
+  ],
+  "focusedChecks": [
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "src-tauri/Cargo.toml",
+        "--lib",
+        "runtime_host::mcp_recovery_tests::stalled_input_and_invalid_stdout_cannot_hang_or_publish_partial_success",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "pid": 78651,
+      "pgid": 78651,
+      "startedUtc": "2026-11-02T06:20:40.855904+00:00",
+      "log": "build/night-20261101-s35/n3-validation/recovery-fixture-exact-green.log",
+      "exit": 0,
+      "elapsedSeconds": 9.841,
+      "sha256": "eddf9ceef75c3ed8529b601554e2c91d124b050fd8055cf59cf49857a3164411",
+      "finishedUtc": "2026-11-02T06:20:50.693875+00:00"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:mcp-recovery-host"
+      ],
+      "pid": 90281,
+      "pgid": 90281,
+      "startedUtc": "2026-11-02T06:20:50.697927+00:00",
+      "log": "build/night-20261101-s35/n3-validation/recovery-fixture-neighbor-green.log",
+      "exit": 0,
+      "elapsedSeconds": 58.69,
+      "sha256": "0be9ba1408a9d4b02ecf74e029479e40c059d1c64d2820c8492b000fa371d48c",
+      "finishedUtc": "2026-11-02T06:21:49.385371+00:00"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:mcp-trial"
+      ],
+      "pid": 52465,
+      "pgid": 52465,
+      "startedUtc": "2026-11-02T06:21:49.388073+00:00",
+      "log": "build/night-20261101-s35/n3-validation/recovery-fixture-trial-green.log",
+      "exit": 0,
+      "elapsedSeconds": 44.54,
+      "sha256": "7e630459c0398930f6485840a8d3699fefd51a0313ae1c5bb5988f1ab55fa92b",
+      "finishedUtc": "2026-11-02T06:22:33.926189+00:00"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:mcp-formal"
+      ],
+      "pid": 404,
+      "pgid": 404,
+      "startedUtc": "2026-11-02T06:22:33.928532+00:00",
+      "log": "build/night-20261101-s35/n3-validation/recovery-fixture-formal-green.log",
+      "exit": 0,
+      "elapsedSeconds": 78.341,
+      "sha256": "59442be9bd0660323ef8c70ee5fbeeb7be8290f9ffb2b5213d70ec475dda25e4",
+      "finishedUtc": "2026-11-02T06:23:52.267582+00:00"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:today-store"
+      ],
+      "pid": 86488,
+      "pgid": 86488,
+      "startedUtc": "2026-11-02T06:23:52.270450+00:00",
+      "log": "build/night-20261101-s35/n3-validation/recovery-fixture-today-green.log",
+      "exit": 0,
+      "elapsedSeconds": 40.836,
+      "sha256": "4473b6b5c8948230be4a739977e249325251c504fd7be35e1d4167bf3de2e128",
+      "finishedUtc": "2026-11-02T06:24:33.105406+00:00"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "check:rust"
+      ],
+      "pid": 30151,
+      "pgid": 30151,
+      "startedUtc": "2026-11-02T06:24:33.109590+00:00",
+      "log": "build/night-20261101-s35/n3-validation/recovery-fixture-rust-green.log",
+      "exit": 0,
+      "elapsedSeconds": 4.324,
+      "sha256": "1af484fb462ae00ad87e79e56f25769d2ee2c97e6b44d73d4cb1664617123455",
+      "finishedUtc": "2026-11-02T06:24:37.431089+00:00"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "check:s33-verification"
+      ],
+      "pid": 35401,
+      "pgid": 35401,
+      "startedUtc": "2026-11-02T06:24:37.435349+00:00",
+      "log": "build/night-20261101-s35/n3-validation/recovery-fixture-dual-green.log",
+      "exit": 0,
+      "elapsedSeconds": 3.305,
+      "sha256": "c9066432be4b0a8c48ff02d9b1d9342725fd8fb3b640e461a231c474f9474525",
+      "finishedUtc": "2026-11-02T06:24:40.736816+00:00"
+    }
+  ],
+  "plannedNextAtDiagnosticCheckpoint": "Same delivery artifact round3 pending; original full failure retained",
+  "laterIndependentResult": "Final delivery round3 and fullAttempt2 pass; see independent-full-summary.json. Original failure and missing exact historical trace remain unchanged."
+}

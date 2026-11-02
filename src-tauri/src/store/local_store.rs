@@ -315,6 +315,9 @@ pub struct AppStore {
     #[cfg(test)]
     mcp_security_fault: Option<mcp_security::McpSecurityFault>,
     mcp_schema_uncertain: bool,
+    today_schema_uncertain: std::cell::Cell<bool>,
+    #[cfg(test)]
+    today_migration_fault: today_schema::TodayMigrationFault,
     mcp_probe_uncertain: bool,
     mcp_probe_directories: std::collections::BTreeMap<String, File>,
     #[cfg(test)]
@@ -477,7 +480,7 @@ fn validate_existing_database(path: &Path, initializing: bool) -> Result<()> {
     let version: i64 = db
         .pragma_query_value(None, "user_version", |r| r.get(0))
         .map_err(db_error)?;
-    if version > 4 {
+    if version > 5 {
         return Err(StoreError::new(
             "SCHEMA_TOO_NEW",
             "数据由较新的跟班版本创建，请升级应用后打开。",
@@ -493,7 +496,7 @@ fn validate_existing_database(path: &Path, initializing: bool) -> Result<()> {
             |r| r.get(0),
         )
         .map_err(db_error)?;
-    if !(app == APPLICATION_ID && (1..=4).contains(&version)
+    if !(app == APPLICATION_ID && (1..=5).contains(&version)
         || initializing && app == 0 && version == 0 && tables == 0)
     {
         return Err(StoreError::new(
@@ -524,6 +527,8 @@ fn validate_existing_database(path: &Path, initializing: bool) -> Result<()> {
     }
     if version == 4 {
         mcp_schema::validate_v4(&db)?;
+    } else if version == 5 {
+        today_schema::validate_v5(&db)?;
     }
     Ok(())
 }
@@ -575,6 +580,9 @@ impl AppStore {
             #[cfg(test)]
             mcp_security_fault: None,
             mcp_schema_uncertain: false,
+            today_schema_uncertain: std::cell::Cell::new(false),
+            #[cfg(test)]
+            today_migration_fault: TODAY_OPEN_FAULT.with(std::cell::Cell::get),
             mcp_probe_uncertain: false,
             mcp_probe_directories: std::collections::BTreeMap::new(),
             #[cfg(test)]
@@ -879,17 +887,29 @@ impl AppStore {
         let version: i64 = db
             .pragma_query_value(None, "user_version", |r| r.get(0))
             .map_err(db_error)?;
-        if (1..3).contains(&version) {
-            let backup = root
-                .join("backups")
-                .join(format!("before-schema-3-{}.sqlite", nonce()));
-            db.backup(rusqlite::MAIN_DB, &backup, None)
-                .map_err(db_error)?;
-            use std::os::unix::fs::PermissionsExt;
-            fs::set_permissions(&backup, fs::Permissions::from_mode(0o600)).map_err(io_error)?;
-        }
         self.check_fault(InitPhase::BeforeSchema)?;
-        if version <= 3 {
+        if (1..3).contains(&version) {
+            #[cfg(test)]
+            let fault = self.today_migration_fault;
+            #[cfg(not(test))]
+            let fault = today_schema::TodayMigrationFault::None;
+            let upgraded = today_schema::upgrade_fixed(
+                &mut db,
+                &mut database_identity,
+                &root,
+                &backups_directory,
+                3,
+                None,
+                fault,
+            );
+            if upgraded
+                .as_ref()
+                .is_err_and(|e| e.code == "TODAY_SCHEMA_UNCERTAIN")
+            {
+                self.today_schema_uncertain.set(true);
+            }
+            upgraded?;
+        } else if version == 0 {
             migrations().to_latest(&mut db).map_err(|_| {
                 StoreError::new(
                     "MIGRATION_FAILED",
@@ -921,12 +941,18 @@ impl AppStore {
         })
     }
     fn db(&self) -> Result<&Connection> {
+        if self.today_schema_uncertain.get() {
+            return Err(today_schema::uncertain());
+        }
         self.workspace
             .as_ref()
             .map(|w| &w.db)
             .ok_or_else(|| StoreError::new("SETUP_REQUIRED", "请先选择工作目录。"))
     }
     fn db_mut(&mut self) -> Result<&mut Connection> {
+        if self.today_schema_uncertain.get() {
+            return Err(today_schema::uncertain());
+        }
         self.workspace
             .as_mut()
             .map(|w| &mut w.db)
@@ -1364,3 +1390,16 @@ pub(crate) use mcp_calls::*;
 #[cfg(test)]
 #[path = "mcp_catalog_tests.rs"]
 mod mcp_catalog_tests;
+
+#[cfg(test)]
+#[path = "today_advice_tests.rs"]
+mod today_advice_tests;
+
+#[path = "today_advice.rs"]
+mod today_advice;
+#[path = "today_schema.rs"]
+mod today_schema;
+pub use today_advice::*;
+
+#[cfg(test)]
+thread_local! { static TODAY_OPEN_FAULT:std::cell::Cell<today_schema::TodayMigrationFault>=const {std::cell::Cell::new(today_schema::TodayMigrationFault::None)}; }

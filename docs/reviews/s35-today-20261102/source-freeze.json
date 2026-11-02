@@ -1,0 +1,236 @@
+{
+  "baseHead": "c783c8560cde2269eed721ee206d53b0f7e022cf",
+  "scope": "All changed/new code, migrations, tests, fixtures, build/guard scripts and package delta; unchanged files bound to baseHead. Docs evidence appended separately. No dependency/config/vendor/resources/identifier change.",
+  "asOfUtc": "2026-11-02T06:29:11.294452+00:00",
+  "coreSha256": "e966f760add123b5d452420f6ddf8aaf32e9cb3c2080aca26d69643d49284da5",
+  "files": [
+    {
+      "path": "package.json",
+      "bytes": 12400,
+      "sha256": "595393b3922b10403345db74992c377f660715815d81d1ea7d45a4fe0fc90d01",
+      "ownerExec": false
+    },
+    {
+      "path": "runtime/entries/organizer-entry.mjs",
+      "bytes": 18604,
+      "sha256": "a37dd08f49dc69c5769e115c0b1ef63c192e6ad861846630dfb5dfe79ddd3cb5",
+      "ownerExec": false
+    },
+    {
+      "path": "runtime/entries/today-facts.mjs",
+      "bytes": 982,
+      "sha256": "5b5c939365b36b3736dd4d10f9e14544af65689a4d2c9e8695e86a66a53d9ea1",
+      "ownerExec": false
+    },
+    {
+      "path": "runtime/lib/today-contract.mjs",
+      "bytes": 3269,
+      "sha256": "bd67f02bde7a2ffb90ca65ae5dadec45b91a35932879a876a4aec0c4c87b8332",
+      "ownerExec": false
+    },
+    {
+      "path": "scripts/build/bundle-runtime.mjs",
+      "bytes": 8560,
+      "sha256": "e128a1c04b7215ca6286c283cbb477c201cd405f6be91aa0e3a856f2e2990b22",
+      "ownerExec": false
+    },
+    {
+      "path": "scripts/checks/check-structure.mjs",
+      "bytes": 21444,
+      "sha256": "ce3faf3c3920677bfcbf17168700d74d3c5ee4b1744abcb9bc5f9dfa8baec83e",
+      "ownerExec": false
+    },
+    {
+      "path": "scripts/probes/check-legacy-today-guard.py",
+      "bytes": 8449,
+      "sha256": "3e4f4f96a0f4e4be73196a54e83e435acfb08d770c4e724bbb138c28d58f0801",
+      "ownerExec": false
+    },
+    {
+      "path": "shared/today-facts.d.mts",
+      "bytes": 1433,
+      "sha256": "cf2dbdc900755df58f0a30eea1b4aeb25ed19a3a6583ca8c48e6fb4b2e80a09f",
+      "ownerExec": false
+    },
+    {
+      "path": "shared/today-facts.mjs",
+      "bytes": 5142,
+      "sha256": "09a931b6ed61f1847c18ee55ce06d55b4182273b9e986d96408f9cf061893465",
+      "ownerExec": false
+    },
+    {
+      "path": "src-tauri/migrations/005_today_advice.sql",
+      "bytes": 2488,
+      "sha256": "16cf72c92f1a007bc686854d71e798265033ff26e2556744bb4be2a07aa8ea11",
+      "ownerExec": false
+    },
+    {
+      "path": "src-tauri/src/app/commands.rs",
+      "bytes": 15486,
+      "sha256": "11d4dc95f7a9bbb3c0572ed30206e9b8670c44f7f0deb42e268da6aee0d00b0a",
+      "ownerExec": false
+    },
+    {
+      "path": "src-tauri/src/app/mod.rs",
+      "bytes": 6202,
+      "sha256": "c645164cc0a750b1840135e86fad7a5a62ffa3a4b48b38433e505504c6ae5510",
+      "ownerExec": false
+    },
+    {
+      "path": "src-tauri/src/host/mcp_recovery_tests.rs",
+      "bytes": 18694,
+      "sha256": "cebc857c7fbe7ef8a4fe8290459e6dad217adfca0e4497ed4edc3baf111b5c25",
+      "ownerExec": false
+    },
+    {
+      "path": "src-tauri/src/host/mcp_trial.rs",
+      "bytes": 25058,
+      "sha256": "cee171354b0b92bb1938fa2ce8a4aa83c630d6d27a5b34605bc2db01d08c41b2",
+      "ownerExec": false
+    },
+    {
+      "path": "src-tauri/src/host/runtime_host.rs",
+      "bytes": 62391,
+      "sha256": "b61fd46627d90da6b7e090ecdcf5464caee49920e5cbb3f78b95e31457b5beb0",
+      "ownerExec": false
+    },
+    {
+      "path": "src-tauri/src/host/today_advice.rs",
+      "bytes": 17687,
+      "sha256": "d60cda8e49107da6b88a6eed1a73c5243593475849b9b8134bd50414b30731a6",
+      "ownerExec": false
+    },
+    {
+      "path": "src-tauri/src/host/today_advice_tests.rs",
+      "bytes": 36387,
+      "sha256": "343a573663b247da80c0ff83989c4f7a4e65469abd6d0fd92e881c85a259bf54",
+      "ownerExec": false
+    },
+    {
+      "path": "src-tauri/src/store/local_store.rs",
+      "bytes": 51230,
+      "sha256": "9290073ce709ad9ec8d2a3adf8de71b41e688df43cf7062203dc5f2ff8599716",
+      "ownerExec": false
+    },
+    {
+      "path": "src-tauri/src/store/mcp_calls.rs",
+      "bytes": 18910,
+      "sha256": "3dd9ff712aafd14a5ce4e4dd428d47ff16431b263a7eea49eb9a79c7d008dcfc",
+      "ownerExec": false
+    },
+    {
+      "path": "src-tauri/src/store/mcp_schema.rs",
+      "bytes": 20651,
+      "sha256": "2ecba338a711f3fa2712b8635adb4ad89afecd80cf0796e6ab9c8d9725ef23b1",
+      "ownerExec": false
+    },
+    {
+      "path": "src-tauri/src/store/mcp_schema_tests.rs",
+      "bytes": 39149,
+      "sha256": "75a8d490c03ecdbc9dc44c1ab1603f0db2bd1ab29f1e2f77a0cd336529d3b089",
+      "ownerExec": false
+    },
+    {
+      "path": "src-tauri/src/store/mcp_security.rs",
+      "bytes": 40296,
+      "sha256": "cb60b5af7ca83ed6d351a359250db92430a292fbadf54b5c28f0521f9bc3a0cb",
+      "ownerExec": false
+    },
+    {
+      "path": "src-tauri/src/store/today_advice.rs",
+      "bytes": 21126,
+      "sha256": "40065969146cd2a0e4a970443c42899c15ee3bbc0f18bc53b35dc662847aee55",
+      "ownerExec": false
+    },
+    {
+      "path": "src-tauri/src/store/today_advice_tests.rs",
+      "bytes": 31654,
+      "sha256": "b5f3c98e2fb91b93963041d677f53c0dd73f7c0667e87aab571e1511b543fc20",
+      "ownerExec": false
+    },
+    {
+      "path": "src-tauri/src/store/today_schema.rs",
+      "bytes": 15028,
+      "sha256": "02690642a962a9c48a9b37e47a8b6666c7b8bd2666f2e46bfcb5d46c7ae5cc23",
+      "ownerExec": false
+    },
+    {
+      "path": "src/components/TodayAdvice.vue",
+      "bytes": 9496,
+      "sha256": "6df95bb8dccd733d6d0de306f47839ce3bdbcc6e7bb36c353d76a89b0df5101e",
+      "ownerExec": false
+    },
+    {
+      "path": "src/components/Workbench.vue",
+      "bytes": 28426,
+      "sha256": "81c6cef5d87f643e741e8b7d69d326968b9138dd0102d97ae9309a6ead73e77a",
+      "ownerExec": false
+    },
+    {
+      "path": "src/stores/mcpUpgrade.ts",
+      "bytes": 4338,
+      "sha256": "e7483d5dcf4b2a485dff18dd0445a7ed55cb708613d2c88157a7ea81077f52a0",
+      "ownerExec": false
+    },
+    {
+      "path": "src/stores/today.ts",
+      "bytes": 7522,
+      "sha256": "c23c23d02b6b75de07d292f448a11709fda2b7a0c3432e80ff421513fe7e5d21",
+      "ownerExec": false
+    },
+    {
+      "path": "tests/fixtures/mcp-trial.mjs",
+      "bytes": 11940,
+      "sha256": "789db5c960465aa35bccd339322c6050d4821f840e24f6ab075ae1339c0bd8df",
+      "ownerExec": false
+    },
+    {
+      "path": "tests/fixtures/profile-ui/api.ts",
+      "bytes": 3905,
+      "sha256": "78c7f23906af9abe87be42d93e49bcca2e8234ab94af90ef38d1ccc136a41ea4",
+      "ownerExec": false
+    },
+    {
+      "path": "tests/fixtures/profile-ui/today.ts",
+      "bytes": 5907,
+      "sha256": "bf3335efccf9aa19c64217062971896b640bf67d90273166f381a471d491ad99",
+      "ownerExec": false
+    },
+    {
+      "path": "tests/fixtures/profile-ui/vite.config.ts",
+      "bytes": 771,
+      "sha256": "4d7147ea697a2636a131cb7ce1966d969afa6298aca409ffc76816945a1bfbfc",
+      "ownerExec": false
+    },
+    {
+      "path": "tests/fixtures/today-advice.mjs",
+      "bytes": 1526,
+      "sha256": "87db62fc4a72773ea71c00ca92ba6888cedca4167efb56af5451e507ce523c40",
+      "ownerExec": false
+    },
+    {
+      "path": "tests/fixtures/today-helper.mjs",
+      "bytes": 955,
+      "sha256": "18b84d33275ff63c73bc45697f753a1bd7207050bfe774ce82128975c633d1cc",
+      "ownerExec": false
+    },
+    {
+      "path": "tests/integration/today-runtime.test.mjs",
+      "bytes": 8673,
+      "sha256": "18390ef89a2e72cfda277e0feb41dc35dc09125afb7da6289496bf36c2e5f509",
+      "ownerExec": false
+    },
+    {
+      "path": "tests/unit/today-advice.test.mjs",
+      "bytes": 7515,
+      "sha256": "0c6f6457ebbf06c392f50e1db4638a972321ced3f7d4f952a3453fee899e395c",
+      "ownerExec": false
+    },
+    {
+      "path": "tests/unit/today-client.test.mjs",
+      "bytes": 8693,
+      "sha256": "f56b98c459c1584823739f8575a332c0a03d8ab7d62af7b315feed0016765a2c",
+      "ownerExec": false
+    }
+  ]
+}
