@@ -658,12 +658,23 @@ fn execute(
         }
     }
     #[cfg(feature = "s33-mcp-ui-verification")]
-    if let Some(pin) = local.native_model_pin() {
-        payload["verificationNativeModel"] = pin;
-        if payload["kind"] != "test" {
-            payload["verificationMcpOnly"] = true.into();
+    let g1_transport = if let Some(pin) = local.native_model_pin() {
+        if local.native_g1() {
+            let control = json!({"scope":"controlled-native-g1","owner":pin}).to_string();
+            if control.len() > 16384 {
+                return Err("RUNTIME_PROTOCOL".into());
+            }
+            Some(control)
+        } else {
+            payload["verificationNativeModel"] = pin;
+            if payload["kind"] != "test" {
+                payload["verificationMcpOnly"] = true.into();
+            }
+            None
         }
-    }
+    } else {
+        None
+    };
     payload["hostNonce"] = job.nonce.clone().into();
     let mut mcp = crate::mcp_trial::TrialControl::new(job, directory, local, &payload);
     let mut command = Command::new(directory.join("node"));
@@ -678,6 +689,12 @@ fn execute(
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .process_group(0);
+    #[cfg(feature = "s33-mcp-ui-verification")]
+    if let Some(control) = g1_transport {
+        command
+            .arg("--s36-native-g1")
+            .env("SIDEKICK_S36_NATIVE_MODEL_PIN", control);
+    }
     let mut child = command.spawn().map_err(|_| "RUNTIME_START".to_string())?;
     job.pid.store(child.id(), Ordering::SeqCst);
     #[cfg(test)]
@@ -1071,6 +1088,56 @@ mod mcp_http_task_tests;
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[cfg(not(feature = "s33-mcp-ui-verification"))]
+    #[test]
+    fn verification_g1_control_environment_is_cleared_for_ordinary_role_runs() {
+        struct Restore(Option<std::ffi::OsString>);
+        impl Drop for Restore {
+            fn drop(&mut self) {
+                if let Some(value) = &self.0 {
+                    std::env::set_var("SIDEKICK_S36_NATIVE_MODEL_PIN", value);
+                } else {
+                    std::env::remove_var("SIDEKICK_S36_NATIVE_MODEL_PIN");
+                }
+            }
+        }
+        let fixture = super::mcp_trial_tests::TrialFixture::new("tracker-normal", true, false);
+        let _restore = Restore(std::env::var_os("SIDEKICK_S36_NATIVE_MODEL_PIN"));
+        std::env::set_var("SIDEKICK_S36_NATIVE_MODEL_PIN", "untrusted-parent-value");
+        let run = fixture
+            .runtime
+            .start_trial(
+                fixture.local.as_ref().unwrap().clone(),
+                fixture.directory.clone(),
+                "tracker",
+                TextInput {
+                    text: "林川已提交SDK鉴权修复，等待我验收。".into(),
+                    source_at_ms: Some(1793239200000),
+                    time_zone: "Asia/Shanghai".into(),
+                },
+                Arc::new(|_, _| {}),
+            )
+            .unwrap();
+        let result = fixture.wait(&run.id);
+        assert_eq!(result.status, "succeeded", "{:?}", result.error_code);
+        assert_eq!(fixture.events("model.jsonl").len(), 1);
+        for table in [
+            "sources",
+            "candidates",
+            "todos",
+            "todo_events",
+            "todo_sources",
+            "tool_calls",
+        ] {
+            let count: i64 = fixture
+                .database()
+                .query_row(&format!("SELECT count(*) FROM {table}"), [], |row| {
+                    row.get(0)
+                })
+                .unwrap();
+            assert_eq!(count, 0, "{table}");
+        }
+    }
     use crate::local_store::{LinkTarget, ModelConfigInput, SignChoice};
     use apple_native_keyring_store::keychain::Store;
     use keyring_core::api::CredentialStoreApi;

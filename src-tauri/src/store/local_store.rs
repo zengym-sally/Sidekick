@@ -289,6 +289,13 @@ struct Workspace {
     backups_directory: File,
     database_identity: mcp_schema::DatabaseIdentity,
 }
+#[cfg(feature = "s33-mcp-ui-verification")]
+#[derive(Clone, Copy)]
+enum VerificationOpen {
+    Mcp,
+    G1,
+}
+
 pub struct AppStore {
     app_dir: PathBuf,
     workspace: Option<Workspace>,
@@ -297,6 +304,8 @@ pub struct AppStore {
     verification_model: Option<ModelConfiguration>,
     #[cfg(feature = "s33-mcp-ui-verification")]
     verification_validate: Option<std::sync::Arc<dyn Fn() -> Result<()> + Send + Sync>>,
+    #[cfg(feature = "s33-mcp-ui-verification")]
+    verification_open: VerificationOpen,
     #[cfg(test)]
     init_fault: Option<InitPhase>,
     #[cfg(test)]
@@ -561,6 +570,8 @@ impl AppStore {
             verification_model: None,
             #[cfg(feature = "s33-mcp-ui-verification")]
             verification_validate: None,
+            #[cfg(feature = "s33-mcp-ui-verification")]
+            verification_open: VerificationOpen::Mcp,
             workspace: None,
             #[cfg(test)]
             init_fault: None,
@@ -629,6 +640,25 @@ impl AppStore {
         model: ModelConfiguration,
         validate: std::sync::Arc<dyn Fn() -> Result<()> + Send + Sync>,
     ) -> Result<Self> {
+        Self::open_verification_kind(app_dir, root, model, validate, VerificationOpen::Mcp)
+    }
+    #[cfg(feature = "s33-mcp-ui-verification")]
+    pub(crate) fn open_g1_verification(
+        app_dir: PathBuf,
+        root: PathBuf,
+        model: ModelConfiguration,
+        validate: std::sync::Arc<dyn Fn() -> Result<()> + Send + Sync>,
+    ) -> Result<Self> {
+        Self::open_verification_kind(app_dir, root, model, validate, VerificationOpen::G1)
+    }
+    #[cfg(feature = "s33-mcp-ui-verification")]
+    fn open_verification_kind(
+        app_dir: PathBuf,
+        root: PathBuf,
+        model: ModelConfiguration,
+        validate: std::sync::Arc<dyn Fn() -> Result<()> + Send + Sync>,
+        kind: VerificationOpen,
+    ) -> Result<Self> {
         validate()?;
         let marker = root.join(ROOT_MARKER);
         let m = fs::symlink_metadata(&marker).map_err(io_error)?;
@@ -642,6 +672,7 @@ impl AppStore {
         }
         validate()?;
         let mut store = Self::open_empty(app_dir)?;
+        store.verification_open = kind;
         validate()?;
         let lock = lock_file(&marker, "ROOT_IN_USE")?;
         store.workspace =
@@ -874,7 +905,11 @@ impl AppStore {
             let version: i64 = db
                 .pragma_query_value(None, "user_version", |r| r.get(0))
                 .map_err(db_error)?;
-            if version != 4 {
+            let allowed = version == 4;
+            #[cfg(feature = "s33-mcp-ui-verification")]
+            let allowed =
+                allowed || matches!(self.verification_open, VerificationOpen::G1) && version == 5;
+            if !allowed {
                 return Err(StoreError::new("VERIFY_INPUT", "隔离验证根版本不符。"));
             }
         }

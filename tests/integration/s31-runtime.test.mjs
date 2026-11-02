@@ -1,14 +1,53 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {createServer} from 'node:http';
-import {spawn} from 'node:child_process';
-import {mkdtempSync,rmSync} from 'node:fs';
+import {spawn,execFileSync} from 'node:child_process';
+import {mkdtempSync,rmSync,realpathSync,readFileSync} from 'node:fs';
+import {randomBytes} from 'node:crypto';
+import {once} from 'node:events';
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {advisorSample,advisorAnswer} from '../fixtures/advisor-trial.mjs';
 const input={runId:'s31-trial',kind:'trial',anchorAtMs:1793239200000,source:{rawText:'我下周五整理清单。',timeZone:'Asia/Shanghai'},snapshot:{provider:{id:'p',network:{timeoutMs:1500,retry:{maxRetries:0}}},model:{id:'logical',apiModelId:'override-wire',capabilities:{toolCall:true}},agent:{agentId:'organizer',revision:'saved',preferences:{detail:'concise',focus:'followups'},supplementalInstructions:'保留核对依据。'}},apiKey:'synthetic-s31'};
 const trackerFacts={version:1,todos:[{id:'sample-action',version:1,title:'整理接入清单',kind:'action',owner:'我',status:'open',submission:'尚未提交',acceptance:'尚未验收'},{id:'sample-followup',version:1,title:'修复SDK鉴权',kind:'followup',owner:'林川',status:'open',submission:'尚未提交',acceptance:'尚未验收'}]};
-async function run(t,request){const cwd=mkdtempSync(join(tmpdir(),'sidekick-s31-fixture-'));t.after(()=>rmSync(cwd,{recursive:true,force:true}));const child=spawn(resolve('build/s0-runtime/node'),[resolve('build/s0-runtime/organizer.mjs')],{env:{PATH:'/usr/bin:/bin',TMPDIR:cwd},stdio:['pipe','pipe','pipe']});t.after(()=>{if(child.exitCode===null)child.kill();});let output='',errors='';child.stdout.on('data',c=>output+=c);child.stderr.on('data',c=>errors+=c);const done=new Promise(resolve=>child.on('close',code=>resolve({code,events:output.trim().split('\n').filter(Boolean).map(s=>JSON.parse(s)),output,errors})));child.stdin.write(JSON.stringify({...request,cwd})+'\n');return done;}
+async function g1Owner(t) {
+ const directory=mkdtempSync(join(tmpdir(),'sidekick-g1-runtime-')),record=join(directory,'model.jsonl'),nonce=randomBytes(24).toString('hex'),script=realpathSync(resolve('tests/fixtures/mcp-trial.mjs'));
+ const child=spawn(resolve('build/s0-runtime/node'),[script,'model',record,'g1',join(directory,'marker'),nonce],{env:{PATH:'/usr/bin:/bin'},stdio:['ignore','pipe','pipe']});
+ t.after(async()=>{if(child.exitCode===null&&child.signalCode===null){const done=once(child,'exit');child.kill('SIGTERM');await done;}rmSync(directory,{recursive:true,force:true});});
+ let output='',stderr='';child.stdout.on('data',bytes=>output+=bytes);child.stderr.on('data',bytes=>stderr+=bytes);
+ const deadline=Date.now()+5000;while(!output.includes('\n')){assert.equal(child.exitCode,null,stderr);assert.ok(Date.now()<deadline);await new Promise(done=>setTimeout(done,10));}
+ const url=output.trim().split('\n')[0],pin={pid:child.pid,port:Number(new URL(url).port),nonce,script,command:execFileSync('/bin/ps',['-p',String(child.pid),'-o','uid=,lstart=,command='],{encoding:'utf8',env:{PATH:'/usr/bin:/bin'}}).trim()};
+ const count=()=>{try{return readFileSync(record,'utf8').trim().split('\n').filter(Boolean).map(line=>JSON.parse(line)).filter(row=>row.type==='g1-http').length;}catch(error){if(error.code==='ENOENT')return 0;throw error;}};
+ return {url,pin,count};
+}
+function g1Tracker(url,id) {
+ const request=structuredClone(input);request.runId=id;request.snapshot.provider.baseUrl=url;request.snapshot.agent.agentId='tracker';request.snapshot.agent.supplementalInstructions='S36_CASE=ok';request.source.rawText='林川已提交SDK鉴权修复，等待我验收。';request.snapshot.trackerSample=structuredClone(trackerFacts);return request;
+}
+test('g1 transport uses a paired private owner without adding role request flags',async t=>{
+ const owner=await g1Owner(t),request=g1Tracker(owner.url,'g1_private_positive');
+ const result=await run(t,request,{args:['--run',request.runId,'--s36-native-g1'],env:{SIDEKICK_S36_NATIVE_MODEL_PIN:JSON.stringify({scope:'controlled-native-g1',owner:owner.pin})}});
+ assert.equal(result.code,0,JSON.stringify(result.events));assert.equal(result.errors,'');assert.equal(result.events.at(-1).data.roleResult.kind,'tracker');assert.equal(owner.count(),1);assert.ok(!result.events.some(event=>['worker','mcp_begin','mcp_ready'].includes(event.type)));
+ assert.ok(!result.output.includes(owner.pin.nonce));assert.ok(!result.output.includes('SIDEKICK_S36_NATIVE_MODEL_PIN'));
+});
+test('g1 transport rejects malformed, single-sided and ambiguous controls before any HTTP',async t=>{
+ const owner=await g1Owner(t),id='g1_private_negative',args=['--run',id,'--s36-native-g1'],control={scope:'controlled-native-g1',owner:owner.pin},encode=value=>({SIDEKICK_S36_NATIVE_MODEL_PIN:JSON.stringify(value)});
+ const edits=[
+  {args:[],env:encode(control)},
+  {args,env:{}},
+  {args,env:{SIDEKICK_S36_NATIVE_MODEL_PIN:''}},
+  {args,env:{SIDEKICK_S36_NATIVE_MODEL_PIN:'{'}},
+  {args,env:encode({...control,scope:'other'})},
+  {args,env:encode({...control,extra:true})},
+  {args,env:encode({...control,owner:{...owner.pin,extra:true}})},
+  {args,env:encode({...control,owner:{}})},
+  {args,env:{SIDEKICK_S36_NATIVE_MODEL_PIN:'x'.repeat(16385)}},
+  {args:['--run','different','--s36-native-g1'],env:encode(control)},
+  {args:[...args,'--s36-native-g1'],env:encode(control)},
+  ...[false,null,{}].map(value=>({args,env:encode(control),edit:request=>request.verificationNativeModel=value})),
+ ];
+ for(const options of edits){const request=g1Tracker(owner.url,id);options.edit?.(request);const result=await run(t,request,options);assert.equal(result.code,1);assert.equal(result.events.at(-1).code,'RUNTIME_PROTOCOL');assert.equal(result.errors,'');assert.equal(owner.count(),0);assert.ok(!result.events.some(event=>['worker','result','mcp_begin','mcp_ready'].includes(event.type)));}
+});
+async function run(t,request,options={}){const cwd=mkdtempSync(join(tmpdir(),'sidekick-s31-fixture-'));t.after(()=>rmSync(cwd,{recursive:true,force:true}));const child=spawn(resolve('build/s0-runtime/node'),[resolve('build/s0-runtime/organizer.mjs'),...(options.args||[])],{env:{PATH:'/usr/bin:/bin',TMPDIR:cwd,...options.env},stdio:['pipe','pipe','pipe']});t.after(()=>{if(child.exitCode===null)child.kill();});let output='',errors='';child.stdout.on('data',c=>output+=c);child.stderr.on('data',c=>errors+=c);const done=new Promise(resolve=>child.on('close',code=>resolve({code,events:output.trim().split('\n').filter(Boolean).map(s=>JSON.parse(s)),output,errors})));child.stdin.write(JSON.stringify({...request,cwd})+'\n');return done;}
 test('trial uses the actual role model and preferences with no tools or business sink',async t=>{
  let body;const server=createServer(async(req,res)=>{let raw='';for await(const c of req)raw+=c;body=JSON.parse(raw);res.writeHead(200,{'content-type':'text/event-stream'});const text=JSON.stringify({candidates:[{title:'整理清单',kind:'action',owner:'我',evidence:'我下周五整理清单。',dueExpression:'下周五',followupExpression:null}]});res.end(`data: ${JSON.stringify({choices:[{index:0,delta:{role:'assistant',content:text},finish_reason:null}]})}\n\ndata: ${JSON.stringify({choices:[{index:0,delta:{},finish_reason:'stop'}]})}\n\ndata: [DONE]\n\n`);});await new Promise(done=>server.listen(0,'127.0.0.1',done));t.after(()=>{server.closeAllConnections();server.close();});
  const request=structuredClone(input);request.snapshot.provider.baseUrl=`http://127.0.0.1:${server.address().port}/v1`;const result=await run(t,request);assert.equal(result.code,0);assert.equal(body.model,'override-wire');assert.ok(!body.tools?.length);assert.match(JSON.stringify(body.messages),/DETAIL_LEVEL=concise/);assert.match(JSON.stringify(body.messages),/WORK_FOCUS=followups/);assert.match(JSON.stringify(body.messages),/保留核对依据/);assert.equal(result.events.at(-1).data.candidates.length,1);assert.ok(!result.output.includes('synthetic-s31'));assert.equal(result.errors,'');

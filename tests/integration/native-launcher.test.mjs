@@ -25,20 +25,30 @@ const { syncBuiltinESMExports } = require('node:module');
 const note = value => fs.appendFileSync(process.env.NATIVE_TEST_AUDIT, JSON.stringify(value) + '\\n', { mode: 0o600 });
 const block = kind => (...args) => { note({ kind }); throw new Error('TEST_NATIVE_FORBIDDEN_' + kind); };
 const originalExec = cp.execFileSync;
+let appIdentityObservations = 0;
 cp.execFileSync = (file, args = [], options = {}) => {
   if (file === '/usr/bin/open') {
     if (process.env.NATIVE_TEST_STALE) {
       const stale = JSON.parse(process.env.NATIVE_TEST_STALE);
       note({ kind: 'simulated-open' });
-      fs.writeFileSync(stale.path, JSON.stringify(stale.info), { mode: 0o600, flag: 'wx' });
+      if (stale.startup) {
+        fs.writeFileSync(stale.startup.path, stale.partialStartup ? '' : JSON.stringify(stale.startup.data), { mode: 0o600, flag: 'wx' });
+        if (stale.partialStartup && !stale.neverComplete) setTimeout(() => fs.writeFileSync(stale.startup.path, JSON.stringify(stale.startup.data)), 150);
+      }
+      fs.writeFileSync(stale.path, stale.partialReady ? '' : JSON.stringify(stale.info), { mode: 0o600, flag: 'wx' });
+      if (stale.partialReady && !stale.neverComplete) setTimeout(() => fs.writeFileSync(stale.path, JSON.stringify(stale.info)), 150);
       return options.encoding ? '' : Buffer.alloc(0);
     }
     return block('open')();
   }
   if (process.env.NATIVE_TEST_STALE && file === '/bin/ps') {
     const stale = JSON.parse(process.env.NATIVE_TEST_STALE);
-    if (args[0] === '-p' && args[1] === String(stale.info.pid) && args.includes('command=')) {
+    if (args[0] === '-p' && args[1] === String(stale.info.pid) && (args.includes('command=') || args.includes('uid=,lstart=,command='))) {
       note({ kind: 'simulated-app-ps' });
+      if (args.includes('uid=,lstart=,command=')) {
+        appIdentityObservations++;
+        return appIdentityObservations === 1 ? stale.identity : stale.readyIdentity || stale.identity;
+      }
       return stale.command;
     }
   }
@@ -75,21 +85,21 @@ async function tree(path, ignored = new Set()) {
   return entries;
 }
 
-async function setup(t) {
+async function setup(t, g1 = false) {
   await mkdir(artifacts, { recursive: true, mode: 0o700 });
   const result = await mkdtemp(join(artifacts, 'case-'));
   const base = await realpath(await mkdtemp(join(await realpath(tmpdir()), 'sidekick-native-launcher-')));
   await chmod(base, 0o700);
   const root = join(base, 'app'), evidence = join(base, 'evidence');
   await mkdir(root, { mode: 0o700 }); await mkdir(evidence, { mode: 0o700 });
-  const nonce = randomBytes(24).toString('hex'), marker = join(root, '.p6-native-verification');
+  const nonce = randomBytes(24).toString('hex'), marker = join(root, g1 ? '.s36-native-verification' : '.p6-native-verification');
   await writeFile(marker, nonce, { mode: 0o600, flag: 'wx' });
   await writeFile(join(root, 'native-info-existing.json'), '{"syntheticExistingInfo":true}', { mode: 0o600, flag: 'wx' });
   const fixture = await realpath(join(bundle, 'Contents/Resources/s33-ui/mcp-trial.mjs'));
   const fixtureSha256 = digest(await readFile(fixture));
   assert.equal(fixtureSha256, digest(await readFile('tests/fixtures/mcp-trial.mjs')), 'build the dedicated verification package before launcher tests');
   const modelLog = join(base, 'model.jsonl'), bundledNode = join(bundle, 'Contents/Resources/s0-runtime/node');
-  const model = spawn(bundledNode, [fixture, 'model', modelLog, 'normal', 'launcher-negative', nonce], { env: { PATH: '/usr/bin:/bin', TMPDIR: base }, stdio: ['ignore', 'pipe', 'pipe'] });
+  const model = spawn(bundledNode, [fixture, 'model', modelLog, g1 ? 'g1' : 'normal', 'launcher-negative', nonce], { env: { PATH: '/usr/bin:/bin', TMPDIR: base }, stdio: ['ignore', 'pipe', 'pipe'] });
   let stdout = '', stderr = '';
   model.stdout.on('data', bytes => { stdout += bytes; }); model.stderr.on('data', bytes => { stderr += bytes; });
   const stop = async () => { if (model.exitCode === null && model.signalCode === null) { const exited = once(model, 'exit'); model.kill('SIGTERM'); await exited; } };
@@ -100,6 +110,7 @@ async function setup(t) {
   assert.ok(listener.split('\n').includes('p' + model.pid));
   assert.throws(() => process.kill(unavailablePid, 0), { code: 'ESRCH' });
   const receipt = { layer: 'launcher rejection tests; synthetic model; no native App', bundle, executable, model: { port, pid: model.pid, command, nonce, script: fixture }, root, base, nonce, fixtureSha256, executableSha256: digest(await readFile(executable)), launched: [{ pid: unavailablePid }] };
+  if (g1) receipt.scope = 'controlled-native-g1';
   const receiptPath = join(evidence, 'owned-launch.json'), audit = join(evidence, 'test-audit.ndjson'), preload = join(evidence, 'test-preload.cjs');
   const save = () => writeFile(receiptPath, JSON.stringify(receipt, null, 2) + '\n', { mode: 0o600 });
   await save(); await writeFile(preload, preloadSource, { mode: 0o600, flag: 'wx' });
@@ -108,7 +119,7 @@ async function setup(t) {
 }
 
 async function invoke(state, { dimensions = ['640', '900'], extra = [], stale = null } = {}) {
-  const ignored = new Set([state.audit, ...(stale ? [stale.path] : [])]);
+  const ignored = new Set([state.audit, ...(stale ? [stale.path, ...(stale.startup ? [stale.startup.path] : [])] : [])]);
   const before = await tree(state.base, ignored);
   const result = spawnSync(process.execPath, ['--require', state.preload, program, '--reopen', state.evidence, ...dimensions, ...extra], { encoding: 'utf8', env: { PATH: '/usr/bin:/bin', TMPDIR: state.base, NATIVE_TEST_AUDIT: state.audit, ...(stale ? { NATIVE_TEST_STALE: JSON.stringify(stale) } : {}) }, timeout: 10000 });
   await writeFile(join(state.result, 'runner-stdout.log'), result.stdout || '');
@@ -226,6 +237,74 @@ for (const dimensions of [['640', '1000'], ['1440', '900'], ['0', '900'], ['640'
 test('extra CLI arguments are rejected before trusting a receipt', async t => {
   const state = await setup(t);
   await rejected(state, /Invalid native reopen arguments/, { extra: ['unowned-extra'] });
+});
+
+function g1Simulation(state) {
+  const pid = unavailablePid - 1, scope = 'controlled-native-g1';
+  const launchScope = scope + ':' + state.receipt.model.port + ':' + state.model.pid;
+  const command = [executable, '--s33-mcp-ui', state.root, state.nonce, '640', '900', launchScope, '--reopen'].join(' ');
+  const identity = String(process.getuid()) + ' Mon Nov 2 00:00:00 2026 ' + command;
+  const startup = { pid, uid: process.getuid(), identity, command, identifier: 'com.sidekick.s33.ui.verify', scope, launchScope, root: state.root, nonce: state.nonce };
+  return {
+    path: join(state.root, 'native-info-g1-simulated.json'), command, identity,
+    startup: { path: join(state.root, 'native-startup-g1-simulated.json'), data: startup },
+    info: { identifier: 'com.sidekick.s33.ui.verify', workspace: join(state.root, 'workspace'), modelOwner: { pid: state.model.pid, nonce: state.nonce }, pid, scope, startupIdentity: startup, schemaVersion: 5, geometryConfirmed: true, physicalInnerSize: { width: 640, height: 900 }, scale: 1, outerRect: { x: 0, y: 0, width: 640, height: 900 }, primaryMonitor: { x: 0, y: 0, width: 1920, height: 1080 } },
+  };
+}
+test('g1 launcher reopens its own scope with startup identity in a simulation, without native GUI evidence', async t => {
+  const state = await setup(t, true), simulated = g1Simulation(state);
+  const result = await invoke(state, { stale: simulated });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.audit.filter(row => row.kind === 'simulated-open').length, 1);
+  assert.equal(result.audit.filter(row => ['open', 'spawn', 'network'].includes(row.kind)).length, 0);
+  assert.equal(result.modelRequests.length, 0);
+  const receipt = JSON.parse(await readFile(state.receiptPath, 'utf8'));
+  assert.equal(receipt.scope, 'controlled-native-g1');
+  assert.equal(receipt.launched.at(-1).initialIdentity.identity, simulated.identity);
+});
+test('g1 launcher rejects cross-scope marker reuse before simulated open', async t => {
+  const state = await setup(t);
+  state.receipt.scope = 'controlled-native-g1'; await state.save();
+  await rejected(state, /scope|ENOENT|marker/i);
+});
+test('g1 launcher rejects a startup identity that disagrees with its root nonce', async t => {
+  const state = await setup(t, true), simulated = g1Simulation(state);
+  simulated.startup.data = { ...simulated.startup.data, nonce: '0'.repeat(48) };
+  await rejected(state, /startup|identity/i, { stale: simulated });
+});
+for (const pending of ['partialStartup', 'partialReady']) test('g1 launcher retries a visible but unfinished ' + pending + ' receipt', async t => {
+  const state = await setup(t, true), simulated = g1Simulation(state);
+  simulated[pending] = true;
+  const result = await invoke(state, { stale: simulated });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.audit.filter(row => row.kind === 'simulated-open').length, 1);
+  assert.equal(result.modelRequests.length, 0);
+});
+test('g1 launcher bounds a startup receipt that never becomes complete', async t => {
+  const state = await setup(t, true), simulated = g1Simulation(state);
+  simulated.partialStartup = true; simulated.neverComplete = true;
+  const started = performance.now();
+  const result = await invoke(state, { stale: simulated });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /startup|incomplete/i);
+  assert.ok(performance.now() - started >= 7000, 'incomplete receipt was rejected before its bounded publication wait');
+  assert.ok(performance.now() - started < 10000);
+  assert.ok(!result.stdout.includes('"ready":true'));
+  assert.equal(result.modelRequests.length, 0);
+  await result.unchanged();
+});
+for (const field of ['start-time', 'uid']) test('g1 launcher rejects ready process ' + field + ' drift after a valid startup observation', async t => {
+  const state = await setup(t, true), simulated = g1Simulation(state);
+  simulated.readyIdentity = field === 'uid' ? simulated.identity.replace(/^\d+/, String(process.getuid() + 1)) : simulated.identity.replace('00:00:00', '00:00:01');
+  const result = await invoke(state, { stale: simulated });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /identity/i);
+  assert.ok(!result.stdout.includes('"ready":true'));
+  assert.equal(result.modelRequests.length, 0);
 });
 
 test('stale native-info dimensions are rejected in a test-only LaunchServices simulation; this is not native GUI evidence', async t => {

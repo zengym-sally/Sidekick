@@ -75,9 +75,9 @@ async function owner(t, mode = 'normal', target = '', port = 0) {
   return startChild(t, script, (nonce, selectedPort) => [record, mode, nonce, target, String(selectedPort)], record, port);
 }
 
-async function fixture(t, nonceEnabled = true) {
+async function fixture(t, nonceEnabled = true, mode = 'normal') {
   const base = await directory(), record = join(base, 'fixture.ndjson');
-  return startChild(t, fixtureScript, nonce => ['model', record, 'normal', join(base, 'marker'), ...(nonceEnabled ? [nonce] : [])], record);
+  return startChild(t, fixtureScript, nonce => ['model', record, mode, join(base, 'marker'), ...(nonceEnabled ? [nonce] : [])], record);
 }
 
 const count = (notes, type) => notes.filter(note => note.type === type).length;
@@ -114,6 +114,85 @@ test('legacy fixture remains available without the native nonce argument', async
   const controlled = await fixture(t, false);
   assert.equal((await fetch(...request(controlled))).status, 200);
   assert.equal(count(await controlled.notes(), 'model'), 1);
+});
+
+const g1Contexts = {
+  tracker: { source: '林川已提交SDK鉴权修复，等待我验收。', syntheticTodos: { version: 1 } },
+  advisor: { syntheticAdvice: { snapshotId: 'verification_g1_advisor', date: '2026-11-02', timeZone: 'Asia/Shanghai' } },
+  today: { todayAdvice: { snapshotId: 'verification_g1_today', date: '2026-11-02', timeZone: 'UTC', todos: [{ id: 'g1-today-action', version: 7, kind: 'action', status: 'open', dueDate: null, followupDate: null, overdue: false }] } },
+};
+function g1Request(controlled, context, scenario, runId, options = {}) {
+  const frozen = structuredClone(context);
+  if (frozen.todayAdvice) frozen.todayAdvice.snapshotId = runId;
+  if (frozen.syntheticAdvice) frozen.syntheticAdvice.snapshotId = runId;
+  return request(controlled, {
+    headers: { 'content-type': 'application/json', 'x-sidekick-g1-run-id': runId },
+    body: JSON.stringify({ model: 'synthetic', stream: true, messages: [
+      { role: 'system', content: `User preferences: DETAIL_LEVEL=brief; WORK_FOCUS=balanced. Additional guidance: ${JSON.stringify(`S36_CASE=${scenario}`)}\nReturn strict JSON.` },
+      { role: 'user', content: JSON.stringify(frozen) },
+    ] }),
+    ...options,
+  });
+}
+async function modelValue(response) {
+  assert.equal(response.status, 200);
+  const chunks = (await response.text()).split('\n').filter(line => line.startsWith('data: ') && line !== 'data: [DONE]').map(line => JSON.parse(line.slice(6)));
+  return JSON.parse(chunks.map(chunk => chunk.choices[0].delta.content || '').join(''));
+}
+for (const role of ['tracker', 'advisor', 'today']) {
+  test(`g1 fixture returns the ${role} schema through the owned transport`, async t => {
+    const controlled = await fixture(t, true, 'g1'), fetchOwned = await nativeFetch(controlled.pin);
+    const result = await modelValue(await fetchOwned(...g1Request(controlled, g1Contexts[role], 'ok', `verification_g1_${role}`)));
+    if (role === 'tracker') {
+      assert.deepEqual(Object.keys(result), ['suggestions']);
+      assert.equal(result.suggestions[0].todoId, 'sample-followup');
+      assert.equal(result.suggestions[0].change, 'submission');
+    } else {
+      assert.deepEqual(Object.keys(result).sort(), ['date', 'ranking', 'snapshotId', 'timeZone']);
+      assert.equal(result.snapshotId, g1Contexts[role][role === 'advisor' ? 'syntheticAdvice' : 'todayAdvice'].snapshotId);
+      if (role === 'today') assert.deepEqual(result.ranking.map(item => [item.todoId, item.todoVersion]), [['g1-today-action', 7]]);
+      else assert.deepEqual(result.ranking.map(item => item.todoId), ['advisor-action', 'advisor-followup', 'advisor-undated']);
+    }
+    assert.equal(count(await controlled.notes(), 'model'), 1);
+  });
+}
+test('g1 fixture requires a native nonce before it can listen', async t => {
+  await assert.rejects(fixture(t, false, 'g1'), /exited before ready/);
+});
+test('g1 fixture scenarios reset per request without changing the model owner', async t => {
+  const controlled = await fixture(t, true, 'g1'), fetchOwned = await nativeFetch(controlled.pin);
+  const identity = ownerCommand(controlled.child.pid);
+  const successful = await modelValue(await fetchOwned(...g1Request(controlled, g1Contexts.today, 'ok', 'verification_g1_first')));
+  assert.equal(successful.ranking.length, 1);
+  const empty = await modelValue(await fetchOwned(...g1Request(controlled, g1Contexts.today, 'empty', 'verification_g1_empty')));
+  assert.deepEqual(empty.ranking, []);
+  assert.equal((await fetchOwned(...g1Request(controlled, g1Contexts.today, 'fail', 'verification_g1_fail'))).status, 500);
+  assert.equal((await fetchOwned(...g1Request(controlled, g1Contexts.today, 'unknown', 'verification_g1_unknown'))).status, 400);
+  const restored = await modelValue(await fetchOwned(...g1Request(controlled, g1Contexts.today, 'ok', 'verification_g1_restored')));
+  assert.equal(restored.snapshotId, 'verification_g1_restored');
+  assert.deepEqual({ ...restored, snapshotId: successful.snapshotId }, successful);
+  assert.equal(ownerCommand(controlled.child.pid), identity);
+});
+test('g1 fixture hold records ready then follows actual client cancellation', async t => {
+  const controlled = await fixture(t, true, 'g1'), fetchOwned = await nativeFetch(controlled.pin);
+  const controller = new AbortController(), runId = 'verification_g1_cancel';
+  const pending = fetchOwned(...g1Request(controlled, g1Contexts.today, 'hold', runId, { signal: controller.signal }));
+  void pending.catch(() => {});
+  await waitFor(async () => (await controlled.notes()).some(note => note.type === 'g1-ready' && note.runId === runId), 'G1 hold never became ready');
+  const cancelled = assert.rejects(pending, error => error.name === 'AbortError');
+  controller.abort();
+  await cancelled;
+  await waitFor(async () => (await controlled.notes()).some(note => note.type === 'g1-hold-ended' && note.runId === runId && note.reason === 'client-closed'), 'G1 hold did not observe client close');
+});
+test('g1 fixture hold has a real bounded 25-second failure instead of a late success', { timeout: 40000 }, async t => {
+  const controlled = await fixture(t, true, 'g1'), fetchOwned = await nativeFetch(controlled.pin);
+  const started = performance.now();
+  const response = await fetchOwned(...g1Request(controlled, g1Contexts.today, 'hold', 'verification_g1_deadline'));
+  assert.equal(response.status, 504);
+  await response.text();
+  assert.ok(performance.now() - started >= 24000);
+  assert.ok(performance.now() - started < 30000);
+  assert.ok((await controlled.notes()).some(note => note.type === 'g1-hold-ended' && note.reason === 'deadline'));
 });
 
 test('fixture PID notes expose the synthetic cwd and label and detect a leaked P6 token', async t => {

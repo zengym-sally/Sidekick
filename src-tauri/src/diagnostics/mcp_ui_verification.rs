@@ -6,7 +6,7 @@ use std::path::PathBuf;
 use tauri::Manager;
 
 fn native_scope(scope: &str) -> Result<Option<(u16, u32)>, &'static str> {
-    if !scope.starts_with("controlled-native-mcp:") {
+    if !scope.starts_with("controlled-native-mcp:") && !scope.starts_with("controlled-native-g1:") {
         return Ok(None);
     }
     let values = scope.split(':').collect::<Vec<_>>();
@@ -65,6 +65,7 @@ pub(crate) fn prepare(app: &tauri::App) -> Result<LocalState, Box<dyn std::error
         return Err("Invalid verification dimensions or scope".into());
     }
     let upgrade = upgrade_policy(&args[6])?;
+    let g1 = args[6].starts_with("controlled-native-g1:");
     let resources = app.path().resource_dir()?;
     let local = if let Some((port, pid)) = native_scope(&args[6])? {
         let owner = crate::verification_root::NativeModelOwner::capture(
@@ -74,7 +75,11 @@ pub(crate) fn prepare(app: &tauri::App) -> Result<LocalState, Box<dyn std::error
             resources.join("s33-ui/mcp-trial.mjs"),
         )
         .map_err(|e| e.code)?;
-        crate::verification_root::open_native_local(&root, &args[3], args.len() == 8, owner)
+        if g1 {
+            crate::verification_root::open_g1_native_local(&root, &args[3], args.len() == 8, owner)
+        } else {
+            crate::verification_root::open_native_local(&root, &args[3], args.len() == 8, owner)
+        }
     } else {
         crate::verification_root::open_local(
             &root,
@@ -88,9 +93,23 @@ pub(crate) fn prepare(app: &tauri::App) -> Result<LocalState, Box<dyn std::error
     let status = local
         .access(|s| s.mcp_storage_status())
         .map_err(|e| e.code)?;
-    if upgrade && status.version != 4 || !(3..=4).contains(&status.version) {
+    let version_allowed = if g1 {
+        status.version == 4 || args.len() == 8 && status.version == 5
+    } else {
+        (!upgrade || status.version == 4) && (3..=4).contains(&status.version)
+    };
+    if !version_allowed {
         return Err("Unexpected verification storage version".into());
     }
+    let startup = if g1 {
+        Some(
+            local
+                .native_startup_identity(&args[6])
+                .map_err(|error| error.code)?,
+        )
+    } else {
+        None
+    };
     let window = app
         .get_webview_window("main")
         .ok_or("Missing main window")?;
@@ -140,7 +159,11 @@ pub(crate) fn prepare(app: &tauri::App) -> Result<LocalState, Box<dyn std::error
             let now = std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)?
                 .as_nanos();
-            let report = serde_json::json!({"layer":"real native verification package; production invoke and MCP host","pid":std::process::id(),"identifier":identifier,"workspace":root.canonicalize()?.join("workspace"),"schemaVersion":schema_version,"node":resources.join("s0-runtime/node"),"service":resources.join("s33-ui/service.mjs"),"serviceLog":root.canonicalize()?.join("service.jsonl"),"requestedLogicalSize":{"width":width,"height":height},"physicalInnerSize":{"width":physical.width,"height":physical.height},"scale":scale,"geometryConfirmed":true,"credentials":if ready_local.native_model_pin().is_some(){"fixed synthetic only; model files and Keychain forbidden"}else{"disabled; model files forbidden; no tools/call"},"modelOwner":ready_local.native_model_pin(),"outerRect":{"x":position.x,"y":position.y,"width":outer.width,"height":outer.height},"primaryMonitor":{"x":monitor.position().x,"y":monitor.position().y,"width":monitor.size().width,"height":monitor.size().height},"nativeService":resources.join("s33-ui/mcp-trial.mjs")});
+            let mut report = serde_json::json!({"layer":"real native verification package; production invoke and MCP host","pid":std::process::id(),"identifier":identifier,"workspace":root.canonicalize()?.join("workspace"),"schemaVersion":schema_version,"node":resources.join("s0-runtime/node"),"service":resources.join("s33-ui/service.mjs"),"serviceLog":root.canonicalize()?.join("service.jsonl"),"requestedLogicalSize":{"width":width,"height":height},"physicalInnerSize":{"width":physical.width,"height":physical.height},"scale":scale,"geometryConfirmed":true,"credentials":if ready_local.native_model_pin().is_some(){"fixed synthetic only; model files and Keychain forbidden"}else{"disabled; model files forbidden; no tools/call"},"modelOwner":ready_local.native_model_pin(),"outerRect":{"x":position.x,"y":position.y,"width":outer.width,"height":outer.height},"primaryMonitor":{"x":monitor.position().x,"y":monitor.position().y,"width":monitor.size().width,"height":monitor.size().height},"nativeService":resources.join("s33-ui/mcp-trial.mjs")});
+            if let Some(startup) = startup {
+                report["scope"] = "controlled-native-g1".into();
+                report["startupIdentity"] = startup;
+            }
             let mut file = OpenOptions::new()
                 .create_new(true)
                 .write(true)
@@ -162,6 +185,21 @@ pub(crate) fn prepare(app: &tauri::App) -> Result<LocalState, Box<dyn std::error
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn verification_g1_scope_has_a_fixed_owned_native_entry() {
+        assert!(native_scope("controlled-native-g1:1493:123")
+            .unwrap()
+            .is_some());
+        assert!(upgrade_policy("controlled-native-g1:1493:123").unwrap());
+        for scope in [
+            "controlled-native-g1:0:123",
+            "controlled-native-g1:1493:0",
+            "controlled-native-g1:1493:123:extra",
+            "controlled-native-g1:https://example.invalid:123",
+        ] {
+            assert!(upgrade_policy(scope).is_err(), "{scope}");
+        }
+    }
     #[test]
     fn verification_scope_keeps_old_v4_and_new_v3_with_no_arbitrary_mode() {
         for (scope, version) in [

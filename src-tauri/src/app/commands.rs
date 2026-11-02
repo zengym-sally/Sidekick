@@ -39,6 +39,26 @@ impl LocalState {
             .as_ref()
             .and_then(|guard| guard.native_pin())
     }
+    #[cfg(feature = "s33-mcp-ui-verification")]
+    pub(crate) fn native_g1(&self) -> bool {
+        self.verification
+            .as_ref()
+            .map(|guard| guard.native_g1())
+            .unwrap_or(false)
+    }
+    #[cfg(feature = "s33-mcp-ui-verification")]
+    pub(crate) fn native_startup_identity(
+        &self,
+        scope: &str,
+    ) -> Result<serde_json::Value, StoreError> {
+        self.verification
+            .as_ref()
+            .ok_or(StoreError {
+                code: "VERIFY_INPUT",
+                message: "隔离验证根标记不符。",
+            })?
+            .native_startup_identity(scope)
+    }
     pub(crate) fn access<T>(
         &self,
         action: impl FnOnce(&mut AppStore) -> Result<T, StoreError>,

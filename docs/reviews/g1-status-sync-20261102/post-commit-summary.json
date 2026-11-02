@@ -1,0 +1,690 @@
+{
+  "scope": "Historical evidence consolidation at current published Git baseline; no new functional/full/native/real-model validation in this docs sync",
+  "asOfDate": "2026-11-02",
+  "asOfHead": "40505eafc77e04f32c24c195f78a3cf943362380",
+  "publishedRemoteMainObserved": "40505eafc77e04f32c24c195f78a3cf943362380",
+  "commitAncestryVerified": true,
+  "slices": [
+    {
+      "slice": "N1",
+      "commit": "951d500f49bbe987de7bd99d8ecc29ebe2e48c50",
+      "exactHeadReport": {
+        "path": "build/night-20261101-s35/n1-exact-head/prepared/report.json",
+        "bytes": 16853,
+        "sha256": "b32739b9dcf7d9033b0bd995fc2659b37d28188189de1adff4329374d4a0fe68"
+      },
+      "conclusion": "pass",
+      "actualPreparationAndFocusedCommands": [
+        {
+          "command": [
+            "npm",
+            "ci",
+            "--ignore-scripts"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 2.895
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "probe:prepare-cli"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 12.573
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "probe:prepare-pi"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 20.879
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "probe:bundle"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 1.032
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "check:structure"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 0.296
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "check:docs"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 0.164
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "typecheck"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 3.865
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "test:s31-domain"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 0.282
+        },
+        {
+          "command": [
+            "node",
+            "--test",
+            "--test-timeout=15000",
+            "tests/integration/s31-runtime.test.mjs"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 7.129
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "test:s31-store"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 24.751
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "probe:native",
+            "--",
+            "tracker_trial_tests"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 4.233
+        }
+      ],
+      "focusedResults": {
+        "s31-domain": {
+          "node": {
+            "tests": 65,
+            "pass": 65,
+            "fail": 0,
+            "cancelled": 0,
+            "skipped": 0,
+            "todo": 0
+          },
+          "rustSummary": []
+        },
+        "s31-runtime": {
+          "node": {
+            "tests": 5,
+            "pass": 5,
+            "fail": 0,
+            "cancelled": 0,
+            "skipped": 0,
+            "todo": 0
+          },
+          "rustSummary": []
+        },
+        "s31-store": {
+          "node": {
+            "tests": 0,
+            "pass": 0,
+            "fail": 0,
+            "cancelled": 0,
+            "skipped": 0,
+            "todo": 0
+          },
+          "rustSummary": [
+            "test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 219 filtered out; finished in 1.17s"
+          ]
+        },
+        "tracker-rust": {
+          "node": {
+            "tests": 0,
+            "pass": 0,
+            "fail": 0,
+            "cancelled": 0,
+            "skipped": 0,
+            "todo": 0
+          },
+          "rustSummary": [
+            "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 225 filtered out; finished in 2.06s"
+          ]
+        }
+      },
+      "fullRerunOnExactHead": false,
+      "priorIndependentFull": {
+        "report": {
+          "path": "build/night-20261101-s35/n1-full/report.json",
+          "bytes": 48181,
+          "sha256": "714ced708caa3455ccc4238c300a361f1b9bc49adb9b5ebd0d20f98dbc0a6625"
+        },
+        "execution": {
+          "command": [
+            "npm",
+            "run",
+            "check"
+          ],
+          "fullAttempt": 1,
+          "startedUtc": "2026-11-01T16:16:20.528186+00:00",
+          "finishedUtc": "2026-11-01T16:27:08.724403+00:00",
+          "exitCode": 0,
+          "elapsedSeconds": 648.193
+        },
+        "node": {
+          "tests": 688,
+          "suites": 0,
+          "pass": 688,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0,
+          "summaryGroups": 27
+        },
+        "rust": {
+          "featureGuards": "17 passed; 0 failed; 0 ignored; 229 filtered out; 34.71s",
+          "defaultLibrary": "227 passed; 0 failed; 2 ignored; 0 filtered out; 288.30s",
+          "separateSyntheticBudgetChild": "1 passed; 0 failed; 0 ignored; 228 filtered out; 3.93s",
+          "ignored": [
+            {
+              "line": 1724,
+              "text": "test runtime_host::tests::s2_live_text_preview_sign_and_restart ... ignored, explicit real model integration using the owner-selected private file"
+            },
+            {
+              "line": 1725,
+              "text": "test runtime_host::tests::s31_live_isolated_organizer_trial_and_configuration_reopen ... ignored, explicit real model trial using the owner-selected private file"
+            }
+          ],
+          "clippy": "original full ran all-targets -D warnings and s33-mcp-verification,s33-mcp-ui-verification all-targets -D warnings; both stages completed with no Rust warning"
+        }
+      },
+      "boundary": "Unprepared cold structure failure remains failed; standard preparation then focus passed."
+    },
+    {
+      "slice": "N2",
+      "commit": "c783c8560cde2269eed721ee206d53b0f7e022cf",
+      "exactHeadReport": {
+        "path": "build/night-20261101-s35/n2-exact-head/report.json",
+        "bytes": 12541,
+        "sha256": "60770ae8b717e5342b8673d43da0f0ce9ffb7609d95627019d602251717eab98"
+      },
+      "conclusion": "pass",
+      "actualPreparationAndFocusedCommands": [
+        {
+          "command": [
+            "npm",
+            "ci",
+            "--ignore-scripts"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 2.995
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "probe:prepare-cli"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 2.842
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "probe:prepare-pi"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 24.666
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "probe:bundle"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 1.032
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "check:structure"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 1.11
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "check:docs"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 1.118
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "typecheck"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 4.28
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "test:s31-domain"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 1.122
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "test:s31-runtime"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 21.155
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "test:s31-store"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 25.672
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "probe:native",
+            "--",
+            "advisor_trial_tests"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 7.457
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "probe:native",
+            "--",
+            "tracker_trial_tests"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 3.226
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "probe:native",
+            "--",
+            "formal_terminal_write_failure_retains_the_slot_until_reopen"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 4.282
+        }
+      ],
+      "focusedResults": {
+        "node": {
+          "s31-domain": {
+            "tests": 183,
+            "pass": 183,
+            "fail": 0,
+            "skipped": 0,
+            "cancelled": 0,
+            "todo": 0
+          },
+          "s31-runtime": {
+            "tests": 10,
+            "pass": 10,
+            "fail": 0,
+            "skipped": 0,
+            "cancelled": 0,
+            "todo": 0
+          }
+        },
+        "rust": {
+          "s31-store": {
+            "passed": 14,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filteredOut": 225
+          },
+          "advisor-host": {
+            "passed": 6,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filteredOut": 233
+          },
+          "tracker-host": {
+            "passed": 4,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filteredOut": 235
+          },
+          "formal-terminal": {
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filteredOut": 238
+          }
+        }
+      },
+      "fullRerunOnExactHead": false,
+      "priorIndependentFull": {
+        "report": {
+          "path": "build/night-20261101-s35/n2-full/report.json",
+          "bytes": 32734,
+          "sha256": "7805ad5da548ea02e562a4a8106631964861dda9331b4772c86f7d5d1b69be72"
+        },
+        "execution": {
+          "command": [
+            "npm",
+            "run",
+            "check"
+          ],
+          "fullAttempt": 1,
+          "startedUtc": "2026-11-01T18:41:25.449562+00:00",
+          "finishedUtc": "2026-11-01T18:52:36.402037+00:00",
+          "exitCode": 0,
+          "elapsedSeconds": 670.952
+        },
+        "node": {
+          "tests": 811,
+          "suites": 0,
+          "pass": 811,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0,
+          "summaryGroups": 27
+        },
+        "rust": [
+          {
+            "line": 1506,
+            "text": "test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 239 filtered out; finished in 34.66s",
+            "passed": 17,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filteredOut": 239
+          },
+          {
+            "line": 1865,
+            "text": "test result: ok. 237 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 290.59s",
+            "passed": 237,
+            "failed": 0,
+            "ignored": 2,
+            "measured": 0,
+            "filteredOut": 0
+          }
+        ]
+      },
+      "boundary": "Fresh exact commit focus only; no full, packages or native GUI rerun."
+    },
+    {
+      "slice": "N3",
+      "commit": "083f3b7792907b5c25ccd4508b74906bea091275",
+      "exactHeadReport": {
+        "path": "build/night-20261101-s35/n3-exact-head/report.json",
+        "bytes": 62637,
+        "sha256": "fa8a99424eec17260b03b748247eafccba1882aa74d60d868c9fc5f484b7617c"
+      },
+      "conclusion": "pass",
+      "actualPreparationAndFocusedCommands": [
+        {
+          "command": [
+            "npm",
+            "ci",
+            "--ignore-scripts"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 3.073
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "probe:prepare-cli"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 12.62
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "probe:prepare-pi"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 17.089
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "probe:bundle"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 1.034
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "check:structure"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 0.276
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "typecheck"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 4.46
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "check:docs"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 0.155
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "test:today-domain"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 0.261
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "test:today-runtime"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 8.491
+        },
+        {
+          "command": [
+            "npm",
+            "run",
+            "test:today-store"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 64.457
+        },
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "src-tauri/Cargo.toml",
+            "--lib",
+            "runtime_host::mcp_recovery_tests::stalled_input_and_invalid_stdout_cannot_hang_or_publish_partial_success",
+            "--",
+            "--exact",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 4.871
+        },
+        {
+          "command": [
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "src-tauri/Cargo.toml",
+            "--check"
+          ],
+          "exitCode": 0,
+          "elapsedSeconds": 0.368
+        }
+      ],
+      "focusedResults": {
+        "nodeDomain": {
+          "tests": 26,
+          "pass": 26,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "nodeRuntime": {
+          "tests": 5,
+          "pass": 5,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "rust": [
+          {
+            "stage": "focus-today-store",
+            "text": "test result: ok. 33 passed; 0 failed; 1 ignored; 0 measured; 239 filtered out; finished in 40.19s",
+            "passed": 33,
+            "failed": 0,
+            "ignored": 1,
+            "measured": 0,
+            "filteredOut": 239
+          },
+          {
+            "stage": "focus-recovery-exact",
+            "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 272 filtered out; finished in 2.75s",
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filteredOut": 272
+          }
+        ],
+        "typecheck": 0,
+        "docs": 0,
+        "rustFmt": 0
+      },
+      "fullRerunOnExactHead": false,
+      "priorIndependentFull": {
+        "report": {
+          "path": "build/night-20261101-s35/n3-full-attempt2/report.json",
+          "bytes": 57431,
+          "sha256": "8ad3c04ff5af5580c1663e83a1c3abf0a1616ab5328f24e64588e3270c0467b0"
+        },
+        "execution": {
+          "command": [
+            "npm",
+            "run",
+            "check"
+          ],
+          "fullAttempt": 2,
+          "startedUtc": "2026-11-02T06:55:55.192822+00:00",
+          "finishedUtc": "2026-11-02T07:08:14.715048+00:00",
+          "exitCode": 0,
+          "elapsedSeconds": 739.519
+        },
+        "node": {
+          "tests": 842,
+          "suites": 0,
+          "pass": 842,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0,
+          "summaryGroups": 29
+        },
+        "rust": [
+          {
+            "line": 1550,
+            "text": "test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 273 filtered out; finished in 34.72s",
+            "passed": 17,
+            "failed": 0,
+            "ignored": 0,
+            "measured": 0,
+            "filteredOut": 273
+          },
+          {
+            "line": 1947,
+            "text": "test result: ok. 270 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 322.83s",
+            "passed": 270,
+            "failed": 0,
+            "ignored": 3,
+            "measured": 0,
+            "filteredOut": 0
+          }
+        ]
+      },
+      "boundary": "Fresh exact commit focus only; internal ignored child is invoked by the passing crash parent; fullAttempt1 remains failed."
+    }
+  ],
+  "realModelRequestsByThisDocsSync": 0,
+  "productionMcpKeychain": "OFF; not accessed",
+  "realUserRootTouched": false,
+  "open": [
+    "S3.4 remaining native H3",
+    "S3.5 native and real-environment verification",
+    "S3.6 integrated acceptance",
+    "S4 desktop product delivery",
+    "S5 install/work-root migration/recovery exit",
+    "historical G0/native/real-service/CI/second-machine/notarization gaps",
+    "N1 original unprepared cold failure retained",
+    "N3 original fullAttempt1 failure retained; exact historical cause not reconstructed"
+  ]
+}
