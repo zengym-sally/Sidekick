@@ -1,0 +1,295 @@
+{
+  "head": "01b98f90e3cb2c1cd35654864b8c9f152316a4b6",
+  "scope": "R3 verification-only JSONL record writer repair",
+  "ownerApproved": true,
+  "rawEvidenceDirectory": "build/s36-audit-record-20261104",
+  "designReviews": {
+    "A": "APPROVE",
+    "B": "APPROVE"
+  },
+  "deliveryReviews": {
+    "scope": "R3 verification-only JSONL record writer repair",
+    "freezeSha256": "2c5c335291d70bafbb83b328e193c96e6f8f5539253a71dc73e37286bdf49e8b",
+    "sourceSha256": "f1885bd339f864fe68534e4b5842dca5a14c246655f905a367e952b8d1ade6be",
+    "A": {
+      "agent": "audit_delivery_a",
+      "conclusion": "APPROVE",
+      "findings": []
+    },
+    "B": {
+      "agent": "audit_delivery_b",
+      "conclusion": "APPROVE",
+      "findings": []
+    },
+    "red": {
+      "exitCode": 101,
+      "passed": 28,
+      "failed": 3
+    },
+    "green": {
+      "exitCode": 0,
+      "passed": 31,
+      "failed": 0
+    },
+    "originalDiscoveryReplay": {
+      "exitCode": 0,
+      "pass": 77,
+      "fail": 0
+    },
+    "fullCheck": "passed independently; see fullCheck",
+    "native": "not verified"
+  },
+  "focusedChecks": [
+    {
+      "command": "npm run test:s33-verification-guards",
+      "exitCode": 0,
+      "seconds": 57.28,
+      "log": "green-verification.log"
+    },
+    {
+      "command": "npm run check:rust",
+      "exitCode": 0,
+      "seconds": 7.303,
+      "log": "rust-default.log"
+    },
+    {
+      "command": "npm run check:s33-verification",
+      "exitCode": 0,
+      "seconds": 5.271,
+      "log": "rust-features.log"
+    },
+    {
+      "command": "npm run test:s33-discovery",
+      "exitCode": 0,
+      "seconds": 60.503,
+      "log": "discovery-replay.log"
+    }
+  ],
+  "previousFullFailurePreserved": true,
+  "fullCheck": {
+    "conclusion": "pass",
+    "command": "npm run check",
+    "exitCode": 0,
+    "seconds": 618.81,
+    "startedAt": "2026-11-03T16:32:21Z",
+    "endedAt": "2026-11-03T16:42:39Z",
+    "executionCount": 1,
+    "log": "full/check.log",
+    "logSha256": "1c0c2cd90b04c933f99f69e7e7ff33b40b2f7f3b0abc726a356d27d902c3d4cd",
+    "tests": {
+      "nodeGroups": 29,
+      "nodePassed": 870,
+      "nodeFailed": 0,
+      "nodeCancelledSkippedTodo": 0,
+      "perGroupEvidence": "test-counts.json",
+      "defaultRust": {
+        "stage": "probe:native",
+        "line": 1508,
+        "result": "ok",
+        "passed": 271,
+        "failed": 0,
+        "ignored": 3,
+        "measured": 0,
+        "filteredOut": 0,
+        "seconds": 294.81
+      },
+      "dualFeatureRust": {
+        "stage": "test:s33-verification-guards",
+        "line": 1110,
+        "result": "ok",
+        "passed": 31,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 273,
+        "seconds": 54.98
+      },
+      "rustCountsNotCombined": true,
+      "defaultFmtClippyExitCode": 0,
+      "dualFeatureClippyExitCode": 0,
+      "typecheckPasses": 3,
+      "originalDiscoveryFailureGroup": {
+        "passed": 77,
+        "failed": 0,
+        "logLine": 1063
+      },
+      "auditNewTestsAllFivePassed": true,
+      "nativeLauncher": {
+        "passed": 52,
+        "failed": 0
+      }
+    },
+    "warningClassification": {
+      "newUnexplainedWarnings": 0,
+      "esbuildSizeNotices": {
+        "bundleInvocations": 7,
+        "noticeLines": 14
+      },
+      "viteChunkSizeNotices": {
+        "builds": 2,
+        "noticeBlockLines": 6
+      },
+      "macOSSigningNotices": {
+        "packagesAdHoc": 2,
+        "notarizationSkippedWarnings": 2,
+        "signingInfoLines": 10
+      },
+      "expectedControlledRefusalStderrLines": 17,
+      "toolchain": "configured proc-macro load fails with known mis-aligned LINKEDIT string pool; host and wrapped load true; workaroundNeededOnThisHost true",
+      "rustWarnings": 0,
+      "rawClassifiedEvidence": "warnings.json"
+    },
+    "sourceAndDocumentInputsStable": 4313,
+    "preparedEntriesStable": 58106,
+    "frozenCodeFilesStable": 12,
+    "packages": {
+      "verification": {
+        "entries": 560,
+        "files": 482,
+        "identifier": "com.sidekick.s33.ui.verify"
+      },
+      "ordinary": {
+        "entries": 557,
+        "files": 480,
+        "identifier": "com.sidekick.s0"
+      },
+      "strictSignaturesExitCode": 0,
+      "runtimeSourceEntries": 563,
+      "runtimePackageEntries": 555,
+      "omittedActuallyEmptyNamedLicenseDirectories": 8,
+      "nonemptyLicenseFilesStrictlyMatched": 18
+    },
+    "canonicalNativeBundle": "build/s36-audit-record-20261104/candidate/src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app",
+    "executableSha256": "f36318746fb17c1c541c4506433cb32382659577069f6eaf37c1f778c20217e8",
+    "resourcesManifestSha256": "a623d055839fb42e00ddb8c33f04256a72459ebcb84243d2f6de40dd1f952f56",
+    "scopedResidualProcesses": 0,
+    "scopedResidualListeners": 0,
+    "guiDuringFull": false,
+    "realModelRequests": 0,
+    "finalVerificationJson": {
+      "bytes": 11961,
+      "sha256": "906e82e5eba18485457454f4ec95c67a66f88be391b9b4ab8f71e1b3b3c58258"
+    }
+  },
+  "native": {
+    "conclusion": "needs_revision",
+    "command": "npm run probe:mcp-native -- --g1 <new owned evidence directory>",
+    "exitCode": 1,
+    "error": "G1 startup identity and ready receipt disagree.",
+    "requestedLogicalInnerSize": [
+      1440,
+      900
+    ],
+    "startupIdentityMatches": true,
+    "readyReceipts": 0,
+    "appProcessLaunched": true,
+    "getAppCalls": 0,
+    "axCalls": 0,
+    "captureCalls": 0,
+    "guiBusinessActions": 0,
+    "automationHelperCreated": false,
+    "readOnlyScreenMetadataProbe": true,
+    "screen": {
+      "scale": 2,
+      "frame": [
+        0,
+        0,
+        1512,
+        982
+      ],
+      "visibleFrameAppKit": [
+        0,
+        62,
+        1512,
+        887
+      ],
+      "topInset": 33,
+      "bottomInset": 62,
+      "requestedInnerHeightExceedsVisibleBy": 13
+    },
+    "specificTauriFailureBranchCaptured": false,
+    "appStderrAndStdout": "/dev/null",
+    "newDatabase": {
+      "schemaVersion": 4,
+      "quickCheck": "ok",
+      "foreignKeyViolations": 0,
+      "businessTablesEmpty": true
+    },
+    "fixtureModelLogExists": false,
+    "fixtureServiceLogExists": false,
+    "observedPersistentFixtureRequests": 0,
+    "cleanup": {
+      "result": "pass",
+      "onlySignal": "SIGTERM",
+      "knownPidsAbsent": 3,
+      "scopedResidualProcesses": 0,
+      "scopedResidualCwd": 0,
+      "scopedResidualListeners": 0,
+      "noWholeMachineUnknownZeroClaim": true
+    },
+    "finalVerificationJson": {
+      "bytes": 10067,
+      "sha256": "b2d315c35f096e84a2c9a2cd49b1bb9053022777bdb31be4b5603d568689ee8e"
+    },
+    "evidencePaths": 23,
+    "rootBytesShaReadback": "pass"
+  },
+  "productionMcpKeychain": "off",
+  "realModelRequests": 0,
+  "commitPush": false,
+  "rootEvidenceReadback": {
+    "conclusion": "pass",
+    "groups": [
+      {
+        "directory": "full",
+        "paths": 1078,
+        "regularPathCount": 1076,
+        "syntheticSymlinkReferences": [
+          {
+            "path": "tmp/sidekick-native-launcher-A7lNGy/app/.p6-native-verification",
+            "targetWithinEvidenceDirectory": "tmp/sidekick-native-launcher-A7lNGy/app/marker-original"
+          },
+          {
+            "path": "tmp/sidekick-native-launcher-u3YjpH/evidence/owned-launch.json",
+            "targetWithinEvidenceDirectory": "tmp/sidekick-native-launcher-u3YjpH/evidence/receipt-original.json"
+          }
+        ],
+        "allBytesSha256AndRecordedOwnerExecMatch": true,
+        "sealSha256": "cb1a5c5e34db89477c130ec6a1081a836bee4f6d8cd7c31cff989eae8bc350d5"
+      },
+      {
+        "directory": "native-01/verifier",
+        "paths": 23,
+        "regularPathCount": 23,
+        "syntheticSymlinkReferences": [],
+        "allBytesSha256AndRecordedOwnerExecMatch": true,
+        "sealSha256": "7caa75faccb0a9ed829ee87cb8fd82797aa88f08d59e0a459e482e8345f7a1e3"
+      }
+    ],
+    "firstAttempt": {
+      "exitCode": 1,
+      "reason": "Root incorrectly assumed all seal paths were regular files; two owned negative launcher fixture symlinks are byte-followed in the original schema. Original seal unchanged; recheck restricted both targets to this evidence directory."
+    }
+  },
+  "auditRepairConclusion": "pass; ordinary behavior and signal/cleanup semantics unchanged",
+  "g1Conclusion": "not complete",
+  "pendingDecision": "owner approval requested for verification-only wide1440x800/narrow640x800 plus private bounded redacted readiness-failure stage records; no changes before explicit reply",
+  "finalRecordReview": {
+    "conclusion": "pass",
+    "findings": [],
+    "bytes": 8450,
+    "sha256": "6a7968c1c94749191a0928deceb29ddbcb9142509f1178e24765ea96b1e93f8a"
+  },
+  "postNativeDocumentChecks": [
+    {
+      "command": "npm run check:docs",
+      "exitCode": 0,
+      "output": "npm notice run sidekick@0.3.0 check:docs\nnpm notice run node scripts/checks/check-docs.mjs\n✓ docs link check passed (15 files, 230 local links resolved).\n"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "output": ""
+    }
+  ]
+}

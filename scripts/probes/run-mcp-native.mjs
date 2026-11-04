@@ -12,13 +12,19 @@ function profile(value) {
   if (value === g1Scope) return { scope: g1Scope, marker: '.s36-native-verification', g1: true };
   throw new Error('Invalid native scope profile.');
 }
+function dimensionsAllowed(width, height, g1) {
+  return width === 640 && height === 900 || width === 1440 && height === 1000 || g1 && (width === 640 && height === 800 || width === 1440 && [800, 900].includes(height));
+}
 async function g1Receipt(path, limit) {
   const file = await openFile(path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
   try {
     const valid = m => m.isFile() && m.nlink === 1 && m.uid === process.getuid() && (m.mode & 0o7777) === 0o600 && m.size <= limit;
     const before = await file.stat();
     if (!valid(before)) throw new Error('Private G1 receipt required.');
-    const bytes = await file.readFile();
+    if (!before.size) return null;
+    const buffer = Buffer.alloc(limit + 1);
+    const { bytesRead } = await file.read({ buffer, length: buffer.length, position: 0 });
+    const bytes = buffer.subarray(0, bytesRead);
     const after = await file.stat();
     if (!valid(after) || before.dev !== after.dev || before.ino !== after.ino || bytes.length > limit) throw new Error('G1 receipt file identity changed.');
     if (!bytes.length || before.size !== after.size || before.mtimeMs !== after.mtimeMs || bytes.length !== after.size) return null;
@@ -33,6 +39,26 @@ function readyIdentity(data, proof) {
   if (!data) return;
   const actual = execFileSync('/bin/ps', ['-p', String(data.pid), '-o', 'uid=,lstart=,command='], proof).trim();
   if (actual !== data.identity) throw new Error('G1 ready process identity changed.');
+}
+async function privateFailure(path, receipt, initialIdentity, args, proof) {
+  const invalid = () => new Error('Invalid private native failure receipt.');
+  let data;
+  try { data = await g1Receipt(path, 4096); } catch { throw invalid(); }
+  if (!data) return null;
+  const keys = (value, names) => value && typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === names.length && names.every(name => Object.hasOwn(value, name));
+  const integers = (value, count, minimum, maximum) => Array.isArray(value) && value.length === count && value.every(item => Number.isSafeInteger(item) && item >= minimum && item <= maximum);
+  const optional = (value, check) => value === null || check(value);
+  const rect = value => integers(value, 4, -2147483648, 4294967295) && integers(value.slice(0, 2), 2, -2147483648, 2147483647) && integers(value.slice(2), 2, 0, 4294967295);
+  const d = data.diagnostic;
+  if (!keys(data, ['version', 'kind', 'scope', 'pid', 'nonceSha256', 'diagnostic']) || data.version !== 1 || data.kind !== 'g1-native-readiness-failure' || data.scope !== g1Scope || data.pid !== initialIdentity.pid || data.nonceSha256 !== createHash('sha256').update(receipt.nonce).digest('hex') ||
+      !keys(d, ['stage', 'reason', 'requested', 'inner', 'scale', 'monitor', 'workArea', 'outer', 'target', 'position']) ||
+      !['size_request', 'inner_size', 'scale', 'monitor', 'outer_size', 'bounds', 'position_request', 'position', 'store'].includes(d.stage) || !['api', 'missing', 'deadline', 'bounds', 'store'].includes(d.reason) ||
+      !integers(d.requested, 2, 0, 4294967295) || d.requested[0] !== Number(args[3]) || d.requested[1] !== Number(args[4]) ||
+      !optional(d.inner, value => integers(value, 2, 0, 4294967295)) || !optional(d.outer, value => integers(value, 2, 0, 4294967295)) ||
+      !optional(d.scale, value => typeof value === 'number' && Number.isFinite(value)) || !optional(d.monitor, rect) || !optional(d.workArea, rect) ||
+      !optional(d.target, value => integers(value, 2, -2147483648, 2147483647)) || !optional(d.position, value => integers(value, 2, -2147483648, 2147483647))) throw invalid();
+  try { readyIdentity(initialIdentity, proof); } catch { throw new Error('Native failure App identity unavailable.'); }
+  return `Native readiness failed at ${d.stage} (${d.reason}).`;
 }
 async function startupIdentity(path, receipt, executable, args, proof) {
   const data = await g1Receipt(path, 16384);
@@ -60,8 +86,14 @@ async function waitNative(root, before, receipt, executable, args, proof, save) 
         }
       }
     }
+    const failures = kind.g1 ? files.filter(name => name.startsWith('native-failure-') && !before.has(name)) : [];
+    if (failures.length > 1) throw new Error('Invalid private native failure receipt.');
+    if (failures.length && initialIdentity) {
+      const failure = await privateFailure(join(root, failures[0]), receipt, initialIdentity, args, proof);
+      if (failure) throw new Error(failure);
+    }
     const file = files.find(name => name.startsWith('native-info-') && !before.has(name));
-    if (file) {
+    if (file && !failures.length) {
       const current = kind.g1 ? await g1Receipt(join(root, file), 2000000) : JSON.parse(await readFile(join(root, file), 'utf8'));
       if (current && (!kind.g1 || initialIdentity)) { info = current; break; }
     }
@@ -76,11 +108,12 @@ const appOpen = (bundle, args, g1, temporary) => execFileSync('/usr/bin/open', [
 if (process.argv[2] === '--reopen') {
   if (process.argv.length !== 6) throw new Error('Invalid native reopen arguments.');
   const evidence = resolve(process.argv[3]), width = Number(process.argv[4]), height = Number(process.argv[5]);
-  if (!(width === 640 && height === 900 || width === 1440 && height === 1000)) throw new Error('Invalid native reopen dimensions.');
+  if (!dimensionsAllowed(width, height, true)) throw new Error('Invalid native reopen dimensions.');
   const path = join(evidence, 'owned-launch.json'), metadata = await lstat(path);
   if (!metadata.isFile() || metadata.isSymbolicLink() || metadata.nlink !== 1 || metadata.uid !== process.getuid() || (metadata.mode & 0o7777) !== 0o600) throw new Error('Private native launch receipt required.');
   const receipt = JSON.parse(await readFile(path, 'utf8'));
   const kind = profile(receipt.scope);
+  if (!dimensionsAllowed(width, height, kind.g1)) throw new Error('Invalid native reopen dimensions.');
   const bundle = resolve('src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app'), executable = join(bundle, 'Contents/MacOS/sidekick');
   const fixture = await realpath(join(bundle, 'Contents/Resources/s33-ui/mcp-trial.mjs'));
   if (receipt.bundle !== bundle || receipt.executable !== executable || receipt.model?.script !== fixture || receipt.model.nonce !== receipt.nonce || !/^[0-9a-f]{48}$/.test(receipt.nonce) || receipt.root !== join(receipt.base, 'app') || await realpath(receipt.root) !== receipt.root || await realpath(receipt.base) !== receipt.base) throw new Error('Native reopen scope mismatch.');
@@ -196,7 +229,7 @@ const configuration = { name: 'P6 合成本机工具', type: 'stdio', enabled: t
 await writeFile(join(evidence, 'service-input.json'), JSON.stringify(configuration, null, 2), { flag: 'wx', mode: 0o600 });
 async function launch(width, height, reopen) {
   verifyOwner();
-  if (![640, 1440].includes(width) || ![900, 1000].includes(height)) throw new Error('Unexpected native acceptance dimensions.');
+  if (!dimensionsAllowed(width, height, kind.g1)) throw new Error('Unexpected native acceptance dimensions.');
   const launchArgs = ['--s33-mcp-ui', root, nonce, String(width), String(height), kind.scope + ':' + port + ':' + model.pid, ...(reopen ? ['--reopen'] : [])];
   const before = new Set(await readdir(root).catch(() => []));
   appOpen(bundle, launchArgs, g1, base);
@@ -216,7 +249,7 @@ async function launch(width, height, reopen) {
   process.stdout.write(JSON.stringify({ ready: true, pid: info.pid, root, nonce, modelPid: model.pid, requested: { width, height }, actual: info.physicalInnerSize, scale: info.scale, outerRect: info.outerRect }) + '\n');
 }
 await record();
-try { await launch(1440, 1000, false); }
+try { await launch(1440, g1 ? 800 : 1000, false); }
 catch (error) { ending = true; model.kill('SIGTERM'); throw error; }
 for await (const line of createInterface({ input: process.stdin })) {
   try {

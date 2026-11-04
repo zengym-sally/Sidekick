@@ -1,0 +1,1002 @@
+{
+  "baseHead": "01b98f90e3cb2c1cd35654864b8c9f152316a4b6",
+  "automaticConclusion": "needs_revision; required native evidence incomplete; no product defect conclusion",
+  "unchangedCodeFiles": 11,
+  "resourceEntries": 560,
+  "resourceFiles": 482,
+  "automaticObserved": [
+    "manual creation",
+    "organizer/tracker successful trial",
+    "S2 extraction",
+    "visible revise preview, no apply or sign"
+  ],
+  "ownerFeedback": {
+    "quote": "清楚，可以继续",
+    "scope": "understands two steps in shown preview"
+  },
+  "counts": {
+    "localSyntheticModelHttp": 4,
+    "metadata": 12,
+    "realModelHttp": 0,
+    "mcpToolCalls": 0,
+    "formalSigns": 0
+  },
+  "stop": {
+    "officialErrors": [
+      "-3812",
+      "-10005"
+    ],
+    "singleCanonicalReselect": "same failure",
+    "guiCallsAfterSecondFailure": 0
+  },
+  "cleanup": {
+    "registeredProcessesGone": 3,
+    "ownedSurvivors": 0,
+    "controlledListeners": 0,
+    "quickCheck": "ok",
+    "foreignKeyViolations": 0,
+    "version": 4,
+    "rootPreserved": true
+  },
+  "rawReports": {
+    "report.md": {
+      "bytes": 10560,
+      "sha256": "25f839894af98ce5759658753bdc2b56cc52ee7dfd3041e4504139972bf9d423"
+    },
+    "report.json": {
+      "bytes": 13442,
+      "sha256": "b538b6a33ea5ce0e8b4bb3f9925dac33e1875552a8d195ea9dd5861498425e45"
+    },
+    "artifact-seal.json": {
+      "bytes": 7752,
+      "sha256": "b8064a635570780d89ce0a79904523f5b5c6a4cbc398c486b0726a82b44df0cd"
+    },
+    "owned-root-seal.json": {
+      "bytes": 631277,
+      "sha256": "038a67957a07da39d529be9b9493d1ee39496da10ea1497476087bb6efb43c4d"
+    }
+  },
+  "sealedAutomaticFiles": 39,
+  "sealedOwnedRootFiles": 1786,
+  "rootReadback": "all bytes/SHA256/ownerExec matched",
+  "manualProtocol": {
+    "coreSha256": "45663fccda03c8bd0f5d5efdf74e4fb6168b6b00594c65ed8d461d5b9294e562",
+    "coreBytes": 4710,
+    "A": {
+      "agent": "s36_manual_design_a",
+      "conclusion": "APPROVE/pass",
+      "findings": []
+    },
+    "B": {
+      "agent": "s36_manual_design_b",
+      "conclusion": "APPROVE/pass",
+      "findings": []
+    },
+    "scope": "human evidence protocol only; no native case or G1 completion claim"
+  },
+  "manualCases": "controlled text/today subcases, stdio normal call and HTTP save passed; assistant backend 62+11+12 focused selfcheck passed; native HTTP discrepancy and capture blocker remain open",
+  "unverified": [
+    "same-operation replay/remaining duplicate GUI checks",
+    "remaining role/Skills/MCP/HTTP/H3/narrow/keyboard/no-model-root matrix",
+    "remaining role/Skills/stdio/HTTP/H3/narrow/keyboard/no-model-root matrix",
+    "complete S3.6/G1 exit",
+    "real model/production MCP Keychain/real services/real user root",
+    "S4/S5/install/release/CI/other machines"
+  ],
+  "manualCheckpoint": {
+    "at": "2026-11-03T02:23:23.619545+00:00",
+    "evidenceType": "owner manual native observation plus independent read-only verification; no CUA in manual run",
+    "passedSubcases": [
+      "H-S2-01 extraction",
+      "H-S2-02 revise preview",
+      "H-S2-03 apply to candidate",
+      "H-S2-04 sign",
+      "H-S2-05 complete and refresh",
+      "H-S2-06 true quit and same-root cold reopen",
+      "H-TODAY-01 confirmation dialog and pre-upgrade boundary",
+      "H-TODAY-02 backup/upgrade subcase with appended trigger clarification",
+      "H-TODAY-03 first successful advice",
+      "H-TODAY-04 fact-change staleness",
+      "H-TODAY-05 refresh restores currentness",
+      "H-TODAY-06 synthetic failure configuration",
+      "H-TODAY-07 failed generation retains last success",
+      "H-TODAY-08 valid empty success retains facts",
+      "H-TODAY-09 ready-then-active-cancel without late success",
+      "H-TODAY-10 restore effective defaults and recover success",
+      "H-TODAY-11 backend persistent data/settings/backups only; owner visible confirmation pending",
+      "H-TODAY-11 owner-visible v5 advice/persisted-facts cold reopen, with catalog exact-diff limit retained",
+      "H-MCP-STDIO-01 GUI single-service JSON save without startup/diagnostic/tool/model side effects",
+      "H-MCP-STDIO-02 GUI diagnostic complete lookup catalog, no tool or model call",
+      "H-MCP-STDIO-03 actual organizer AgentTool lookup roundtrip",
+      "extra owner activity: today/tracker/advisor visible success status only",
+      "H-MCP-HTTP-01 add HTTP while retaining stdio, save without native connection"
+    ],
+    "lastVerifiedState": {
+      "checkpoint": "H-MCP-HTTP-01 save after owner extra activities",
+      "schema": 5,
+      "todos": 1,
+      "todoTitle": "核对合成清单（复核）",
+      "todoStatus": "open",
+      "todoVersion": 5,
+      "todoEvents": 5,
+      "agentRuns": 11,
+      "todayRuns": 7,
+      "roleTrialRuns": 3,
+      "probeRuns": 1,
+      "toolCalls": 1,
+      "localSyntheticModelHttp": 13,
+      "metadata": 40,
+      "realModelHttp": 0
+    },
+    "resultBindings": {
+      "h-s2-01-extract-result.json": {
+        "bytes": 3260,
+        "sha256": "4a8d0f5121f565accf9401368e4bf02bdccc4f2d2876305c1223c97bfa5ce44b"
+      },
+      "h-s2-02-preview-result.json": {
+        "bytes": 3610,
+        "sha256": "2de3c72c9f6478f01adc283ed2d483f11adf82ffa70d8eea2d06caba19581ef4"
+      },
+      "h-s2-03-apply-result.json": {
+        "bytes": 3456,
+        "sha256": "a7e0c88dc3a95a3efe7bc4c047585bed1d17cbc62dae517d0172f0aaefa546e0"
+      },
+      "h-s2-04-sign-result.json": {
+        "bytes": 6284,
+        "sha256": "64488bedad8e0df450ff9ce7890792f3ec2e9350562221d6da858265b77834e0"
+      },
+      "h-s2-05-complete-refresh-result.json": {
+        "bytes": 5169,
+        "sha256": "bdee0cc0af45e583c8b603294ec1e4809f00f025e80f2917c0170a6fef8ef74f"
+      },
+      "h-s2-06-cold-reopen-result.json": {
+        "bytes": 1685,
+        "sha256": "acff3cdebf7c3a5a83e864348efbec84febbfae9cca345f725dc622f5a6bbbcc"
+      },
+      "h-today-01-confirmation-result.json": {
+        "bytes": 5221,
+        "sha256": "7c2cfd42bc385757c8e966410a86120c6cbd33f2bb6df5f5203dcb9454429611"
+      },
+      "h-today-02-upgrade-result.json": {
+        "bytes": 4865,
+        "sha256": "2828e33740cf67badd8eb9453b9e1084346f7576c4dbc476c7834efd17754007"
+      },
+      "h-today-02-clarified-result.json": {
+        "bytes": 2009,
+        "sha256": "b54ef714a2c72af5df88216ec0ada43a523609268b3d0b9b1785b72327203e08"
+      },
+      "h-today-02-trigger-clarification.json": {
+        "bytes": 1198,
+        "sha256": "49cdcf16bf0c63ed06db53c7549d83bcab9b689997b3646c01d751df88ef0ff6"
+      },
+      "h-today-03-first-generation-result.json": {
+        "bytes": 2583,
+        "sha256": "e959f80ce55d6485f6ecf2325ab6d880432fbeb297c6f5d8e91a03d5f0f8723b"
+      },
+      "h-today-04-stale-result.json": {
+        "bytes": 6040,
+        "sha256": "d10eecbfc1ab57e4a878de173a31a1b235394de57f52291229cccb1a32e3cad1"
+      },
+      "h-today-05-refresh-result.json": {
+        "bytes": 6035,
+        "sha256": "267a81c7e7fea643904376c80f0417ebd469f8cc60cc96822001baa08fb4214f"
+      },
+      "h-today-06-fail-config-result.json": {
+        "bytes": 5621,
+        "sha256": "03172738947824fc84b2e56836bd7b64e0f39602d8d0dfc57e343e7025ffed2b"
+      },
+      "h-today-07-failure-retains-success-result.json": {
+        "bytes": 6921,
+        "sha256": "b0a22e2f521954e89001b390dabe4854e350e30391c88b5389abe4be7f1d62aa"
+      },
+      "h-today-08-empty-result.json": {
+        "bytes": 6888,
+        "sha256": "c4508e6000168e5c546b177228019d6580d1a7548fe016aed17ae7a08e0bece5"
+      },
+      "h-today-09-cancel-result.json": {
+        "bytes": 7809,
+        "sha256": "61b3a3c462655f2f6f8167ea7121973cc624e9b76742c5a5eb1044ed5bd0de20"
+      },
+      "h-today-10-recovery-result.json": {
+        "bytes": 7136,
+        "sha256": "fb48f4fd1da4e016b2683b17766e384a604438ea75ef57617d75b419ad678172"
+      },
+      "h-today-11-v5-reopen-backend-result.json": {
+        "bytes": 2574,
+        "sha256": "25efe5db08236ac3d3838780d1b8a80f8bf2e2187980741ae03ae582ab66553f"
+      },
+      "h-today-11-file-comparison-detail.json": {
+        "bytes": 3703,
+        "sha256": "131a7f7eece0154642170cd09e9578a286380a03233949fb39fb1079768dea11"
+      },
+      "h-today-11-derived-cache-evidence.json": {
+        "bytes": 11812,
+        "sha256": "5c210f71cd4537c5f0815f2219d4bcbe607abec89ffb4f27a2a7f303f3e5d8f2"
+      },
+      "h-today-11-persistence-clarified-result.json": {
+        "bytes": 5590,
+        "sha256": "79a18bf83980c27b1884c35a8acf971e030e62444f2b0b54355e9d6c29871d19"
+      },
+      "h-today-11-v5-reopen-visible-result.json": {
+        "bytes": 2413,
+        "sha256": "efaf1025e26870eb4bf020997be636220408b57b2535573b3018e80cae9281bd"
+      },
+      "h-mcp-stdio-01-save-result.json": {
+        "bytes": 5455,
+        "sha256": "e31888f77780c6c419ebc2ca5beb5c1643d670617624b25e4f0b45f5ce66ebdb"
+      },
+      "h-mcp-stdio-02-diagnostic-result.json": {
+        "bytes": 10919,
+        "sha256": "a56bc9bcc81e0c966dd74c9023f650be3ec869c550f32cff5bdfecad6ca1d2b1"
+      },
+      "h-mcp-stdio-03-trial-result.json": {
+        "bytes": 8519,
+        "sha256": "030639a27e68eb102bdaa3b32ef7443e12ed6169dfc5721b2a3b85a24f17745b"
+      },
+      "extra-activity-user-clarified-result.json": {
+        "bytes": 8118,
+        "sha256": "9a7caf890932effb7ee5a3225f9f1eec5377f7cefb9ff4da8516dc9f2c7dc0b5"
+      },
+      "http-normal/preparation-report.json": {
+        "bytes": 13309,
+        "sha256": "dae0b1ff1dba71629bb48b31df86833b7a0c92e0a76aed22711ffa510056c9cc"
+      },
+      "h-mcp-http-01-save-result.json": {
+        "bytes": 7039,
+        "sha256": "f528a634878e837d40b74f9e1f10f25f7bb5b086c14d1583423786fbfd4a90e4"
+      },
+      "h-mcp-http-02-diagnostic-result.json": {
+        "bytes": 4563,
+        "sha256": "46e7f7dc10e850092c4f7d1e14b9e3ea853ebc4e2b9f307526fa712fccbfcab6"
+      }
+    },
+    "pendingUserObservation": null,
+    "remaining": [
+      "new-launch readiness geometry incompatibility plus retained old native HTTP discrepancy; capture pilot not entered",
+      "exact prior Skills catalog per-field difference (raw-before unavailable)",
+      "same-operation replay/remaining duplicate GUI checks",
+      "remaining role/Skills/stdio/HTTP/H3/narrow/keyboard/no-model-root matrix",
+      "S3.6/G1 final exit"
+    ],
+    "textPositiveChain": {
+      "conclusion": "pass for observed positive path only",
+      "steps": [
+        "extract",
+        "revise preview",
+        "apply",
+        "sign",
+        "complete and refresh",
+        "true quit",
+        "same-root/same-model cold reopen"
+      ],
+      "stateAtColdReopen": {
+        "todos": 1,
+        "status": "completed",
+        "todoVersion": 2,
+        "candidateStatus": "accepted",
+        "candidateVersion": 3,
+        "todoEvents": 2,
+        "sourceLinks": 1,
+        "ingestionReceipts": 2,
+        "allTablesUnchangedAcrossColdReopen": true,
+        "localSyntheticModelHttp": 2
+      },
+      "limits": "does not sign same-operation replay, all idempotence, S3.6 or G1 completion"
+    },
+    "todayUpgrade": {
+      "versionBefore": 4,
+      "versionAfter": 5,
+      "newBackupVersion": 4,
+      "backupMatchesTruePreUpgradeAllRowsAndRowids": true,
+      "schemaObjectsMatched": 23,
+      "oldBackupUnchanged": true,
+      "newBackupFile": "before-schema-5-3030-1793636170613615000.sqlite",
+      "newBackupBytes": 212992,
+      "newBackupSha256": "b6373fe882e473cd9c025a59550396fc2a168c4c9b83cba082480c5ec4f98673",
+      "limits": [
+        "Upgrade-before configuration byte hashes were not captured.",
+        "One additional post-upgrade refresh or Enter action confirmed by owner; exact gesture not classified.",
+        "No isolated dynamic claim that upgrade alone made zero model requests."
+      ],
+      "initialNeedsRevisionReportPreserved": true
+    },
+    "todayLifecycleObserved": {
+      "failure": "MODEL_SERVICE; old successful snapshots unchanged",
+      "empty": "succeeded with ranking=[]; facts intact",
+      "cancel": "g1-ready then cancelled/CANCELLED; hold ended client-closed, not deadline; still cancelled after 25-second deadline",
+      "cancelReadyToPersistentCancelMs": 10644,
+      "cancelReadyToClientClosedMs": 11171,
+      "restoredEffectiveDefaults": {
+        "supplementalInstructions": "",
+        "modelId": null,
+        "detail": "standard",
+        "focus": "deadline"
+      },
+      "restoreLimitation": "Original advisor file was absent; restore saves a new revision/file, no claim of restoring original filesystem absence.",
+      "oldFiveTodayHistoryRowsUnchanged": true
+    },
+    "v5ColdReopen": {
+      "fixedLauncherExitCode": 0,
+      "sameRootAndModelOwner": true,
+      "businessTablesAndRowidsSame": true,
+      "sixTodayHistoryRowsAndLastSuccessSame": true,
+      "modelHttp": 8,
+      "modelRecords": 25,
+      "authoredAdvisorAndAppSettingsContentAndIdentitySame": true,
+      "twoBackupsContentAndIdentitySame": true,
+      "allFiveConfigHashesSame": false,
+      "skillsInstallationPersistentContentSame": true,
+      "skillsScanStateContentSame": true,
+      "derivedCatalogHashChanged": true,
+      "startupInitializationAndRescanSourceVerified": true,
+      "currentBuiltinPackages": 18,
+      "currentBuiltinFiles": 441,
+      "currentBuiltinBytes": 3440468,
+      "currentCatalogValidAndPackageRevisionRetained": true,
+      "exactCatalogFieldDifference": "unverified; raw-before missing; cannot claim only timestamp changed",
+      "originalNeedsRevisionRetained": true,
+      "independentReview": {
+        "agent": "s36_cold_cache_review",
+        "conclusion": "APPROVE/pass for backend persistence only",
+        "bytes": 2136,
+        "sha256": "0971318bc46d0c9ee27185b618517b1fed38130a807550257c0cc47ce3f695ef"
+      },
+      "ownerVisibleStatus": "confirmed by owner: advice/facts/currentness correct"
+    },
+    "stdioSave": {
+      "serverId": "mcp-ff5ced98d1ff29e2b3d84223",
+      "configurationRevision": "rev-df75282fe85d898851e6e1102af233792009d9ffdb1ba21c018b5296fc3f6d09",
+      "name": "P6 合成本机工具",
+      "transport": "stdio",
+      "serverCount": 1,
+      "normalizedInputFieldsMatch": true,
+      "serviceLogExists": false,
+      "serviceLogRecords": 0,
+      "probeRuns": 0,
+      "roleTrialRuns": 0,
+      "toolCalls": 0,
+      "allExistingDatabaseRowsAndTodayHistoryUnchanged": true,
+      "localSyntheticModelHttp": 8,
+      "modelHttpDelta": 0,
+      "newSkillsCacheComparison": "actual raw-before and after identical; no new change observed; older H11 gap not backfilled"
+    },
+    "stdioDiagnostic": {
+      "catalogTools": 1,
+      "toolName": "lookup",
+      "catalogBytes": 393,
+      "catalogSha256": "202e2055baef8fdfa75ecde53d72826be9f707843a0598aac498fd0eac4c0550",
+      "schemaSha256": "54669b5e6a1bfebb4d15788d41b5cd5fb8e51fc2d982eb2383a42262c748c90a",
+      "sameSavedServerAndRevision": true,
+      "completeCatalogPublished": true,
+      "knownLoggedServicePidAbsent": true,
+      "sourceCloseGatePlusPersistedOutcomeVerified": true,
+      "rawOwnerEndFrameCaptured": false,
+      "wireRpcSequenceCaptured": false,
+      "initialServiceFullIdentityCaptured": false,
+      "childPidCaptured": false,
+      "toolCalls": 0,
+      "localSyntheticModelHttp": 8,
+      "modelDelta": 0,
+      "metadata": 25,
+      "allFormalRowsAndSixTodayHistoryUnchanged": true,
+      "limits": "No initial service/child/guardian/keeper full identities or raw owner/end/wire sequence retained; current scoped absence and source close/end/group_gone/reap gates plus persisted success are the stated evidence."
+    },
+    "stdioTrial": {
+      "serviceCallsDelta": 1,
+      "ledgerRowsDelta": 1,
+      "sendState": "responded",
+      "responseCategory": "success",
+      "role": "organizer",
+      "purpose": "role_trial",
+      "previewCandidates": 1,
+      "pendingCandidatesAfterTrial": 0,
+      "formalTodos": 1,
+      "modelHttpAtThisCheckpoint": 10,
+      "modelDelta": 2,
+      "modelMetadataAtThisCheckpoint": 31,
+      "formalRowsAndPriorSevenAgentHistoryUnchanged": true,
+      "serviceAndChildKnownLoggedPidsAbsent": true,
+      "rawBeforeToolOwnerEndWireFramesCaptured": false,
+      "earlyFullServiceIdentityCaptured": false
+    },
+    "extraOwnerActivity": {
+      "ownerQuote": "都是我操作的，3次都看到了成功结果",
+      "actions": [
+        "manual synthetic todo deadline edit",
+        "today advice refresh",
+        "tracker trial",
+        "advisor trial"
+      ],
+      "newRuns": 3,
+      "visibleSuccessStatusConfirmed": true,
+      "completeOutputVisualChecked": false,
+      "perTrialIndependentPreSnapshotCaptured": false,
+      "wholeWindowFormalUnchangedClaimed": false,
+      "newTodoVersion": 5,
+      "newTodoEvents": 5,
+      "deadlineUtc": "2026-11-04T09:00:00Z",
+      "deadlinePrecision": "minute",
+      "modelHttpAfterExtra": 13,
+      "metadataAfterExtra": 40,
+      "sameOldStdioToolCallCount": 1,
+      "occurredBeforeHttpProducerPreparation": true
+    },
+    "httpPreparation": {
+      "testFixtureSource": "tracked tests/fixtures/mcp-http.mjs",
+      "fixtureHeadMainCandidateSha256": "b4b28ffa9263a1363a35a5bc50c6de4000f4629c89e9a92de4edb82985428789",
+      "originalProgramSha256": "5a08377d80442950525e44422aa2a517e6e11e156792e284602cfaaa12e7c2cd",
+      "headerParameterProgramSha256": "73cc1c0b93f0ed03570e9996ad4eae53840f6260226d4336c4d407c3fcfe7184",
+      "serviceMode": "json with fixed synthetic header check",
+      "negativeGetWithoutHeaderStatus": 401,
+      "positiveGetWithSyntheticHeaderStatus": 405,
+      "controlRequests": 2,
+      "controlRpc": 0,
+      "controlCalls": 0,
+      "controlSocketsAfter": 0,
+      "notNativeEvidence": true,
+      "initialWrongBundleSourceAssumptionAndSyntaxExit9Retained": true
+    },
+    "httpSave": {
+      "serverCount": 2,
+      "bothEnabled": true,
+      "originalStdioIdAndFieldsUnchanged": true,
+      "httpServerId": "mcp-4997f2d0dc47ba3f65ce7db6",
+      "configurationRevision": "rev-29bdb4d93edcac805e56e799f773f95622454ee343db7e427bd66708a693b6e1",
+      "headerReference": "environment X-Controlled-Secret -> S36_HTTP_TOKEN",
+      "noPlaintextOrKeychainHeader": true,
+      "httpProducerRequestsStillOnlyTwoControls": true,
+      "nativeRequestDelta": 0,
+      "allCurrentAppRowsAndMetadataUnchanged": true,
+      "modelHttp": 13,
+      "modelMetadata": 40
+    },
+    "httpDiagnostic": {
+      "conclusion": "needs_revision: owner description not matched by current backend evidence; cause unconfirmed",
+      "ownerQuote": "HTTP诊断完成，本地连接关闭，发现lookup 1项",
+      "newHttpProbeRuns": 0,
+      "newNativeHttpRequests": 0,
+      "producerTotalRequests": 2,
+      "producerRequestsAreOnlyEarlierGetControls": true,
+      "rpc": 0,
+      "toolCalls": 0,
+      "sockets": 0,
+      "socketZeroProvesPreviousConnectionClosed": false,
+      "onlyExistingProbeBelongsToStdio": true,
+      "newCatalogOrCloseReceiptAvailable": false,
+      "allAppRowsAndMetadataUnchanged": true,
+      "modelHttp": 13,
+      "metadata": 40,
+      "oldLedgerRows": 1,
+      "retryOrRepairPerformed": false,
+      "fourOwnedProcessesStillAlive": true
+    },
+    "assistantTakeoverStatus": "new A-to-B protocol approved; artifact rebuilt and verified; launch blocked on necessary geometry compatibility, pending separately requested viewport adaptation"
+  },
+  "assistantSelfcheck": {
+    "at": "2026-11-03T13:49:58.659003+00:00",
+    "head": "01b98f90e3cb2c1cd35654864b8c9f152316a4b6",
+    "verificationType": "non-independent focused backend selfcheck, no source change",
+    "scope": "cache-assisted isolated backend diagnosis; not native GUI or clean-clone preparation proof",
+    "commands": [
+      {
+        "command": "npm run test:mcp-http",
+        "exitCode": 0,
+        "seconds": 1.953,
+        "nodeCounts": {
+          "tests": 62,
+          "suites": 0,
+          "pass": 62,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "rustResultLines": [],
+        "log": "test-mcp-http.log",
+        "logBytes": 5328,
+        "logSha256": "6f760c911cca18316340dc34bfba8b0f4bf3778065eb0f9c94cfa344b0c5d16d",
+        "warningLines": []
+      },
+      {
+        "command": "npm run test:mcp-http-host",
+        "exitCode": 0,
+        "seconds": 30.108,
+        "nodeCounts": {
+          "tests": 11,
+          "suites": 0,
+          "pass": 11,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "rustResultLines": [],
+        "log": "test-mcp-http-host.log",
+        "logBytes": 3036,
+        "logSha256": "0d4c113488e0b826b32c70c8b85072c537e7fbf95b7025cd47e3bb89663439c7",
+        "warningLines": [
+          "  build/s0-runtime/probe.mjs  2.3mb ⚠️",
+          "  build/s0-runtime/organizer.mjs  2.4mb ⚠️"
+        ]
+      },
+      {
+        "command": "npm run test:mcp-http-task",
+        "exitCode": 0,
+        "seconds": 87.223,
+        "nodeCounts": {},
+        "rustResultLines": [
+          "test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 262 filtered out; finished in 78.69s"
+        ],
+        "log": "test-mcp-http-task.log",
+        "logBytes": 2346,
+        "logSha256": "40c712dda77286a201d890e4bafaf001d27fec02f6fe4fc0ed949b458c8047eb",
+        "warningLines": [
+          "  build/s0-runtime/probe.mjs  2.3mb ⚠️",
+          "  build/s0-runtime/organizer.mjs  2.4mb ⚠️"
+        ]
+      }
+    ],
+    "warningClassification": {
+      "categories": [
+        "existing esbuild bundle size"
+      ],
+      "perBundle": [
+        "probe.mjs 2.3mb",
+        "organizer.mjs 2.4mb"
+      ],
+      "bundleInvocations": 2,
+      "warningLines": 4,
+      "newCategories": []
+    },
+    "localCrateRebuiltInNewCheckoutForHostAndTask": true,
+    "setupDeviation": {
+      "firstAttemptExitCode": 1,
+      "reason": "Incorrectly expected the historical cache checkout HEAD to equal the delivered commit. Actual cache base is 40505ea with the preserved reviewed overlay. New test checkout is exact 01b98f9; dependency locks match and cached outputs are independent APFS copies.",
+      "firstAttemptEvidence": "preparation-attempt-1.json"
+    },
+    "officialCaptureAttemptFromChat": {
+      "method": "cua.getApp(same canonical verification App)",
+      "attempts": 2,
+      "errorCode": -3811,
+      "outerErrorCode": -10005,
+      "nativeStateOrScreenshotReturned": false,
+      "guiActionsExecuted": 0,
+      "additionalAttemptsInThisVerificationScript": 0
+    },
+    "frozenSourceFilesMatchedInMainCandidateAndCache": 11,
+    "originalAppSha256After": "f36318746fb17c1c541c4506433cb32382659577069f6eaf37c1f778c20217e8",
+    "historicalCacheStatusUnchanged": true,
+    "historicalCacheTrackedDiffUnchanged": true,
+    "candidateStatusAfter": "",
+    "originalAcceptanceRootUnchanged": {
+      "tables": true,
+      "schema": true,
+      "modelRecords": true
+    },
+    "originalAcceptanceCounts": {
+      "agentRuns": 11,
+      "toolCalls": 1,
+      "todos": 1,
+      "localSyntheticModelHttp": 13,
+      "modelMetadata": 40
+    },
+    "originalOwnedProcessesNow": [
+      {
+        "role": "app",
+        "pid": 24449,
+        "exitCode": 0
+      },
+      {
+        "role": "model",
+        "pid": 67902,
+        "exitCode": 1
+      },
+      {
+        "role": "runner",
+        "pid": 67733,
+        "exitCode": 1
+      },
+      {
+        "role": "httpProducer",
+        "pid": 19520,
+        "exitCode": 1
+      }
+    ],
+    "originalTwoPortsListening": false,
+    "newCheckoutScopedRemainingProcesses": [],
+    "cleanupScope": "No remaining process command references the new checkout; test shutdown assertions passed. No machine-wide unknown-process claim. Original App retained, no process signals sent by this verification.",
+    "realModelHttpRequests": 0,
+    "productionMcpKeychain": "off",
+    "nativeHttpDiagnostic": "needs_revision; prior discrepancy retained; no native GUI pass",
+    "testsRetried": false,
+    "conclusion": "pass for the three focused backend scripts only; native HTTP/S3.6/G1 remain open",
+    "rawEvidenceDirectory": "build/s36-g1-native-resume-20261102/assistant-selfcheck-20261103",
+    "verificationJson": {
+      "bytes": 5450,
+      "sha256": "c9b11865586665f7b62a62ba8d7b95f8915fcb47fdcc42bad05a30d1fdb4eb1c"
+    },
+    "fullCheckRun": false,
+    "cleanClonePreparationClaimed": false,
+    "nativeGuiPassClaimed": false,
+    "sourceChanged": false,
+    "commitOrPush": false,
+    "documentationChecks": [
+      {
+        "command": "npm run check:docs",
+        "exitCode": 0,
+        "seconds": 0.17,
+        "log": "check-docs.log",
+        "output": "npm notice run sidekick@0.3.0 check:docs\nnpm notice run node scripts/checks/check-docs.mjs\n✓ docs link check passed (15 files, 226 local links resolved).\n"
+      },
+      {
+        "command": "npm run check:structure",
+        "exitCode": 0,
+        "seconds": 0.315,
+        "log": "check-structure.log",
+        "output": "npm notice run sidekick@0.3.0 check:structure\nnpm notice run node scripts/checks/check-structure.mjs --self-test && node scripts/checks/check-structure.mjs\n✓ structure self-test passed (19 violation classes and 8 individual reference violations detected in a synthetic tree; clean samples stayed clean).\n✓ structure check passed (182 source files scanned, 397 relative references resolved).\n"
+      },
+      {
+        "command": "git diff --check",
+        "exitCode": 0,
+        "seconds": 0.02,
+        "log": "git-diff-check.log",
+        "output": ""
+      }
+    ]
+  },
+  "nativeToolRecovery": {
+    "at": "2026-11-03T15:15:30.480617+00:00",
+    "rawEvidenceDirectory": "build/s36-native-tools-20261103",
+    "head": "01b98f90e3cb2c1cd35654864b8c9f152316a4b6",
+    "ownerApprovedRoutes": "A bounded official recovery, then B AX semantic operations/single-window capture after verified pilot",
+    "freshPlanReviews": {
+      "A": "APPROVE",
+      "B": "APPROVE"
+    },
+    "oldCanonicalArtifactMissing": true,
+    "initialPreflight": "needs_revision retained",
+    "artifactReplacementReview": {
+      "A": "APPROVE_WITH_CHANGES",
+      "B": "BLOCK before explicit owner authorization"
+    },
+    "explicitRebuildAuthorization": "允许隔离重建专用验收 App（推荐）",
+    "rebuild": {
+      "command": "npm run build:s33-ui-verify",
+      "exitCode": 0,
+      "seconds": 31.057,
+      "totalPreparationAndChecksSeconds": 70.839,
+      "trackedInputs": 4308,
+      "preparedEntries": 58106,
+      "preparedFiles": 54091,
+      "preparedSymlinks": 61,
+      "sharedWritableInodes": [],
+      "localCrateRecompiled": true,
+      "resourceEntries": 560,
+      "resourceFiles": 482,
+      "resourceDifferences": 0,
+      "newExecutableSha256": "f36318746fb17c1c541c4506433cb32382659577069f6eaf37c1f778c20217e8",
+      "strictSignatureExitCode": 0,
+      "independentVerification": "pass; input/app/environment only",
+      "newFullCheck": false,
+      "cleanClonePreparationClaimed": false
+    },
+    "launch": {
+      "command": "npm run probe:mcp-native -- --g1 <new owned evidence directory>",
+      "exitCode": 1,
+      "error": "G1 startup identity and ready receipt disagree.",
+      "startupIdentityCaptured": true,
+      "readyReceiptCount": 0,
+      "retryCount": 0,
+      "nativeAppSelectionCalls": 0,
+      "screenshotCalls": 0,
+      "guiActions": 0,
+      "helperCreated": false
+    },
+    "routeA": {
+      "startedUtc": "2026-11-03T14:52:01Z",
+      "deadlineUtc": "2026-11-03T15:07:01Z",
+      "deadlineExtended": false,
+      "outcome": "blocked before capture pilot by launch readiness; no new -3811 reproduction"
+    },
+    "geometry": {
+      "mainPhysical": [
+        3024,
+        1964
+      ],
+      "mainLogical": [
+        1512,
+        982
+      ],
+      "requestedLogical": [
+        1440,
+        1000
+      ],
+      "necessaryGeometryConditionsCompatible": false,
+      "specificTauriErrorBranchCaptured": false
+    },
+    "newRoot": {
+      "schemaVersion": 4,
+      "businessTablesEmpty": true,
+      "quickCheck": "ok",
+      "foreignKeyViolations": 0,
+      "ownedRegularFilesPreserved": 456,
+      "modelDurableRequestRecords": 0,
+      "realModelHttp": 0
+    },
+    "cleanup": {
+      "conclusion": "pass",
+      "registeredPidsGone": 3,
+      "originalRunPortListening": false,
+      "scopedRemainingChildren": 0,
+      "rootDeleted": false,
+      "globalNoUnknownProcessClaimed": false
+    },
+    "pendingDecision": "viewport adaptation explicitly approved; see viewportAdaptation; earlier pending record retained in raw evidence",
+    "productionMcpKeychain": "off",
+    "sourceChanged": false,
+    "commitOrPush": false,
+    "conclusion": "rebuild pass; native launch needs_revision; S3.6/G1 remain open",
+    "rawBindings": {
+      "plan-v2.md": {
+        "bytes": 4894,
+        "sha256": "7e51d12c7c8d15a239fa95389e349f57a26f05741482ca1f593f7918b6c8e9e6"
+      },
+      "approval.json": {
+        "bytes": 1029,
+        "sha256": "b23e0c577b69d4eaf8d9d3b9ecaeab60292777f6ee3f41eb75341860cfa21eea"
+      },
+      "recovery-authorization.json": {
+        "bytes": 1128,
+        "sha256": "395d5516a4ca96df4258c9a3d80f633eeeb7555a48462fc4723c27fe8f6b595a"
+      },
+      "rebuild-result.json": {
+        "bytes": 10318,
+        "sha256": "41cc7374a0a45e38bc06cd867203acf81bd2bec792b5c3a1f156ec183b85ea40"
+      },
+      "rebuild.log": {
+        "bytes": 3556,
+        "sha256": "9dabe161376badbb62fd87985821a95b670d0ccb64fe16a219d4b60de7eab57a"
+      },
+      "verifier/preflight.json": {
+        "bytes": 13521,
+        "sha256": "e0e7dcf37f1620357934bfe7ec27b850eda7898f5604bce0700aa8c6b5ed93e1"
+      },
+      "verifier/rebuilt-app-preflight.json": {
+        "bytes": 159040,
+        "sha256": "1a0431d7541a67097ad198ca62cf4894cd846579c13690c601ad0fcf62ed792d"
+      },
+      "verifier/rebuilt-inputs-verification.json": {
+        "bytes": 3518,
+        "sha256": "d516cc35a2339d4116a10890f8064fb293e3fd54c317b8e1ac24a4eeb4e2d099"
+      },
+      "verifier/rebuilt-environment-verification.json": {
+        "bytes": 862,
+        "sha256": "c2ebf7f04743f885ed1abf359f77b604b8fd07b9d3e9dcc74d4c1820f7340366"
+      },
+      "verifier/failed-launch-inspection.json": {
+        "bytes": 149345,
+        "sha256": "3b2788e4d4fd2ab3a4f5acb0adee6d36b647ddef440e39ef751e05ed67a4e0d9"
+      },
+      "verifier/failed-launch-cleanup.json": {
+        "bytes": 5403,
+        "sha256": "747a08b8338586748db19196ea74bb09f9766fd3892ba84950f6584ea87a5d96"
+      },
+      "display-geometry-detail.json": {
+        "bytes": 301,
+        "sha256": "aaf31d89a4e6a60fa84425637fbedb21305dc9ed2f850c6a961f5269c3809f8a"
+      }
+    },
+    "finalRecordReview": {
+      "conclusion": "pass",
+      "openFindings": [],
+      "bytes": 10183,
+      "sha256": "832fc3d004ce4c7fe0da44c137cc9944df80e53985c4a9370d916966dc7189c2"
+    },
+    "lightweightChecks": [
+      {
+        "command": "npm run check:docs",
+        "exitCode": 0,
+        "log": "check-docs.log",
+        "output": "npm notice run sidekick@0.3.0 check:docs\nnpm notice run node scripts/checks/check-docs.mjs\n✓ docs link check passed (15 files, 227 local links resolved).\n"
+      },
+      {
+        "command": "npm run check:structure",
+        "exitCode": 0,
+        "log": "check-structure.log",
+        "output": "npm notice run sidekick@0.3.0 check:structure\nnpm notice run node scripts/checks/check-structure.mjs --self-test && node scripts/checks/check-structure.mjs\n✓ structure self-test passed (19 violation classes and 8 individual reference violations detected in a synthetic tree; clean samples stayed clean).\n✓ structure check passed (182 source files scanned, 397 relative references resolved).\n"
+      },
+      {
+        "command": "git diff --check",
+        "exitCode": 0,
+        "log": "git-diff-check.log",
+        "output": ""
+      }
+    ]
+  },
+  "viewportAdaptation": {
+    "rawEvidenceDirectory": "build/s36-g1-viewport-20261103",
+    "ownerApproved": true,
+    "scope": "G1 wide1440x900/narrow640x900; legacy MCP unchanged; guards retained",
+    "sourceFiles": [
+      "scripts/probes/run-mcp-native.mjs",
+      "tests/integration/native-launcher.test.mjs"
+    ],
+    "codeFreezeSha256": "d2b69886cbd0d6419a57d0fdaddd8c22963e02262b9f5dafc17ed7bc58cd51be",
+    "designReviews": {
+      "A": "APPROVE",
+      "B": "APPROVE"
+    },
+    "deliveryReviews": {
+      "A": "APPROVE",
+      "B": "APPROVE"
+    },
+    "baselineFinalTests": {
+      "pass": 46,
+      "fail": 6,
+      "exitCode": 1
+    },
+    "currentLauncher": {
+      "pass": 52,
+      "fail": 0,
+      "exitCode": 0
+    },
+    "nativeFetch": {
+      "pass": 33,
+      "fail": 0,
+      "exitCode": 0
+    },
+    "firstGreenAttempt": {
+      "pass": 50,
+      "fail": 2,
+      "reason": "new post-open test incorrectly required unchanged receipt; lawful starting identity preserved by protocol"
+    },
+    "baselineLoadSettingError": {
+      "pass": 3,
+      "fail": 49,
+      "productRedEvidence": false,
+      "reason": "old copied file had unsupported .before extension; identical .mjs copy used for final baseline"
+    },
+    "staticChecks": [
+      {
+        "command": "npm run typecheck",
+        "exitCode": 0,
+        "seconds": 2.498,
+        "log": "typecheck.log",
+        "output": "npm notice run sidekick@0.3.0 typecheck\nnpm notice run vue-tsc --noEmit\n"
+      },
+      {
+        "command": "npm run check:structure",
+        "exitCode": 0,
+        "seconds": 0.236,
+        "log": "check-structure.log",
+        "output": "npm notice run sidekick@0.3.0 check:structure\nnpm notice run node scripts/checks/check-structure.mjs --self-test && node scripts/checks/check-structure.mjs\n✓ structure self-test passed (19 violation classes and 8 individual reference violations detected in a synthetic tree; clean samples stayed clean).\n✓ structure check passed (182 source files scanned, 397 relative references resolved).\n"
+      },
+      {
+        "command": "npm run check:docs",
+        "exitCode": 0,
+        "seconds": 0.121,
+        "log": "check-docs.log",
+        "output": "npm notice run sidekick@0.3.0 check:docs\nnpm notice run node scripts/checks/check-docs.mjs\n✓ docs link check passed (15 files, 227 local links resolved).\n"
+      },
+      {
+        "command": "git diff --check",
+        "exitCode": 0,
+        "seconds": 0.017,
+        "log": "diff-check.log",
+        "output": ""
+      }
+    ],
+    "fullCheck": {
+      "conclusion": "needs_revision",
+      "command": "npm run check",
+      "exitCode": 1,
+      "seconds": 150.151,
+      "executionCount": 1,
+      "nodeTotals": {
+        "tests": 756,
+        "pass": 755,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "rustFmtClippy": "passed",
+      "rustLibraryAndDualFeature": "not reached",
+      "finalAppBuilds": "not reached; no this-run final package binding",
+      "failureGroup": {
+        "command": "npm run test:s33-discovery",
+        "tests": 77,
+        "pass": 76,
+        "fail": 1,
+        "name": "SIGKILL runtime still cleans owned group with unrelated control alive",
+        "error": "Expected ',' or '}' after property value in JSON at position 137"
+      },
+      "rootCauseEvidence": "Rust JSON serialization is interleaved with a complete cleaner JSON record in the shared verification audit; original 575 bytes preserved; not a truncated-tail assumption",
+      "rawAuditBytes": 575,
+      "inputsStable": 4311,
+      "preparedEntriesStable": 58106,
+      "freezeMatches": 11,
+      "residualScopedProcesses": 0,
+      "residualScopedListeners": 0,
+      "recordedPidsNoLiveMatch": 228,
+      "recordedPgidsNoLiveMatch": 48,
+      "guiLaunched": false,
+      "realModelsExecuted": false,
+      "repairOrRerun": false,
+      "sealedEvidenceFiles": 128,
+      "sealedEvidenceReadback": "all bytes/SHA256 matched",
+      "rawBindings": {
+        "final-verification.json": {
+          "bytes": 4978,
+          "sha256": "9c8864465c780ee4290a0acc6941c6bb41448754c9cd33bdf0dae533c5310721"
+        },
+        "partial-counts.json": {
+          "bytes": 6521,
+          "sha256": "ac71133ffe75b3f1d777edac3c092ec85d55b3265d3197ddfd9560ff74ea4cdd"
+        },
+        "partial-warnings.json": {
+          "bytes": 1406,
+          "sha256": "2275ac6b07120b011eb24e61aeea0d9a47a9ebca54b77c7f722fb52481ece592"
+        },
+        "failure-tail.log": {
+          "bytes": 4771,
+          "sha256": "2ac24209955145b145b743a9ccf2d46b422e2160a42ab0d974eb57df89f17385"
+        },
+        "check.log": {
+          "bytes": 87262,
+          "sha256": "3f2dc5330074b299767f8c4b4b4faf44d22135327fe77197e2a831d59004e2e3"
+        },
+        "raw-audit-analysis.json": {
+          "bytes": 1481,
+          "sha256": "985371e4592a0482c48a4079dfe2c2954d26e0a37a16ded607383936065619d0"
+        },
+        "evidence-seal.json": {
+          "bytes": 23710,
+          "sha256": "276c29338506e721a1829e5988f6751d8986103d3cfb9da9cbcf3239ab7297a8"
+        }
+      }
+    },
+    "nativeReady": "unverified; blocked by failed full check",
+    "realModelHttp": 0,
+    "productionMcpKeychain": "off",
+    "commitOrPush": false,
+    "pendingDecision": "900 geometry still not native-ready; audit repair full passed separately; next800/diagnostic proposal awaiting owner; old full failure retained",
+    "postFailureRecordReview": {
+      "conclusion": "pass",
+      "bytes": 3486,
+      "sha256": "a598f2b0008b41bc6a2af8748ddd05471a5329b89cb127b3b413df5f8f32208f"
+    },
+    "postFailureDocumentChecks": [
+      {
+        "command": "npm run check:docs",
+        "exitCode": 0,
+        "output": "npm notice run sidekick@0.3.0 check:docs\nnpm notice run node scripts/checks/check-docs.mjs\n✓ docs link check passed (15 files, 227 local links resolved).\n"
+      },
+      {
+        "command": "git diff --check",
+        "exitCode": 0,
+        "output": ""
+      }
+    ]
+  },
+  "verificationAuditFollowup": {
+    "review": "verification-audit-20261104.md",
+    "fullCheckExitCode": 0,
+    "nodePassed": 870,
+    "defaultRustPassed": 271,
+    "defaultRustIgnored": 3,
+    "dualFeaturePassed": 31,
+    "nativeRequested": [
+      1440,
+      900
+    ],
+    "nativeReady": false,
+    "nativeLaunchExitCode": 1,
+    "observedVisibleSize": [
+      1512,
+      887
+    ],
+    "next800ReadinessDiagnosticProposal": "pending owner approval",
+    "oldHttp02NeedsRevisionRetained": true
+  }
+}

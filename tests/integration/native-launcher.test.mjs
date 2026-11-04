@@ -35,6 +35,14 @@ cp.execFileSync = (file, args = [], options = {}) => {
         fs.writeFileSync(stale.startup.path, stale.partialStartup ? '' : JSON.stringify(stale.startup.data), { mode: 0o600, flag: 'wx' });
         if (stale.partialStartup && !stale.neverComplete) setTimeout(() => fs.writeFileSync(stale.startup.path, JSON.stringify(stale.startup.data)), 150);
       }
+      if (stale.failure) {
+        fs.writeFileSync(stale.failure.path, stale.partialFailure ? '' : JSON.stringify(stale.failure.data), { mode: 0o600, flag: 'wx' });
+        if (stale.partialFailure && !stale.neverCompleteFailure) setTimeout(() => fs.writeFileSync(stale.failure.path, JSON.stringify(stale.failure.data)), 150);
+        if (stale.failure.mode) fs.chmodSync(stale.failure.path, stale.failure.mode);
+        const sibling = require('node:path').join(require('node:path').dirname(stale.failure.path), 'failure-reference.json');
+        if (stale.failure.hardlink) fs.linkSync(stale.failure.path, sibling);
+        if (stale.failure.symlink) { fs.renameSync(stale.failure.path, sibling); fs.symlinkSync(sibling, stale.failure.path); }
+      }
       fs.writeFileSync(stale.path, stale.partialReady ? '' : JSON.stringify(stale.info), { mode: 0o600, flag: 'wx' });
       if (stale.partialReady && !stale.neverComplete) setTimeout(() => fs.writeFileSync(stale.path, JSON.stringify(stale.info)), 150);
       return options.encoding ? '' : Buffer.alloc(0);
@@ -47,6 +55,7 @@ cp.execFileSync = (file, args = [], options = {}) => {
       note({ kind: 'simulated-app-ps' });
       if (args.includes('uid=,lstart=,command=')) {
         appIdentityObservations++;
+        if (stale.exitAfterStartup && appIdentityObservations > 1) { const error = new Error('TEST_APP_EXITED'); error.status = 1; throw error; }
         return appIdentityObservations === 1 ? stale.identity : stale.readyIdentity || stale.identity;
       }
       return stale.command;
@@ -229,7 +238,7 @@ for (const [name, change, expected] of [
   await rejected(state, expected);
 });
 
-for (const dimensions of [['640', '1000'], ['1440', '900'], ['0', '900'], ['640', 'NaN']]) test(`invalid dimensions ${dimensions.join('x')} are rejected before launch`, async t => {
+for (const dimensions of [['640', '1000'], ['1440', '900'], ['640', '800'], ['1440', '800'], ['0', '900'], ['640', 'NaN']]) test(`invalid dimensions ${dimensions.join('x')} are rejected before launch`, async t => {
   const state = await setup(t);
   await rejected(state, /Invalid native reopen dimensions/, { dimensions });
 });
@@ -239,16 +248,16 @@ test('extra CLI arguments are rejected before trusting a receipt', async t => {
   await rejected(state, /Invalid native reopen arguments/, { extra: ['unowned-extra'] });
 });
 
-function g1Simulation(state) {
+function g1Simulation(state, width = 640, height = 900) {
   const pid = unavailablePid - 1, scope = 'controlled-native-g1';
   const launchScope = scope + ':' + state.receipt.model.port + ':' + state.model.pid;
-  const command = [executable, '--s33-mcp-ui', state.root, state.nonce, '640', '900', launchScope, '--reopen'].join(' ');
+  const command = [executable, '--s33-mcp-ui', state.root, state.nonce, String(width), String(height), launchScope, '--reopen'].join(' ');
   const identity = String(process.getuid()) + ' Mon Nov 2 00:00:00 2026 ' + command;
   const startup = { pid, uid: process.getuid(), identity, command, identifier: 'com.sidekick.s33.ui.verify', scope, launchScope, root: state.root, nonce: state.nonce };
   return {
     path: join(state.root, 'native-info-g1-simulated.json'), command, identity,
     startup: { path: join(state.root, 'native-startup-g1-simulated.json'), data: startup },
-    info: { identifier: 'com.sidekick.s33.ui.verify', workspace: join(state.root, 'workspace'), modelOwner: { pid: state.model.pid, nonce: state.nonce }, pid, scope, startupIdentity: startup, schemaVersion: 5, geometryConfirmed: true, physicalInnerSize: { width: 640, height: 900 }, scale: 1, outerRect: { x: 0, y: 0, width: 640, height: 900 }, primaryMonitor: { x: 0, y: 0, width: 1920, height: 1080 } },
+    info: { identifier: 'com.sidekick.s33.ui.verify', workspace: join(state.root, 'workspace'), modelOwner: { pid: state.model.pid, nonce: state.nonce }, pid, scope, startupIdentity: startup, schemaVersion: 5, geometryConfirmed: true, physicalInnerSize: { width, height }, scale: 1, outerRect: { x: 0, y: 0, width, height }, primaryMonitor: { x: 0, y: 0, width: 1920, height: 1080 } },
   };
 }
 test('g1 launcher reopens its own scope with startup identity in a simulation, without native GUI evidence', async t => {
@@ -261,6 +270,48 @@ test('g1 launcher reopens its own scope with startup identity in a simulation, w
   assert.equal(result.modelRequests.length, 0);
   const receipt = JSON.parse(await readFile(state.receiptPath, 'utf8'));
   assert.equal(receipt.scope, 'controlled-native-g1');
+  assert.equal(receipt.launched.at(-1).initialIdentity.identity, simulated.identity);
+});
+for (const height of [800, 900, 1000]) test(`g1 launcher reopens a 1440x${height} wide window with exact geometry in a simulation`, async t => {
+  const state = await setup(t, true), simulated = g1Simulation(state, 1440, height);
+  if (height === 900) {
+    simulated.info.outerRect = { x: 36, y: 20, width: 1440, height: 928 };
+    simulated.info.primaryMonitor = { x: 0, y: 0, width: 1512, height: 982 };
+  }
+  const result = await invoke(state, { dimensions: ['1440', String(height)], stale: simulated });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.audit.filter(row => row.kind === 'simulated-open').length, 1);
+  assert.equal(result.audit.filter(row => ['open', 'spawn', 'network'].includes(row.kind)).length, 0);
+  assert.equal(result.modelRequests.length, 0);
+  assert.deepEqual(JSON.parse(result.stdout).requested, { width: 1440, height });
+});
+test('g1 launcher reopens the approved 640x800 narrow window', async t => {
+  const state = await setup(t, true), simulated = g1Simulation(state, 640, 800);
+  const result = await invoke(state, { dimensions: ['640', '800'], stale: simulated });
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout).requested, { width: 640, height: 800 });
+  assert.equal(result.modelRequests.length, 0);
+});
+for (const dimensions of [['640', '1000'], ['1440', '899'], ['1440', '901']]) test(`g1 launcher rejects unapproved dimensions ${dimensions.join('x')} before open`, async t => {
+  const state = await setup(t, true);
+  await rejected(state, /Invalid native reopen dimensions/, { dimensions });
+});
+for (const failure of ['physical-size', 'outside-monitor']) test(`g1 1440x900 still rejects ${failure} in a simulation`, async t => {
+  const state = await setup(t, true), simulated = g1Simulation(state, 1440, 900);
+  simulated.info.primaryMonitor = { x: 0, y: 0, width: 1512, height: 982 };
+  if (failure === 'physical-size') simulated.info.physicalInnerSize.height = 1000;
+  else simulated.info.outerRect = { x: 100, y: 0, width: 1440, height: 928 };
+  const result = await invoke(state, { dimensions: ['1440', '900'], stale: simulated });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, failure === 'physical-size' ? /Native reopen dimensions not confirmed/ : /Native reopen window is outside the display/);
+  assert.ok(!result.stdout.includes('"ready":true'));
+  assert.equal(result.audit.filter(row => row.kind === 'simulated-open').length, 1);
+  assert.equal(result.audit.filter(row => ['open', 'spawn', 'network'].includes(row.kind)).length, 0);
+  assert.equal(result.modelRequests.length, 0);
+  const receipt = JSON.parse(await readFile(state.receiptPath, 'utf8'));
+  assert.equal(receipt.launched.at(-1).state, 'starting');
   assert.equal(receipt.launched.at(-1).initialIdentity.identity, simulated.identity);
 });
 test('g1 launcher rejects cross-scope marker reuse before simulated open', async t => {
@@ -307,6 +358,100 @@ for (const field of ['start-time', 'uid']) test('g1 launcher rejects ready proce
   assert.equal(result.modelRequests.length, 0);
 });
 
+function failureSimulation(state) {
+  const simulated = g1Simulation(state);
+  simulated.failure = { path: join(state.root, 'native-failure-simulated.json'), data: {
+    version: 1, kind: 'g1-native-readiness-failure', scope: 'controlled-native-g1', pid: simulated.info.pid, nonceSha256: digest(state.nonce),
+    diagnostic: { stage: 'inner_size', reason: 'deadline', requested: [640, 900], inner: [1280, 1600], scale: 2, monitor: [0, 0, 3024, 1964], workArea: [0, 66, 3024, 1774], outer: null, target: null, position: null },
+  } };
+  return simulated;
+}
+async function refusedFailure(state, simulated, pattern) {
+  const result = await invoke(state, { stale: simulated });
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 1, result.stderr);
+  assert.match(result.stderr, pattern);
+  assert.ok(!result.stdout.includes('"ready":true'));
+  assert.ok(!result.stderr.includes('PRIVATE_DIAGNOSTIC_CANARY'));
+  assert.equal(result.audit.filter(row => row.kind === 'simulated-open').length, 1);
+  assert.equal(result.audit.filter(row => ['open', 'spawn', 'network'].includes(row.kind)).length, 0);
+  assert.equal(result.modelRequests.length, 0);
+  const receipt = JSON.parse(await readFile(state.receiptPath, 'utf8'));
+  assert.equal(receipt.launched.at(-1).state, 'starting');
+  return result;
+}
+test('g1 private readiness failure takes precedence over a simultaneously visible ready record', async t => {
+  const state = await setup(t, true), simulated = failureSimulation(state);
+  await refusedFailure(state, simulated, /Native readiness failed at inner_size \(deadline\)/);
+});
+test('g1 partial private failure blocks ready until its bounded publication completes', async t => {
+  const state = await setup(t, true), simulated = failureSimulation(state);
+  simulated.partialFailure = true;
+  await refusedFailure(state, simulated, /Native readiness failed at inner_size \(deadline\)/);
+});
+test('g1 diagnostics preserve negative coordinates and an outer rectangle beyond the monitor', async t => {
+  const state = await setup(t, true), simulated = failureSimulation(state);
+  Object.assign(simulated.failure.data.diagnostic, { stage: 'bounds', reason: 'bounds', monitor: [-300, -200, 1280, 800], outer: [2880, 1656], target: [-10, -20], position: [-30, -40] });
+  await refusedFailure(state, simulated, /Native readiness failed at bounds \(bounds\)/);
+});
+test('g1 never-complete failure cannot be bypassed by valid ready data', async t => {
+  const state = await setup(t, true), simulated = failureSimulation(state);
+  simulated.partialFailure = true; simulated.neverCompleteFailure = true;
+  const started = performance.now();
+  await refusedFailure(state, simulated, /startup|ready|receipt/i);
+  assert.ok(performance.now() - started >= 7000);
+  assert.ok(performance.now() - started < 10000);
+});
+for (const [name, change] of [
+  ['wrong pid', f => { f.data.pid++; }],
+  ['wrong nonce digest', f => { f.data.nonceSha256 = '0'.repeat(64); }],
+  ['wrong scope', f => { f.data.scope = 'controlled-native-mcp'; }],
+  ['wrong version', f => { f.data.version = 2; }],
+  ['wrong dimensions', f => { f.data.diagnostic.requested = [1440, 800]; }],
+  ['unknown stage', f => { f.data.diagnostic.stage = 'PRIVATE_DIAGNOSTIC_CANARY'; }],
+  ['unknown reason', f => { f.data.diagnostic.reason = 'PRIVATE_DIAGNOSTIC_CANARY'; }],
+  ['extra secret field', f => { f.data.extra = 'PRIVATE_DIAGNOSTIC_CANARY'; }],
+  ['extra diagnostic field', f => { f.data.diagnostic.error = 'PRIVATE_DIAGNOSTIC_CANARY'; }],
+  ['oversized record', f => { f.data.extra = 'PRIVATE_DIAGNOSTIC_CANARY'.repeat(300); }],
+  ['invalid numeric shape', f => { f.data.diagnostic.inner = [1]; }],
+  ['nonprivate mode', f => { f.mode = 0o644; }],
+  ['hardlinked record', f => { f.hardlink = true; }],
+  ['symlink record', f => { f.symlink = true; }],
+]) test(`g1 failure ${name} is rejected without publishing ready or its raw contents`, async t => {
+  const state = await setup(t, true), simulated = failureSimulation(state); change(simulated.failure);
+  await refusedFailure(state, simulated, /Invalid private native failure receipt/);
+});
+test('g1 readiness failure never relaxes the fresh App identity check after exit', async t => {
+  const state = await setup(t, true), simulated = failureSimulation(state);
+  simulated.exitAfterStartup = true;
+  await refusedFailure(state, simulated, /identity|process|TEST_APP_EXITED/i);
+});
+test('g1 failure growth is refused after reading at most its fixed limit plus one', async t => {
+  const state = await setup(t, true), simulated = failureSimulation(state);
+  const source = preloadSource + `
+const fsp = require('node:fs/promises');
+const originalOpen = fsp.open;
+fsp.open = async (path, ...args) => {
+  const file = await originalOpen(path, ...args);
+  if (String(path).includes('native-failure-')) {
+    const read = file.read.bind(file);
+    file.read = async (...options) => {
+      fs.appendFileSync(path, 'x'.repeat(5000));
+      const size = options[0].buffer.length;
+      note({ kind: 'bounded-failure-read', requested: size });
+      return read(...options);
+    };
+    file.readFile = async () => { note({ kind: 'unbounded-failure-read' }); throw new Error('TEST_UNBOUNDED_READ'); };
+  }
+  return file;
+};
+syncBuiltinESMExports();`;
+  await writeFile(state.preload, source, { mode: 0o600 });
+  const result = await refusedFailure(state, simulated, /Invalid private native failure receipt/);
+  assert.equal(result.audit.filter(row => row.kind === 'unbounded-failure-read').length, 0);
+  assert.deepEqual(result.audit.filter(row => row.kind === 'bounded-failure-read').map(row => row.requested), [4097]);
+});
+
 test('stale native-info dimensions are rejected in a test-only LaunchServices simulation; this is not native GUI evidence', async t => {
   const state = await setup(t);
   const stale = { path: join(state.root, 'native-info-simulated-stale.json'), command: `${executable} --s33-mcp-ui ${state.root} ${state.nonce}`, info: { identifier: 'com.sidekick.s33.ui.verify', workspace: join(state.root, 'workspace'), modelOwner: { pid: state.model.pid, nonce: state.nonce }, pid: unavailablePid - 1, geometryConfirmed: true, physicalInnerSize: { width: 1440, height: 1000 }, scale: 1, outerRect: { x: 0, y: 0, width: 640, height: 900 }, primaryMonitor: { x: 0, y: 0, width: 1920, height: 1080 } } };
@@ -314,6 +459,76 @@ test('stale native-info dimensions are rejected in a test-only LaunchServices si
   assert.equal(result.audit.filter(note => note.kind === 'simulated-open').length, 1);
   assert.equal(result.audit.filter(note => note.kind === 'simulated-app-ps').length, 0);
   assert.deepEqual(JSON.parse(await readFile(stale.path, 'utf8')), stale.info);
+});
+
+for (const g1 of [false, true]) for (const control of [false, true]) test(`${g1 ? 'g1' : 'legacy MCP'} initial dimensions${control ? ' and stdin scope boundaries' : ''} use guarded launch simulation`, async t => {
+  const state = await setup(t, g1), evidence = join(state.base, 'initial-dimensions');
+  await mkdir(evidence, { mode: 0o700 });
+  const audit = join(state.result, 'dimensions-audit.ndjson'), preload = join(state.result, 'dimensions-preload.cjs');
+  const source = preloadSource
+    .replace('let appIdentityObservations = 0;', 'let appIdentityObservations = 0; let initialNative = null; let initialOpenCount = 0;')
+    .replace("if (file === '/usr/bin/open') {", `if (file === '/usr/bin/open') {
+    if (process.env.NATIVE_TEST_INITIAL === '1') {
+      const path = require('node:path');
+      const launch = args.slice(args.indexOf('--args') + 1);
+      const [flag, root, nonce, rawWidth, rawHeight, launchScope] = launch;
+      if (flag !== '--s33-mcp-ui' || !root.startsWith(process.env.TMPDIR + path.sep) || !/^[0-9a-f]{48}$/.test(nonce)) throw new Error('TEST_INITIAL_SCOPE');
+      const width = Number(rawWidth), height = Number(rawHeight), scope = process.env.NATIVE_STARTUP_SCOPE === 'g1' ? 'controlled-native-g1' : 'controlled-native-mcp';
+      if (!launchScope.startsWith(scope + ':')) throw new Error('TEST_INITIAL_SCOPE');
+      const pid = 2147483646, command = [args[args.indexOf('--args') - 1] + '/Contents/MacOS/sidekick', ...launch].join(' ');
+      const identity = String(process.getuid()) + ' Mon Nov 2 00:00:00 2026 ' + command;
+      const startup = { pid, uid: process.getuid(), identity, command, identifier: 'com.sidekick.s33.ui.verify', scope, launchScope, root, nonce };
+      const monitor = JSON.parse(process.env.NATIVE_INITIAL_MONITOR);
+      const info = { identifier: startup.identifier, workspace: path.join(root, 'workspace'), modelOwner: { pid: Number(launchScope.split(':')[2]), nonce }, pid, scope, startupIdentity: startup, schemaVersion: 4, geometryConfirmed: true, physicalInnerSize: { width, height }, scale: 1, outerRect: { x: 0, y: 0, width, height: height + 28 }, primaryMonitor: { x: 0, y: 0, width: monitor[0], height: monitor[1] } };
+      fs.mkdirSync(root, { recursive: true, mode: 0o700 });
+      initialNative = { pid, command, identity };
+      initialOpenCount++;
+      note({ kind: 'initial-simulated-open', width, height, launch });
+      if (scope === 'controlled-native-g1') fs.writeFileSync(path.join(root, 'native-startup-initial-' + initialOpenCount + '.json'), JSON.stringify(startup), { mode: 0o600, flag: 'wx' });
+      fs.writeFileSync(path.join(root, 'native-info-initial-' + initialOpenCount + '.json'), JSON.stringify(info), { mode: 0o600, flag: 'wx' });
+      return options.encoding ? '' : Buffer.alloc(0);
+    }`)
+    .replace("if (process.env.NATIVE_TEST_STALE && file === '/bin/ps') {", `if (initialNative && file === '/bin/ps' && args[0] === '-p' && args[1] === String(initialNative.pid)) {
+    if (args.includes('uid=,lstart=,command=')) return initialNative.identity;
+    if (args.includes('command=')) return initialNative.command;
+  }
+  if (process.env.NATIVE_TEST_STALE && file === '/bin/ps') {`)
+    .replace("cp.spawn = block('spawn');", `const originalSpawn = cp.spawn;
+cp.spawn = (file, args, options) => {
+  const path = require('node:path'), base = path.dirname(args[2] || '');
+  const mode = process.env.NATIVE_STARTUP_SCOPE;
+  if (file !== process.env.NATIVE_STARTUP_NODE || args.length !== 6 || args[0] !== process.env.NATIVE_STARTUP_FIXTURE || args[1] !== 'model' || args[3] !== mode || !/^[0-9a-f]{48}$/.test(args[5]) || !base.startsWith(process.env.TMPDIR + path.sep) || args[2] !== path.join(base, 'model.jsonl') || args[4] !== (mode === 'g1' ? path.join(base, 'app/synthetic-marker') : 'native') || Object.keys(options.env).sort().join(',') !== 'PATH,TMPDIR') return block('spawn')();
+  const child = originalSpawn(file, args, options);
+  const identity = originalExec('/bin/ps', ['-p', String(child.pid), '-o', 'uid=,lstart=,command='], { encoding: 'utf8', env: { PATH: '/usr/bin:/bin' } }).trim();
+  note({ kind: 'owned-model-spawn', pid: child.pid, file, args, identity });
+  return child;
+};`);
+  await writeFile(preload, source, { mode: 0o600 });
+  const commands = control ? [{ op: 'reopen', width: 640, height: 1000 }, { op: 'reopen', width: 1440, height: 899 }, { op: 'reopen', width: 1440, height: 800 }, { op: 'reopen', width: 640, height: 800 }, { op: 'reopen', width: 1440, height: 900 }, { op: 'reopen', width: 1440, height: 1000 }, { op: 'reopen', width: 640, height: 900 }] : [];
+  commands.push({ op: 'stop-model' });
+  const result = spawnSync(process.execPath, ['--require', preload, program, ...(g1 ? ['--g1'] : []), evidence], { encoding: 'utf8', env: { PATH: '/usr/bin:/bin', TMPDIR: state.base, NATIVE_TEST_AUDIT: audit, NATIVE_TEST_INITIAL: '1', NATIVE_STARTUP_SCOPE: g1 ? 'g1' : 'normal', NATIVE_STARTUP_NODE: join(bundle, 'Contents/Resources/s0-runtime/node'), NATIVE_STARTUP_FIXTURE: state.receipt.model.script, NATIVE_INITIAL_MONITOR: JSON.stringify(g1 && !control ? [1512, 982] : [1920, 1080]) }, input: commands.map(value => JSON.stringify(value)).join('\n') + '\n', timeout: 10000 });
+  const events = await notes(audit), children = events.filter(row => row.kind === 'owned-model-spawn');
+  const alive = child => {
+    try {
+      const actual = execFileSync('/bin/ps', ['-p', String(child.pid), '-o', 'uid=,lstart=,command='], proofOptions).trim();
+      assert.equal(actual, child.identity, 'only the exact initial owned model may be observed or signalled');
+      return true;
+    } catch (error) { if (error.status === 1) return false; throw error; }
+  };
+  t.after(async () => { for (const child of children) if (alive(child)) { process.kill(child.pid, 'SIGTERM'); await waitFor(() => !alive(child), 'initial model cleanup failed'); } });
+  await writeFile(join(state.result, 'dimensions-result.json'), JSON.stringify({ status: result.status, error: result.error?.message, events, stdout: result.stdout, stderr: result.stderr }, null, 2));
+  assert.equal(result.error, undefined);
+  assert.equal(result.status, 0, result.stderr);
+  const expected = [[1440, g1 ? 800 : 1000], ...(control ? [...(g1 ? [[1440, 800], [640, 800], [1440, 900]] : []), [1440, 1000], [640, 900]] : [])];
+  assert.deepEqual(events.filter(row => row.kind === 'initial-simulated-open').map(row => [row.width, row.height]), expected);
+  const receipt = JSON.parse(await readFile(join(evidence, 'owned-launch.json'), 'utf8'));
+  assert.equal(receipt.launched.length, expected.length);
+  assert.equal(result.stdout.trim().split('\n').filter(line => JSON.parse(line).ready).length, expected.length);
+  assert.equal((result.stderr.match(/Unexpected native acceptance dimensions/g) || []).length, control ? g1 ? 2 : 5 : 0);
+  assert.equal(events.filter(row => ['open', 'spawn', 'network', 'simulated-open'].includes(row.kind)).length, 0);
+  assert.equal(children.length, 1);
+  for (const child of children) { assert.equal((await notes(child.args[2])).length, 0); assert.equal(alive(child), false); }
+  assert.equal((await notes(state.modelLog)).length, 0);
 });
 
 for (const failure of ['existing-input', 'existing-stderr', 'receipt-write', 'stderr-write']) test(`initial runner ${failure} leaves no owned model child`, async t => {

@@ -59,6 +59,19 @@ impl LocalState {
             })?
             .native_startup_identity(scope)
     }
+    #[cfg(feature = "s33-mcp-ui-verification")]
+    pub(crate) fn native_readiness_failure(
+        &self,
+        diagnostic: &crate::verification_root::NativeReadinessDiagnostic,
+    ) -> Result<serde_json::Value, StoreError> {
+        self.verification
+            .as_ref()
+            .ok_or(StoreError {
+                code: "VERIFY_INPUT",
+                message: "隔离验证根标记不符。",
+            })?
+            .native_readiness_failure(diagnostic)
+    }
     pub(crate) fn access<T>(
         &self,
         action: impl FnOnce(&mut AppStore) -> Result<T, StoreError>,

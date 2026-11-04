@@ -1,0 +1,529 @@
+{
+  "head": "01b98f90e3cb2c1cd35654864b8c9f152316a4b6",
+  "ownerApproved": true,
+  "rawEvidenceDirectory": "build/s36-readiness-20261104",
+  "scope": "G1-only800 and bounded pre-publish diagnostics; no production/OS changes",
+  "coreSha256": "a9841e13754ba8de4a10925439bfe4ddc756e6477d069180cccb04519ad8a515",
+  "codeFreezeSha256": "71cfcef163300365f82ca0c3fad13b84dccaaa5ab59d51c8e66e6cf9e942143a",
+  "designReviews": {
+    "A": "APPROVE",
+    "B": "APPROVE"
+  },
+  "deliveryReviews": {
+    "freezeSha256": "71cfcef163300365f82ca0c3fad13b84dccaaa5ab59d51c8e66e6cf9e942143a",
+    "A": {
+      "agent": "readiness_delivery_a",
+      "conclusion": "APPROVE",
+      "findings": []
+    },
+    "B": {
+      "agent": "readiness_delivery_b",
+      "conclusion": "APPROVE",
+      "findings": []
+    },
+    "scope": "G1-only800 and bounded pre-publish diagnostics; no production/OS changes",
+    "fullCheck": "pass; independently executed once"
+  },
+  "nodeRegression": {
+    "baseline": {
+      "pass": 53,
+      "fail": 23,
+      "exitCode": 1
+    },
+    "current": {
+      "pass": 76,
+      "fail": 0,
+      "exitCode": 0
+    },
+    "actualFailureReadLimitPlusOne": 4097
+  },
+  "rustVerification": {
+    "passed": 36,
+    "failed": 0,
+    "ignored": 0,
+    "exitCode": 0
+  },
+  "fullCheck": {
+    "command": "npm run check",
+    "exitCode": 0,
+    "seconds": 641.212,
+    "attempts": 1,
+    "node": {
+      "groups": 29,
+      "pass": 894,
+      "fail": 0
+    },
+    "defaultRust": {
+      "passed": 271,
+      "failed": 0,
+      "ignored": 3
+    },
+    "dualFeatureRust": {
+      "passed": 36,
+      "failed": 0
+    },
+    "unclassifiedWarnings": 0,
+    "rawReport": "build/s36-readiness-20261104/full/report.json",
+    "rawReportSha256": "adb0ee8077293f6e9724e966d0161bf58db0535f4b5ac71c236d54de4e55d536",
+    "cacheAssistedCandidate": true,
+    "standardCleanClone": false
+  },
+  "nativeReady": {
+    "status": "pass",
+    "logicalWidth": 1440,
+    "logicalHeight": 800,
+    "officialCuaCapture": "pass",
+    "dedicatedExeSha256": "525bebf8106adc4cf9c9e555e5438d8130cb1211630760a6863e2a636419a6c5",
+    "wholeAppManifestSha256": "15f689228ca15ff848ddf0c39a8b0f42c30c46a38bac55f74e4774feff441dd4",
+    "verifiedLogicalSizes": [
+      [
+        1440,
+        800
+      ],
+      [
+        640,
+        800
+      ]
+    ]
+  },
+  "realModelRequests": 0,
+  "productionMcpKeychain": "off",
+  "commitPush": "owner authorized local commit on 2026-11-04; push not requested",
+  "nativeAcceptance": {
+    "status": "native supplement deferred unverified by owner; isolated fixture processes closed, state preserved; proceed with independent G1 functional work",
+    "method": "official CUA image and AX plus independent read-only backend observer",
+    "passedSubcases": [
+      "manual create",
+      "text extract",
+      "revise preview without candidate mutation",
+      "apply without sign",
+      "single sign",
+      "complete and refresh",
+      "same-root cold reopen",
+      "reopen signed todo for today",
+      "explicit upgrade-only with exact pre-v5 backup",
+      "first today success with two current facts",
+      "title edit preserves stale old snapshot",
+      "refresh binds new title and version",
+      "failure preserves facts and last success",
+      "empty successful ranking preserves full facts",
+      "active hold cancellation and no late mutation",
+      "effective defaults restored and normal success",
+      "same-root v5 cold reopen at640x800 with no new model request",
+      "narrow quick entry Tab Return Escape and focus return with retained non-control stops",
+      "three default role trials with separate history",
+      "organizer existing explicit model and detailed my_actions preference trial",
+      "organizer explicit preferences and prior result cold restored at1440x800",
+      "organizer effective defaults restored and normal trial",
+      "organizer role_trial failure",
+      "organizer active role_trial cancellation and no late mutation",
+      "organizer role_trial normal recovery",
+      "tracker explicit role_trial service failure",
+      "separately identified tracker active cancellation after reviewed official CUA composition",
+      "tracker effective default restore and successful recovery trial",
+      "advisor role_trial service failure",
+      "advisor independently admitted active role_trial cancellation",
+      "advisor effective default restore and successful recovery",
+      "controlled synthetic Skills package exclusive placement",
+      "GUI Skills rescan from18 to19 with original entries preserved",
+      "native organizer actual frozen SKILL read relative context read and Bash execution",
+      "stdio JSON config saved once with zero service start or model request",
+      "stdio directory discovery only with lookup1 and exact schema/config binding; overall attempt needs_revision"
+    ],
+    "mainRootFormalCount": 2,
+    "mainRootOpenCount": 2,
+    "syntheticHttpCount": 27,
+    "agentRuns": 23,
+    "coldConfigDifference": "only derived skills-index scannedAtMs; raw before and after preserved; no retroactive closure of old-root gap",
+    "next": "preserve deferred Native gaps; no further capture/private-helper iteration; isolated fixture processes closed; continue independent G1 product fixes and planned S4/S5 functional work",
+    "evidenceDirectory": "build/s36-readiness-20261104/native-01",
+    "oldFailuresPreserved": true,
+    "observations": [
+      {
+        "item": "transient RUNTIME_BUSY while first today generation",
+        "status": "unresolved observation; final run succeeded; root cause not proven",
+        "officialToolObservationCount": 5,
+        "firstOriginalImageAndAxSaved": true
+      },
+      {
+        "item": "signed item create history label says manual entry",
+        "status": "existing fixed create label; production UI pending outside current carrier scope"
+      },
+      {
+        "item": "stale AX index refused by tool",
+        "status": "operator error; no click executed; corrected using fresh index"
+      },
+      {
+        "item": "two non-control Tab focus positions in narrow empty capture cycle",
+        "status": "retained observation; no perfect focus trap conclusion"
+      }
+    ],
+    "upgradeOnly": {
+      "from": 4,
+      "to": 5,
+      "syntheticHttpDelta": 0,
+      "backupMatchesBeforeSchemaRowsAndRowids": true,
+      "oldBackupAndRawConfigUnchanged": true,
+      "newTableCount": 0,
+      "tableCount": 10
+    },
+    "cancellation": {
+      "readyToCancelledMs": 15326,
+      "readyToClientClosedMs": 15901,
+      "fixtureDeadlineMs": 25000,
+      "lateSnapshotAfterOriginalDeadlineMs": 43843,
+      "syntheticHttpDelta": 1,
+      "lateMutationOrReplay": false,
+      "lastSuccessDuringCancellation": "previous successful empty ranking"
+    },
+    "settingsRestoration": "effective original defaults restored; newly explicit advisor file and revision retained; original file absence not restored",
+    "todayAdviceRuns": 6,
+    "roleTrialRuns": 16,
+    "asOf": "stdio directory function passed; full historical child identity and lifecycle gate unverified",
+    "roleTrialCancellation": {
+      "agentId": "organizer",
+      "readyToCancelledMs": 15763,
+      "readyToClientClosedMs": 16336,
+      "fixtureDeadlineMs": 25000,
+      "lateSnapshotAfterOriginalDeadlineMs": 39367,
+      "syntheticHttpDelta": 1,
+      "lateMutationOrReplay": false
+    },
+    "roleTrialSettingsRestoration": "organizer effective original null/standard/balanced/empty restored; explicit file retained",
+    "trackerCancellation": {
+      "conclusion": "needs_revision",
+      "actualStatus": "failed",
+      "errorCode": "MODEL_SERVICE",
+      "readyToFixtureDeadlineMs": 25002,
+      "cancelDispatched": false,
+      "clientClosed": false,
+      "syntheticHttpDelta": 1,
+      "automaticReplay": false,
+      "productCancelPathTested": false,
+      "oldAttemptPreserved": true
+    },
+    "trackerSeparateCancellation": {
+      "conclusion": "pass",
+      "request": 19,
+      "readyToCancelledMs": 6719,
+      "readyToClientClosedMs": 6729,
+      "lateSnapshotAfterOriginalDeadlineMs": 85560,
+      "syntheticHttpDelta": 1,
+      "startClicks": 1,
+      "cancelClicks": 1,
+      "automaticRetry": false,
+      "lateMutationOrReplay": false,
+      "previousAttempt18Preserved": true
+    },
+    "advisorCancellation": {
+      "conclusion": "pass",
+      "request": 22,
+      "readyToCancelledMs": 6729,
+      "readyToClientClosedMs": 6738,
+      "lateSnapshotAfterOriginalDeadlineMs": 77773,
+      "syntheticHttpDelta": 1,
+      "startClicks": 1,
+      "cancelClicks": 1,
+      "automaticRetry": false,
+      "lateMutationOrReplay": false
+    },
+    "persistedMcpToolCalls": 0,
+    "toolCallsScope": "MCP persistent ledger only; actual N2 basic tools separately verified as Read2/Bash1",
+    "mcpConfiguredServers": 1,
+    "stdio": {
+      "configurationSave": "pass",
+      "serviceCount": 1,
+      "normalizedPinnedInputMatches": true,
+      "modelHttpBefore": 27,
+      "modelHttpAfter": 27,
+      "oldAgentRowsPreserved": 22,
+      "newProbeRows": 1,
+      "serviceLogLines": 1,
+      "durableMcpToolCalls": 0,
+      "diagnostic": {
+        "conclusion": "needs_revision",
+        "functionalDirectory": "pass",
+        "tools": 1,
+        "modelHttpDelta": 0,
+        "serviceCallRecords": 0,
+        "priorAgentRowsPreserved": 22,
+        "currentAgentRows": 23,
+        "servicePidPpidUidStartCommandAndExitObserved": true,
+        "independentServiceCwdLookup": "not captured; lsof exit1; fixture self-report only",
+        "childHistoricalIdentityCaptured": false,
+        "childExecutionAndCleanupVerified": false,
+        "currentScopedExtraChildren": 0,
+        "zeroIsNotHistoricalChildProof": true,
+        "productCleanupBugProven": false,
+        "environmentMeasured": "service synthetic label and modelKeyPresent=false only; child and transport control PIN presence unverified",
+        "reportSha256": "30b72a57415c2ef7ab28f2a0aed56fbad9ee1ab0f46fe897deca666e6c028d78",
+        "stoppedCheckpointSha256": "b684beaa6212e440e3d4d4d71ca9641194fae4ad09a2b1422b9e8037f41bd03d"
+      },
+      "actualCall": "not executed; prerequisite lifecycle gate remains open",
+      "monitorAttempts": {
+        "01": "startup failure exit1; zero diagnostic action",
+        "02": "no qualified loop admission; zero diagnostic action; natural expiry",
+        "03": "fresh loop-entry and identity guard admitted; service captured but child identity absent; no retry"
+      },
+      "independentSupplement": {
+        "ownerApproved": true,
+        "phase": "private delivery dual pass; full read-only before passed; official CUA record and one canonical rebind failed -3812; stopped with zero Save/diagnostic; native supplement unverified",
+        "designSha256": "00b39c86b47f13bbdbdc8f7db9ab65c35213e06702b67abd9674335ab4bfcb4b",
+        "oldAttemptRemainsNeedsRevision": true,
+        "plannedConfigurationWrites": 1,
+        "plannedNativeDiagnoses": 1,
+        "sameAppAndOwnedRoot": true,
+        "frozenAppAndFixtureChanged": false,
+        "designReviews": {
+          "A": "pass",
+          "B": "pass"
+        },
+        "firstRedBaseline": {
+          "command": "STDIO_LIFECYCLE_BASELINE=unbuffered node --test build/s36-readiness-20261104/native-01/stdio-lifecycle/diagnostic-order.test.mjs",
+          "exitCode": 1,
+          "pass": 1,
+          "fail": 1,
+          "realProcessesStarted": 0,
+          "actualRootWrites": 0
+        },
+        "deliveryFreezeSha256": "fe01d6f139a786665e6cfb984df6a81baa75120b101af3d0c2896edf03434a09",
+        "componentChecks": {
+          "nodePass": 70,
+          "nodeFail": 0,
+          "pythonTests": 41,
+          "pythonFail": 0,
+          "syntaxExitCode": 0,
+          "aCounterexamples": {
+            "tests": 3,
+            "fail": 0,
+            "exitCode": 0
+          },
+          "bCounterexampleGroups": {
+            "pass": 3,
+            "fail": 0,
+            "exitCode": 0
+          },
+          "finalBoundary": {
+            "tests": 3,
+            "fail": 0,
+            "exitCode": 0
+          }
+        },
+        "newNativeCasesRun": 0,
+        "newConfigurationWrites": 0,
+        "newRealMcpServicesStarted": 0,
+        "signalAttribution": "unverified; Native signal audit unavailable",
+        "timingMethod": "existing FIFO pre-write causal anchor; source-local forward<1500ms; observer all-target absence<1900ms; error bound<=100ms; original4000ms watchdog unchanged",
+        "priorBlockedDeliveryFreezeSha256": "be9f544100244c283ad85dfee15cb32b453b3385099a13bbc66748f13f24a9b9",
+        "originalDatabaseReading": "O_RDONLY stable DB/WAL pair; SQLite opens private copies only; dual plan pass; 8 snapshots/256MiB total/64MiB per source; actual root not yet read by this helper",
+        "deliveryReviewsV1": {
+          "A": "needs_revision",
+          "B": "needs_revision"
+        },
+        "priorBlockedDeliveryV2Sha256": "3ec5a4a3b4b0a99f3576e7606c059355314a88425152eaa03a1e528c52153771",
+        "deliveryReviewsV2": {
+          "A": "needs_revision",
+          "B": "needs_revision"
+        },
+        "deliveryReviewsV3": {
+          "A": "pass",
+          "aSha256": "3e4b4a21e937142f0d66269457b429e343df051fcf391de159958ba64a99f902",
+          "B": "pass",
+          "bSha256": "cccf49824ff4a512bf983f87e808ba155c27d7587358ed65dc6e4c35b70e7ba1"
+        },
+        "prospectiveShape": {
+          "pass": 5,
+          "fail": 0,
+          "exitCode": 0,
+          "realLoaderCalled": false,
+          "resultSha256": "2ad9f93f7938d6cc13125ab415568a9656512cac59cc985d186308a103d6af43"
+        },
+        "backendAdmission": {
+          "beforeAttempts": 3,
+          "priorFailuresRetained": [
+            {
+              "exitCode": 2,
+              "reason": "empty root name vs dot comparison",
+              "receiptSha256": "dfa2173166bfb36e6a85e7dee3ae7759f415b87773f592e1c188150f75bede9e"
+            },
+            {
+              "exitCode": 2,
+              "reason": "incorrect catalog source path",
+              "receiptSha256": "9e732eed00cffcb9e57b4ce5b22b1614891085a1514d1cff933a64ccbf8a0aed"
+            }
+          ],
+          "latestBefore": {
+            "exitCode": 0,
+            "sha256": "bbe16d68ac175342543e9b78ff22b00f198c882f9c11d84935e1ebd832ff4a27",
+            "agents": 23,
+            "terminal": 23,
+            "http": 27,
+            "formal": 2,
+            "open": 2,
+            "mcpToolCalls": 0,
+            "runFiles": 3991,
+            "configs": 7,
+            "backups": 2,
+            "scopedExtra": 0,
+            "sourceChecks": 24,
+            "bundleEntries": 567
+          },
+          "postCuaCheckpoint": {
+            "exitCode": 0,
+            "sha256": "8259c2b104aef072867017b1cb81ef518169d4910b28dbd34c9821eb9351e941",
+            "allBusinessAndSourceStateMatchesBefore": true,
+            "threeOwnersAlive": true,
+            "scopedExtra": 0
+          },
+          "historicalRowidBoundary": "old archive omitted rowid; fresh full before/current checkpoint pins current rowids only"
+        },
+        "normalCleanupConcern": {
+          "conclusion": "not supported; no implementation change",
+          "evidence": "normal guardian cleanup stops/kills group without forwarding EOF or SIGTERM to proxy",
+          "aSupplementSha256": "3b8c89991e811937f029672e94a9dd03044cc4da6869b5ea4fbf6da61985f6d7"
+        },
+        "backendTool": {
+          "sha256": "cc839a8bfb245ff4c296f560f014dec79afdc85b4336d5e06c7638d757c2ce34",
+          "tests": 22,
+          "fail": 0,
+          "exitCode": 0,
+          "sourceSqliteOpened": false,
+          "sourceWriteClaim": "no explicit content/sidecar writes; OS atime excluded"
+        },
+        "officialCuaStop": {
+          "attempts": 2,
+          "canonicalRebinds": 1,
+          "error": "ScreenCaptureKit -3812 invalid parameters; tool -10005",
+          "receiptSha256": "1f0c79e2443dc2a9d06e8d42737da3b21e9e02661d8e9daf3ee8cfa5e2963c3e",
+          "actualCaseDirectories": 0,
+          "imageOrAxArtifacts": 0,
+          "guiSaves": 0,
+          "nativeDiagnoses": 0,
+          "barrierObservers": 0,
+          "newMcpServices": 0,
+          "systemOrCaptureBackendChanged": false,
+          "conclusion": "needs_revision; native unverified; no dependent N3 trial or HTTP"
+        }
+      }
+    },
+    "mcpProbeRuns": 1,
+    "serviceMetadataLogLines": 1,
+    "serviceToolCallRecords": 0
+  },
+  "officialCuaComposition": {
+    "status": "independently approved after first review BLOCK and post-wait identity fix",
+    "scope": "test orchestration through same official CUA API only; no App/source/timeout/guard changes",
+    "selfTest": {
+      "initialPass": 11,
+      "initialFail": 1,
+      "currentPass": 12,
+      "currentFail": 0
+    },
+    "newAttemptAllowedAutomatically": false,
+    "driverSha256": "c41ca613c7840605c8fe3235fdd15c43e8b65b9f1e9b234bdc0ee260ca3cd7f7",
+    "driverTest": {
+      "baselinePass": 3,
+      "baselineFail": 4,
+      "baselineExitCode": 1,
+      "currentPass": 7,
+      "currentFail": 0,
+      "currentExitCode": 0
+    },
+    "nativeTrackerCase19": "independently passed",
+    "advisor22": "independently admitted and backend verified; recovery23 also passed"
+  },
+  "nextSkillsCase": {
+    "status": "pass for controlled placement GUI rescan and actual native execution",
+    "mcpConfigured": false,
+    "templateFiles": 3,
+    "originalBuiltinWorkspaceFiles": 441,
+    "appAndRepoFilesEach": 444,
+    "availableBefore": 18,
+    "availableAfter": 19,
+    "packageSha256": "5c9f810b925d33d52440b9ed5d44e7122bc50554afd2ea1f323e6a2d9446a941",
+    "basicTools": {
+      "read": 2,
+      "bash": 1
+    },
+    "syntheticHttpBefore": 23,
+    "syntheticHttpAfter": 27,
+    "sameRunContinuationRequests": 4,
+    "exactOwnedOutput": "g1-skill-ok",
+    "outputBytes": 11,
+    "outputMode": "0644",
+    "numericBashExitCodeSeparatelyRecorded": false,
+    "priorAgentRowsPreserved": 21,
+    "currentAgentRows": 22,
+    "formalRowsUnchanged": 2,
+    "persistedMcpToolCalls": 0,
+    "serviceRequests": 0,
+    "scopedExtraChildren": 0,
+    "bashIsOsSandbox": false,
+    "report": "build/s36-readiness-20261104/native-01/verifier/skills-organizer-execution-result.json",
+    "reportSha256": "a57eac1390474b27d9a17f64eb28ae85b907e5fd07835934f97e8c3e738a9b0a",
+    "recordReviewSha256": "fdc6833e223d7105a11633609a4d630b9bb1e3d61971ba70b50f1313f756d92f"
+  },
+  "privateHttpObserver": {
+    "scope": "ignored build observation helper; no App or production source changes",
+    "implementationReview": "pass",
+    "sourceSha256": "af3b507fd23c4be5d03fcab363a905cccf344d3c719c1c5f8850e91f6d777c4f",
+    "pureTests": {
+      "pass": 20,
+      "fail": 0,
+      "exitCode": 0
+    },
+    "syntaxExitCode": 0,
+    "gracefulFatalCounter": {
+      "baselinePass": 1,
+      "baselineFail": 1,
+      "baselineExitCode": 1,
+      "currentPass": 2,
+      "currentFail": 0,
+      "currentExitCode": 0
+    },
+    "actualEofSeparatelyVerified": true,
+    "historicalCleanEofLabelActuallyExplicitStop": true,
+    "realNetworkListeners": 0,
+    "actualRootWrites": 0,
+    "httpStartupApproved": false,
+    "realFsNetworkLifecycle": "unverified; gated by stdio prerequisite",
+    "reviewSha256": "8bc8da2b378b0599802ccefc0283cadbd37b40319234962a44134973d23bb999",
+    "stopRecordIsDurableExitCommit": false
+  },
+  "ownerDirectedCleanup": {
+    "conclusion": "pass",
+    "registeredPidsExited": 3,
+    "loopback62489Listeners": 0,
+    "allRowsRowidsSchemaAndVersionPreserved": true,
+    "configurationAndModelServiceLogsBytewiseUnchanged": true,
+    "rootAndBackupsPreserved": true,
+    "newSupplementConfigurationSaves": 0,
+    "newSupplementDiagnoses": 0,
+    "receiptSha256": "e8595f45c924684d95a58e1311f703eb4321a96470ec492a1fbfbde1477e6a15",
+    "noCaptureRetry": true
+  },
+  "precommitVerification": {
+    "independentScopeReview": "pass",
+    "reviewSha256": "a645a1685f54259228170ea4a35775f254ad60b914815e56b59cd44a5098ca30",
+    "sealedFullReused": true,
+    "allBehavioralInputsMatch": true,
+    "newFullRun": false,
+    "launcher": {
+      "pass": 76,
+      "fail": 0,
+      "exitCode": 0,
+      "cwd": "same-byte cached candidate",
+      "mainLauncherExplicitlySelected": true,
+      "mainUnbuiltAppSetupFailureRetained": true
+    },
+    "rustVerification": {
+      "pass": 36,
+      "fail": 0,
+      "exitCode": 0,
+      "standardBundlePreparedFirst": true,
+      "staleRuntimeInitial33pass3failRetained": true
+    },
+    "structureDocsDiff": "exit0",
+    "selectedFilesPrivacy": "pass"
+  }
+}

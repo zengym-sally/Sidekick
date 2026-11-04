@@ -17,6 +17,12 @@ pub(crate) fn take_policy() -> String {
         .unwrap_or_default()
 }
 static AUDIT: OnceLock<Mutex<File>> = OnceLock::new();
+fn write_audit_record(writer: &mut impl Write, record: &Value) -> bool {
+    let line = format!("{record}\n");
+    writer
+        .write(line.as_bytes())
+        .is_ok_and(|written| written == line.len())
+}
 fn audit_signal_to(
     target: Option<&Mutex<File>>,
     owner: &crate::mcp_host::Owner,
@@ -26,11 +32,10 @@ fn audit_signal_to(
     match target {
         None => true,
         Some(file) => match file.lock() {
-            Ok(mut file) => writeln!(
-                file,
-                "{}",
-                json!({"at":std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_millis(),"actor":"rust","group":owner.guardian,"proofPid":pid,"run":owner.run,"nonce":owner.nonce,"signal":signal,"matched":true})
-            ).is_ok(),
+            Ok(mut file) => write_audit_record(
+                &mut *file,
+                &json!({"at":std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_millis(),"actor":"rust","group":owner.guardian,"proofPid":pid,"run":owner.run,"nonce":owner.nonce,"signal":signal,"matched":true}),
+            ),
             Err(_) => false,
         },
     }
@@ -246,6 +251,106 @@ fn serve() -> Result<(), StoreError> {
 mod audit_capability_tests {
     use super::*;
     use std::os::unix::fs::DirBuilderExt;
+    struct InterleavingWriter {
+        bytes: Vec<u8>,
+        cleaner: Vec<u8>,
+        calls: usize,
+    }
+    impl Write for InterleavingWriter {
+        fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+            self.calls += 1;
+            self.bytes.extend_from_slice(bytes);
+            if self.calls == 1 {
+                self.bytes.extend_from_slice(&self.cleaner);
+            }
+            Ok(bytes.len())
+        }
+        fn flush(&mut self) -> std::io::Result<()> {
+            Ok(())
+        }
+    }
+    struct FaultWriter {
+        mode: &'static str,
+        calls: usize,
+        bytes: Vec<u8>,
+    }
+    impl Write for FaultWriter {
+        fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+            self.calls += 1;
+            match self.mode {
+                "zero" => Ok(0),
+                "broken" => Err(std::io::ErrorKind::BrokenPipe.into()),
+                "interrupted" if self.calls == 1 => Err(std::io::ErrorKind::Interrupted.into()),
+                _ => {
+                    let count = if self.mode == "short" {
+                        bytes.len().min(1)
+                    } else {
+                        bytes.len()
+                    };
+                    self.bytes.extend_from_slice(&bytes[..count]);
+                    Ok(count)
+                }
+            }
+        }
+        fn flush(&mut self) -> std::io::Result<()> {
+            Ok(())
+        }
+    }
+    #[test]
+    fn audit_record_stays_complete_when_another_writer_appends() {
+        let rust = json!({"at":1,"actor":"rust","group":123,"proofPid":123,"run":"synthetic-雪\n\"run","nonce":"synthetic-audit-nonce","signal":"-STOP","matched":true});
+        let cleaner = json!({"at":1,"actor":"cleaner","group":123,"proofPid":123,"run":"synthetic-雪\n\"run","nonce":"synthetic-audit-nonce","signal":"SIGSTOP","matched":true});
+        let mut writer = InterleavingWriter {
+            bytes: Vec::new(),
+            cleaner: format!("{cleaner}\n").into_bytes(),
+            calls: 0,
+        };
+        assert!(write_audit_record(&mut writer, &rust));
+        let output = String::from_utf8(writer.bytes).unwrap();
+        let records: Vec<Value> = output
+            .lines()
+            .map(|line| serde_json::from_str(line).unwrap())
+            .collect();
+        assert_eq!(records, vec![rust, cleaner]);
+        assert_eq!(writer.calls, 1);
+        assert!(output.ends_with('\n'));
+    }
+    fn rejects_fault(mode: &'static str) {
+        let mut writer = FaultWriter {
+            mode,
+            calls: 0,
+            bytes: Vec::new(),
+        };
+        assert!(!write_audit_record(
+            &mut writer,
+            &json!({"actor":"rust","signal":"-STOP"}),
+        ));
+        assert_eq!(writer.calls, 1);
+        assert_eq!(
+            writer.bytes,
+            if mode == "short" {
+                b"{".to_vec()
+            } else {
+                Vec::new()
+            }
+        );
+    }
+    #[test]
+    fn audit_record_rejects_short_write_without_continuation() {
+        rejects_fault("short");
+    }
+    #[test]
+    fn audit_record_rejects_zero_write() {
+        rejects_fault("zero");
+    }
+    #[test]
+    fn audit_record_rejects_broken_writer() {
+        rejects_fault("broken");
+    }
+    #[test]
+    fn audit_record_rejects_interrupted_write_without_retry() {
+        rejects_fault("interrupted");
+    }
     fn fixture() -> (PathBuf, PathBuf) {
         let root =
             std::env::temp_dir().join(format!("sidekick-audit-cap-{}", crate::mcp_host::nonce()));

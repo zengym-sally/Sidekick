@@ -26,6 +26,64 @@ const NATIVE_DIRECTORIES: [&str; 10] = [
     "workspace/logs",
     "workspace/backups",
 ];
+#[cfg(feature = "s33-mcp-ui-verification")]
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct NativeReadinessDiagnostic {
+    pub(crate) stage: &'static str,
+    pub(crate) reason: &'static str,
+    pub(crate) requested: [u32; 2],
+    pub(crate) inner: Option<[u32; 2]>,
+    pub(crate) scale: Option<f64>,
+    pub(crate) monitor: Option<[i64; 4]>,
+    pub(crate) work_area: Option<[i64; 4]>,
+    pub(crate) outer: Option<[u32; 2]>,
+    pub(crate) target: Option<[i32; 2]>,
+    pub(crate) position: Option<[i32; 2]>,
+}
+#[cfg(feature = "s33-mcp-ui-verification")]
+impl NativeReadinessDiagnostic {
+    pub(crate) fn new(width: u32, height: u32) -> Self {
+        Self {
+            stage: "size_request",
+            reason: "api",
+            requested: [width, height],
+            inner: None,
+            scale: None,
+            monitor: None,
+            work_area: None,
+            outer: None,
+            target: None,
+            position: None,
+        }
+    }
+    fn valid(&self) -> bool {
+        let rect = |value: [i64; 4]| {
+            i32::try_from(value[0]).is_ok()
+                && i32::try_from(value[1]).is_ok()
+                && u32::try_from(value[2]).is_ok()
+                && u32::try_from(value[3]).is_ok()
+        };
+        [
+            "size_request",
+            "inner_size",
+            "scale",
+            "monitor",
+            "outer_size",
+            "bounds",
+            "position_request",
+            "position",
+            "store",
+        ]
+        .contains(&self.stage)
+            && ["api", "missing", "deadline", "bounds", "store"].contains(&self.reason)
+            && (640..=2000).contains(&self.requested[0])
+            && (600..=1400).contains(&self.requested[1])
+            && self.scale.is_none_or(f64::is_finite)
+            && self.monitor.is_none_or(rect)
+            && self.work_area.is_none_or(rect)
+    }
+}
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Identity {
@@ -375,6 +433,44 @@ impl VerificationRoot {
             .scope
             .app
             .join(format!("native-startup-{}.json", now.as_nanos()));
+        let mut file = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .mode(0o600)
+            .open(path)
+            .map_err(|_| invalid())?;
+        file.write_all(&bytes).map_err(|_| invalid())?;
+        file.sync_all().map_err(|_| invalid())?;
+        self.validate()?;
+        Ok(data)
+    }
+    #[cfg(feature = "s33-mcp-ui-verification")]
+    pub(crate) fn native_readiness_failure(
+        &self,
+        diagnostic: &NativeReadinessDiagnostic,
+    ) -> Result<serde_json::Value, StoreError> {
+        use sha2::{Digest, Sha256};
+        self.validate()?;
+        if !self.native_g1() || !diagnostic.valid() {
+            return Err(invalid());
+        }
+        let data = serde_json::json!({
+            "version":1,"kind":"g1-native-readiness-failure","scope":"controlled-native-g1",
+            "pid":std::process::id(),"nonceSha256":format!("{:x}",Sha256::digest(self.scope.nonce.as_bytes())),
+            "diagnostic":diagnostic
+        });
+        let bytes = serde_json::to_vec(&data).map_err(|_| invalid())?;
+        if bytes.len() > 4096 {
+            return Err(invalid());
+        }
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_err(|_| invalid())?;
+        self.validate()?;
+        let path = self
+            .scope
+            .app
+            .join(format!("native-failure-{}.json", now.as_nanos()));
         let mut file = OpenOptions::new()
             .write(true)
             .create_new(true)
@@ -1374,6 +1470,101 @@ mod native_tests {
         let legacy =
             open_native_local(&fixture.app, &fixture.nonce, true, fixture.owner.clone()).unwrap();
         assert!(legacy.native_startup_identity(&scope).is_err());
+        fixture.no_http();
+    }
+    #[test]
+    fn verification_g1_readiness_failure_is_private_bounded_and_redacted() {
+        use sha2::{Digest, Sha256};
+        let fixture = Fixture::new_mode("g1");
+        let app = fixture.base.join("g1-app");
+        let local =
+            open_g1_native_local(&app, &fixture.nonce, false, fixture.owner.clone()).unwrap();
+        let mut diagnostic = NativeReadinessDiagnostic::new(1440, 800);
+        diagnostic.stage = "position";
+        diagnostic.reason = "deadline";
+        diagnostic.inner = Some([2880, 1600]);
+        diagnostic.scale = Some(2.0);
+        diagnostic.monitor = Some([-100, -200, 1280, 800]);
+        diagnostic.work_area = Some([-100, -134, 1280, 700]);
+        diagnostic.outer = Some([2880, 1656]);
+        diagnostic.target = Some([72, 154]);
+        diagnostic.position = Some([72, 150]);
+        let data = local.native_readiness_failure(&diagnostic).unwrap();
+        assert_eq!(data["pid"], std::process::id());
+        assert_eq!(
+            data["nonceSha256"],
+            format!("{:x}", Sha256::digest(fixture.nonce.as_bytes()))
+        );
+        assert_eq!(data["diagnostic"]["monitor"][0], -100);
+        assert_eq!(data["diagnostic"]["outer"][0], 2880);
+        let paths = fs::read_dir(&app)
+            .unwrap()
+            .map(|entry| entry.unwrap().path())
+            .filter(|path| {
+                path.file_name()
+                    .unwrap()
+                    .to_string_lossy()
+                    .starts_with("native-failure-")
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(paths.len(), 1);
+        let metadata = fs::symlink_metadata(&paths[0]).unwrap();
+        assert_eq!(metadata.mode() & 0o7777, 0o600);
+        assert_eq!(metadata.nlink(), 1);
+        assert!(metadata.len() <= 4096);
+        let bytes = fs::read(&paths[0]).unwrap();
+        assert_eq!(
+            serde_json::from_slice::<serde_json::Value>(&bytes).unwrap(),
+            data
+        );
+        let text = String::from_utf8(bytes).unwrap();
+        assert!(!text.contains(&fixture.nonce));
+        assert!(!text.contains(fixture.base.to_str().unwrap()));
+        assert!(!text.contains("command") && !text.contains("env") && !text.contains("model"));
+        assert!(fs::read_dir(&app).unwrap().all(|entry| !entry
+            .unwrap()
+            .file_name()
+            .to_string_lossy()
+            .starts_with("native-info-")));
+        fixture.no_http();
+    }
+    #[test]
+    fn verification_readiness_failure_rejects_invalid_observations_and_other_scopes() {
+        let fixture = Fixture::new_mode("g1");
+        let app = fixture.base.join("g1-app");
+        let local =
+            open_g1_native_local(&app, &fixture.nonce, false, fixture.owner.clone()).unwrap();
+        for invalid_kind in ["stage", "reason", "scale", "rect", "requested"] {
+            let mut diagnostic = NativeReadinessDiagnostic::new(1440, 800);
+            match invalid_kind {
+                "stage" => diagnostic.stage = "PRIVATE_DIAGNOSTIC_CANARY",
+                "reason" => diagnostic.reason = "PRIVATE_DIAGNOSTIC_CANARY",
+                "scale" => diagnostic.scale = Some(f64::NAN),
+                "rect" => diagnostic.monitor = Some([i64::MAX, 0, 1, 1]),
+                "requested" => diagnostic.requested = [0, 0],
+                _ => unreachable!(),
+            }
+            assert!(local.native_readiness_failure(&diagnostic).is_err());
+        }
+        let diagnostic = NativeReadinessDiagnostic::new(1440, 800);
+        let legacy =
+            open_native_local(&fixture.app, &fixture.nonce, true, fixture.owner.clone()).unwrap();
+        assert!(legacy.native_readiness_failure(&diagnostic).is_err());
+        let ordinary = LocalState::new(fixture.base.join("must-not-create"));
+        assert!(ordinary.native_readiness_failure(&diagnostic).is_err());
+        assert!(!fixture.base.join("must-not-create").exists());
+        assert!(fs::read_dir(&app).unwrap().all(|entry| !entry
+            .unwrap()
+            .file_name()
+            .to_string_lossy()
+            .starts_with("native-failure-")));
+        fs::write(app.join(".s36-native-verification"), "wrong-marker").unwrap();
+        assert!(local.native_readiness_failure(&diagnostic).is_err());
+        assert!(fs::read_dir(&app).unwrap().all(|entry| !entry
+            .unwrap()
+            .file_name()
+            .to_string_lossy()
+            .starts_with("native-failure-")));
         fixture.no_http();
     }
     #[test]
