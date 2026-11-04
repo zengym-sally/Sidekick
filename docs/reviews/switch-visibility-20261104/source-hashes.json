@@ -1,0 +1,8 @@
+{
+  "package.json": "43369c8aa75dffe34dca5f44bb24e1cd0d91fb3fcc1412bee9cb0dad1ba5a153",
+  "src/styles/forms.css": "fc429bbed5f0e29353efbfaa8575e3567f08eb3aaed77182393ee580c3c6df83",
+  "tests/fixtures/desktop-controls/api.ts": "e0701ab20724f2e034de09c6a6c84e3ac8b1e28880020e914e931f27393177c7",
+  "tests/fixtures/desktop-controls/index.html": "c8a4e327ac38ca44dafac9a0aa3b1a2c8ae90dbd3161b1ee314b154e376dd413",
+  "tests/fixtures/desktop-controls/main.ts": "06f3d540cfe2728f0a7bb3f001ff88e4b960247c308307fd87b208edd76bf23f",
+  "tests/integration/desktop-controls.test.mjs": "4d998c0fa225e88d150b1eb9366752191215b0f3bc67461ff626fe4e8d282da0"
+}

@@ -1,0 +1,205 @@
+{
+  "version": 1,
+  "scope": "shared switch visibility fix; automatic/browser evidence only, native acceptance open",
+  "baseCommit": "b19c735c2ccd0b3257c04631d3748b60e7500c3e",
+  "sourceFiles": 6,
+  "sourceManifest": "source-hashes.json",
+  "sourceManifestSha256": "9cca453e42c7f816611f39d158d556ebb1817c4f7100124d3afd17b7e71e21bd",
+  "planSha256": "f07a633926c01a00a062a94f1464dda2f10d846606204d0b4af3c756a17b3d18",
+  "reviewSha256": "a141d898f3c6b8bc28343bf1f8796acf9e647a15fecb6e2ef4020d18a201fba4",
+  "reviewConclusion": "pass",
+  "originalBrowserRed": {
+    "command": "npm run test:desktop-controls",
+    "exitCode": 1,
+    "pass": 0,
+    "fail": 2,
+    "trackWidth": 0,
+    "trackHeight": 0
+  },
+  "disabledGuardMutation": {
+    "mutation": "remove both SkSwitch keyboard disabled guards in an isolated source copy",
+    "exitCode": 1,
+    "expectedFailureCaught": true
+  },
+  "focused": {
+    "browserPass": 2,
+    "browserSkip": 0,
+    "domainPass": 51,
+    "neighborPass": 14,
+    "typecheckBuildAndGuardsExitCode": 0
+  },
+  "full": {
+    "execution": {
+      "command": "npm run check",
+      "startedAtUtc": "2026-11-04T10:47:56.445613+00:00",
+      "head": "b19c735c2ccd0b3257c04631d3748b60e7500c3e",
+      "deliveryReviewSha256": "a141d898f3c6b8bc28343bf1f8796acf9e647a15fecb6e2ef4020d18a201fba4",
+      "sourceFreezeSha256": "9cca453e42c7f816611f39d158d556ebb1817c4f7100124d3afd17b7e71e21bd",
+      "planSha256": "f07a633926c01a00a062a94f1464dda2f10d846606204d0b4af3c756a17b3d18",
+      "executionCount": 1,
+      "exitCode": 0,
+      "durationSeconds": 643.538,
+      "finishedAtUtc": "2026-11-04T10:58:39.983552+00:00",
+      "rawLogSha256": "63def4e267b3d3e2d52c979c01dc32183c0e1446a67b3635de44419f3ec7082f",
+      "rawLogBytes": 152347
+    },
+    "verificationJsonSha256": "23e6c73ff2bff77ef5171e7e57d40c8498681c1916ec4ae077d7142659044d6d",
+    "node": {
+      "tests": 932,
+      "pass": 932,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0
+    },
+    "nodeGroups": 30,
+    "rust": [
+      {
+        "script": "test:s33-verification-guards",
+        "rawLine": 1164,
+        "passed": 37,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 280,
+        "durationSeconds": 57.08
+      },
+      {
+        "script": "probe:native",
+        "rawLine": 1570,
+        "passed": 279,
+        "failed": 0,
+        "ignored": 3,
+        "measured": 0,
+        "filteredOut": 0,
+        "durationSeconds": 302.92
+      }
+    ],
+    "bundles": [
+      {
+        "bundle": "src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app",
+        "resourceEntries": 560,
+        "resourceAggregateSha256": "05049aa2448e86f05dd5b5a0b4bf0fc999b8c91dadbf9199a27b5fc93906f0aa",
+        "executableSha256": "90adb1b263142cfb2d903960c7ec30fa6af8bebd6feab3743328d2b144e7d777",
+        "infoPlistSha256": "a138d66a42563d8b2d74c7a7cc29c1d6c5678abeebf283c959bd68dd72747789",
+        "codeResourcesSha256": "921939276133369d82d3ae5b6d8db03111da9cc997b3bf929fa8baebf5092003",
+        "signatureVerification": "both codesign --verify --deep --strict passed inside test:s33-ui-artifacts",
+        "controlledResourcePaths": [
+          "s33-ui",
+          "s33-ui/mcp-trial.mjs",
+          "s33-ui/service.mjs"
+        ]
+      },
+      {
+        "bundle": "src-tauri/target/release/bundle/macos/Sidekick.app",
+        "resourceEntries": 557,
+        "resourceAggregateSha256": "51395a013fbaa9d1f5684096c8d871a6de99fcf82d3645c1c1f49d5173e568d4",
+        "executableSha256": "333806d5082089a53044b63aad63b858ba51fcdf29f8c7121d0d27b8a84356d2",
+        "infoPlistSha256": "711c1ef698e0dcf5ccda37c6d58ce67ac16b23c8de688209f558621e4f29e80f",
+        "codeResourcesSha256": "352f357ad10156e5931c46736471fb0d0c616e1f0e788ff6c84fe448a7f72a7e",
+        "signatureVerification": "both codesign --verify --deep --strict passed inside test:s33-ui-artifacts",
+        "controlledResourcePaths": []
+      }
+    ],
+    "warnings": {
+      "baseline": {
+        "runtimeEsbuildLargeOutputIndicators": 14,
+        "viteLargeChunkWarnings": 2,
+        "adHocSigningIdentityLines": 6,
+        "existingSignatureReplacementLines": 4,
+        "skippedNotarizationWarnings": 2,
+        "hostProcMacroWorkaroundApplications": 2
+      },
+      "browserDiagnostics": [
+        {
+          "width": 1440,
+          "diagnostics": {
+            "displayLinkMinus6670": 7,
+            "allocatorMultipleLoads": 1,
+            "taskCategoryPolicyInvalidArgument": 1,
+            "taskSuppressionPolicyInvalidArgument": 1
+          }
+        },
+        {
+          "width": 640,
+          "diagnostics": {
+            "displayLinkMinus6670": 7,
+            "allocatorMultipleLoads": 1,
+            "taskCategoryPolicyInvalidArgument": 0,
+            "taskSuppressionPolicyInvalidArgument": 0
+          }
+        }
+      ],
+      "browserResidual": "New test-carrier diagnostics; root cause not located. Browser exit, DOM assertions and generated images succeeded. They do not prove native GUI correctness.",
+      "toolchainResidual": "Configured proc macro load reports mis-aligned LINKEDIT string pool; host and wrapped alternatives load. Existing host workaround; toolchain probe status passed."
+    },
+    "realModelRequests": 0,
+    "protectedFilesStable": 2857,
+    "sourcesStable": true
+  },
+  "browser": [
+    {
+      "viewport": 1440,
+      "trackWidth": 32.359375,
+      "trackHeight": 20,
+      "saveCount": 1,
+      "disabledUpdateEvents": 0,
+      "artifacts": {
+        "1440.stderr.log": {
+          "sha256": "0bd90b033871b8d6a3fa8450f699832b7d635ee54ff2a3d91e4b447c980af621",
+          "bytes": 1458
+        },
+        "1440.json": {
+          "sha256": "df2b88671d1cbd40889756cf0d101290ed728bf4a3fc1efd13010ea7de42e29a",
+          "bytes": 1535
+        },
+        "1440.png": {
+          "sha256": "55ceee7635cba068b914942373edae0be8d197001a15c6c6e88836a51ca7a304",
+          "bytes": 51654
+        }
+      },
+      "diagnostics": {
+        "displayLinkMinus6670": 7,
+        "allocatorMultipleLoads": 1,
+        "taskCategoryPolicyInvalidArgument": 1,
+        "taskSuppressionPolicyInvalidArgument": 1
+      }
+    },
+    {
+      "viewport": 640,
+      "trackWidth": 32.359375,
+      "trackHeight": 20,
+      "saveCount": 1,
+      "disabledUpdateEvents": 0,
+      "artifacts": {
+        "640.stderr.log": {
+          "sha256": "a52cb2d82a41b36f955286e7224c6b27fdb9f2974bdc74876d6120326382e6cc",
+          "bytes": 1172
+        },
+        "640.json": {
+          "sha256": "25d04645a845f84bb991388c7b6fa16a69406e851cf182591da447762bc20d3b",
+          "bytes": 1530
+        },
+        "640.png": {
+          "sha256": "d90c27ca459ef496acd692b79c3b0d2d36b915d3e619e46f2856a53d20e6d9b3",
+          "bytes": 46132
+        }
+      },
+      "diagnostics": {
+        "displayLinkMinus6670": 7,
+        "allocatorMultipleLoads": 1,
+        "taskCategoryPolicyInvalidArgument": 0,
+        "taskSuppressionPolicyInvalidArgument": 0
+      }
+    }
+  ],
+  "notVerified": [
+    "Native Tauri switch appearance and user click/keyboard flow",
+    "Real model/provider, Feishu services, real credentials and real user roots",
+    "Production MCP Keychain backend (remains closed)",
+    "Clean checkout build and cross-machine distribution",
+    "Notarization",
+    "Root cause and variability of new Chrome carrier diagnostics",
+    "G1 remaining native/window/multi-monitor/autostart/S5 and historical MCP evidence gaps remain open"
+  ]
+}
