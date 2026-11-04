@@ -13,10 +13,11 @@
 - **索引强制**：新增记录必须登记到本文件；未登记视为未收口。`check:docs` 只校验链接存在，语义一致性靠评审。
 - **新路径**：2026-10-31 结构治理后，新记录使用新路径（`runtime/{entries,lib,workers}/`、`src-tauri/src/{app,store,host,diagnostics}/`、`tests/{unit,integration,probes,fixtures}/`、`scripts/{build,checks,probes}/`）；旧记录保留原路径，按文件名仍可检索。
 
-## 2. 记录索引（42 份）
+## 2. 记录索引（43 份）
 
 | 记录 | 日期 | 范围与结论 | 证据 |
 |---|---|---|---|
+| [inbox-width-20261105.md](inbox-width-20261105.md) | 2026-11-05 | 来源工具条与候选主列对齐，窄窗换行；真实浏览器9项、独立交付/完整门禁通过（Node939、Rust279/3ignored、dual37） | 原始证据`build/inbox-width-20261105/` |
 | [ui-consistency-20261104.md](ui-consistency-20261104.md) | 2026-11-04 | 三页空态与图标按钮共享规范修订；独立复审/完整门禁通过（Node938、Rust279/3ignored、dual37），原生待验 | 原始证据`build/ui-consistency-20261104/` |
 | [switch-visibility-20261104.md](switch-visibility-20261104.md) | 2026-11-04 | 原生报告开关不可见；浏览器已复现0×0并最小修复，独立复审及完整门禁通过（Node932、Rust279/3ignored、dual37），原生待重试 | 原始证据`build/switch-visibility-20261104/` |
 | [desktop-preferences-20261104.md](desktop-preferences-20261104.md) | 2026-11-04 | S4桌面偏好：设计/修订交付双面及独立完整门禁通过（Node930、Rust279/3ignored、dual37）；补记owner人工确认快速录入/主窗同步/托盘入口，G1其余未验保留 | 原始证据`build/desktop-preferences-20261104/` |

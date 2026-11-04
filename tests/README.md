@@ -33,7 +33,7 @@
 | `s31-runtime.test.mjs` | integration | 打包 Runtime 的三角色隔离试跑及advisor联网前拒绝正反控 |
 | `layout-domain.test.mjs` | unit | 布局/表单/设置域模型与控件绑定 |
 | `desktop-preferences.test.mjs` | unit | 桌面偏好读写与未知核销、三窗初始化/聚焦同步、卸载清理及真实Vue组件/公共控件SSR；不冒充原生窗口证据 |
-| `desktop-controls.test.mjs` | integration | 真实桌面开关/按钮和三个工作台页面的1440/640浏览器尺寸、内层对齐、徽标、空态/筛选/加载/失败/历史与入口回归；只替换Tauri为内存后端，非原生验收 |
+| `desktop-controls.test.mjs` | integration | 真实桌面开关/按钮和三个工作台页面的1440/640浏览器尺寸、对齐、空态与入口；待确认页另含1024及合成已签收批次，核工具条与候选主列等宽/按钮对齐/窄窗换行；只替换IPC，非原生验收 |
 | `layout-runtime.test.mjs` | integration | 打包 Runtime 的采样与推理参数透传 |
 | `s32-skills.test.mjs` | unit | Skills 扫描、冻结与内置包 |
 | `s32-client.test.mjs` | unit | Skills 客户端 store |
@@ -71,7 +71,7 @@ P5正式任务矩阵在`host/mcp_formal_tests.rs`，聚焦`npm run test:mcp-form
 
 ## 新测试命名约定
 
-`npm run test:desktop-controls`使用已有Vite与本机Chrome无头模式，不安装或下载浏览器；可通过`SIDEKICK_TEST_CHROME`指定可执行文件，默认macOS应用路径。每次使用独立临时浏览器数据与loopback服务，不读默认浏览器配置或真实凭据；当前截图/指标放`build/ui-consistency-20261104/browser/`，前项开关证据保留原目录。完整check包含该脚本，未安装Chrome时明确skip，不能报告浏览器通过；本次本机实际执行，不以skip替代。本机浏览器通过仍不能关闭Tauri原生验收。按钮点击以事件计数验证，默认/紧凑和前/后图标/徽标/载入分别测量；工作台导航不调用整理/签收/模型任务，只读模拟资料并检查打开的实际录入方式。
+`npm run test:desktop-controls`使用已有Vite与本机Chrome无头模式，不安装或下载浏览器；可通过`SIDEKICK_TEST_CHROME`指定可执行文件，默认macOS应用路径。每次使用独立临时浏览器数据与loopback服务，不读默认浏览器配置或真实凭据；当前截图/指标放`build/inbox-width-20261105/browser/`，前项开关/空态证据保留原目录。完整check包含该脚本，未安装Chrome时明确skip，不能报告浏览器通过；本次本机实际执行，不以skip替代。本机浏览器通过仍不能关闭Tauri原生验收。按钮点击以事件计数验证，默认/紧凑和前/后图标/徽标/载入分别测量；工作台导航不调用整理/签收/模型任务，只读模拟资料并检查打开的实际录入方式。
 
 - 新测试用领域名，不再用交付切片号：`<domain>-<subject>.test.mjs`（例如 `skills-freeze.test.mjs`、`mcp-discovery-timeout.test.mjs`）。
 - 只依赖纯逻辑与 store 的测试放 `unit/`；需要打包 Runtime、Rust 二进制、真实子进程或 `.app` 产物的放 `integration/`；探针脚本与探针自测放 `probes/`。

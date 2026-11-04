@@ -12,7 +12,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 const exec=promisify(execFile),repository=fileURLToPath(new URL('../../',import.meta.url));
 const fixture=join(repository,'tests/fixtures/desktop-controls'),chrome=process.env.SIDEKICK_TEST_CHROME||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-const available=existsSync(chrome),evidence=join(repository,'build/ui-consistency-20261104/browser');
+const available=existsSync(chrome),evidence=join(repository,'build/inbox-width-20261105/browser');
 let work,server;
 before(async()=>{
  if(!available)return;
@@ -111,13 +111,20 @@ const uiProbe=String.raw`(async()=>{
   fixtureApi.setUiCase('inbox-loading');nav('待确认').click();await refresh();await frame();check(!empty(),'inbox loading is presented as empty');fixtureApi.setUiCase('empty');fixtureApi.releaseUiRead();await wait(()=>empty());
   fixtureApi.setUiCase('inbox-error');await refresh();await wait(()=>document.querySelector('.inbox-page [role="alert"]'));check(!empty(),'inbox error is presented as fresh empty success');
   fixtureApi.setUiCase('empty');await refresh();await wait(()=>empty());
-  const capture=new URLSearchParams(location.search).get('capture')||'inbox';nav({today:'今日工作台',inbox:'待确认',all:'全部事项'}[capture]).click();await wait(()=>empty());
+  fixtureApi.setUiCase('width-batch');nav('待确认').click();await refresh();await wait(()=>document.querySelector('.review-grid .candidate-card'));
+  const tools=document.querySelector('.inbox-tools').getBoundingClientRect(),column=document.querySelector('.review-grid>div').getBoundingClientRect(),field=document.querySelector('.inbox-tools>.sk-field').getBoundingClientRect(),action=document.querySelector('.inbox-tools>.sk-button').getBoundingClientRect();
+  const inboxWidth={toolsLeft:tools.left,toolsRight:tools.right,columnLeft:column.left,columnRight:column.right,fieldWidth:field.width,fieldRight:field.right,buttonLeft:action.left,buttonRight:action.right,buttonTop:action.top,fieldBottom:field.bottom};
+  check(Math.abs(tools.left-column.left)<1&&Math.abs(tools.right-column.right)<1,'source toolbar does not match candidate column: '+JSON.stringify(inboxWidth));
+  check(Math.abs(action.right-column.right)<1,'source toolbar button leaves unused candidate width: '+JSON.stringify(inboxWidth));
+  if(innerWidth<=760)check(action.top>=field.bottom&&field.width>column.width-1,'narrow source toolbar did not wrap its button');else check(action.left-field.right>=11&&action.left-field.right<=13,'source select did not stretch to its button');
+  const capture=new URLSearchParams(location.search).get('capture')||'inbox';
+  if(capture!=='inbox'){fixtureApi.setUiCase('empty');await refresh();nav({today:'今日工作台',all:'全部事项'}[capture]).click();await wait(()=>empty());}
   check(!fixtureApi.calls.some(c=>['organize_text','test_model','start_agent_trial','start_today_advice','sign_candidates'].includes(c.command)),'visual navigation started a business/model call');
-  check(document.documentElement.scrollWidth<=innerWidth,'page overflows viewport');return {pass:true,viewport:innerWidth,metrics,businessCalls:0};
+  check(document.documentElement.scrollWidth<=innerWidth,'page overflows viewport');return {pass:true,viewport:innerWidth,metrics,inboxWidth,businessCalls:0};
  }catch(error){return {pass:false,viewport:innerWidth,metrics,error:String(error)};}
 })()`;
 
-for(const surface of ['controls','workbench'])for(const capture of surface==='workbench'?['today','inbox','all']:['controls'])for(const width of [1440,640])test(`${surface}/${capture} remains consistent and usable at ${width}px`,{skip:available?false:'Chrome unavailable; browser acceptance not verified',timeout:30000},async()=>{
+for(const surface of ['controls','workbench'])for(const capture of surface==='workbench'?['today','inbox','all']:['controls'])for(const width of capture==='inbox'?[1440,1024,640]:[1440,640])test(`${surface}/${capture} remains consistent and usable at ${width}px`,{skip:available?false:'Chrome unavailable; browser acceptance not verified',timeout:30000},async()=>{
  const address=server.httpServer.address();assert.equal(typeof address,'object');
  const profile=join(work,'chrome-'+width+'-'+capture),url=`http://127.0.0.1:${address.port}/`;
  const result=await exec(chrome,['--headless','--disable-gpu','--no-first-run','--no-default-browser-check','--disable-background-networking','--disable-component-update','--disable-sync','--disable-extensions','--use-mock-keychain',`--user-data-dir=${profile}-${surface}`,'--dump-dom','--virtual-time-budget=15000',`--window-size=${width},1000`,`--screenshot=${join(evidence,`${surface}-${capture}-${width}.png`)}`,url+'?surface='+surface+'&capture='+capture],{timeout:25000,maxBuffer:4*1024*1024});

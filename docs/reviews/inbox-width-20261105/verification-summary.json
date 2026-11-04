@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "conclusion": "pass for local layout and automatic checks; native acceptance open",
+  "baseCommit": "faf83a2820f086ba309b9420e5cfb6c62c899cb3",
+  "scope": "independent complete verification for source-batch toolbar width; R1 local CSS and synthetic browser fixture regression; no source edits",
+  "sourceManifest": "source-hashes.json",
+  "sourceManifestSha256": "7d10bc42c19b2bfb86795d1a5d81dc8f777e9c482e921446aabdd4291243040f",
+  "sourceFiles": 4,
+  "reviewSha256": "84293977890988f74c8bbaa11c40928b93112ae694683e1b92e57a56e3c2f44b",
+  "verificationJsonSha256": "bbfdf7543976888a86d20efcee0294ed6484fa2bef64975b7b614bf7705807d9",
+  "full": {
+    "run": {
+      "command": "npm run check",
+      "startedAt": "2026-11-04T16:27:00.962885+00:00",
+      "finishedAt": "2026-11-04T16:38:52.183726+00:00",
+      "durationSeconds": 711.221,
+      "exitCode": 0,
+      "status": "completed",
+      "attempt": 1,
+      "logSha256": "50b59e993e135e61cb331754b962f928607766057cc0b9407556ac8e0affea85"
+    },
+    "checks": {
+      "exitCodeZero": true,
+      "allNodePassed": true,
+      "rustDefaultPass": true,
+      "rustDualPass": true,
+      "browserActuallyExecuted": true,
+      "headStable": true,
+      "sourcesStable": true,
+      "protectedStable": true,
+      "noOldPathMatches": true,
+      "diffCheckPass": true,
+      "twoPackagesRecorded": true,
+      "budgetRealRequestsZero": true
+    },
+    "node": {
+      "groupCount": 30,
+      "totals": {
+        "tests": 939,
+        "pass": 939,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "nonBrowserPass": 930,
+      "browserPassIncluded": 9
+    },
+    "rust": {
+      "dual": {
+        "line": 1171,
+        "pass": 37,
+        "fail": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 280,
+        "durationSeconds": 65.58
+      },
+      "default": {
+        "line": 1577,
+        "pass": 279,
+        "fail": 0,
+        "ignored": 3,
+        "measured": 0,
+        "filtered": 0,
+        "durationSeconds": 331.87
+      },
+      "ignored": [
+        {
+          "line": 1545,
+          "text": "test runtime_host::tests::s2_live_text_preview_sign_and_restart ... ignored, explicit real model integration using the owner-selected private file"
+        },
+        {
+          "line": 1546,
+          "text": "test runtime_host::tests::s31_live_isolated_organizer_trial_and_configuration_reopen ... ignored, explicit real model trial using the owner-selected private file"
+        },
+        {
+          "line": 1549,
+          "text": "test runtime_host::today_advice_tests::today_child_crash_harness ... ignored, controlled subprocess entry only; invoked by today_real_host_crash_cold_reopen"
+        }
+      ]
+    },
+    "packages": [
+      {
+        "name": "Sidekick MCP Verify.app",
+        "resourceEntries": 560,
+        "contentsFileOrSymlinkCount": 485,
+        "treeSha256": "f900c5392877eb71d8bc50ea1d2e13c3c550e5674fb2aa7c4fda27625acd5b0c",
+        "executableSha256": "2b10919357d7d376d531b0e679287b37f67cdd948fa5bbdc471ec0ca14eee393"
+      },
+      {
+        "name": "Sidekick.app",
+        "resourceEntries": 557,
+        "contentsFileOrSymlinkCount": 483,
+        "treeSha256": "d432e8dc5eaac77e4618907337a6c66cbf5e57beb40e10616abb9f8514e0ed22",
+        "executableSha256": "ebcfe0c64e0ae8ae3b666fa211ff60e05e3d42b9d3b7b36951c2b05d6ca4b6bb"
+      }
+    ],
+    "lifecycleScenarios": 10,
+    "budget": {
+      "layer": "synthetic-budgeted",
+      "conclusion": "pass",
+      "occupiedSlots": 6,
+      "possiblyForwarded": 6,
+      "completed": 6,
+      "remaining": 4,
+      "realModelRequests": 0,
+      "realModelRequestUpperBound": 0,
+      "evidence": "build/p5-revise-20261101/synthetic-budgeted-1793810207811418000"
+    },
+    "browserStderr": {
+      "categories": {
+        "displaylink": 63,
+        "allocator": 9,
+        "task_policy": 28
+      },
+      "unclassified": 0,
+      "classification": "unlocated Chrome carrier residual; not a production baseline or native proof"
+    },
+    "existingBuildDiagnostics": {
+      "runtimeSizeHints": 14,
+      "viteChunkHints": 2,
+      "notarizationSkipped": 2,
+      "existingHostWorkaroundApplied": 2
+    },
+    "hostToolchainProbe": {
+      "status": "passed",
+      "cases": [
+        {
+          "case": "configured",
+          "loaded": false,
+          "error": "mis-aligned LINKEDIT string pool"
+        },
+        {
+          "case": "host",
+          "loaded": true,
+          "error": null
+        },
+        {
+          "case": "wrapped",
+          "loaded": true,
+          "error": null
+        }
+      ],
+      "workaroundNeededOnThisHost": true
+    },
+    "protected": {
+      "fileCount": 3654,
+      "aggregateSha256": "d015682462371b6c5ddf391800438fadeac10c979903bb1d58a1019665746ca4",
+      "changed": []
+    },
+    "unverified": [
+      "native GUI/font/focus/input and actual Tauri IPC flows",
+      "popup search focus with virtual-time animation; extra reviewer experiment failed with both old and new CSS",
+      "real model or Feishu/business MCP",
+      "production credentials/MCP Keychain and real workspace roots",
+      "clean checkout, other machines, notarization/install",
+      "existing G1 open items remain open"
+    ]
+  },
+  "acceptanceEnvironment": {
+    "ownerSelectedNewModelFreeRoot": true,
+    "oldRootPreserved": true,
+    "oldConfigurationOrDataCopied": false,
+    "offlineSyntheticBatchCount": 1,
+    "offlineSyntheticSignedTodoCount": 1,
+    "modelRequestsDuringSeed": 0,
+    "onlyPublicStoreMethodsUsed": true,
+    "nativeResult": "pending user feedback"
+  }
+}

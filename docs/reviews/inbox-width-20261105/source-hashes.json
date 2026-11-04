@@ -1,0 +1,6 @@
+{
+  "src/style.css": "e0a57fcb50591e47e8c8372d55940b70c2b38295d7115abef83338c367e66586",
+  "src/styles/forms.css": "ad468ceaccffde5cfb4af19d4d0f2e092d62430c148a9d7ca4cea764954d82c7",
+  "tests/fixtures/desktop-controls/api.ts": "bd7fc3b2a50a982f579db83d29629320226cd968fdc5edc5507aaf2e4a8227eb",
+  "tests/integration/desktop-controls.test.mjs": "b1de5e00f0662bd038876b2db2acbb635e0b297378f898d27898b22db61a0ae3"
+}
