@@ -1,0 +1,239 @@
+{
+  "version": 1,
+  "conclusion": "reviewed implementation and automatic/browser checks passed; native acceptance open",
+  "baseCommit": "1f3bed98474311f9574fc8de0e9341cf33244fa9",
+  "scope": "Independent full verification of R2 frontend empty states and shared button presentation, frozen v3; no source changes or App/user-root operations by verifier",
+  "sourceManifest": "source-hashes.json",
+  "sourceManifestSha256": "45bb9eedc51f2531f5fd356c9a147bdde909b8abe6d4093cf8fb651293b82373",
+  "sourceFiles": 8,
+  "planSha256": "80eaf01bfe19e847b10e02cf371959e9c5f7dfead3c472c323ca254f4f0e2393",
+  "deliveryReviewSha256": "4bcd23d89fe9910d55806c2c01560c9fbbc57c35477fc0f3255dd2bde9e233f0",
+  "fullReportSha256": "82ee678a3bdc42c0092fe02446a5b2fb033091380f2c9b52744dc0ac4de84769",
+  "full": {
+    "command": {
+      "command": "npm run check",
+      "exitCode": 0,
+      "durationSeconds": 661.809,
+      "startedAt": "2026-11-04T15:12:03.182560+00:00",
+      "finishedAt": "2026-11-04T15:23:05.054055+00:00",
+      "log": "build/ui-consistency-20261104/full/npm-check.log",
+      "logSha256": "89530eb498510f2bb041a85f23f086e9a99774a31f4a13cd58f42b4dbf68f7fb",
+      "rerun": false
+    },
+    "nodeTotals": {
+      "tests": 938,
+      "pass": 938,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0
+    },
+    "rust": {
+      "dualFeatureVerification": {
+        "pass": 37,
+        "fail": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 280,
+        "durationSeconds": 57.87,
+        "summaryLine": 1170
+      },
+      "ordinaryLibrary": {
+        "pass": 279,
+        "fail": 0,
+        "ignored": 3,
+        "measured": 0,
+        "filtered": 0,
+        "durationSeconds": 306.52,
+        "summaryLine": 1576
+      },
+      "syntheticBudgetChild": {
+        "pass": 1,
+        "fail": 0,
+        "ignored": 0,
+        "summary": [
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 281 filtered out; finished in 3.48s"
+        ]
+      }
+    },
+    "browser": {
+      "pass": 8,
+      "fail": 0,
+      "skipped": 0,
+      "syntheticDomOnly": true,
+      "widths": [
+        1440,
+        640
+      ],
+      "raw": "browser",
+      "results": "browser-results.json",
+      "measurements": {
+        "normalHeight": 38,
+        "compactHeight": 30,
+        "iconLayoutSize": 16,
+        "badgeHeight": 20,
+        "maximumIconTextCenterOffset": 0.5
+      }
+    },
+    "guards": {
+      "structureSourceFiles": 196,
+      "structureRelativeReferences": 446,
+      "structureSelfTestViolationClasses": 19,
+      "structureSelfTestReferenceCases": 8,
+      "docsFiles": 15,
+      "docsRelativeLinks": 242,
+      "oldPathScan": {
+        "scanned": 262,
+        "guardOrNegativeFixtureMatches": 5,
+        "actualExecutableReferences": 0
+      }
+    },
+    "lifecycle": {
+      "nodePass": 12,
+      "runtimeProbePass": 9,
+      "cardProbePass": 4,
+      "contractProbePass": 6,
+      "scenarioRecords": 10,
+      "raw": "lifecycle-summary.json"
+    },
+    "runtimeSlices": {
+      "test:s2-runtime": 7,
+      "test:today-runtime": 5,
+      "direct:s31-runtime": 12,
+      "direct:layout-runtime": 2,
+      "direct:s32-runtime": 3
+    },
+    "syntheticBudget": {
+      "event": {
+        "layer": "synthetic-budgeted",
+        "conclusion": "pass",
+        "occupiedSlots": 6,
+        "possiblyForwarded": 6,
+        "completed": 6,
+        "remaining": 4,
+        "realModelRequests": 0,
+        "realModelRequestUpperBound": 0,
+        "evidence": "build/p5-revise-20261101/synthetic-budgeted-1793805660814061000"
+      },
+      "summarySha256": "6c0ab09f049f056b8e9fd3e914788c556d69859dda28018c367615ea7108f384",
+      "copiedEvidence": "synthetic-budget-evidence",
+      "conclusion": "pass",
+      "realModelRequests": 0,
+      "realModelRequestUpperBound": 0,
+      "nativeTestSummary": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 281 filtered out; finished in 3.48s"
+      ],
+      "diagnosticsComplete": true,
+      "diagnosticErrors": []
+    },
+    "launcher": {
+      "pass": 76,
+      "fail": 0,
+      "skipped": 0,
+      "layer": "guarded launch and receipt simulations with owned synthetic children; not native GUI evidence"
+    },
+    "packages": {
+      "Sidekick MCP Verify.app": {
+        "resourceEntries": 560,
+        "executableSha256": "03727e474a51fc3a9bd08dfdf983ac4da7b5b0033b1f8668788bcf4f4cbd3d98",
+        "infoPlistSha256": "a138d66a42563d8b2d74c7a7cc29c1d6c5678abeebf283c959bd68dd72747789"
+      },
+      "Sidekick.app": {
+        "resourceEntries": 557,
+        "executableSha256": "9a0e3d894a12217681e08a87c834dd06e6bbbbecd4178b156690af30df17a1cf",
+        "infoPlistSha256": "711c1ef698e0dcf5ccda37c6d58ce67ac16b23c8de688209f558621e4f29e80f"
+      }
+    },
+    "packageProof": {
+      "deepStrictSignatures": "both verified in npm run test:s33-ui-artifacts",
+      "ordinaryControlledResourcesExcluded": true,
+      "preparedRuntimeControlledResourcesExcluded": true,
+      "ordinaryNegativeFlagExitCode": 2,
+      "ordinaryNegativeFlagMessage": "MCP UI verification is not enabled in this package",
+      "noGuiOrMcpLaunchByArtifactTest": true
+    },
+    "carrierResiduals": {
+      "classification": "unlocated residual Chrome/macOS test-carrier diagnostics; isolated from production warning baseline and not a claim of zero browser-console errors",
+      "counts": {
+        "displaylink6670": 56,
+        "taskCategoryPolicy": 12,
+        "taskSuppressionPolicy": 12,
+        "allocator": 8
+      },
+      "v3ReviewCountsForContextOnly": {
+        "displaylink6670": 56,
+        "taskCategoryPolicy": 10,
+        "taskSuppressionPolicy": 10
+      },
+      "countComparison": "current task policies are 12 each rather than review 10 each; current allocator count is 8. Counts vary per execution; no claim all new output is historical baseline.",
+      "raw": "carrier-diagnostics.json"
+    },
+    "limits": [
+      "No native GUI acceptance, screenshots or DOM do not establish native rendering, keyboard, focus or font correctness.",
+      "No real models, real service credentials, production MCP Keychain, real user workspace, installation/distribution or clean checkout/dependency installation verified. Ordinary library did run its existing synthetic Keychain roundtrip.",
+      "Chrome carrier diagnostics remain unlocated residuals, do not close native G1 gaps.",
+      "Main agent may append factual documentation and separately run docs guard; any executable-input change invalidates this frozen-source result."
+    ]
+  },
+  "warnings": {
+    "productionBaselineAuthority": "docs/engineering/verification.md section 1: Runtime size, Vite chunk, ad-hoc signing and unnotarized output are known nonblocking; no baseline checkout was executed in this verification",
+    "runtimeSize": {
+      "count": 14,
+      "details": "probe.mjs 2.3mb and organizer.mjs 2.4mb, seven bundle runs, 14 informational size markers",
+      "classification": "known nonblocking Runtime size output"
+    },
+    "viteChunk": {
+      "count": 2,
+      "jsKiBReported": 706.81,
+      "classification": "known nonblocking Vite >500 kB chunk warning, twice for two builds"
+    },
+    "notarization": {
+      "count": 2,
+      "classification": "known nonblocking local ad-hoc unnotarized builds; both use signing identity -"
+    },
+    "rustWarnings": 0,
+    "toolchain": {
+      "status": "passed",
+      "cases": [
+        {
+          "case": "configured",
+          "loaded": false,
+          "error": "mis-aligned LINKEDIT string pool"
+        },
+        {
+          "case": "host",
+          "loaded": true,
+          "error": null
+        },
+        {
+          "case": "wrapped",
+          "loaded": true,
+          "error": null
+        }
+      ],
+      "workaroundNeededOnThisHost": true
+    },
+    "toolchainClassification": "explicit configured/host/wrapped contrast: configured deployment target 12.0 produces mis-aligned LINKEDIT; host and wrapper load successfully, probe passed. Existing wrapper affects proc-macro only; documented historical host limitation, not hidden fallback. See tests/probes/toolchain.py and scripts/probes/rustc-host-macro.py.",
+    "carrier": {
+      "classification": "unlocated residual Chrome/macOS test-carrier diagnostics; isolated from production warning baseline and not a claim of zero browser-console errors",
+      "counts": {
+        "displaylink6670": 56,
+        "taskCategoryPolicy": 12,
+        "taskSuppressionPolicy": 12,
+        "allocator": 8
+      },
+      "v3ReviewCountsForContextOnly": {
+        "displaylink6670": 56,
+        "taskCategoryPolicy": 10,
+        "taskSuppressionPolicy": 10
+      },
+      "countComparison": "current task policies are 12 each rather than review 10 each; current allocator count is 8. Counts vary per execution; no claim all new output is historical baseline.",
+      "raw": "carrier-diagnostics.json"
+    },
+    "otherProductionWarningsFound": []
+  },
+  "frozenSourcesAndHeadStable": true,
+  "protectedFiles": 3172,
+  "parallelResearchExcludedFromCommit": true,
+  "nativeAppReplacement": "requested; subsequent startup metadata kept only under ignored manual evidence"
+}

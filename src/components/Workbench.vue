@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from
 import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 import { open } from '@tauri-apps/plugin-dialog';
 import SkButton from './ui/SkButton.vue';
+import SkEmptyState from './ui/SkEmptyState.vue';
 import SkInput from './ui/SkInput.vue';
 import SkSelect from './ui/SkSelect.vue';
 import SkField from './ui/SkField.vue';
@@ -46,6 +47,8 @@ const page=ref<'today'|'inbox'|'all'|'settings'>('today'),booting=ref(true),star
 watch(page,value=>{if(value==='today'&&!store.workspace?.needsSetup&&!booting.value)void todayAdvice.load().catch(()=>{});});
 const now=ref(Date.now()),toast=ref(''),formDialog=ref<HTMLDialogElement>(),detailDialog=ref<HTMLDialogElement>(),deleteDialog=ref<HTMLDialogElement>();
 const filters=reactive({kind:'all',status:'all',date:'all',owner:'',tag:'',query:''});
+const hasFilters=computed(()=>filters.kind!=='all'||filters.status!=='all'||filters.date!=='all'||!!(filters.owner||filters.tag||filters.query.trim()));
+function resetFilters(){Object.assign(filters,{kind:'all',status:'all',date:'all',owner:'',tag:'',query:''});}
 const today=computed(()=>todayLists(store.rows,now.value));
 const active=computed(()=>store.rows.filter(t=>t.status==='open'));
 const undated=computed(()=>active.value.filter(t=>!t.data.due&&!t.data.followup).length);
@@ -139,20 +142,23 @@ onUnmounted(()=>{workbenchAlive=false;factsTimerGeneration++;clearTimeout(factsT
       <header class="toolbar"><span>{{ page==='today'?'今日工作台':page==='inbox'?'待确认':page==='all'?'全部事项':'设置' }}</span><div class="toolbar-actions"><button class="icon-button" aria-label="刷新清单" :disabled="store.loading" @click="refresh"><Icon name="refresh"/></button><SkButton id="quick-entry" kind="entry" :disabled="store.saving||!settings.ready||settings.loading||settings.saving" @click="capture()"><Icon name="plus"/>快速录入<kbd>⌘ K</kbd></SkButton></div></header>
       <div v-if="store.error" class="inline-error" role="alert">{{ store.error }} <button class="text-button" @click="refresh">重新刷新</button></div>
       <div v-if="!settings.ready" class="inline-error" role="alert">通用设置尚未确认，新输入与新任务暂不可用。<button class="text-button" @click="timeSettings">去通用设置核对</button></div><div class="view" :aria-busy="page==='inbox'?organizer.loading:store.loading">
+        <p v-if="store.loading&&!store.rows.length&&page!=='inbox'&&page!=='settings'" class="muted" role="status">正在读取事项…</p>
         <template v-if="page==='today'"><div class="page-intro"><h1>今天，先盯住这些事。</h1><p>{{ new Intl.DateTimeFormat('zh-CN',{timeZone:currentZone(),month:'long',day:'numeric',weekday:'long'}).format(new Date(now)) }} · 执行的事和跟进的事，分别记清楚。</p></div>
           <div class="today-grid"><div class="work-list">
+            <SkEmptyState v-if="!active.length&&!store.loading&&!store.error" :title="store.rows.length?'当前没有待办事项。':'先记录第一条事项。'" :description="store.rows.length?'历史事项仍保留在全部事项中，有新事可以继续记录。':'自己要做的，或需要跟进的事项，都可以记录下来。'"><template #actions><SkButton kind="entry" @click="capture()"><Icon name="plus"/>{{store.rows.length?'记录一条':'记录第一条'}}</SkButton><SkButton kind="quiet" @click="captureText">整理一段原文<Icon name="arrow"/></SkButton></template></SkEmptyState>
+            <template v-else-if="active.length">
             <section class="task-section"><div class="section-heading"><h2>待我处理</h2><span class="count">{{ today.action.length }} 项</span></div><ul class="task-list"><TodoRow v-for="todo in today.action" :key="todo.id" :todo="todo" :busy="store.saving" :now="now" @detail="detail" @toggle="toggle"/></ul><p v-if="!today.action.length" class="section-empty">今天还没有需要到点处理的事项。</p></section>
             <section class="task-section"><div class="section-heading"><h2>待我跟进</h2><span class="count">{{ today.followup.length }} 项</span></div><ul class="task-list"><TodoRow v-for="todo in today.followup" :key="todo.id" :todo="todo" :busy="store.saving" :now="now" @detail="detail" @toggle="toggle"/></ul><p v-if="!today.followup.length" class="section-empty">今天没有安排跟进；有新事就先记下来。</p></section>
             <div v-if="undated" class="undated-note"><Icon name="clock"/><div><strong>还有 {{ undated }} 项未定期。</strong><p>没有时间的事，也替你留着了。</p></div><button class="text-button" @click="showUndated">去看看<Icon name="arrow"/></button></div>
-            <div v-if="!active.length" class="first-task"><SkButton kind="entry" class="first-task-action" @click="capture()"><Icon name="plus"/>记录第一条</SkButton><p>自己要做的，或需要盯着别人交付的，都可以。</p><button class="text-button empty-text-entry" @click="captureText">或者，整理一段原文<Icon name="arrow"/></button></div>
+            </template>
           </div><aside class="brief-rail" aria-label="班班简报"><h2><img :src="mark" alt="">班班简报</h2><div class="brief-message"><h3>{{ active.length?`${address}，事项都记着呢。`:`${address}，随时交给我。` }}</h3><p>{{ active.length?`目前还有 ${active.length} 项待闭环。先看时间，再看谁来处理。`:'先从一件小事开始，把靠记忆盯着的工作留下来。' }}</p><img class="brief-pet" :src="pet" alt="班班"></div><div class="rail-facts"><p><span>待我处理</span><strong>{{ active.filter(t=>t.data.kind==='action').length }}</strong></p><p><span>待我跟进</span><strong>{{ active.filter(t=>t.data.kind==='followup').length }}</strong></p><p><span>交付已逾期</span><strong :class="{danger:overdue}">{{ overdue }}</strong></p></div><p class="muted rail-note">依据已保存的本地事项统计。截止与下次跟进时间分别保留。</p><TodayAdvice/></aside></div>
         </template>
         <InboxView v-else-if="page==='inbox'" @capture="captureText" @models="openModels" @signed="signed"/>
         <template v-else-if="page==='all'"><div class="page-intro"><h1>每件事，都有个着落。</h1><p>按执行、跟进或时间筛选；已完成和未定期的事项也在这里。</p></div>
           <div class="filter-bar"><SkInput v-model="filters.query" class="search-field" aria-label="搜索事项标题" placeholder="搜索事项标题"><template #prefix><Icon name="search"/></template><template #suffix><button v-if="filters.query" class="icon-button small" aria-label="清除搜索" @click="filters.query=''"> <Icon name="close"/></button></template></SkInput>
             <SkSelect v-model="filters.kind" aria-label="事项类型筛选" :options="[{value:'all',label:'所有类型'},{value:'action',label:'待我处理'},{value:'followup',label:'待我跟进'}]"/><SkSelect v-model="filters.status" aria-label="状态筛选" :options="[{value:'all',label:'全部状态'},{value:'open',label:'未完成'},{value:'completed',label:'已完成'},{value:'deleted',label:'已删除'}]"/><SkSelect v-model="filters.date" aria-label="时间筛选" :options="[{value:'all',label:'所有时间'},{value:'today',label:'今天及之前'},{value:'week',label:'本周'},{value:'overdue',label:'已逾期'},{value:'undated',label:'未定期'}]"/><SkSelect v-model="filters.owner" aria-label="负责人筛选" placeholder="所有负责人" :options="[{value:'',label:'所有负责人'},...owners.map(value=>({value,label:value}))]" searchable/><SkSelect v-model="filters.tag" aria-label="标签筛选" placeholder="所有标签" :options="[{value:'',label:'所有标签'},...tags.map(value=>({value,label:value}))]" searchable/>
-          </div><div class="results-heading"><span>{{ results.length }} 项事项</span><button class="text-button" @click="Object.assign(filters,{kind:'all',status:'all',date:'all',owner:'',tag:'',query:''})">清除筛选</button></div><ul class="task-list"><TodoRow v-for="todo in results" :key="todo.id" :todo="todo" :busy="store.saving" :now="now" @detail="detail" @toggle="toggle"/></ul>
-          <div v-if="!results.length" class="empty-state"><img :src="pet" alt="班班"><h2>这里暂时没有事项。</h2><p>换个筛选条件，或者先记录一条。</p><SkButton kind="entry" @click="capture()">记录一条</SkButton></div>
+          </div><div class="results-heading"><span>{{ results.length }} 项事项</span><button class="text-button" @click="resetFilters">清除筛选</button></div><ul class="task-list"><TodoRow v-for="todo in results" :key="todo.id" :todo="todo" :busy="store.saving" :now="now" @detail="detail" @toggle="toggle"/></ul>
+          <SkEmptyState v-if="!results.length&&!store.loading&&!store.error" :title="!store.rows.length&&!hasFilters?'先记录第一条事项。':hasFilters?'没有符合条件的事项。':'当前没有可显示的事项。'" :description="!store.rows.length&&!hasFilters?'自己要做的，或需要跟进的事项，都可以记录下来。':hasFilters?'试试调整筛选条件，或记录一条新事项。':'可以调整状态筛选查看历史事项，或记录一条新事项。'"><template #actions><SkButton v-if="hasFilters" kind="entry" @click="resetFilters"><Icon name="refresh"/>清除筛选</SkButton><SkButton :kind="hasFilters?'quiet':'entry'" @click="capture()"><Icon name="plus"/>{{!store.rows.length&&!hasFilters?'记录第一条':'记录一条'}}</SkButton><SkButton v-if="!store.rows.length&&!hasFilters" kind="quiet" @click="captureText">整理一段原文<Icon name="arrow"/></SkButton></template></SkEmptyState>
         </template>
         <SettingsPanel v-else :tab="settingsTab" :root="store.workspace?.root||''" @select-tab="settingsTab=$event" @open-directory="openDirectory"/>
       </div>

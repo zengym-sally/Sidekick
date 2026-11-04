@@ -1,0 +1,10 @@
+{
+  "src/components/InboxView.vue": "e92bf3f9139fdc7878191f4fd14cdd971a30891f7a7a45121a348e25c6fb81e4",
+  "src/components/Workbench.vue": "c6bf9fae2d5a946a5ada3d45f297baae42e53aa4755faaeaf9d805c3063e936b",
+  "src/components/ui/SkEmptyState.vue": "c41740d966264e26778f308c0fb432cb40bc6fb1ba8f58f51dbbc0bf87401d06",
+  "src/style.css": "825d70dda810c3a8b55f1635501f85703a47aacdf820ceb24fa8639ceed10fc5",
+  "src/styles/forms.css": "12fc3c74da390872fa6064ef9a8bd7494f4c110b7d6d029265884c38a07d0bcc",
+  "tests/fixtures/desktop-controls/api.ts": "ce9420c41865b913e4cc9fe4bc271a3b2081cc0901d1eb07494fa84b64bcfaa3",
+  "tests/fixtures/desktop-controls/main.ts": "6177f2f0249a3e3d5058bfe9c6dd924d5a3106ffdf4b36835d97f11eb7369386",
+  "tests/integration/desktop-controls.test.mjs": "f3b5a56fa7cd59ea21d72dcb7076abaf4373b7ebb9e2c1a175b8610868daf3c3"
+}

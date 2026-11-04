@@ -13,3 +13,6 @@
 .sk-textarea textarea::placeholder{color:var(--muted);opacity:1}
 
 .sk-select-status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+
+.sk-button .t-button__text{align-items:center;justify-content:center;gap:8px;line-height:20px}.sk-button.button .icon{display:block;width:16px;height:16px;flex:none}.sk-button kbd{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex:none;height:20px;line-height:1;margin:0;padding:0 5px}.text-button{line-height:20px}.text-button .icon{display:block;width:16px;height:16px;flex:none}
+.sk-button .t-loading{flex:none;font-size:16px;line-height:20px}.sk-button.button .t-loading+.t-button__text{margin-left:0}
