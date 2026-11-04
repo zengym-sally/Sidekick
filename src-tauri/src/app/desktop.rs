@@ -1,9 +1,12 @@
-use crate::local_store::StoreError;
+use crate::local_store::{
+    DesktopPreferences, DesktopPreferencesInput, DesktopPreferencesSave, StoreError,
+};
+use crate::store_commands::{call, LocalState};
 use serde::{Deserialize, Serialize};
 use std::sync::atomic::{AtomicBool, Ordering};
 use tauri::menu::{Menu, MenuItem};
 use tauri::tray::TrayIconBuilder;
-use tauri::{AppHandle, Manager, State, WebviewUrl, WebviewWindowBuilder};
+use tauri::{AppHandle, Emitter, Manager, State, WebviewUrl, WebviewWindowBuilder};
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, ShortcutState};
 
 const SHORTCUT: &str = "CommandOrControl+Shift+K";
@@ -76,6 +79,32 @@ pub(crate) fn read_desktop_status(state: State<'_, DesktopState>) -> DesktopStat
     }
 }
 
+#[tauri::command]
+pub(crate) async fn read_desktop_preferences(
+    app: AppHandle,
+    state: State<'_, LocalState>,
+) -> Result<DesktopPreferences, StoreError> {
+    enabled(&app.state::<DesktopState>())?;
+    call(state, |store| store.desktop_preferences()).await
+}
+#[tauri::command]
+pub(crate) async fn save_desktop_preferences(
+    app: AppHandle,
+    state: State<'_, LocalState>,
+    input: DesktopPreferencesInput,
+) -> Result<DesktopPreferencesSave, StoreError> {
+    enabled(&app.state::<DesktopState>())?;
+    let mut result = call(state, move |store| store.save_desktop_preferences(input)).await?;
+    if app.emit("desktop-preferences-changed", ()).is_err() {
+        result.warning = Some(if result.warning.is_some() {
+            "桌面偏好已生效，但磁盘同步和窗口通知未能确认，请稍后重读并重新保存。"
+        } else {
+            "桌面偏好已保存，窗口通知未能确认，请重新显示相关窗口。"
+        });
+    }
+    Ok(result)
+}
+
 pub(crate) fn setup(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let production = !cfg!(feature = "s33-mcp-ui-verification");
     app.manage(DesktopState {
@@ -85,6 +114,10 @@ pub(crate) fn setup(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Erro
     if !production {
         return Ok(());
     }
+    let pet_on_startup = app
+        .state::<LocalState>()
+        .access(|store| store.desktop_preferences())
+        .is_ok_and(|preferences| preferences.pet_on_startup);
     WebviewWindowBuilder::new(app, "pet", WebviewUrl::App("index.html?window=pet".into()))
         .title("班班")
         .inner_size(280.0, 200.0)
@@ -94,7 +127,8 @@ pub(crate) fn setup(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Erro
         .shadow(false)
         .always_on_top(true)
         .skip_taskbar(true)
-        .visible(false)
+        .focused(false)
+        .visible(pet_on_startup)
         .build()?;
     WebviewWindowBuilder::new(
         app,

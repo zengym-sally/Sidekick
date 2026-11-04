@@ -1,0 +1,16 @@
+{
+  "package.json": "2d276ba194cfe9bc8d469fa1acfbd980aeb71345fd9cb1b11e43dd0473c3d9d7",
+  "src-tauri/src/app/commands.rs": "b2202ffdfb68a00bfa6d6b79c732338436524f04f7d1e5e0b8ab9c484dfe9499",
+  "src-tauri/src/app/desktop.rs": "8f1f26d59b817509ee705f37120e62b364c611656e5937fe306b9b006ebd9590",
+  "src-tauri/src/app/mod.rs": "533ddd50bb733875d43725b209a9f9185d4087be0aa960ac2ba40fdb591d9c09",
+  "src-tauri/src/store/desktop_preferences.rs": "d1daeba1db3f740d4e2944c68f3b76428f9c91bcdb6a5872f57ef4c309f292c9",
+  "src-tauri/src/store/desktop_preferences_tests.rs": "b9bc4dcb9fff77b3c4bda107f205c964062df08d14d6a206b45c2f22aa80d30d",
+  "src-tauri/src/store/local_store.rs": "9e4b3addae5bf239ff0359e2b43415d90ff8c5ade34f5a2df9e81ba9354d9698",
+  "src/App.vue": "58a53a54727affc9dc1e57b874e70b46c7f392dd50c2ac1c6b7d59744d474dec",
+  "src/components/DesktopSettingsPanel.vue": "8a2afb40027e348e5d6be5ed232a7fc574f26f19934008461062c7a4839384b6",
+  "src/components/SettingsPanel.vue": "40de57acd57222ae4c3f5575e078dde43131e56d53bdb8dae1b7605239494f2e",
+  "src/components/Workbench.vue": "30c61310de807cdf4b93affc867d8bea69181826b7df71b5d0875818116901f1",
+  "src/stores/desktopPreferences.ts": "5b7c3499674214147393926c39ffaf079bfaa5f750bb52807cc740dbb5538220",
+  "src/style.css": "3e31115dcaa308c56c7d88d4f33a76d2d513d47a73a2fa6590fcf17b2a239cdc",
+  "tests/unit/desktop-preferences.test.mjs": "27068a4f083a1bd85ddf99ac435f9937d881c5e137262a2e666d401633f6eb4c"
+}

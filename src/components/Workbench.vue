@@ -32,7 +32,7 @@ const settings=useApplicationSettings(),modelSettings=useModelSettings();
 const store=useTodos(),profile=useProfile(),organizer=useOrganizer(),agents=useAgents(),skills=useSkills();
 const todayAdvice=useTodayAdvice();
 const captureMode=ref<'manual'|'text'>('manual');
-const settingsTab=ref<'profile'|'general'|'models'|'agents'|'tools'|'about'>('profile');
+const settingsTab=ref<'profile'|'general'|'desktop'|'models'|'agents'|'tools'|'about'>('profile');
 const address=computed(()=>profile.ready?profile.saved.address:'BOSS');
 const profileName=computed(()=>profile.ready?(profile.saved.name||DEFAULT_NICKNAME):DEFAULT_NICKNAME);
 function openSettings(){page.value='settings';settingsTab.value='profile';}

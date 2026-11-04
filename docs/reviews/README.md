@@ -13,10 +13,11 @@
 - **索引强制**：新增记录必须登记到本文件；未登记视为未收口。`check:docs` 只校验链接存在，语义一致性靠评审。
 - **新路径**：2026-10-31 结构治理后，新记录使用新路径（`runtime/{entries,lib,workers}/`、`src-tauri/src/{app,store,host,diagnostics}/`、`tests/{unit,integration,probes,fixtures}/`、`scripts/{build,checks,probes}/`）；旧记录保留原路径，按文件名仍可检索。
 
-## 2. 记录索引（39 份）
+## 2. 记录索引（40 份）
 
 | 记录 | 日期 | 范围与结论 | 证据 |
 |---|---|---|---|
+| [desktop-preferences-20261104.md](desktop-preferences-20261104.md) | 2026-11-04 | S4桌面偏好：设计/修订交付双面及独立完整门禁通过（Node930、Rust279/3ignored、dual37）；补记owner人工确认快速录入/主窗同步/托盘入口，G1其余未验保留 | 原始证据`build/desktop-preferences-20261104/` |
 | [desktop-entry-20261104.md](desktop-entry-20261104.md) | 2026-11-04 | S4首条桌面录入候选：设计/交付双面及新独立full通过（Node917、Rust273/3ignored、dual37），原生与其余S4/S5待验，G1未闭 | 同名精选摘要；原始证据`build/g1-functional-20261104/` |
 | [native-readiness-20261104.md](native-readiness-20261104.md) | 2026-11-04 | G1固定800视口/私有前置诊断：双面及独立full通过（Node894、Rust271/3ignored、dual36）；官方文本/今日/角色/Skills子项通过，stdio补证私有交付通过，官方CUA再次-3812；owner结束补证并安全收尾，原生缺证待补、G1功能继续 | 同名目录精选摘要，原始证据`build/s36-readiness-20261104/`，旧900失败保留 |
 | [verification-audit-20261104.md](verification-audit-20261104.md) | 2026-11-04 | 审计修复双面及独立full通过（Node870、Rust271/3ignored、dual31）；后续900高原生启动仍无ready，可用高887/800与诊断增量待授权，G1未闭 | 同名目录精选摘要；原始证据`build/s36-audit-record-20261104/`，旧失败封存不改 |

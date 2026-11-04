@@ -32,6 +32,7 @@
 | `advisor-contract.test.mjs` | unit | advisor完整固定事实、快照／日期／时区、多合法排序与解释、谓词／比较及工具载荷拒绝 |
 | `s31-runtime.test.mjs` | integration | 打包 Runtime 的三角色隔离试跑及advisor联网前拒绝正反控 |
 | `layout-domain.test.mjs` | unit | 布局/表单/设置域模型与控件绑定 |
+| `desktop-preferences.test.mjs` | unit | 桌面偏好读写与未知核销、三窗初始化/聚焦同步、卸载清理及真实Vue组件/公共控件SSR；不冒充原生窗口证据 |
 | `layout-runtime.test.mjs` | integration | 打包 Runtime 的采样与推理参数透传 |
 | `s32-skills.test.mjs` | unit | Skills 扫描、冻结与内置包 |
 | `s32-client.test.mjs` | unit | Skills 客户端 store |

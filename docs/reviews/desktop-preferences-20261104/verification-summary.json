@@ -1,0 +1,435 @@
+{
+  "version": 1,
+  "conclusion": "pass for reviewed implementation and automatic checks; G1 remains open",
+  "baseCommit": "e91bbc1556ab3731742cea4fb97d65b981d441b5",
+  "scope": "desktop work mode and pet-on-startup preferences; independent complete local gate and static freeze/boundary verification, not native GUI or release approval",
+  "coreSha256": "b3883fc634902875837f24f03e89fa225c067912e98585981aca8e113f73ef6d",
+  "sourceManifest": "source-hashes.json",
+  "sourceManifestSha256": "315f3372f48e8d020490de8a1c60be5ea6164c3e16954a0a535dbf6233aea9b7",
+  "sourceFiles": 14,
+  "reviewReportsSha256": {
+    "design-review-v1.md": "f2907fbd7c3f31d568140a6b6a7533e347e78ccb0921de2e058905ba959ac49c",
+    "design-v2-a.md": "d043e07b093f1a6553b04f592f8643d2728caa38750dd24bd82672e4fa76967c",
+    "design-v2-b.md": "e27705f5c3e8de02a1545ef40f6105bfe4f197c61e5547ba69475b5ffd5a44d5",
+    "delivery-a-v1.md": "58f206f7df0aa1a970125c03aa89d2ca46e71abdf3a600debee23757f91dc437",
+    "delivery-b-v1.md": "8c2ad47b2406ffcd91ff81d08c0dc09d9daaea2307adc9ddf474b9ccdd10945e",
+    "delivery-a-v2.md": "e11232a13332fab16f82abcea7aeda4596c2c7b4370c5d7027525076d4cf1192",
+    "delivery-b-v2.md": "65ee8dd9bca395a27ff708dec6e4134c9d5f7cf88bcd9cb671739a6e2e23dc73"
+  },
+  "reviewOutcome": {
+    "designV1": "reject",
+    "designV2A": "pass",
+    "designV2B": "pass",
+    "deliveryV1A": "needs_revision",
+    "deliveryV1B": "needs_revision",
+    "deliveryV2A": "pass",
+    "deliveryV2B": "pass"
+  },
+  "regressionRed": {
+    "command": "npm run test:s1-domain",
+    "exitCode": 1,
+    "pass": 48,
+    "fail": 3
+  },
+  "focused": {
+    "node": {
+      "command": "npm run test:s1-domain",
+      "exitCode": 0,
+      "pass": 51,
+      "fail": 0
+    },
+    "store": {
+      "command": "npm run test:desktop-preferences-store",
+      "exitCode": 0,
+      "pass": 6,
+      "fail": 0
+    },
+    "host": {
+      "command": "npm run test:desktop-host",
+      "exitCode": 0,
+      "pass": 2,
+      "fail": 0
+    },
+    "neighbor": {
+      "command": "npm run test:layout-domain",
+      "exitCode": 0,
+      "pass": 14,
+      "fail": 0
+    },
+    "otherExitZero": [
+      "npm run typecheck",
+      "npm run build",
+      "npm run check:rust",
+      "npm run check:s33-verification",
+      "npm run check:structure",
+      "npm run check:docs",
+      "git diff --check"
+    ]
+  },
+  "full": {
+    "execution": {
+      "command": "npm run check",
+      "invocations": 1,
+      "startedAt": "2026-11-04T09:40:55.442227+00:00",
+      "finishedAt": "2026-11-04T09:51:58.161868+00:00",
+      "exitCode": 0,
+      "elapsedSeconds": 662.7189837909973,
+      "logSha256": "9a17cf62857ee1b09089540691c7846af0146fe5d7857010db11cd0e1abca60e",
+      "logMode": "0o600"
+    },
+    "reportSha256": "a0d8483bd9589fa70053dc86b85b2247863083803d3d976eb980b58c121ada5c",
+    "node": {
+      "groups": 29,
+      "pass": 930,
+      "fail": 0,
+      "commands": [
+        {
+          "command": "npm run test:s1-domain",
+          "pass": 51,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:s2-domain",
+          "pass": 47,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:s31-domain",
+          "pass": 183,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:today-domain",
+          "pass": 26,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:layout-domain",
+          "pass": 14,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:s32-domain",
+          "pass": 28,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:s33-config-domain",
+          "pass": 60,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:s33-security-domain",
+          "pass": 7,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:s33-ui-domain",
+          "pass": 18,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:s33-upgrade-domain",
+          "pass": 8,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:mcp-contract",
+          "pass": 9,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:mcp-http",
+          "pass": 62,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:mcp-recovery",
+          "pass": 14,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:model-budget",
+          "pass": 134,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:model-output-diagnostics",
+          "pass": 16,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:mcp-native-fetch",
+          "pass": 33,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:s33-ui-safety",
+          "pass": 5,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:s33-discovery",
+          "pass": 77,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:s33-lifecycle",
+          "pass": 12,
+          "fail": 0
+        },
+        {
+          "command": "npm run probe:runtime",
+          "pass": 9,
+          "fail": 0
+        },
+        {
+          "command": "npm run probe:card",
+          "pass": 4,
+          "fail": 0
+        },
+        {
+          "command": "npm run probe:contracts",
+          "pass": 6,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:s2-runtime",
+          "pass": 7,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:today-runtime",
+          "pass": 5,
+          "fail": 0
+        },
+        {
+          "command": "node --test --test-timeout=15000 tests/integration/s31-runtime.test.mjs",
+          "pass": 12,
+          "fail": 0
+        },
+        {
+          "command": "node --test --test-timeout=20000 tests/integration/layout-runtime.test.mjs",
+          "pass": 2,
+          "fail": 0
+        },
+        {
+          "command": "node --test --test-timeout=20000 tests/integration/s32-runtime.test.mjs",
+          "pass": 3,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:s33-ui-artifacts",
+          "pass": 2,
+          "fail": 0
+        },
+        {
+          "command": "npm run test:mcp-native-launcher",
+          "pass": 76,
+          "fail": 0
+        }
+      ]
+    },
+    "rust": {
+      "default": {
+        "summaryLine": 1558,
+        "pass": 279,
+        "fail": 0,
+        "ignored": 3,
+        "measured": 0,
+        "filtered": 0,
+        "durationSeconds": 310.46,
+        "command": "npm run probe:native"
+      },
+      "dualFeaturesVerification": {
+        "summaryLine": 1152,
+        "pass": 37,
+        "fail": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 280,
+        "durationSeconds": 58.52,
+        "command": "npm run test:s33-verification-guards"
+      },
+      "ignored": [
+        {
+          "line": 1526,
+          "output": "test runtime_host::tests::s2_live_text_preview_sign_and_restart ... ignored, explicit real model integration using the owner-selected private file"
+        },
+        {
+          "line": 1527,
+          "output": "test runtime_host::tests::s31_live_isolated_organizer_trial_and_configuration_reopen ... ignored, explicit real model trial using the owner-selected private file"
+        },
+        {
+          "line": 1530,
+          "output": "test runtime_host::today_advice_tests::today_child_crash_harness ... ignored, controlled subprocess entry only; invoked by today_real_host_crash_cold_reopen"
+        }
+      ],
+      "defaultFmtClippyPassed": true,
+      "dualFeatureClippyPassed": true,
+      "syntheticNonceKeychainRoundtripPassed": true
+    },
+    "structure": {
+      "pass": true,
+      "sourceFilesScanned": 191,
+      "relativeReferencesResolved": 432,
+      "negativeClasses": 19,
+      "individualNegativeReferences": 8
+    },
+    "docs": {
+      "pass": true,
+      "files": 15,
+      "localLinks": 236
+    },
+    "packages": {
+      "bundles": {
+        "Sidekick.app": {
+          "path": "src-tauri/target/release/bundle/macos/Sidekick.app",
+          "identifier": "com.sidekick.s0",
+          "resourceEntries": 557,
+          "executableSha256": "e8254723051f49effd78268910f7d17e2007d3e0c94aa39458ff1e6301dd45df",
+          "infoPlistSha256": "711c1ef698e0dcf5ccda37c6d58ce67ac16b23c8de688209f558621e4f29e80f",
+          "deepStrictSignatureVerified": true,
+          "signatureEvidence": "npm run test:s33-ui-artifacts; both /usr/bin/codesign --verify --deep --strict calls succeeded",
+          "signing": "ad-hoc",
+          "notarized": false,
+          "controlledResourceMatches": []
+        },
+        "Sidekick MCP Verify.app": {
+          "path": "src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app",
+          "identifier": "com.sidekick.s33.ui.verify",
+          "resourceEntries": 560,
+          "executableSha256": "a79d2f471259841d6bceae32e8d1fdfd942077bc3007681be167acb94de210fc",
+          "infoPlistSha256": "a138d66a42563d8b2d74c7a7cc29c1d6c5678abeebf283c959bd68dd72747789",
+          "deepStrictSignatureVerified": true,
+          "signatureEvidence": "npm run test:s33-ui-artifacts; both /usr/bin/codesign --verify --deep --strict calls succeeded",
+          "signing": "ad-hoc",
+          "notarized": false,
+          "controlledResourceMatches": [
+            "s33-ui",
+            "s33-ui/mcp-trial.mjs",
+            "s33-ui/service.mjs"
+          ]
+        }
+      },
+      "artifactTestOutput": {
+        "layer": "actual macOS bundles; no GUI or MCP launch",
+        "ordinaryResourceEntries": 557,
+        "controlledServiceExcluded": true,
+        "signatures": "both deep strict verified"
+      },
+      "ordinaryNegativeEntry": {
+        "layer": "ordinary executable negative entry; no ordinary-root startup",
+        "exitCode": 2,
+        "stderr": "MCP UI verification is not enabled in this package"
+      },
+      "runtimeControlledResourceMatches": [],
+      "manifests": "artifact-manifests.json"
+    },
+    "warnings": {
+      "comparisonBasis": "owner-provided prior categories, not a fresh baseline rerun",
+      "esbuildSize": {
+        "count": 14,
+        "bundleRuns": 7,
+        "lines": [
+          13,
+          17,
+          958,
+          962,
+          1163,
+          1167,
+          1571,
+          1575,
+          1611,
+          1615,
+          1695,
+          1699,
+          1758,
+          1762
+        ],
+        "classification": "existing size notices, exactly two per Runtime bundle"
+      },
+      "viteChunkSize": {
+        "count": 2,
+        "lines": [
+          1734,
+          1797
+        ],
+        "classification": "existing >500kB minified chunk category in each app build"
+      },
+      "notarizationSkipped": {
+        "count": 2,
+        "lines": [
+          1749,
+          1812
+        ],
+        "classification": "existing ad-hoc, non-notarized local builds"
+      },
+      "hostProcMacro": {
+        "negativeAndPositiveControl": {
+          "status": "passed",
+          "cases": [
+            {
+              "case": "configured",
+              "loaded": false,
+              "error": "mis-aligned LINKEDIT string pool"
+            },
+            {
+              "case": "host",
+              "loaded": true,
+              "error": null
+            },
+            {
+              "case": "wrapped",
+              "loaded": true,
+              "error": null
+            }
+          ],
+          "workaroundNeededOnThisHost": true
+        },
+        "successfulWorkaroundInfoCount": 2,
+        "successfulWorkaroundInfoLines": [
+          1715,
+          1778
+        ],
+        "classification": "configured negative control stays unloaded; host and wrapped controls load; successful build wrapper messages are info, not new warnings"
+      },
+      "newWarningLines": [],
+      "rustCompilerWarnings": 0
+    },
+    "realModelRequests": 0,
+    "lifecycle": {
+      "tests": 12,
+      "scenarios": 10,
+      "stdioCalls": 23
+    },
+    "budget": {
+      "reserved": 6,
+      "forwarded": 6,
+      "completed": 6,
+      "realModelRequests": 0
+    },
+    "launcher": {
+      "tests": 76,
+      "ownedSyntheticFixtureCases": 77,
+      "recordedModelHttpRequests": 0
+    },
+    "sourceAndCoreStable": true,
+    "protectedTrackedFilesStable": 2858,
+    "existingManualAppExecutableStable": true
+  },
+  "ownerManualEvidence": {
+    "quote": "快速录入、主窗同步和托盘入口都正常",
+    "codeBase": "e91bbc1",
+    "layer": "owner manual observations in dedicated verification App; no new screenshot or independent database readback"
+  },
+  "unverified": [
+    "本次未启动原生 GUI；桌面设置原生交互、三个实际窗口的动效同步与失事件恢复、下次冷启动显宠及不抢焦点仍未验证。",
+    "未运行真实模型，未读取 .env.deepseek 或生产凭据，未操作真实用户工作根。",
+    "默认 Rust 中 synthetic nonce Keychain roundtrip 通过，仅覆盖合成探针；生产 MCP Keychain 关闭状态与真实凭据验收不因此关闭。",
+    "系统登录启动、桌宠拖动与透明、多屏找回、全局快捷键冲突、安装、公证与干净检出构建均未验证。",
+    "Launcher 76 项为合成进程与 LaunchServices 调用替身，未启动 App GUI，不能替代原生验收。",
+    "Sidekick Profile Verify App 未被启动、停止或重建；本次前后只校验其现有可执行文件哈希相同，未做整个历史包的内容审计。",
+    "历史S3.6/HTTP/stdio缺证、CI及其他机器继续开放；S4位置/多屏/登录启动与S5后续分项不因本项关闭。"
+  ]
+}

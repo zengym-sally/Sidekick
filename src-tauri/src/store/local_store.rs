@@ -1372,6 +1372,14 @@ mod app_settings;
 use app_settings::SettingsWriteFault;
 pub use app_settings::*;
 
+#[path = "desktop_preferences.rs"]
+mod desktop_preferences;
+pub use desktop_preferences::*;
+
+#[cfg(test)]
+#[path = "desktop_preferences_tests.rs"]
+mod desktop_preferences_tests;
+
 #[path = "mcp_config.rs"]
 mod mcp_config;
 #[cfg(test)]

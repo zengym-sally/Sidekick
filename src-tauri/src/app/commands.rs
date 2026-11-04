@@ -134,7 +134,7 @@ impl LocalState {
     }
 }
 
-async fn call<T, F>(state: State<'_, LocalState>, action: F) -> Result<T, StoreError>
+pub(crate) async fn call<T, F>(state: State<'_, LocalState>, action: F) -> Result<T, StoreError>
 where
     T: Send + 'static,
     F: FnOnce(&mut AppStore) -> Result<T, StoreError> + Send + 'static,
@@ -171,6 +171,7 @@ pub async fn save_profile(
 }
 #[tauri::command]
 pub async fn initialize_workspace(
+    app: tauri::AppHandle,
     state: State<'_, LocalState>,
     path: Option<String>,
     time_zone: String,
@@ -181,10 +182,12 @@ pub async fn initialize_workspace(
             message: "隔离验收包不允许更换工作根。",
         });
     }
-    call(state, move |s| {
+    let info = call(state, move |s| {
         s.initialize(path.map(PathBuf::from), &time_zone)
     })
-    .await
+    .await?;
+    let _ = app.emit("desktop-preferences-changed", ());
+    Ok(info)
 }
 #[tauri::command]
 pub async fn list_todos(state: State<'_, LocalState>) -> Result<Vec<Todo>, StoreError> {
