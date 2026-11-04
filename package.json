@@ -17,7 +17,7 @@
     "build": "npm run typecheck && vite build",
     "tauri": "tauri",
     "probe:runtime": "npm --prefix tests/probes run test:runtime",
-    "test:s1-domain": "node --test tests/unit/s1-domain.test.mjs tests/unit/s1-state.test.mjs tests/unit/s1-profile.test.mjs",
+    "test:s1-domain": "node --test tests/unit/s1-domain.test.mjs tests/unit/s1-state.test.mjs tests/unit/s1-profile.test.mjs tests/unit/desktop-entry.test.mjs",
     "test:s1-store": "cargo test --manifest-path src-tauri/Cargo.toml --lib local_store -- --test-threads=1",
     "probe:prepare-pi": "npm --prefix tests/probes run prepare:pi",
     "probe:prepare-cli": "node node_modules/@larksuite/cli/scripts/install.js",
@@ -94,7 +94,8 @@
     "test:today-domain": "node --test tests/unit/today-advice.test.mjs tests/unit/today-client.test.mjs",
     "test:today-store": "cargo test --manifest-path src-tauri/Cargo.toml --lib today_ -- --test-threads=1",
     "test:today-runtime": "npm run probe:bundle && node --test --test-timeout=15000 tests/integration/today-runtime.test.mjs",
-    "test:today-host": "npm run probe:bundle && cargo test --manifest-path src-tauri/Cargo.toml --lib runtime_host::today_advice_tests -- --test-threads=1"
+    "test:today-host": "npm run probe:bundle && cargo test --manifest-path src-tauri/Cargo.toml --lib runtime_host::today_advice_tests -- --test-threads=1",
+    "test:desktop-host": "cargo test --manifest-path src-tauri/Cargo.toml --lib app::desktop -- --test-threads=1"
   },
   "dependencies": {
     "@larksuite/cli": "1.0.98",

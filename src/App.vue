@@ -5,9 +5,11 @@ import {ConfigProvider} from 'tdesign-vue-next';
 import zhCN from 'tdesign-vue-next/es/locale/zh_CN';
 import Workbench from './components/Workbench.vue';
 import ProbePanel from './components/ProbePanel.vue';
+import QuickEntry from './components/QuickEntry.vue';
+import PetWindow from './components/PetWindow.vue';
+import {desktopSurface} from './domain/desktop';
 const locale=JSON.parse(JSON.stringify(zhCN));
 locale.icon={AddIcon:()=>h(Icon,{name:'plus'}),RemoveIcon:()=>h(Icon,{name:'minus'})};
-const query=new URLSearchParams(location.search);
-const diagnostic=query.has('pet')||query.has('quick')||query.has('probe');
+const surface=desktopSurface(location.search);
 </script>
-<template><ConfigProvider :global-config="locale"><ProbePanel v-if="diagnostic"/><Workbench v-else/></ConfigProvider></template>
+<template><ConfigProvider :global-config="locale"><ProbePanel v-if="surface==='probe'"/><QuickEntry v-else-if="surface==='quick'"/><PetWindow v-else-if="surface==='pet'"/><Workbench v-else/></ConfigProvider></template>

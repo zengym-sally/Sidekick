@@ -1,0 +1,331 @@
+{
+  "head": "04be41c45f3e5903285a52667f784b30d2505f02",
+  "scope": "S4 first desktop manual-entry vertical and signed activity label correction",
+  "risk": "R3 desktop IPC/lifecycle; R1 label correction",
+  "coreSha256": "992e3890863a810e4a2e1383d1e45baa462dbc01e7d577ebdb3ccb44745b6609",
+  "sourceFreezeSha256": "82e277fd45fc89af47867abd24db82d93020c168a3563dccb833aaf7b902d979",
+  "sourceFiles": [
+    {
+      "path": "package.json",
+      "bytes": 12549,
+      "sha256": "9849344e1f204efa2270c683674688ceb4fa868d9719e02fd0bb574d89ebaba6"
+    },
+    {
+      "path": "src-tauri/src/app/mod.rs",
+      "bytes": 6539,
+      "sha256": "60e48b1bc7c45bb17388eee8ab53b41840227b69c0eab54242712e1425d00c4e"
+    },
+    {
+      "path": "src-tauri/src/app/desktop.rs",
+      "bytes": 6335,
+      "sha256": "92cf10f3fc8796be5357251a8aa03a728f33cab29bb120edbb14266281d80e65"
+    },
+    {
+      "path": "src/App.vue",
+      "bytes": 863,
+      "sha256": "1fc8b408899cad9126dbae9e4ad99771f2e1c6291470b3dc46ca9ef43bb52349"
+    },
+    {
+      "path": "src/components/Workbench.vue",
+      "bytes": 29256,
+      "sha256": "fe8b263d38e721f780918227e89d9debebf62d3d621c5c187a917c6c71c85c91"
+    },
+    {
+      "path": "src/components/QuickEntry.vue",
+      "bytes": 3943,
+      "sha256": "f067f0e7805f7bb5aad894e3fa506a32e4927ef83dc6d31fd811dd6f22db9ca7"
+    },
+    {
+      "path": "src/components/PetWindow.vue",
+      "bytes": 1547,
+      "sha256": "10cdb46eeb0e1763741665f7698980bc256ed7ac7470f56b69484cbdebf73644"
+    },
+    {
+      "path": "src/domain/desktop.ts",
+      "bytes": 1130,
+      "sha256": "0378afbc5025f8d54d40d45845fcbef8a41d077e81ada909e12b7e7b8424f54e"
+    },
+    {
+      "path": "src/stores/quickEntry.ts",
+      "bytes": 5013,
+      "sha256": "73d7529094161a0e56432f3385569648e76fb964bf787a620b2bdf816c9376d5"
+    },
+    {
+      "path": "tests/unit/s1-domain.test.mjs",
+      "bytes": 4295,
+      "sha256": "91ef62f31ba3ee6c4442d2702b6793bfbdcdb283e8c7ae8823c4c7442bc6c488"
+    },
+    {
+      "path": "tests/unit/desktop-entry.test.mjs",
+      "bytes": 12405,
+      "sha256": "89ea1716a5d3f8657348bdb669e37f51cabc963d7568430b1644ad3786072004"
+    },
+    {
+      "path": "src/stores/desktop.ts",
+      "bytes": 1379,
+      "sha256": "5b6053454c67421881f52d4b8b999c5a24bd4576da4c003cbab877601c56ab52"
+    }
+  ],
+  "designReviews": {
+    "A": "pass",
+    "B": "pass"
+  },
+  "deliveryReviews": {
+    "A": {
+      "conclusion": "pass",
+      "sha256": "a61b18f0a4379ef998d1aa750221a3ee51724f1595f007048697783ba823260c",
+      "domainPass": 38,
+      "actualComponentCounterexamples": 10
+    },
+    "B": {
+      "conclusion": "pass",
+      "sha256": "719afa60ce55e470fdc6ae2dbe9628c3d9c42dee802a2a186ce2faf85c491812",
+      "domainPass": 38,
+      "boundaryCounterexamples": 3
+    }
+  },
+  "focusedChecks": {
+    "s1Domain": {
+      "exitCode": 0,
+      "pass": 38,
+      "fail": 0
+    },
+    "desktopRust": {
+      "exitCode": 0,
+      "pass": 2,
+      "fail": 0
+    },
+    "typecheck": 0,
+    "defaultFmtClippy": 0,
+    "dualClippy": 0,
+    "viteBuild": 0,
+    "structure": {
+      "exitCode": 0,
+      "sourceFiles": 188,
+      "relativeReferences": 421
+    },
+    "docs": {
+      "exitCode": 0,
+      "files": 15,
+      "links": 234
+    },
+    "impeccable": "exit0 []"
+  },
+  "fullCheck": {
+    "conclusion": "pass",
+    "command": "npm run check",
+    "execution": {
+      "command": "npm run check",
+      "argv": [
+        "npm",
+        "run",
+        "check"
+      ],
+      "startedAt": "2026-11-04T08:02:55.803135+00:00",
+      "singleOriginalInvocation": true,
+      "attempt": 1,
+      "head": "04be41c45f3e5903285a52667f784b30d2505f02",
+      "freezeSha256": "82e277fd45fc89af47867abd24db82d93020c168a3563dccb833aaf7b902d979",
+      "finishedAt": "2026-11-04T08:14:30.969249+00:00",
+      "durationSeconds": 695.165,
+      "exitCode": 0,
+      "logSha256": "9ed74c723f6efce45084864e6dd4879c82ea9907108fc9c1dfddb89a9cbd8fb5",
+      "beforeSha256": "508853ef0f4e5005ce425623896d3356eb29539f9006bfd48bf203bac5009343",
+      "afterSha256": "60d16cfb3b998abe0f9009cd06163a17f3cd657c08c03bdf88e18528f60fb1bd",
+      "frozenFilesUnchanged": true,
+      "freezeUnchanged": true,
+      "coreUnchanged": true
+    },
+    "reportSha256": "737079140d4a48845208dd08d968d1954adaff960519132a7bb63302ea29d2d3",
+    "nodeGroups": 29,
+    "nodeTotals": {
+      "tests": 917,
+      "pass": 917,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "rustGroups": [
+      {
+        "summaryLine": 1139,
+        "pass": 37,
+        "fail": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 274,
+        "durationSeconds": 60.92,
+        "group": "dual-feature verification guards",
+        "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib --features s33-mcp-verification,s33-mcp-ui-verification verification -- --test-threads=1"
+      },
+      {
+        "summaryLine": 1539,
+        "pass": 273,
+        "fail": 0,
+        "ignored": 3,
+        "measured": 0,
+        "filteredOut": 0,
+        "durationSeconds": 311.94,
+        "group": "default Rust library",
+        "command": "cargo test --manifest-path src-tauri/Cargo.toml --lib -- --test-threads=1"
+      }
+    ],
+    "ignored": [
+      {
+        "line": 1507,
+        "text": "test runtime_host::tests::s2_live_text_preview_sign_and_restart ... ignored, explicit real model integration using the owner-selected private file"
+      },
+      {
+        "line": 1508,
+        "text": "test runtime_host::tests::s31_live_isolated_organizer_trial_and_configuration_reopen ... ignored, explicit real model trial using the owner-selected private file"
+      },
+      {
+        "line": 1511,
+        "text": "test runtime_host::today_advice_tests::today_child_crash_harness ... ignored, controlled subprocess entry only; invoked by today_real_host_crash_cold_reopen"
+      }
+    ],
+    "syntheticBudgeted": {
+      "layer": "synthetic-budgeted",
+      "conclusion": "pass",
+      "occupiedSlots": 6,
+      "possiblyForwarded": 6,
+      "completed": 6,
+      "remaining": 4,
+      "realModelRequests": 0,
+      "realModelRequestUpperBound": 0,
+      "evidence": "build/p5-revise-20261101/synthetic-budgeted-1793779922863436000"
+    },
+    "packageChecks": {
+      "specialThenOrdinary": true,
+      "ordinaryResourceEntries": 557,
+      "controlledServiceExcluded": true,
+      "runtimeControlledServiceExcluded": true,
+      "verificationFixturesByteEqual": true,
+      "signatures": "both deep strict verified by actual test:s33-ui-artifacts",
+      "adHocIdentity": "-",
+      "ordinaryNegativeEntry": {
+        "argv": [
+          "--s33-mcp-ui"
+        ],
+        "actualExitCode": 2,
+        "stderr": "MCP UI verification is not enabled in this package",
+        "boundary": "Refused before ordinary work-root startup; no ordinary GUI acceptance."
+      },
+      "nativeLauncher": {
+        "tests": 76,
+        "pass": 76,
+        "fail": 0,
+        "boundary": "Synthetic model and guarded LaunchServices simulations; no native App GUI evidence."
+      }
+    },
+    "bundles": [
+      {
+        "kind": "verification",
+        "bundle": "src-tauri/target/release/bundle/macos/Sidekick MCP Verify.app",
+        "bundleIdentifier": "com.sidekick.s33.ui.verify",
+        "version": "0.3.0",
+        "executableSha256": "8751d5a3825f71c2b14a717f4165b64fe10adf947c8b10f4070c27ef01f12f9f",
+        "resourceEntryCount": 560,
+        "resourceFileCount": 482
+      },
+      {
+        "kind": "ordinary",
+        "bundle": "src-tauri/target/release/bundle/macos/Sidekick.app",
+        "bundleIdentifier": "com.sidekick.s0",
+        "version": "0.3.0",
+        "executableSha256": "a19303439a0e7e2ac0c426f0ce475f1e306b88d5ca1b5bab853c85a1814dd8db",
+        "resourceEntryCount": 557,
+        "resourceFileCount": 480
+      }
+    ],
+    "warnings": {
+      "groups": [
+        {
+          "class": "known esbuild Runtime size notice",
+          "classification": "known nonblocking baseline in docs/engineering/verification.md",
+          "count": 14,
+          "lines": [
+            13,
+            17,
+            945,
+            949,
+            1150,
+            1154,
+            1552,
+            1556,
+            1592,
+            1596,
+            1676,
+            1680,
+            1999,
+            2003
+          ],
+          "detail": "probe.mjs 2.3mb and organizer.mjs 2.4mb, repeated by 7 prescribed bundle invocations"
+        },
+        {
+          "class": "known Vite chunk size warning",
+          "classification": "known nonblocking baseline in docs/engineering/verification.md",
+          "count": 2,
+          "lines": [
+            1715,
+            2038
+          ],
+          "detail": "700.54 kB minified JS exceeds 500 kB; both builds"
+        },
+        {
+          "class": "known skipped notarization warning",
+          "classification": "known nonblocking baseline; local ad-hoc app artifacts only",
+          "count": 2,
+          "lines": [
+            1990,
+            2053
+          ],
+          "detail": "Both builds used identity \"-\" and did not notarize"
+        }
+      ],
+      "otherAnchoredWarnings": [],
+      "unclassifiedWarnings": [],
+      "informationalNotes": [
+        {
+          "class": "existing host proc-macro workaround",
+          "count": 2,
+          "lines": [
+            1696,
+            2019
+          ]
+        },
+        {
+          "class": "existing app signatures replaced during prescribed ad-hoc builds",
+          "classification": "build information; not a runtime or security acceptance"
+        }
+      ]
+    },
+    "sourceFreshness": {
+      "all12FrozenFilesUnchanged": true,
+      "coreAndFreezeUnchanged": true,
+      "lateChanges": "documentation only; check:docs and diff separately after final evidence sync"
+    },
+    "cleanClone": "not claimed; existing prepared dependencies/cache",
+    "native": "not verified by this full"
+  },
+  "cleanupOfOldAcceptance": "completed and committed in 04be41c; no restart of capture",
+  "native": {
+    "gui": "unverified",
+    "trayAndGlobalKey": "unverified",
+    "focusDragTransparency": "unverified",
+    "crossScreen": "unverified",
+    "install": "unverified"
+  },
+  "remaining": [
+    "S4 work mode and startup settings",
+    "S4 position persistence and monitor recovery",
+    "S4 customizable shortcuts",
+    "S5 work-root switching and backup restore/install exit",
+    "old S3.6 Native and HTTP/stdio evidence gaps"
+  ],
+  "productionMcpKeychain": "closed",
+  "realModelRequests": 0,
+  "realUserRootOperations": 0,
+  "push": false,
+  "commitAuthorization": "owner requested local commit and G1 functional progress; no push"
+}

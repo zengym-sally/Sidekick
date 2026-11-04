@@ -1,9 +1,24 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { readFileSync } from 'node:fs';
+import { compile,createSSRApp } from 'vue';
+import { renderToString } from '@vue/server-renderer';
 import { localCandidates, pointFromInput, localInput, filterTodos, todayLists } from '../../src/domain/todos.ts';
 
 function inZone(zone, action) { const old=process.env.TZ; process.env.TZ=zone; try { action(); } finally {if(old===undefined)delete process.env.TZ;else process.env.TZ=old;} }
 const row=(id,data,status='open')=>({id,data:{title:'合成事项',kind:'action',owner:'我',priority:'medium',due:null,followup:null,tags:[],...data},status,version:1,source:'manual',createdAtMs:0,updatedAtMs:0,completedAtMs:null,deletedAtMs:null});
+
+const workbench=readFileSync(new URL('../../src/components/Workbench.vue',import.meta.url),'utf8');
+const history=workbench.match(/<ol v-else class="history">(.*?)<\/ol>/s)?.[1];
+const labels=workbench.match(/const actionNames:Record<string,string>=(\{[^\n]+\});/)?.[1];
+assert.ok(history&&labels,'Render the actual Workbench history markup and labels.');
+const historyRender=compile(`<ol class="history">${history}</ol>`);
+const actionNames=Function(`return (${labels})`)();
+for(const [source,action,label] of [['manual','create','手工录入'],['signed_ai','create','文本签收'],['signed_ai','complete','标记完成'],['signed_ai','link','关联来源']])test(`activity history renders ${source} ${action} from its saved event snapshot`,async()=>{
+  const event={operationId:'synthetic-event',action,occurredAtMs:0,before:null,after:{...row('synthetic',{}),source}};
+  const app=createSSRApp({render:historyRender,setup:()=>({events:[event],actionNames,displayTime:()=> '合成时间'})});
+  assert.match(await renderToString(app),new RegExp(`<span>${label}<\\/span>`));
+});
 
 test('manual dates preserve UTC, timezone, expression and unchanged values',()=>inZone('Asia/Shanghai',()=>{
   const point=pointFromInput('2026-10-30T17:00',null,null);
