@@ -300,6 +300,9 @@ pub struct AppStore {
     app_dir: PathBuf,
     workspace: Option<Workspace>,
     _instance: File,
+    pet_receipt: Option<PetCommitReceipt>,
+    #[cfg(test)]
+    pet_publish_read_fault: bool,
     #[cfg(feature = "s33-mcp-ui-verification")]
     verification_model: Option<ModelConfiguration>,
     #[cfg(feature = "s33-mcp-ui-verification")]
@@ -566,6 +569,9 @@ impl AppStore {
         let store = Self {
             app_dir,
             _instance: instance,
+            pet_receipt: None,
+            #[cfg(test)]
+            pet_publish_read_fault: false,
             #[cfg(feature = "s33-mcp-ui-verification")]
             verification_model: None,
             #[cfg(feature = "s33-mcp-ui-verification")]
@@ -1200,6 +1206,7 @@ impl AppStore {
         action: &str,
         operation_id: &str,
     ) -> Result<Todo> {
+        self.pet_receipt = None;
         let request = json!({"action":action,"id":id,"version":version}).to_string();
         validate_operation(operation_id)?;
         let tx = self.db_mut()?.transaction().map_err(db_error)?;
@@ -1219,6 +1226,16 @@ impl AppStore {
         let after = load_todo(&tx, id)?;
         record_event(&tx, operation_id, action, &request, Some(&before), &after)?;
         tx.commit().map_err(db_error)?;
+        if before.status == "open" && status == "completed" {
+            self.pet_receipt = Some(PetCommitReceipt {
+                kind: PetCommitKind::Done {
+                    todo_id: after.id.clone(),
+                    version: after.version,
+                },
+                committed_at: std::time::Instant::now(),
+                confirmed: true,
+            });
+        }
         Ok(after)
     }
 }
@@ -1379,6 +1396,13 @@ pub use desktop_preferences::*;
 #[cfg(test)]
 #[path = "desktop_preferences_tests.rs"]
 mod desktop_preferences_tests;
+
+#[path = "pet.rs"]
+mod pet;
+pub(crate) use pet::{PetCommitKind, PetCommitReceipt, PetStoreFacts};
+#[cfg(test)]
+#[path = "pet_tests.rs"]
+mod pet_tests;
 
 #[path = "mcp_config.rs"]
 mod mcp_config;

@@ -1,0 +1,31 @@
+import {spawnSync} from 'node:child_process';
+import {cpSync,mkdirSync,writeFileSync,readFileSync,chmodSync,readdirSync} from 'node:fs';
+import {fileURLToPath} from 'node:url';
+import {join} from 'node:path';
+import {release} from 'node:os';
+import {build} from 'vite';
+import {randomUUID,createHash} from 'node:crypto';
+import {copyExecutable} from '../build/copy-executable.mjs';
+const root=fileURLToPath(new URL('../../',import.meta.url));
+if(process.platform!=='darwin')throw Error('Pet UI verification requires macOS.');
+if(process.env.TAURI_CONFIG)throw Error('Refusing an existing TAURI_CONFIG.');
+const revision=randomUUID(),folder=join(root,'build/pet-ui-20261105'),assets=join(folder,`assets-${revision}`),env={...process.env};
+const hash=path=>createHash('sha256').update(readFileSync(path)).digest('hex');
+function files(directory){return readdirSync(join(root,directory),{withFileTypes:true}).flatMap(e=>e.isDirectory()?files(join(directory,e.name)):[join(directory,e.name)]);}
+const sources=[...files('src'),...files('src-tauri/src'),...files('src-tauri/capabilities'),...files('tests/fixtures/pet-ui'),'src-tauri/examples/pet-ui-verification.rs','src-tauri/Cargo.toml','src-tauri/Cargo.lock','src-tauri/tauri.conf.json'];
+const hashes=Object.fromEntries(sources.map(path=>[path,hash(join(root,path))]));
+const front=spawnSync('npm',['run','build'],{cwd:root,stdio:'inherit'});if(front.status!==0)process.exit(front.status??1);
+mkdirSync(assets,{recursive:true});cpSync(join(root,'dist'),assets,{recursive:true});cpSync(join(root,'tests/fixtures/pet-ui'),assets,{recursive:true});
+await build({configFile:false,envDir:false,root,logLevel:'warn',build:{outDir:assets,emptyOutDir:false,copyPublicDir:false,lib:{entry:join(root,'tests/fixtures/pet-ui/pet-console.js'),formats:['es'],fileName:()=> 'pet-console.js'},minify:false}});
+if(Number(release().split('.')[0])>=26){if(env.RUSTC_WRAPPER)throw Error('Existing RUSTC_WRAPPER requires review.');env.RUSTC_WRAPPER=join(root,'scripts/probes/rustc-host-macro.py');}
+env.TAURI_CONFIG=JSON.stringify({build:{devUrl:null,frontendDist:assets},app:{windows:[]}});
+const result=spawnSync('cargo',['build','--manifest-path','src-tauri/Cargo.toml','--features','pet-ui-verification','--example','pet-ui-verification'],{cwd:root,env,stdio:'inherit'});if(result.status!==0)process.exit(result.status??1);
+for(const path of sources)if(hash(join(root,path))!==hashes[path])throw Error(`Source changed during build: ${path}`);
+const app=join(folder,'Sidekick Pet UI.app'),macos=join(app,'Contents/MacOS');mkdirSync(macos,{recursive:true,mode:0o700});
+await copyExecutable(join(root,'src-tauri/target/debug/examples/pet-ui-verification'),join(macos,'pet-ui-bin'));
+const identity=JSON.parse(readFileSync(join(root,'tests/fixtures/s1-profile-verify.config.json'),'utf8')).identifier;
+writeFileSync(join(app,'Contents/Info.plist'),`<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict><key>CFBundleExecutable</key><string>pet-ui</string><key>CFBundleName</key><string>Sidekick Pet UI</string><key>CFBundleIdentifier</key><string>${identity}</string><key>CFBundlePackageType</key><string>APPL</string><key>NSHighResolutionCapable</key><true/></dict></plist>\n`);
+writeFileSync(join(macos,'pet-ui'),'#!/bin/sh\npet_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)\nexec "$pet_dir/pet-ui-bin" --pet-ui-verify >> "$pet_dir/../../../pet-ui.ndjson" 2>&1\n');chmodSync(join(macos,'pet-ui'),0o700);
+const signed=spawnSync('/usr/bin/codesign',['--force','--deep','--sign','-',app],{stdio:'inherit'});if(signed.status!==0)process.exit(signed.status??1);
+writeFileSync(join(folder,`source-${revision}.json`),JSON.stringify({sources:hashes,binarySha256:hash(join(macos,'pet-ui-bin')),assets,revision},null,2)+'\n');
+console.log(JSON.stringify({revision,app,log:join(folder,'pet-ui.ndjson'),newSyntheticRootOnEveryLaunch:true,retained:true}));

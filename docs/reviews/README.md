@@ -13,12 +13,15 @@
 - **索引强制**：新增记录必须登记到本文件；未登记视为未收口。`check:docs` 只校验链接存在，语义一致性靠评审。
 - **新路径**：2026-10-31 结构治理后，新记录使用新路径（`runtime/{entries,lib,workers}/`、`src-tauri/src/{app,store,host,diagnostics}/`、`tests/{unit,integration,probes,fixtures}/`、`scripts/{build,checks,probes}/`）；旧记录保留原路径，按文件名仍可检索。
 
-## 2. 记录索引（43 份）
+## 2. 记录索引（46 份）
 
 | 记录 | 日期 | 范围与结论 | 证据 |
 |---|---|---|---|
+| [pet-native-20261105.md](pet-native-20261105.md) | 2026-11-05 | 单屏桌宠动效/半隐/原生右键菜单、语义反馈与单色菜单栏图标已接线；双面代码评审/完整门禁通过，正式版物理验收及P4仍开放 | build/pet-native-20261105 完整日志与冻结；正式UI源/包哈希见记录 |
+| [pet-interaction-design-20261105.md](pet-interaction-design-20261105.md) | 2026-11-05 | 桌宠D1–D7分阶段设计及正式UI隔离载体v3.3，两面独立APPROVE/pass；只签设计，不替代代码/原生验收 | 规范核心及评审处置见记录 |
 | [inbox-width-20261105.md](inbox-width-20261105.md) | 2026-11-05 | 来源工具条与候选主列对齐，窄窗换行；真实浏览器9项、独立交付/完整门禁通过（Node939、Rust279/3ignored、dual37） | 原始证据`build/inbox-width-20261105/` |
 | [ui-consistency-20261104.md](ui-consistency-20261104.md) | 2026-11-04 | 三页空态与图标按钮共享规范修订；独立复审/完整门禁通过（Node938、Rust279/3ignored、dual37），原生待验 | 原始证据`build/ui-consistency-20261104/` |
+| [pet-animation-research-20261104.md](pet-animation-research-20261104.md) | 2026-11-04 | 桌宠动画技术调研：macOS＋Tauri 栈下待机/事件动画可行；SVG 四态＋CSS/motion-v 起步、Lottie 次选、Rive 需 CSP 探针；纯调研无代码改动 | 无证据目录（外部来源见文内链接） |
 | [switch-visibility-20261104.md](switch-visibility-20261104.md) | 2026-11-04 | 原生报告开关不可见；浏览器已复现0×0并最小修复，独立复审及完整门禁通过（Node932、Rust279/3ignored、dual37），原生待重试 | 原始证据`build/switch-visibility-20261104/` |
 | [desktop-preferences-20261104.md](desktop-preferences-20261104.md) | 2026-11-04 | S4桌面偏好：设计/修订交付双面及独立完整门禁通过（Node930、Rust279/3ignored、dual37）；补记owner人工确认快速录入/主窗同步/托盘入口，G1其余未验保留 | 原始证据`build/desktop-preferences-20261104/` |
 | [desktop-entry-20261104.md](desktop-entry-20261104.md) | 2026-11-04 | S4首条桌面录入候选：设计/交付双面及新独立full通过（Node917、Rust273/3ignored、dual37），原生与其余S4/S5待验，G1未闭 | 同名精选摘要；原始证据`build/g1-functional-20261104/` |

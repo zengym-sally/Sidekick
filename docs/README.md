@@ -13,6 +13,7 @@
 | 已授权连续目标的准入、选取与无人值守流程 | [无人值守约定](engineering/unattended.md) | 授权及进度仍以实施计划和当次用户指令为准 |
 | 每轮必读的定位与红线 | [AGENTS.md](../AGENTS.md) | 只导航，不维护第二份状态清单 |
 | 设计规范与视觉约定 | [DESIGN.md](../DESIGN.md) | 令牌的代码来源是 `src/styles/tokens.css` |
+| 桌宠交互与动效专项设计 | [桌宠设计](engineering/pet-interaction-design.md) | owner 确认的体验、技术路线与待探针验收；不替代实施状态或工程规则 |
 | 设计预览与原型边界 | [设计说明](../design/README.md) | 原型不是生产代码，也不是验收证据 |
 | 历史评审记录与证据 | [评审记录索引](reviews/README.md) | 按当时版本保留，不改写结论 |
 | 早期产品说明书 | [产品说明书 v0.3](产品说明书-v0.3.md) | 历史文档，只作溯源，不代表现状 |
@@ -37,6 +38,7 @@ docs/engineering/
   architecture.md             # 结构、边界、模块职责、放置决策表、后续落点、已知债
   verification.md             # 门禁矩阵、测试分层、证据新鲜度、留存、独立验证、CI 缺口
   unattended.md               # 已授权连续目标的准入、选取、预算与收口流程
+  pet-interaction-design.md   # 桌宠半隐、右键菜单、动效/事件与原生验证设计
 docs/reviews/
   README.md                   # 记录索引、证据目录映射与留存策略
   <slice>-<YYYYMMDD>.md       # 各切片的评审／验证记录

@@ -442,6 +442,7 @@ impl AppStore {
         run_id: &str,
         drafts: Vec<CandidateDraft>,
     ) -> Result<ImportBatch> {
+        self.pet_receipt = None;
         self.settle_mcp_task(mcp_calls::McpTaskOwner::Business, run_id)?;
         if drafts.len() > 50 {
             return Err(invalid());
@@ -456,12 +457,14 @@ impl AppStore {
             return Err(stopped());
         }
         let mut unique = BTreeSet::new();
+        let mut inserted = Vec::new();
         for (ordinal, draft) in drafts.into_iter().enumerate() {
             let draft = validate_draft(draft, &source)?;
             if !unique.insert(encode(&draft)?) {
                 continue;
             }
             let id = new_id(&tx)?;
+            inserted.push((id.clone(), 1));
             tx.execute("INSERT INTO candidates(id,source_id,run_id,ordinal,status,version,fields_json,evidence,due_expression,followup_expression,warnings_json,unresolved) VALUES(?1,?2,?3,?4,'pending',1,?5,?6,?7,?8,?9,?10)",params![id,source.id,run.id,ordinal as i64,encode(&draft.fields)?,draft.evidence,draft.due_expression,draft.followup_expression,encode(&draft.warnings)?,draft.unresolved]).map_err(db_error)?;
         }
         tx.execute(
@@ -475,7 +478,24 @@ impl AppStore {
         )
         .map_err(db_error)?;
         tx.commit().map_err(db_error)?;
-        self.batch(&source.id)
+        if !inserted.is_empty() {
+            self.pet_receipt = Some(PetCommitReceipt {
+                kind: PetCommitKind::Found {
+                    candidates: inserted,
+                },
+                committed_at: std::time::Instant::now(),
+                confirmed: false,
+            });
+        }
+        #[cfg(test)]
+        if self.pet_publish_read_fault {
+            return Err(StoreError::new("SYNTHETIC_READ", "合成提交后读取失败。"));
+        }
+        let batch = self.batch(&source.id)?;
+        if let Some(receipt) = &mut self.pet_receipt {
+            receipt.confirmed = true;
+        }
+        Ok(batch)
     }
     pub fn finish_run_error(&mut self, id: &str, code: &str) -> Result<ModelRun> {
         self.settle_mcp_task(mcp_calls::McpTaskOwner::Business, id)?;

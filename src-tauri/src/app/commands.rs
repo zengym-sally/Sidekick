@@ -1,10 +1,11 @@
+use crate::app::pet_state::PetState;
 use crate::local_store::{
     AppStore, BatchSummary, Candidate, ImportBatch, ModelConfigInput, ModelConfigSave,
     ModelConfiguration, ModelRun, ProfileInput, ProfileSave, SignChoice, StoreError, Todo,
     TodoEvent, TodoInput, UserProfile, WorkspaceInfo,
 };
 use std::path::PathBuf;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, Weak};
 use tauri::{Emitter, State};
 
 #[derive(Clone)]
@@ -12,6 +13,9 @@ pub struct LocalState {
     app_dir: PathBuf,
     store: Arc<Mutex<Option<AppStore>>>,
     today_schema_unknown: Arc<std::sync::atomic::AtomicBool>,
+    pet: Arc<Mutex<Weak<PetState>>>,
+    #[cfg(feature = "pet-ui-verification")]
+    pet_fixture: Option<Arc<crate::pet_ui_root::PetUiRoot>>,
     #[cfg(any(feature = "s33-mcp-verification", feature = "s33-mcp-ui-verification"))]
     verification: Option<Arc<crate::verification_root::VerificationRoot>>,
 }
@@ -21,6 +25,9 @@ impl LocalState {
             app_dir,
             store: Arc::new(Mutex::new(None)),
             today_schema_unknown: Default::default(),
+            pet: Default::default(),
+            #[cfg(feature = "pet-ui-verification")]
+            pet_fixture: None,
             #[cfg(any(feature = "s33-mcp-verification", feature = "s33-mcp-ui-verification"))]
             verification: None,
         }
@@ -72,6 +79,20 @@ impl LocalState {
             })?
             .native_readiness_failure(diagnostic)
     }
+    #[cfg(feature = "pet-ui-verification")]
+    pub(crate) fn pet_fixture(
+        app_dir: PathBuf,
+        store: AppStore,
+        root: Arc<crate::pet_ui_root::PetUiRoot>,
+    ) -> Self {
+        let mut state = Self::new(app_dir);
+        state.pet_fixture = Some(root);
+        *state.store.lock().expect("fresh store") = Some(store);
+        state
+    }
+    pub(crate) fn observe_pet(&self, pet: &Arc<PetState>) {
+        *self.pet.lock().expect("pet observer poisoned") = Arc::downgrade(pet);
+    }
     pub(crate) fn access<T>(
         &self,
         action: impl FnOnce(&mut AppStore) -> Result<T, StoreError>,
@@ -110,6 +131,18 @@ impl LocalState {
         {
             *guard = Some(verification.open_native_store()?);
         }
+        #[cfg(feature = "pet-ui-verification")]
+        if let Some(root) = &self.pet_fixture {
+            root.validate()?;
+            if guard.is_none() {
+                return Err(StoreError {
+                    code: "PET_VERIFY_ROOT",
+                    message: "隔离存储已关闭，拒绝重新打开。",
+                });
+            }
+            #[cfg(test)]
+            pet_access_checkpoint();
+        }
         if guard.is_none() {
             match AppStore::open(self.app_dir.clone()) {
                 Ok(store) => *guard = Some(store),
@@ -122,7 +155,31 @@ impl LocalState {
                 }
             }
         }
-        let result = action(guard.as_mut().expect("store initialized above"));
+        let store = guard.as_mut().expect("store initialized above");
+        let pet = self.pet.lock().ok().and_then(|observer| observer.upgrade());
+        let scope = pet.as_ref().map(|pet| pet.scope());
+        let before = store.pet_change_count();
+        store.clear_pet_receipt();
+        let result = action(store);
+        let packets = pet.as_ref().map(|pet| {
+            let receipt = store.take_pet_receipt().filter(|_| result.is_ok());
+            let source = receipt.clone().or_else(|| pet.source());
+            let valid = source
+                .as_ref()
+                .is_none_or(|source| store.pet_receipt_valid(source).unwrap_or(false));
+            let facts = store.pet_facts().map_err(|_| ());
+            pet.observe(
+                scope,
+                facts,
+                receipt,
+                before != store.pet_change_count(),
+                valid,
+            )
+        });
+        drop(guard);
+        if let (Some(pet), Some(packets)) = (pet, packets) {
+            pet.publish(packets);
+        }
         if result
             .as_ref()
             .is_err_and(|error| error.code == "TODAY_SCHEMA_UNCERTAIN")
@@ -523,4 +580,95 @@ pub async fn save_mcp_secrets(
     input: crate::local_store::McpSecretInput,
 ) -> Result<crate::local_store::McpConfigSave, StoreError> {
     call(state, move |s| s.save_mcp_secrets(input)).await
+}
+
+#[cfg(all(test, feature = "pet-ui-verification"))]
+thread_local! {static PET_ACCESS_CHECKPOINT:std::cell::RefCell<Option<Box<dyn FnOnce()>>>=Default::default();}
+#[cfg(all(test, feature = "pet-ui-verification"))]
+fn pet_access_checkpoint() {
+    PET_ACCESS_CHECKPOINT.with(|slot| {
+        if let Some(hook) = slot.borrow_mut().take() {
+            hook();
+        }
+    });
+}
+#[cfg(all(test, feature = "pet-ui-verification"))]
+mod pet_fixture_tests {
+    use super::*;
+    #[test]
+    fn bootstrap_swap_after_validation_never_opens_foreign_root() {
+        let (owned, state) = crate::pet_ui_root::PetUiRoot::create().unwrap();
+        let (foreign, other) = crate::pet_ui_root::PetUiRoot::create().unwrap();
+        let foreign_db = foreign.directory.join("workspace/data/sidekick.sqlite");
+        let before = std::fs::read(&foreign_db).unwrap();
+        let foreign_pointer = std::fs::read(foreign.application().join("bootstrap.json")).unwrap();
+        let path = owned.application().join("bootstrap.json");
+        PET_ACCESS_CHECKPOINT.with(|slot| {
+            *slot.borrow_mut() = Some(Box::new(move || {
+                std::fs::write(path, foreign_pointer).unwrap()
+            }))
+        });
+        let actual = state.access(|store| store.root()).unwrap();
+        assert_eq!(actual, owned.directory.join("workspace"));
+        assert_eq!(std::fs::read(&foreign_db).unwrap(), before);
+        assert_eq!(
+            state.access(|store| store.info()).unwrap_err().code,
+            "PET_VERIFY_ROOT"
+        );
+        drop(other);
+    }
+    #[test]
+    fn missing_cached_store_and_replaced_database_fail_before_action() {
+        let (root, state) = crate::pet_ui_root::PetUiRoot::create().unwrap();
+        *state.store.lock().unwrap() = None;
+        assert_eq!(
+            state
+                .access::<()>(|_| panic!("must not reopen"))
+                .unwrap_err()
+                .code,
+            "PET_VERIFY_ROOT"
+        );
+        assert!(root.validate().is_ok());
+        let (root, state) = crate::pet_ui_root::PetUiRoot::create().unwrap();
+        let db = root.directory.join("workspace/data/sidekick.sqlite");
+        std::fs::rename(&db, db.with_extension("retained")).unwrap();
+        std::fs::write(db, b"synthetic replacement").unwrap();
+        assert_eq!(
+            state
+                .access::<()>(|_| panic!("must not open replacement"))
+                .unwrap_err()
+                .code,
+            "PET_VERIFY_ROOT"
+        );
+    }
+}
+#[cfg(all(test, feature = "pet-ui-verification"))]
+mod pet_permission_tests {
+    use std::os::unix::fs::{DirBuilderExt, PermissionsExt};
+    #[test]
+    fn guard_rejects_widened_directory_permissions_and_database_hard_links() {
+        let (root, _state) = crate::pet_ui_root::PetUiRoot::create().unwrap();
+        std::fs::set_permissions(
+            root.directory.join("workspace/config"),
+            std::fs::Permissions::from_mode(0o777),
+        )
+        .unwrap();
+        assert!(root.validate().is_err(), "writable fixture config accepted");
+        let (root, _state) = crate::pet_ui_root::PetUiRoot::create().unwrap();
+        std::fs::hard_link(
+            root.directory.join("workspace/data/sidekick.sqlite"),
+            root.directory.join("db-hard-link"),
+        )
+        .unwrap();
+        assert!(root.validate().is_err(), "linked fixture database accepted");
+    }
+
+    #[test]
+    fn guard_rejects_replaced_config_directory() {
+        let (root, _state) = crate::pet_ui_root::PetUiRoot::create().unwrap();
+        let path = root.directory.join("workspace/config");
+        std::fs::rename(&path, root.directory.join("retained-config")).unwrap();
+        std::fs::DirBuilder::new().mode(0o700).create(path).unwrap();
+        assert!(root.validate().is_err());
+    }
 }

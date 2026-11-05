@@ -28,7 +28,17 @@ sha2 = "=0.10.9"
 [features]
 s33-mcp-verification = []
 s33-mcp-ui-verification = []
+pet-native-probe = []
+pet-ui-verification = []
 
 [[example]]
 name = "s33-mcp-host"
 required-features = ["s33-mcp-verification"]
+
+[[example]]
+name = "pet-native-probe"
+required-features = ["pet-native-probe"]
+
+[[example]]
+name = "pet-ui-verification"
+required-features = ["pet-ui-verification"]

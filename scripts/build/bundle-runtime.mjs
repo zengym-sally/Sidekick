@@ -2,6 +2,7 @@ import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
 import { chmod, copyFile, cp, mkdir, readFile, writeFile, readdir, realpath } from 'node:fs/promises';
 import { dirname, join, resolve, sep } from 'node:path';
+import { copyExecutable } from './copy-executable.mjs';
 
 if (process.env.SIDEKICK_PI_ROOT) throw new Error('Delivery builds only use the reviewed vendor/pi subtree; unset SIDEKICK_PI_ROOT.');
 const source = resolve('vendor/pi');
@@ -64,8 +65,7 @@ for(const pack of skillManifest.packages)for(const file of pack.files){const byt
 for(const file of skillManifest.supportReferences||[]){const bytes=await readFile(join('resources/skills',file.resourcePath));if(bytes.length!==file.bytes||createHash('sha256').update(bytes).digest('hex')!==file.sha256)throw new Error('Skill support provenance mismatch.');}
 await cp('resources/skills',join(directory,'builtin-skills'),{recursive:true});
 await copyFile('runtime/workers/bash-worker.mjs', join(directory, 'bash-worker.mjs'));
-await copyFile(process.execPath, join(directory, 'node'));
-await chmod(join(directory, 'node'), 0o755);
+await copyExecutable(process.execPath, join(directory, 'node'));
 await copyFile(resolve(dirname(process.execPath), '../LICENSE'), join(directory, 'NODE-LICENSE'));
 await copyFile('node_modules/@larksuite/cli/bin/lark-cli', join(directory, 'lark-cli'));
 await chmod(join(directory, 'lark-cli'), 0o755);

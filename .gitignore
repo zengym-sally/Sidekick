@@ -8,7 +8,7 @@ node_modules/
 target/
 src-tauri/gen/schemas/
 dist/
-build/
+/build/
 *.sqlite
 *.sqlite-*
 *.db

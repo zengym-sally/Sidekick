@@ -71,6 +71,10 @@ P5正式任务矩阵在`host/mcp_formal_tests.rs`，聚焦`npm run test:mcp-form
 
 ## 新测试命名约定
 
+桌宠原生P0载体使用独立 `pet-native-probe` example/feature，不进入生产启动。`npm run probe:pet-native` 只构建并签名隔离App，不自动启动；资产和脚本来自 `tests/fixtures/pet-native/`，不会初始化业务存储。启动前核对既有Profile Verify身份没有其他运行实例，并以生成的确切bundle路径和ready日志PID绑定自有实例；不要操作生产App或其他验收实例。
+
+`npm run test:tray-icon` 检查真实图像构造的透明度、单色通道及尺寸；`npm run test:pet-native` 检查裁切/alpha命中、读取失败恢复和自有子进程deadline，使用Rust测试入口，不运行GUI。一个ignored入口由有界父测试显式启动，不另计通过。`npm run check:pet-native` 覆盖该feature的Clippy；后两项进入完整check。它们不关闭真实穿透、拖动、多屏或菜单栏视觉验收，当前范围与未验证项见[实施检查点](../docs/reviews/pet-native-20261105.md)。
+
 `npm run test:desktop-controls`使用已有Vite与本机Chrome无头模式，不安装或下载浏览器；可通过`SIDEKICK_TEST_CHROME`指定可执行文件，默认macOS应用路径。每次使用独立临时浏览器数据与loopback服务，不读默认浏览器配置或真实凭据；当前截图/指标放`build/inbox-width-20261105/browser/`，前项开关/空态证据保留原目录。完整check包含该脚本，未安装Chrome时明确skip，不能报告浏览器通过；本次本机实际执行，不以skip替代。本机浏览器通过仍不能关闭Tauri原生验收。按钮点击以事件计数验证，默认/紧凑和前/后图标/徽标/载入分别测量；工作台导航不调用整理/签收/模型任务，只读模拟资料并检查打开的实际录入方式。
 
 - 新测试用领域名，不再用交付切片号：`<domain>-<subject>.test.mjs`（例如 `skills-freeze.test.mjs`、`mcp-discovery-timeout.test.mjs`）。
@@ -93,3 +97,7 @@ N3今日建议宿主矩阵位于`host/today_advice_tests.rs`，`npm run test:tod
 `scripts/probes/check-legacy-today-guard.py --checkout <独立c783基线clone> --source-root <当前源> --output <全新证据目录>`只在另一个已标准prepare的基线clone追加纳管测试及005合成fixture，调用原字节`validate_existing_database`核v4正控／v5拒绝和库字节／schema／全表rowid行不变；它不替代当前升级器、原生包或完整check。
 
 MCP恢复的坏stdout／配额／no-read故障测试在私有目录复用本fixture已启动的canonical prepared Node执行inode，独立organizer脚本与mode仍私有；避免新复制Node的首次启动成本耦合进原1000ms IO窗口。原故障输出、协议／超时预期、零调用、写集、回收及后续result-only断言不变，生产Runtime不增加symlink许可。
+
+桌宠正式接线：`npm run test:pet-domain`、`test:pet-client`保护表现规则/领取取消；`test:pet-store`保护真实提交收据；`test:pet-state`保护宿主状态/输入/几何；`test:pet-ui-root`保护新鲜根及指针、inode、权限/硬链接拒绝；`test:pet-ui-entries`实际构建并验证feature普通main、额外根参数、S33混用的早拒绝。`test:pet-ui-artifacts`在完整check的两包构建之后核普通/S33包无console标记及普通私有flag拒绝，不能对旧普通二进制跳过前置标记核对。原子可执行文件复制由`test:executable-copy`保护。这些均不替代原生GUI。
+
+`npm run probe:pet-ui`只构建真实生产前端的独立原生验收包，不启动：Vite生产dist独立副本、最少IPC、创建时incognito，每次启动创建新的私有合成根并保留其AppStore/守卫；不读取正常appData，不接模型/MCP/凭据。控制台通过正式store API发布/处理候选和完成事项，固定3秒延迟场景用于切回桌宠后观察真实反馈；不直接写pet姿态/发反馈。不接受根路径或脚本输入，30分钟独立监督退出，关闭后默认保留合成根。包装器将日志及源/包hash留在`build/pet-ui-20261105/`。原生检查需另外手动/GUI取证，普通工作台内容、安装、多屏和硬件矩阵不能借该载体关闭。

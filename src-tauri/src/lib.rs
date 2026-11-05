@@ -44,6 +44,14 @@ mod verification_root;
 #[path = "diagnostics/mcp_ui_verification.rs"]
 mod mcp_ui_verification;
 
+#[cfg(feature = "pet-ui-verification")]
+#[path = "diagnostics/pet_ui_root.rs"]
+mod pet_ui_root;
+#[cfg(feature = "pet-ui-verification")]
+pub fn run_pet_ui_verification() {
+    app::pet_ui::run();
+}
+
 pub fn run() {
     app::run();
 }
