@@ -19,7 +19,7 @@
 
 ## 2. 项目事实
 
-- 产品：macOS 桌面 AI 待办管家（“跟班 Sidekick”），Tauri 2 + Vue 3 + Pinia + TDesign + Tailwind v4 + SQLite；推理用 Pi，从 `vendor/pi/` 固定源码构建，Runtime 随包运行。
+- 当前实现：跟班 Sidekick，Tauri 2 + Vue 3 + Pinia + TDesign + Tailwind v4 + SQLite；Pi 从 `vendor/pi/` 固定源码构建。已确认的 Web/后端优先目标见[Web/后端设计](docs/engineering/web-backend-design.md)，不把目标当现状。
 - 工具链：Node ≥24、npm 12、Rust 1.89；目前只在 macOS arm64 验证。版本号见 `package.json`。
 - 应用身份：identifier `com.sidekick.s0`，包内资源目录 `s0-runtime`。改名会破坏既有用户工作根指针，属于 S5／G4 迁移议题。
 - 单工作根：`workspaceRoot/` 下含 `data/sidekick.sqlite`、`config/`、`runs/`、`mcp/`、`backups/`；路径指针在固定应用数据目录的 `bootstrap.json`。

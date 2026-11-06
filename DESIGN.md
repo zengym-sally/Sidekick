@@ -1,6 +1,6 @@
 ---
 name: 跟班 Sidekick
-description: 有分寸、记得住事的桌面 AI 待办管家；浅色原型与原生主窗共用品牌。
+description: 有分寸、记得住事的个人 AI 待办管家；Web 与后续原生壳共用品牌。
 colors:
   ink: "#1f3a5f"
   night: "#16283f"
@@ -131,6 +131,9 @@ components:
     backgroundColor: "{colors.ivory}"
     padding: "16px 32px"
 ---
+
+> Web 完整业务先行、薄壳后置；品牌与已确认布局延续。任务需展示排队/运行/取消中/失败与恢复，默认并发 3、可配置；系统能力按后端/壳能力显示，浏览器不可用的原生操作不得假成功。交互目标见[用户流程](docs/product/02-用户流程.md)，接口边界见[Web/后端设计](docs/engineering/web-backend-design.md)。
+
 
 # Design System: 跟班 Sidekick
 

@@ -8,6 +8,7 @@
 |---|---|---|
 | 产品承诺、用户流程、分期验收 | `product/01`–`04` | 目标能力与验收要求，不随实现进度改写 |
 | 当前实施状态与切片证据 | [第一阶段实施计划](product/05-第一阶段实施计划.md) | 唯一当前状态源，顶部写明 as-of 基点；未验证项保持开放 |
+| Web/后端目标契约 | [Web/后端设计](engineering/web-backend-design.md) | owner 新方向、部署/凭据/队列/薄壳接缝；目标尚未实现，执行顺序看 product/04–05 |
 | 工程结构、依赖边界、新代码放置 | [工程架构](engineering/architecture.md) | 与 `scripts/checks/check-structure.mjs` 同源；改结构必须同步守卫 |
 | 验证门禁、测试分层、证据与评审要求 | [验证约定](engineering/verification.md) | 与 `package.json` 脚本及 `check:docs` 同源 |
 | 已授权连续目标的准入、选取与无人值守流程 | [无人值守约定](engineering/unattended.md) | 授权及进度仍以实施计划和当次用户指令为准 |
@@ -32,9 +33,10 @@ docs/product/
   01-产品定义.md              # 定位、对象、边界
   02-用户流程.md              # 端到端动线
   03-智能体与架构.md          # 三角色、目标架构与技术选型
-  04-分期交付与验收.md        # G0–G5 与验收组
+  04-分期交付与验收.md        # W0–W5 Web 完整业务 → D1 薄壳 → G4/G5；保留业务 G 编号
   05-第一阶段实施计划.md      # 切片计划、契约、证据与当前状态
 docs/engineering/
+  web-backend-design.md       # Web/后端目标、持久队列、代理与凭据、薄壳接口
   architecture.md             # 结构、边界、模块职责、放置决策表、后续落点、已知债
   verification.md             # 门禁矩阵、测试分层、证据新鲜度、留存、独立验证、CI 缺口
   unattended.md               # 已授权连续目标的准入、选取、预算与收口流程

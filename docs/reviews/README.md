@@ -17,6 +17,7 @@
 
 | 记录 | 日期 | 范围与结论 | 证据 |
 |---|---|---|---|
+| [web-backend-direction-20261106.md](web-backend-direction-20261106.md) | 2026-11-06 | owner 五项决定：完整 Web 业务先行、OS 凭据、默认 3 并发持久队列、旧版无兼容桥；文档同步与设计，功能尚未实现 | 原始证据 `build/mayne-16-review/` |
 | [pet-native-20261105.md](pet-native-20261105.md) | 2026-11-05 | 单屏桌宠动效/半隐/原生右键菜单、语义反馈与单色菜单栏图标已接线；双面代码评审/完整门禁通过，正式版物理验收及P4仍开放 | build/pet-native-20261105 完整日志与冻结；正式UI源/包哈希见记录 |
 | [pet-interaction-design-20261105.md](pet-interaction-design-20261105.md) | 2026-11-05 | 桌宠D1–D7分阶段设计及正式UI隔离载体v3.3，两面独立APPROVE/pass；只签设计，不替代代码/原生验收 | 规范核心及评审处置见记录 |
 | [inbox-width-20261105.md](inbox-width-20261105.md) | 2026-11-05 | 来源工具条与候选主列对齐，窄窗换行；真实浏览器9项、独立交付/完整门禁通过（Node939、Rust279/3ignored、dual37） | 原始证据`build/inbox-width-20261105/` |
