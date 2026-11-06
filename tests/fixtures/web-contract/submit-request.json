@@ -1,0 +1,13 @@
+{
+  "$contract": "sidekick.web-contract/1.0.0",
+  "$scenario": "S01",
+  "$note": "POST /api/tasks 请求体（合成输入，不含秘密）。",
+  "type": "extract",
+  "roleId": "organizer",
+  "input": {
+    "rawText": "合成样例：我负责整理接入清单，下周五17点前交付。"
+  },
+  "configRevision": "rev_000000000000000000000001",
+  "anchorAtMs": 1793884800000,
+  "timeZone": "Asia/Shanghai"
+}

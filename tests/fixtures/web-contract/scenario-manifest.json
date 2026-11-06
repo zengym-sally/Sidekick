@@ -1,0 +1,263 @@
+{
+  "$contract": "sidekick.web-contract/1.0.0",
+  "contractId": "sidekick.web-contract",
+  "version": "1.0.0",
+  "status": "candidate-draft",
+  "baseline": "85feb8aaa431a2a1c9f92b238e26a7a2400baa9e",
+  "date": "2026-11-06",
+  "doc": "docs/engineering/web-api-contract.md",
+  "scenarios": [
+    {
+      "id": "S01",
+      "name": "正常提交并排队",
+      "request": "submit-request.json",
+      "response": "submit-accepted-202.json",
+      "expectedStatus": 202,
+      "expectedState": "queued",
+      "note": null
+    },
+    {
+      "id": "S02",
+      "name": "重复提交（同操作 ID 同输入）",
+      "request": null,
+      "response": "submit-duplicate-idempotent-202.json",
+      "expectedStatus": 202,
+      "expectedState": "queued",
+      "note": null
+    },
+    {
+      "id": "S03",
+      "name": "响应丢失后按操作 ID 读回",
+      "request": null,
+      "response": "submit-response-unknown-query-200.json",
+      "expectedStatus": 200,
+      "expectedState": "queued",
+      "note": null
+    },
+    {
+      "id": "S04",
+      "name": "同操作 ID 不同输入",
+      "request": null,
+      "response": "submit-duplicate-conflict-409.json",
+      "expectedStatus": 409,
+      "expectedState": null,
+      "note": null
+    },
+    {
+      "id": "S05",
+      "name": "满槽排队（默认 3）",
+      "request": null,
+      "response": "queue-full-accepted-202.json",
+      "expectedStatus": 202,
+      "expectedState": "queued",
+      "note": null
+    },
+    {
+      "id": "S06",
+      "name": "查询排队",
+      "request": null,
+      "response": "task-queued-200.json",
+      "expectedStatus": 200,
+      "expectedState": "queued",
+      "note": null
+    },
+    {
+      "id": "S07",
+      "name": "查询运行中",
+      "request": null,
+      "response": "task-running-200.json",
+      "expectedStatus": 200,
+      "expectedState": "running",
+      "note": null
+    },
+    {
+      "id": "S08",
+      "name": "查询成功结果",
+      "request": null,
+      "response": "task-succeeded-200.json",
+      "expectedStatus": 200,
+      "expectedState": "succeeded",
+      "note": null
+    },
+    {
+      "id": "S09",
+      "name": "查询失败错误",
+      "request": null,
+      "response": "task-failed-200.json",
+      "expectedStatus": 200,
+      "expectedState": "failed",
+      "note": null
+    },
+    {
+      "id": "S10",
+      "name": "取消排队任务",
+      "request": null,
+      "response": "cancel-queued-200.json",
+      "expectedStatus": 200,
+      "expectedState": "cancelled",
+      "note": null
+    },
+    {
+      "id": "S11",
+      "name": "取消与领取竞争",
+      "request": null,
+      "response": "cancel-race-200.json",
+      "expectedStatus": 200,
+      "expectedState": "cancelled",
+      "note": null
+    },
+    {
+      "id": "S12",
+      "name": "取消运行中",
+      "request": null,
+      "response": "cancel-running-cancelling-200.json",
+      "expectedStatus": 200,
+      "expectedState": "cancelling",
+      "note": null
+    },
+    {
+      "id": "S13",
+      "name": "取消中重启",
+      "request": null,
+      "response": "cancel-restart-needs-review-200.json",
+      "expectedStatus": 200,
+      "expectedState": "needs_review",
+      "note": null
+    },
+    {
+      "id": "S14",
+      "name": "重启后 running 中断",
+      "request": null,
+      "response": "restart-interrupted-snapshot.json",
+      "expectedStatus": 200,
+      "expectedState": "interrupted",
+      "note": null
+    },
+    {
+      "id": "S15",
+      "name": "晚到结果被拒",
+      "request": null,
+      "response": "late-result-rejected-200.json",
+      "expectedStatus": 200,
+      "expectedState": "cancelled",
+      "note": null
+    },
+    {
+      "id": "S16",
+      "name": "安全临时失败重试",
+      "request": null,
+      "response": "retry-safe-202.json",
+      "expectedStatus": 202,
+      "expectedState": "queued",
+      "note": null
+    },
+    {
+      "id": "S17",
+      "name": "认证／配置错误不重试",
+      "request": null,
+      "response": "retry-blocked-409.json",
+      "expectedStatus": 409,
+      "expectedState": null,
+      "note": null
+    },
+    {
+      "id": "S18",
+      "name": "凭据缺失",
+      "request": null,
+      "response": "credential-missing-failed-200.json",
+      "expectedStatus": 200,
+      "expectedState": "failed",
+      "note": null
+    },
+    {
+      "id": "S19",
+      "name": "Provider 能力查询",
+      "request": null,
+      "response": "capabilities-200.json",
+      "expectedStatus": 200,
+      "expectedState": null,
+      "note": null
+    },
+    {
+      "id": "S20",
+      "name": "跨源拒绝",
+      "request": null,
+      "response": "cross-origin-rejected-403.json",
+      "expectedStatus": 403,
+      "expectedState": null,
+      "note": null
+    },
+    {
+      "id": "S21",
+      "name": "代理伪造头／缺秘密",
+      "request": null,
+      "response": "proxy-secret-missing-403.json",
+      "expectedStatus": 403,
+      "expectedState": null,
+      "note": null
+    },
+    {
+      "id": "S22",
+      "name": "旧备份恢复",
+      "request": "backup-restore-request-202.json",
+      "response": "backup-restore-recovery-state-200.json",
+      "expectedStatus": 200,
+      "expectedState": "needs_review",
+      "note": null
+    },
+    {
+      "id": "S23",
+      "name": "旧根激活无连续性证明",
+      "request": null,
+      "response": "workspace-existing-root-continuity-409.json",
+      "expectedStatus": 409,
+      "expectedState": null,
+      "note": null
+    },
+    {
+      "id": "S24",
+      "name": "工作根切换意图",
+      "request": null,
+      "response": "workspace-switch-intent-202.json",
+      "expectedStatus": 202,
+      "expectedState": null,
+      "note": null
+    },
+    {
+      "id": "S25",
+      "name": "工作根切换被拒",
+      "request": null,
+      "response": "workspace-switch-rejected-403.json",
+      "expectedStatus": 403,
+      "expectedState": null,
+      "note": null
+    },
+    {
+      "id": "S26",
+      "name": "SSE 高水位快照补偿",
+      "request": null,
+      "response": "sse-snapshot-compensation-200.json",
+      "expectedStatus": 200,
+      "expectedState": null,
+      "note": null
+    },
+    {
+      "id": "S27",
+      "name": "并发调整",
+      "request": null,
+      "response": "concurrency-adjust-200.json",
+      "expectedStatus": 200,
+      "expectedState": null,
+      "note": null
+    },
+    {
+      "id": "S28",
+      "name": "错误信封",
+      "request": null,
+      "response": "error-envelope-400.json",
+      "expectedStatus": 400,
+      "expectedState": null,
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "$contract": "sidekick.web-contract/1.0.0",
+  "$scenario": "S22",
+  "$note": "旧备份恢复：返回持久操作 ID；结果按 ID 读回，不盲目重复迁移。",
+  "operationId": "op_00000000-0000-4000-8000-000000000002",
+  "kind": "restore_backup",
+  "backupId": "bak_000000000000000000000001",
+  "state": "pending",
+  "createdAt": "2026-11-06T10:05:00.000Z"
+}

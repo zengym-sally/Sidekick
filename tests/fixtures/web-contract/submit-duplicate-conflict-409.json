@@ -1,0 +1,14 @@
+{
+  "$contract": "sidekick.web-contract/1.0.0",
+  "$scenario": "S04",
+  "$note": "同操作 ID 不同输入：409 冲突，不新建任务。",
+  "error": {
+    "code": "IDEMPOTENCY_KEY_CONFLICT",
+    "message": "该操作 ID 已对应不同输入，不能重复使用。",
+    "details": {
+      "operationId": "op_00000000-0000-4000-8000-000000000001",
+      "existingTaskId": "tsk_000000000000000000000001"
+    },
+    "requestId": "req_00000000-0000-4000-8000-000000000001"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "$contract": "sidekick.web-contract/1.0.0",
+  "$scenario": "S28",
+  "$note": "统一错误信封：状态与 error.code 对齐，details 不含秘密。",
+  "error": {
+    "code": "INVALID_INPUT",
+    "message": "请求字段缺失或非法。",
+    "details": {
+      "fields": [
+        "type",
+        "input"
+      ]
+    },
+    "requestId": "req_00000000-0000-4000-8000-000000000001"
+  }
+}

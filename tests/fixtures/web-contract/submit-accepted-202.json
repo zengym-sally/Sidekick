@@ -1,0 +1,12 @@
+{
+  "$contract": "sidekick.web-contract/1.0.0",
+  "$scenario": "S01",
+  "$note": "提交成功：202 queued，返回 taskId 与队列位置。",
+  "taskId": "tsk_000000000000000000000001",
+  "state": "queued",
+  "version": 1,
+  "position": 1,
+  "queueLength": 1,
+  "runningCount": 0,
+  "acceptedAt": "2026-11-06T10:00:00.000Z"
+}

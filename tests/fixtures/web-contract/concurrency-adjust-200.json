@@ -1,0 +1,10 @@
+{
+  "$contract": "sidekick.web-contract/1.0.0",
+  "$scenario": "S27",
+  "$note": "并发调整：上调补发空槽，下调不杀运行任务，待其自然退出后满足新上限。",
+  "agentConcurrency": 4,
+  "previous": 3,
+  "runningCount": 3,
+  "queuedCount": 2,
+  "adjustmentNote": "下调时 running 不中断；上调时补发空槽。"
+}

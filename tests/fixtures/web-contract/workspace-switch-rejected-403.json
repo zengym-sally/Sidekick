@@ -1,0 +1,14 @@
+{
+  "$contract": "sidekick.web-contract/1.0.0",
+  "$scenario": "S25",
+  "$note": "代理模式请求切换根：403 拒绝，即使绕过 UI 或代理路由也不能调用。",
+  "error": {
+    "code": "WORKSPACE_SWITCH_REJECTED_PROXY",
+    "message": "代理模式不签发根切换能力，后端拒绝该请求。",
+    "details": {
+      "mode": "proxy",
+      "operationId": "op_00000000-0000-4000-8000-000000000003"
+    },
+    "requestId": "req_00000000-0000-4000-8000-000000000001"
+  }
+}
