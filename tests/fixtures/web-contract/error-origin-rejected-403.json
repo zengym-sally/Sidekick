@@ -1,0 +1,9 @@
+{
+  "contractVersion": "web-api/1",
+  "status": 403,
+  "error": {
+    "code": "origin_rejected",
+    "message": "request Origin/Host is not allowed; nothing was enqueued and no worker was started",
+    "details": { "check": "exact_host_and_origin" }
+  }
+}

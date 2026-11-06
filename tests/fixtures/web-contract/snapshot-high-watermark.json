@@ -1,0 +1,36 @@
+{
+  "contractVersion": "web-api/1",
+  "epoch": "inst_9f27c1aa40b2",
+  "highWatermark": 1042,
+  "generatedAt": "2026-11-06T12:32:00.000Z",
+  "settings": { "agentConcurrency": 3, "version": 5 },
+  "workspace": {
+    "mode": "local",
+    "currentRoot": { "id": "root_a1b2c3d4e5f6", "label": "默认工作根（合成示例）" },
+    "capabilities": ["workspace.manage"],
+    "recovery": null
+  },
+  "tasks": [
+    {
+      "taskId": "tsk_1a2b3c4d5e6f708192a3b4c5d6e7f809",
+      "state": "running",
+      "version": 2,
+      "submitSeq": 1041,
+      "attemptCount": 1,
+      "attemptId": "att_77c1e4a09b3d42f58c6e01a2d9b48e77",
+      "cancelIntent": false,
+      "updatedAt": "2026-11-06T12:30:41.000Z"
+    },
+    {
+      "taskId": "tsk_8e4f2a6b0c9d3e71f5a8b2c4d6e0f913",
+      "state": "queued",
+      "version": 1,
+      "submitSeq": 1042,
+      "queuePosition": 2,
+      "attemptCount": 0,
+      "attemptId": null,
+      "cancelIntent": false,
+      "updatedAt": "2026-11-06T12:31:02.000Z"
+    }
+  ]
+}

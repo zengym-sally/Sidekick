@@ -1,0 +1,62 @@
+{
+  "contractVersion": "web-api/1",
+  "stream": "GET /api/events (text/event-stream); each entry below is one SSE frame: `event:` line, `id:` line, and the JSON in `data:`",
+  "events": [
+    {
+      "event": "task.changed",
+      "id": "1040",
+      "data": {
+        "contractVersion": "web-api/1",
+        "cursor": 1040,
+        "epoch": "inst_9f27c1aa40b2",
+        "objectType": "task",
+        "objectId": "tsk_1a2b3c4d5e6f708192a3b4c5d6e7f809",
+        "objectVersion": 2,
+        "taskState": "running",
+        "at": "2026-11-06T12:30:41.000Z"
+      }
+    },
+    {
+      "event": "task.progress",
+      "id": "1041",
+      "data": {
+        "contractVersion": "web-api/1",
+        "cursor": 1041,
+        "epoch": "inst_9f27c1aa40b2",
+        "objectType": "task",
+        "objectId": "tsk_1a2b3c4d5e6f708192a3b4c5d6e7f809",
+        "objectVersion": 2,
+        "progress": { "stage": "extracting", "detail": "organizer pass 1/2 (synthetic sample)" },
+        "at": "2026-11-06T12:31:02.000Z"
+      }
+    },
+    {
+      "event": "task.changed",
+      "id": "1042",
+      "data": {
+        "contractVersion": "web-api/1",
+        "cursor": 1042,
+        "epoch": "inst_9f27c1aa40b2",
+        "objectType": "task",
+        "objectId": "tsk_1a2b3c4d5e6f708192a3b4c5d6e7f809",
+        "objectVersion": 3,
+        "taskState": "cancelling",
+        "at": "2026-11-06T12:31:20.000Z"
+      }
+    },
+    {
+      "event": "recovery.changed",
+      "id": "1043",
+      "data": {
+        "contractVersion": "web-api/1",
+        "cursor": 1043,
+        "epoch": "inst_9f27c1aa40b2",
+        "objectType": "recovery_hold",
+        "objectId": "rec_3d81f0c2b6a4",
+        "objectVersion": 1,
+        "holdState": "open",
+        "at": "2026-11-06T12:45:00.000Z"
+      }
+    }
+  ]
+}

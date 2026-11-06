@@ -1,0 +1,33 @@
+{
+  "contractVersion": "web-api/1",
+  "taskId": "tsk_4c7e0a2d9b1f5e83a6c0d4b8f2e6a1c5",
+  "operationId": "op_8b3e6d1a7c04f2b9d5e8a1c4f7b0d3e6",
+  "type": "organize_text",
+  "role": "organizer",
+  "state": "interrupted",
+  "version": 4,
+  "createdAt": "2026-11-06T11:58:10.000Z",
+  "updatedAt": "2026-11-06T12:33:00.000Z",
+  "submitSeq": 1036,
+  "queuePosition": null,
+  "attemptCount": 1,
+  "attemptId": null,
+  "cancelIntent": false,
+  "configRevision": "cfgrev_0d81fe22",
+  "inputRef": {
+    "kind": "inline_text",
+    "byteSize": 1204,
+    "contentHash": "sha256:5c8e1a3d7f0b4c6e9a2d5f8b1c4e7a0d3f6b9c2e5a8d1f4b7c0e3a6d9f2b5c8e"
+  },
+  "progress": null,
+  "result": null,
+  "failure": null,
+  "recovery": {
+    "cause": "backend_restart",
+    "sideEffectKnown": true,
+    "resumeEligible": true,
+    "autoResume": true,
+    "reason": "worker exit confirmed by process-tree check; task type proven pre-send only",
+    "receipts": []
+  }
+}
