@@ -57,7 +57,7 @@
 | `originalConfigRevision` | string | 首次入队时的配置修订，审计用，不随 `retry` 改变 |
 | `inputRef` | object | 不可变输入引用（inline 或来源引用）；不含秘密 |
 | `progress` | object \| null | 运行中进度（阶段、可读描述）；仅展示，不作为业务事实 |
-| `result` | object \| null | 终态结果信封：`{kind, payloadRef, acceptedByAttempt, completedAt}`；**仅在终态提交后可见**；`payloadRef` 使用后端解析的 `result://` scheme，读取协议见 §4.3；业务 payload 结构由各业务切片另行定义 |
+| `result` | object \| null | 终态结果信封：`{kind, payloadRef, acceptedByAttempt, completedAt}`；**仅在终态提交后可见**，唯一定例外：`cause=result_exit_unconfirmed` 且 `attemptExitState=exited_confirmed` 时暂存结果对用户可见以供核对（§3.5、场景 29）；`payloadRef` 使用后端解析的 `result://` scheme，读取协议见 §4.3；业务 payload 结构由各业务切片另行定义 |
 | `resultPendingExit` | bool | 结果已收到但所属进程树退出尚未确认；此时 `state` 仍为 `running`、`result` 为 null、槽位不释放。**结果上报不构成进程退出确认**（§3.2、场景 24） |
 | `failure` | object \| null | 终态失败信封：`{code, message, retryable, sideEffectSafety, nextAttemptAt?}`；`retryable` 只区分重试发起方（`auto_backoff`／`manual`／`none`）；`sideEffectSafety ∈ proven_safe \| unknown \| proven_unsafe` 决定自动重入队是否放行（§4.6）。任务级失败码注册表见 §4.6 |
 | `recovery` | object \| null | 仅 `interrupted`/`needs_review` 存在；按 `cause` 的 discriminated union，见 §3.5 |
@@ -73,14 +73,16 @@
 | `queued` | 取消（事务内条件更新） | `cancelled` | 调度器此后不得启动；与领取竞争恰有一个胜出（场景 5/6）；`attemptExitState=not_started` |
 | `running` | 当前 attempt 提交结果 | `running`（`resultPendingExit=true`） | 结果暂存；仅接受 `attemptId` 与 epoch 都匹配的结果；晚到结果记审计事件；`result` 不可见；**槽位不释放**（场景 24） |
 | `running`（`resultPendingExit=true`） | 所属进程树退出已确认 | `succeeded` / `failed` | `attemptExitState=exited_confirmed`；**释放槽**；结果与终态在同一事务提交后才可见 |
-| `running`（`resultPendingExit=true`） | 退出无法确认 | `needs_review` | `attemptExitState=exited_unknown`；**槽位保持占用**；保留已暂存结果；`resolve` → 409 `exit_unconfirmed` |
+| `running`（`resultPendingExit=true`） | 退出无法确认 | `needs_review` | `attemptExitState=exited_unknown`；**槽位保持占用**；保留已暂存结果；`cause=result_exit_unconfirmed`、`cancelIntent=false`；`resolve` → 409 `exit_unconfirmed`（场景 24/29） |
 | `running` | 取消（先持久取消意图） | `cancelling` | 再停止 worker/工具树；`attemptExitState=exiting`；槽不释放；不显示"已取消"（场景 6） |
 | `cancelling` | 退出已确认且无未知副作用 | `cancelled` | `attemptExitState=exited_confirmed`；释放槽 |
 | `cancelling` | 退出已确认但副作用未知 | `needs_review` | `attemptExitState=exited_confirmed`；**释放槽**（进程已停）；`cancelIntent` 保持 true；不得自动重入队（场景 9） |
 | `cancelling` | 退出无法确认 | `needs_review` | `attemptExitState=exited_unknown`；**槽位保持占用**；`resolve` 一律 409 `exit_unconfirmed`；不得补发新 worker；仅新实例恢复扫描确认旧进程树已退出后释放（§3.4，场景 19） |
 | `running` | 后端重启，旧 worker 已确认停止，无未知副作用 | `interrupted` | 由恢复扫描处置（§3.4，场景 8）；`attemptExitState=exited_confirmed` |
 | `running` | 后端重启，外部副作用结果不明 | `needs_review` | `attemptExitState=exited_confirmed`；保留输入与已知回执；禁止自动重放 |
-| `needs_review`（`exited_unknown`） | 新实例恢复扫描确认进程树已退出 | `needs_review`（`exited_confirmed`） | 释放槽；业务状态不变；此后才允许 `resolve`（场景 19） |
+| `needs_review`（`exited_unknown`，`cancelIntent=true`） | 新实例恢复扫描确认进程树已退出 | `cancelled` / `needs_review` | 释放槽；台账证明无副作用 → `cancelled`；否则 `cause` 迁移为 `cancel_unknown_side_effect` 并补 `decisionOptions`（§3.4，场景 19/28） |
+| `needs_review`（`exited_unknown`，`cancelIntent=false`，`resultPendingExit=true`） | 新实例恢复扫描确认进程树已退出 | `succeeded` / `needs_review` | 台账证明无未知副作用 → **提交原暂存结果**转 `succeeded`（`result` 可见、释放槽）；否则保持 `needs_review`（`cause=result_exit_unconfirmed`、`cancelIntent=false`、`result` 转为可见、补 `decisionOptions`），`resolve(resume)` 提交结果转 `succeeded`、`resolve(cancel)` → `cancelled`（§3.4，场景 29） |
+| `needs_review`（`exited_unknown`，`cancelIntent=false`，`resultPendingExit=false`） | 新实例恢复扫描确认进程树已退出 | `queued` / `needs_review` | 台账证明无副作用且可安全重跑 → 有界重入队（新 attempt）；否则保持 `needs_review`（`cause=exit_unconfirmed`、`cancelIntent=false`、补 `decisionOptions`）（§3.4，场景 30） |
 | `interrupted` | 恢复扫描判定可安全重跑 | `queued` | 类型/工具记录证明无外部副作用或仅发送前副作用，且重试预算未耗尽；有界重入队（新 attempt） |
 | `interrupted` | 恢复扫描判定未知或预算耗尽 | `needs_review` / `failed` | `failed` 时 `failure.code=worker_lost`、`retryable=manual` |
 | `failed` | 自动重试（`auto_backoff` 到期**且** `failure.sideEffectSafety=proven_safe`）或用户 `retry`（仅 `retryable=manual`） | `queued` | 有界退避；`nextAttemptAt` 未到不阻塞后续就绪任务；安全证明缺失时不得自动重入队（场景 20） |
@@ -96,7 +98,7 @@
 ### 3.3 幂等、版本与 attempt/epoch fencing
 
 - 提交：`POST /api/tasks` 以 `operationId` 为幂等键。同 ID + 同规范输入 → 返回既有任务当前权威状态（200，`replayed:true`）；同 ID + 不同规范输入 → 409 `idempotency_conflict`（场景 2/3）。规范输入含 `type`、`role`、规范化后的 `input` 与 `configRevision`。
-- 变更：重试/并发调整携带 `expectedVersion`（任务版本）；过期返回 409 `version_conflict`，客户端重读后按新版本重新决策（场景 7）。**处置（resolve）的 `expectedVersion` 一律指条目的 `version`**（经任务资源 `recovery.itemVersion` 与 hold 报告条目 `version` 暴露），任务入口与条目入口同规则（§3.5、§4.5）。**取消的 `expectedVersion` 可选**（§4.4）。同 ID 重放不消耗版本。
+- 变更按**被修改对象**绑定乐观并发版本，三类不可混用：**任务版本**（`retry`，任务资源 `version`）、**条目版本**（`resolve`，`recovery.itemVersion` 与 hold 报告条目 `version`）、**设置版本**（并发调整，`GET /api/settings/agent-concurrency` 返回的 `version`）。过期一律 409 `version_conflict`，客户端重读后按新版本重新决策（场景 7）。任务入口与条目入口的 resolve 同规则（§3.5、§4.5）。**取消的 `expectedVersion` 可选**（§4.4）。同 ID 重放不消耗版本。
 - fencing：结果仅被"当前 attempt"接受（`attemptId` 匹配 + 实例 `epoch` 匹配 + 状态可接受）。后端重启后新实例 epoch 变化，旧实例的任何残留写入一律拒绝。晚到结果以事件留痕（`rejected_late_result`），不产生业务写入。
 - 自动重入队守卫：`retryable=auto_backoff` 只是必要条件；调度器自动重入队还要求 `failure.sideEffectSafety == "proven_safe"`，否则转 `needs_review`（§4.6、场景 20）。
 - 取消不是外部副作用撤销：`cancelled` 不承诺已发出的消息/已写文件被回滚（设计 §5）。
@@ -106,24 +108,32 @@
 - 后端重启：`queued` 全部保留；新实例必须先清理/核实上一实例所属 worker 进程树，无法核实则暂停调度并暴露原因，不得按默认并发直接开工。
 - 上次 `running` 的 attempt 记为 `interrupted`，随后逐任务扫描：可证无外部副作用（可信任务类型/工具台账证明）→ 有界重入队；副作用未知 → `needs_review`，保留全部已知回执，禁止自动重放。
 - 重启时有取消意图的：保留 `cancelling`/`cancelIntent`，确认进程树退出且无副作用未知后才置 `cancelled`；未知则保持取消意图并置 `needs_review`。
-- **`exited_unknown` 回收**：新实例启动时扫描所有 `attemptExitState=exited_unknown` 的 attempt，核实旧进程树确已退出后把该字段改为 `exited_confirmed` 并**释放槽位**；业务状态保持 `needs_review`，并**迁移 `recovery`**（§3.5）：台账证明无外部副作用 → `cancelled`（终态，取消意图留痕事件历史）；否则 `cause` 由 `cancel_exit_unconfirmed` 迁移为 `cancel_unknown_side_effect` 并补 `decisionOptions: ["resume","cancel"]`，`cancelIntent` 保持 true。在回收完成前，调度器不得把该槽位分配给新任务，用户 `resolve` 也不得绕过退出确认（场景 28）。
+- **`exited_unknown` 回收**：新实例启动时扫描所有 `attemptExitState=exited_unknown` 的 attempt，核实旧进程树确已退出后把该字段改为 `exited_confirmed` 并**释放槽位**；`recovery` 按**真实取消意图与暂存结果**分支（§3.2、§3.5）：
+  - **取消路径**（`cancelIntent=true`，`cause=cancel_exit_unconfirmed`）：台账证明无外部副作用 → `cancelled`（终态，取消意图留痕事件历史）；否则 `cause` 迁移为 `cancel_unknown_side_effect` 并补 `decisionOptions: ["resume","cancel"]`，`cancelIntent` 保持 true。
+  - **非取消 + 结果已暂存**（`cancelIntent=false`、`resultPendingExit=true`、`cause=result_exit_unconfirmed`）：台账证明无未知副作用 → **提交原暂存结果**转 `succeeded`（`result` 可见、释放槽）；否则保持 `needs_review`，`result` 转为可见（暂存结果供核对），`cancelIntent` 保持 false 并补 `decisionOptions`；`resolve(resume)` 提交结果转 `succeeded`，`resolve(cancel)` → `cancelled`。
+  - **非取消 + 无暂存结果**（`cause=exit_unconfirmed`）：台账证明无副作用且可安全重跑 → 有界重入队（新 attempt）；否则保持 `needs_review` 并补 `decisionOptions`。
+
+  在回收完成前，调度器不得把该槽位分配给新任务，用户 `resolve` 也不得绕过退出确认（场景 28/29/30）。
 
 ### 3.5 `recovery` 对象结构（按 `cause` 的 discriminated union）
 
-所有取值共享基础字段：`cause`、`sideEffectKnown`、`autoResume`、`reason`、`receipts`（已知外部回执数组，元素结构同 §12 `side_effect_receipts`）；**凡 `cause ∈ {cancel_exit_unconfirmed, cancel_unknown_side_effect, restart_unknown_side_effect, failure_unknown_side_effect, backup_restore, root_activation, root_import}` 另带 `itemVersion: int`**（对应 `recovery_items.version`，供两个 resolve 入口做乐观并发校验）；其余字段只按 `cause` 出现，客户端不得依赖所在取值未声明的字段（样例：[task-interrupted.json](../../tests/fixtures/web-contract/task-interrupted.json)、[task-needs-review.json](../../tests/fixtures/web-contract/task-needs-review.json)、[task-needs-review-exit-unconfirmed.json](../../tests/fixtures/web-contract/task-needs-review-exit-unconfirmed.json)、[task-needs-review-exit-reclaimed.json](../../tests/fixtures/web-contract/task-needs-review-exit-reclaimed.json)、[task-recovery-backup-restore.json](../../tests/fixtures/web-contract/task-recovery-backup-restore.json)）：
+所有取值共享基础字段：`cause`、`sideEffectKnown`、`autoResume`、`reason`、`receipts`（已知外部回执数组，元素结构同 §12 `side_effect_receipts`）；**凡 `cause ∈ {cancel_exit_unconfirmed, cancel_unknown_side_effect, restart_unknown_side_effect, failure_unknown_side_effect, result_exit_unconfirmed, exit_unconfirmed, backup_restore, root_activation, root_import}` 另带 `itemVersion: int`**（对应 `recovery_items.version`，供两个 resolve 入口做乐观并发校验）；其余字段只按 `cause` 出现，客户端不得依赖所在取值未声明的字段（样例：[task-interrupted.json](../../tests/fixtures/web-contract/task-interrupted.json)、[task-needs-review.json](../../tests/fixtures/web-contract/task-needs-review.json)、[task-needs-review-exit-unconfirmed.json](../../tests/fixtures/web-contract/task-needs-review-exit-unconfirmed.json)、[task-needs-review-exit-reclaimed.json](../../tests/fixtures/web-contract/task-needs-review-exit-reclaimed.json)、[task-recovery-backup-restore.json](../../tests/fixtures/web-contract/task-recovery-backup-restore.json)）：
 
 | cause | 出现状态 | 附加字段 | 语义 |
 |---|---|---|---|
 | `backend_restart` | `interrupted` | `resumeEligible: bool` | 恢复扫描判定；`resumeEligible=true` 且重试预算未耗尽时可自动重入队（`autoResume=true`） |
 | `restart_unknown_side_effect` | `needs_review` | `decisionOptions: ["resume","cancel"]` | 重启时外部副作用结果不明；退出已确认（`attemptExitState=exited_confirmed`）；禁止自动重放，仅用户显式处置 |
 | `cancel_unknown_side_effect` | `needs_review` | `decisionOptions: ["resume","cancel"]` | 取消退出已确认但副作用未知；`cancelIntent` 保持 true，仅用户显式处置 |
-| `cancel_exit_unconfirmed` | `needs_review` | `itemVersion`；无 `decisionOptions` | 退出无法确认；`attemptExitState=exited_unknown`，槽位保持占用；`resolve` → 409 `exit_unconfirmed`；**回收后迁移为 `cancel_unknown_side_effect` 并补 `decisionOptions`**（§3.4、场景 19/28） |
+| `cancel_exit_unconfirmed` | `needs_review` | `itemVersion`、`stagedResult: false` | 取消路径退出无法确认；`attemptExitState=exited_unknown`，`cancelIntent=true`，槽位保持占用；`resolve` → 409 `exit_unconfirmed`；**回收后迁移为 `cancel_unknown_side_effect` 并补 `decisionOptions`**（§3.4、场景 19/28） |
+| `result_exit_unconfirmed` | `needs_review` | `itemVersion`、`stagedResult: true` | 非取消路径：结果已暂存但退出未确认；`cancelIntent=false`；回收后按副作用证据提交暂存结果或转核对（§3.4、场景 24/29） |
+| `exit_unconfirmed` | `needs_review` | `itemVersion`、`stagedResult: false` | 非取消路径：运行中退出未确认且无暂存结果；`cancelIntent=false`；回收后按台账重跑或转核对（§3.4、场景 30） |
 | `failure_unknown_side_effect` | `needs_review` | `decisionOptions: ["resume","cancel"]` | 失败码本身允许重试，但工具台账存在 `provable_readonly=false` 的调用且失败点在其之后，副作用安全无法证明；禁止自动重入队（场景 20） |
 | `backup_restore` | `needs_review` | `holdId`、`itemId`、`decisionOptions` | 备份恢复隔离待核对；`attemptExitState=exited_confirmed`（场景 22） |
 | `root_activation` | `needs_review` | `holdId`、`itemId`、`historyContinuity`、`decisionOptions` | 已有根／退役源根再激活，执行历史连续性未证明（A→B→A）；禁止自动重发（场景 22） |
 | `root_import` | `needs_review` | `holdId`、`itemId`、`decisionOptions` | 导入根副本，适用与 `root_activation` 相同边界 |
 
 - 任务 `resolve` 与 hold 条目 `resolve` 是**同一操作、同一版本守卫**：任务 `recovery.itemId` 指向 `recovery_items` 的一行，两个入口都接受 `{expectedVersion, decision, acknowledgedReceipts}`，其中 `expectedVersion` 校验**条目版本**（任务资源经 `recovery.itemVersion` 暴露，hold 报告条目返回 `version`）；不匹配 → 409 `version_conflict`。处置成功后任务与条目版本同时递增；`verification_state ∈ {resumed, cancelled}` 的条目不可被旧请求改写（409 `state_conflict`）。hold 内全部条目处置完毕才关闭 hold（§8.3、场景 27）。
+- `decisionOptions` **仅在 `attemptExitState=exited_confirmed` 时出现**；`exited_unknown` 时 `resolve` 一律 409 `exit_unconfirmed`（唯一定例外见 `result_exit_unconfirmed` 回收后的可见 `result`）。
 - `backup_restore`/`root_activation`/`root_import` 取值的 `autoResume` 恒为 `false`；这些任务在 hold 关闭前不参与调度。
 
 ## 4. 任务 API
@@ -202,8 +212,8 @@
 
 | 端点 | 方法 | 说明 |
 |---|---|---|
-| `/api/settings/agent-concurrency` | GET | 返回 `{contractVersion, agentConcurrency, default, runningCount, queuedCount}`（样例 [settings-concurrency.json](../../tests/fixtures/web-contract/settings-concurrency.json)） |
-| `/api/settings/agent-concurrency` | PUT | `{agentConcurrency, expectedVersion}` → 200；校验正整数，否则 400 `validation_failed` |
+| `/api/settings/agent-concurrency` | GET | 返回 `{contractVersion, agentConcurrency, default, version, runningCount, queuedCount}`；`version` 为**设置自身版本**（样例 [settings-concurrency.json](../../tests/fixtures/web-contract/settings-concurrency.json)） |
+| `/api/settings/agent-concurrency` | PUT | `{agentConcurrency, expectedVersion}` → 200；`expectedVersion` 校验**设置版本**（不是任何任务的 `version`）；校验正整数，否则 400 `validation_failed`；版本不匹配 409 `version_conflict` |
 
 - 默认 3；实例级设置，持久保存。
 - 上调：立即补发空槽；下调：不杀正在执行的任务，待自然退出后满足新上限。
@@ -345,14 +355,16 @@ HTTP 错误包络：`{"contractVersion":"web-api/1","status":<int>,"error":{"cod
 | 18 | 结果读取失败 | 任务未 `succeeded` 或结果已过期 | 409 `state_conflict` / 404 `result_not_found`；客户端不得自行拼接 `result://` 路径 | [error-result-not-found-404.json](../../tests/fixtures/web-contract/error-result-not-found-404.json) |
 | 19 | 取消后退出未确认 | 取消 running 任务，进程退出无法确认 | `needs_review` + `attemptExitState=exited_unknown`，槽位保持占用、不释放；`resolve` → 409 `exit_unconfirmed`；新实例恢复扫描确认退出后释放槽 | [task-needs-review-exit-unconfirmed.json](../../tests/fixtures/web-contract/task-needs-review-exit-unconfirmed.json)、[error-exit-unconfirmed-409.json](../../tests/fixtures/web-contract/error-exit-unconfirmed-409.json) |
 | 20 | 工具已执行后失败 | 失败码为 `auto_backoff`，但工具台账存在外部副作用调用且失败点在其之后 | `sideEffectSafety=unknown` → `needs_review`（`cause=failure_unknown_side_effect`），不自动重入队 | [task-needs-review-side-effect-unknown.json](../../tests/fixtures/web-contract/task-needs-review-side-effect-unknown.json) |
-| 21 | 配置修正后重试 | 任务因错误端点失败，用户修正配置 | `retry` 携带新 `configRevision` → 202 `queued`，`configRevision` 更新、`originalConfigRevision` 保留；非配置类失败携带该字段 → 409 | [task-retry-new-config-202.json](../../tests/fixtures/web-contract/task-retry-new-config-202.json)、[error-config-revision-not-allowed-409.json](../../tests/fixtures/web-contract/error-config-revision-not-allowed-409.json) |
+| 21 | 配置修正后重试 | 任务因错误端点失败，用户修正配置 | `retry` 携带新 `configRevision` → 202 `queued`，`configRevision` 更新、`originalConfigRevision` 保留；非配置类失败携带该字段 → 409 | [task-failed-config-invalid.json](../../tests/fixtures/web-contract/task-failed-config-invalid.json)、[task-retry-new-config-202.json](../../tests/fixtures/web-contract/task-retry-new-config-202.json)、[error-config-revision-not-allowed-409.json](../../tests/fixtures/web-contract/error-config-revision-not-allowed-409.json) |
 | 22 | 恢复后任务资源 | 备份恢复/已有根激活后读取任务 | 任务 `recovery` 按 `backup_restore`/`root_activation` 取值出现，含 `holdId`/`itemId`；`resolve` 与 hold 条目 `resolve` 同一操作 | [task-recovery-backup-restore.json](../../tests/fixtures/web-contract/task-recovery-backup-restore.json)、[task-recovery-root-activation.json](../../tests/fixtures/web-contract/task-recovery-root-activation.json) |
 | 23 | restore 响应丢失 | restore 已受理但 202 丢失 | 按同一 `operationId` 读回操作与 `holdId`；未知 → 404 `operation_not_found`，不盲目重提 | [workspace-restore-operation-pending.json](../../tests/fixtures/web-contract/workspace-restore-operation-pending.json)、[workspace-restore-accepted-202.json](../../tests/fixtures/web-contract/workspace-restore-accepted-202.json) |
 | 24 | 结果已到、退出未确认 | 正常完成路径：attempt 提交结果，但所属进程树退出未确认 | 任务保持 `running`、`resultPendingExit=true`、`result` 不可见、**槽位不释放**；退出确认后才转终态并释放槽 | [task-result-pending-exit.json](../../tests/fixtures/web-contract/task-result-pending-exit.json) |
 | 25 | 超限结果分段读取 | 大结果（`totalBytes > maxInlineBytes`） | 先取索引响应，再按 `offset`/`limit` 逐段读取，`done=true` 或累计满 `totalBytes` 结束 | [task-result-read-segmented-200.json](../../tests/fixtures/web-contract/task-result-read-segmented-200.json) |
 | 26 | 自动重试预算耗尽 | `auto_backoff` 且 `proven_safe`，但 `attempt_budget` 用尽 | 保持 `failed`，`retryable` 降为 `manual`、`nextAttemptAt=null`；用户 `retry` 重置预算 | [task-failed-budget-exhausted.json](../../tests/fixtures/web-contract/task-failed-budget-exhausted.json) |
 | 27 | 恢复处置版本冲突 | 任务入口与 hold 条目入口用旧版本交叉提交 | 两个入口都校验条目 `version`，旧版本 → 409 `version_conflict`；已处置条目 → 409 `state_conflict` | [error-resolve-version-conflict-409.json](../../tests/fixtures/web-contract/error-resolve-version-conflict-409.json) |
-| 28 | 退出回收后处置 | `exited_unknown` 被恢复扫描回收 | `attemptExitState=exited_confirmed`、释放槽；`cause` 迁移为 `cancel_unknown_side_effect` 并补 `decisionOptions`；台账证明无副作用时直接 `cancelled` | [task-needs-review-exit-reclaimed.json](../../tests/fixtures/web-contract/task-needs-review-exit-reclaimed.json) |
+| 28 | 退出回收后处置（取消路径） | `exited_unknown` 被恢复扫描回收 | `attemptExitState=exited_confirmed`、释放槽；`cause` 迁移为 `cancel_unknown_side_effect` 并补 `decisionOptions`；台账证明无副作用时直接 `cancelled` | [task-needs-review-exit-reclaimed.json](../../tests/fixtures/web-contract/task-needs-review-exit-reclaimed.json) |
+| 29 | 结果暂存后回收（非取消） | 正常任务结果已暂存、退出无法确认，随后被恢复扫描回收 | 无未知副作用 → **提交原暂存结果**转 `succeeded`；副作用未知 → 保持 `needs_review`（`cause=result_exit_unconfirmed`、`cancelIntent=false`、`result` 可见、补 `decisionOptions`） | [task-succeeded-result.json](../../tests/fixtures/web-contract/task-succeeded-result.json)、[task-result-reclaimed-needs-review.json](../../tests/fixtures/web-contract/task-result-reclaimed-needs-review.json) |
+| 30 | 无暂存结果退出未知 | 运行中任务退出无法确认且无暂存结果，随后被回收 | 台账证明无副作用且可安全重跑 → 有界重入队；否则保持 `needs_review`（`cause=exit_unconfirmed`、`cancelIntent=false`） | [task-exit-unconfirmed-noncancel.json](../../tests/fixtures/web-contract/task-exit-unconfirmed-noncancel.json) |
 
 ## 12. 数据结构提案（逻辑字段；非 DDL，表名与类型由实施切片定案）
 
@@ -367,7 +379,7 @@ HTTP 错误包络：`{"contractVersion":"web-api/1","status":<int>,"error":{"cod
 | `workspace_operations` | `operation_id` PK、`kind`(switch/restore/backup)、`target_root_id` NULL、`backup_id` NULL、`hold_id` NULL、`state`(pending/succeeded/failed)、`created_at`、`updated_at` | 响应丢失读回；`hold_id` 在 hold 创建后回填；不盲目重复迁移 |
 | `recovery_holds` | `hold_id` PK、`cause`(backup_restore/root_activation/import)、`paused_submissions`、`paused_scheduling`、`paused_timers`、`paused_outbox`、`opened_at`、`closed_at` NULL | 持久恢复标记；关闭前不恢复普通调度 |
 | `recovery_items` | `item_id` PK、`hold_id` FK NULL（非 hold 来源的恢复项为 NULL）、`task_id`、`version`(从 1 起，每次变更 +1)、`verification_state`(pending/verified/auto_safe/resumed/cancelled)、`decision` NULL、`decided_by` NULL、`decided_at` NULL | 每个 `needs_review` 任务对应一行；任务 `recovery.itemId`/`itemVersion` 指向此行；两个 resolve 入口共用该版本做乐观并发 |
-| `settings` | `key` PK、`value`(JSON)、`version` | `agentConcurrency` 等；PUT 携带 `expectedVersion` |
+| `settings` | `key` PK、`value`(JSON)、`version`(从 1 起，每次变更 +1) | `agentConcurrency` 等；GET 返回 `version`，PUT 的 `expectedVersion` 校验该设置版本，与任务/条目版本无关 |
 | `instance_epochs` | `epoch` PK、`started_at`、`stopped_at` NULL | 实例更替与旧写入拒绝 |
 
 schema/migration 建议（提案）：新服务数据库独立 lineage（元数据表记录 `schema_lineage = "web-backend/1"`、`schema_version` 从 1 起），遇 lineage 不符的既有库一律显式报错，不静默新建或续用；迁移工具沿用已锁定的 `rusqlite_migration` 正向迁移模式；开启 WAL；全部状态迁移用带状态/版本条件的 UPDATE 并校验影响行数（fencing 的机械实现）；索引：`tasks(operation_id)`、`tasks(state)`（部分索引）、`tasks(submit_seq)`、`task_events(object_type, object_id)`。与旧 v1–v5 store 之间不做迁移桥。

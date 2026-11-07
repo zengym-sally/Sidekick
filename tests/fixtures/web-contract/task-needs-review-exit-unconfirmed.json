@@ -31,7 +31,8 @@
     "autoResume": false,
     "reason": "cancel intent persisted, but the worker process-tree exit could not be confirmed; the execution slot stays occupied and resolve is refused until recovery reclaims it",
     "receipts": [],
-    "itemVersion": 1
+    "itemVersion": 1,
+    "stagedResult": false
   },
   "resultPendingExit": false
 }

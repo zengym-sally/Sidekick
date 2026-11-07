@@ -23,7 +23,7 @@
   },
   "payloadRef": "result://att_77c1e4a09b3d42f58c6e01a2d9b48e77/payload",
   "acceptedByAttempt": "att_77c1e4a09b3d42f58c6e01a2d9b48e77",
-  "completedAt": "2026-11-06T12:32:30.000Z",
+  "completedAt": "2026-11-06T12:33:05.000Z",
   "note": "GET /api/tasks/{taskId}/result inline path: totalBytes <= maxInlineBytes; payload is inline JSON. The oversized path is scenario 25.",
   "totalBytes": 1024,
   "maxInlineBytes": 65536,

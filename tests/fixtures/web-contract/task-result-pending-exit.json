@@ -26,7 +26,15 @@
   },
   "result": null,
   "failure": null,
-  "recovery": null,
+  "recovery": {
+    "cause": "result_exit_unconfirmed",
+    "sideEffectKnown": false,
+    "autoResume": false,
+    "itemVersion": 1,
+    "stagedResult": true,
+    "reason": "result staged, but the worker process-tree exit could not be confirmed; cancelIntent stays false because no cancel was requested",
+    "receipts": []
+  },
   "attemptExitState": "active",
   "originalConfigRevision": "cfgrev_0d81fe22",
   "resultPendingExit": true

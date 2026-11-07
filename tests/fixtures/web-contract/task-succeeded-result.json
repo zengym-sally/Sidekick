@@ -5,10 +5,10 @@
   "type": "organize_text",
   "role": "organizer",
   "state": "succeeded",
-  "version": 3,
+  "version": 4,
   "createdAt": "2026-11-06T12:30:00.000Z",
-  "updatedAt": "2026-11-06T12:32:30.000Z",
-  "terminalAt": "2026-11-06T12:32:30.000Z",
+  "updatedAt": "2026-11-06T12:33:05.000Z",
+  "terminalAt": "2026-11-06T12:33:05.000Z",
   "submitSeq": 1041,
   "queuePosition": null,
   "attemptCount": 1,
@@ -25,7 +25,7 @@
     "kind": "organize_text_result",
     "payloadRef": "result://att_77c1e4a09b3d42f58c6e01a2d9b48e77/payload",
     "acceptedByAttempt": "att_77c1e4a09b3d42f58c6e01a2d9b48e77",
-    "completedAt": "2026-11-06T12:32:30.000Z"
+    "completedAt": "2026-11-06T12:33:05.000Z"
   },
   "failure": null,
   "recovery": null,
