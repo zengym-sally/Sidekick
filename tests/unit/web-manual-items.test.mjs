@@ -9,6 +9,7 @@ import test from 'node:test';
 import { DatabaseSync } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
 import { ManualItemsService, ServiceError, canonicalize } from '../../server/lib/manual-items-service.mjs';
+import { parseArgs } from '../../server/entries/web-backend-entry.mjs';
 
 class StorageError extends Error {
   constructor(code, message) {
@@ -287,6 +288,97 @@ test('list rejects unknown status and invalid limit (2026-11-08 ruling)', async 
   }
   const history = await service.history(item.itemId, { limit: 200 });
   assert.ok(Array.isArray(history.events));
+});
+
+test('failed concurrent writes leave no event and keep the operationId free (MAJOR-1)', async () => {
+  for (const action of ['update', 'complete', 'reopen', 'delete']) {
+    const { service, storage } = makeService();
+    const { item } = await createSample(service);
+    const itemId = item.itemId;
+    let staleVersion = 1;
+    if (action === 'reopen') {
+      await service.completeItem(itemId, `op_setup_${action}`, 1);
+      staleVersion = 2;
+    }
+    // Deterministic version race: the winner's commit lands between the
+    // loser's read-before and its transaction.
+    let winnerHook = null;
+    const racingStorage = {
+      async command(command, params) {
+        if (command === 'transact' && winnerHook) {
+          const hook = winnerHook;
+          winnerHook = null;
+          await hook();
+        }
+        return storage.command(command, params);
+      },
+    };
+    const racing = new ManualItemsService(racingStorage, { now: () => 9000 });
+    winnerHook = () => storage.command('transact', {
+      ops: [{
+        sql: `UPDATE manual_items SET title='胜者', updated_at_ms=8000, version=version+1 WHERE item_id=? AND version=?`,
+        params: [itemId, staleVersion],
+      }],
+    });
+
+    const loser = action === 'update'
+      ? () => racing.updateItem(itemId, `op_loser_${action}`, staleVersion, { ...SAMPLE, title: '败者' })
+      : action === 'complete'
+        ? () => racing.completeItem(itemId, `op_loser_${action}`, staleVersion)
+        : action === 'reopen'
+          ? () => racing.reopenItem(itemId, `op_loser_${action}`, staleVersion)
+          : () => racing.deleteItem(itemId, `op_loser_${action}`, staleVersion);
+    await assert.rejects(loser, (error) => {
+      assert.equal(error.code, 'version_conflict');
+      return true;
+    });
+
+    const afterLoss = await racing.history(itemId);
+    assert.equal(afterLoss.events.find((event) => event.operationId === `op_loser_${action}`), undefined);
+
+    const retried = action === 'update'
+      ? await racing.updateItem(itemId, `op_loser_${action}`, staleVersion + 1, { ...SAMPLE, title: '败者重决' })
+      : action === 'complete'
+        ? await racing.completeItem(itemId, `op_loser_${action}`, staleVersion + 1)
+        : action === 'reopen'
+          ? await racing.reopenItem(itemId, `op_loser_${action}`, staleVersion + 1)
+          : await racing.deleteItem(itemId, `op_loser_${action}`, staleVersion + 1);
+    assert.equal(retried.replayed, false);
+    const afterRetry = await racing.history(itemId);
+    assert.ok(afterRetry.events.find((event) => event.operationId === `op_loser_${action}`));
+  }
+});
+
+test('idempotency key binds action and item across reuse (OBS-2)', async () => {
+  const { service } = makeService();
+  const first = await createSample(service);
+  const second = await createSample(service);
+  const shared = 'op_shared';
+
+  await service.completeItem(first.item.itemId, shared, 1);
+  await assert.rejects(() => service.completeItem(second.item.itemId, shared, 1), (error) => {
+    assert.equal(error.code, 'idempotency_conflict');
+    return true;
+  });
+  await assert.rejects(() => service.deleteItem(first.item.itemId, shared, 2), (error) => {
+    assert.equal(error.code, 'idempotency_conflict');
+    return true;
+  });
+  const replay = await service.completeItem(first.item.itemId, shared, 1);
+  assert.equal(replay.replayed, true);
+  assert.equal(replay.item.itemId, first.item.itemId);
+});
+
+test('CLI parseArgs keeps the boolean --init flag and value flags', () => {
+  assert.deepEqual(parseArgs(['--root', '/tmp/x', '--init']), { root: '/tmp/x', init: true });
+  assert.deepEqual(parseArgs(['--init', '--root', '/tmp/x']), { init: true, root: '/tmp/x' });
+  assert.deepEqual(
+    parseArgs(['--root', '/tmp/x', '--storage-bin', '/b', '--port', '9000']),
+    { root: '/tmp/x', 'storage-bin': '/b', port: '9000' },
+  );
+  assert.throws(() => parseArgs(['--root']), /缺少值/);
+  assert.throws(() => parseArgs(['--root', '/tmp/x', '--init', '--port']), /缺少值/);
+  assert.throws(() => parseArgs(['root']), /无法识别/);
 });
 
 test('canonicalize is key-order independent', () => {

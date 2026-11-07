@@ -5,6 +5,7 @@
 //! programmatic surface used by tests and by the CLI below.
 
 import { fileURLToPath } from 'node:url';
+import { realpathSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { StorageClient } from '../lib/storage-client.mjs';
 import { ManualItemsService } from '../lib/manual-items-service.mjs';
@@ -66,12 +67,23 @@ export async function startWebBackend(config = {}) {
   return { origin, close, pairingCode, port: actualPort };
 }
 
-function parseArgs(argv) {
+export function parseArgs(argv) {
   const args = {};
-  for (let index = 0; index < argv.length; index += 2) {
+  for (let index = 0; index < argv.length; index += 1) {
     const flag = argv[index];
     if (!flag.startsWith('--')) throw new Error(`无法识别的参数：${flag}`);
-    args[flag.slice(2)] = argv[index + 1];
+    const name = flag.slice(2);
+    if (name === 'init') {
+      // Boolean flag: no value, and never consumes the next flag.
+      args.init = true;
+      continue;
+    }
+    const value = argv[index + 1];
+    if (value === undefined || value.startsWith('--')) {
+      throw new Error(`参数 ${flag} 缺少值`);
+    }
+    args[name] = value;
+    index += 1;
   }
   return args;
 }
@@ -84,7 +96,7 @@ async function main() {
     port: args.port ?? DEFAULT_PORT,
     staticRoot: args['static-root'],
     storageBin: args['storage-bin'],
-    initialize: args.init === undefined ? false : true,
+    initialize: args.init === true,
     onPairingCode: (code) => {
       process.stdout.write(`配对码：${code}\n`);
     },
@@ -99,7 +111,9 @@ async function main() {
 
 const isDirectRun = (() => {
   try {
-    return fileURLToPath(import.meta.url) === resolve(process.argv[1] ?? '');
+    // Resolve symlinks on both sides: a CLI invoked through a symlinked path
+    // must still run instead of silently doing nothing.
+    return realpathSync(fileURLToPath(import.meta.url)) === realpathSync(resolve(process.argv[1] ?? ''));
   } catch {
     return false;
   }

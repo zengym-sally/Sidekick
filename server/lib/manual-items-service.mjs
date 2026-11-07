@@ -29,6 +29,16 @@ const INSERT_EVENT = `INSERT INTO manual_item_events
   (operation_id,item_id,action,occurred_at_ms,request_json,before_json,after_json)
   VALUES (?,?,?,?,?,?,?)`;
 
+/// History insert gated on the immediately preceding conditional UPDATE: when
+/// the version guard matched zero rows the event row is not written at all, so
+/// a losing writer leaves no history and does not consume its operationId
+/// (MAJOR-1). `changes()` still reports the previous statement's row count
+/// while this statement's WHERE clause is evaluated.
+const INSERT_EVENT_GATED = `INSERT INTO manual_item_events
+  (operation_id,item_id,action,occurred_at_ms,request_json,before_json,after_json)
+  SELECT ?,?,?,?,?,?,?
+  WHERE (SELECT changes()) = 1`;
+
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 200;
 const ALLOWED_STATUSES = ['open', 'completed', 'deleted', 'all'];
@@ -271,7 +281,7 @@ export class ManualItemsService {
   async createItem(operationId, input) {
     const normalized = normalizeInput(input);
     const existing = await this.findEvent(operationId);
-    const canonical = canonicalize({ input: normalized });
+    const canonical = canonicalize({ action: 'create', input: normalized });
     const replay = await this.replayOrConflict(operationId, canonical, existing);
     if (replay) return replay;
 
@@ -318,7 +328,7 @@ export class ManualItemsService {
 
   async updateItem(itemId, operationId, expectedVersion, input) {
     const normalized = normalizeInput(input);
-    const canonical = canonicalize({ expectedVersion, input: normalized });
+    const canonical = canonicalize({ action: 'update', itemId, expectedVersion, input: normalized });
     const existing = await this.findEvent(operationId);
     const replay = await this.replayOrConflict(operationId, canonical, existing);
     if (replay) return replay;
@@ -354,12 +364,12 @@ export class ManualItemsService {
             ],
           },
           {
-            sql: INSERT_EVENT,
+            sql: INSERT_EVENT_GATED,
             params: [operationId, itemId, 'update', now, canonical, JSON.stringify(toWire(before)), JSON.stringify(toWire(after))],
           },
         ],
       });
-      if (result.results[0].changes !== 1) {
+      if (result.results[1].changes !== 1) {
         throw new ServiceError('version_conflict', '事项已有更新，请刷新后重试。');
       }
     } catch (error) {
@@ -373,7 +383,7 @@ export class ManualItemsService {
   }
 
   async transitionItem(itemId, operationId, expectedVersion, action, nextStatus) {
-    const canonical = canonicalize({ expectedVersion });
+    const canonical = canonicalize({ action, itemId, expectedVersion });
     const existing = await this.findEvent(operationId);
     const replay = await this.replayOrConflict(operationId, canonical, existing);
     if (replay) return replay;
@@ -418,12 +428,12 @@ export class ManualItemsService {
         ops: [
           { sql: `UPDATE manual_items SET ${assignments.join(',')} WHERE item_id=? AND version=?`, params },
           {
-            sql: INSERT_EVENT,
+            sql: INSERT_EVENT_GATED,
             params: [operationId, itemId, action, now, canonical, JSON.stringify(toWire(before)), JSON.stringify(toWire(after))],
           },
         ],
       });
-      if (result.results[0].changes !== 1) {
+      if (result.results[1].changes !== 1) {
         throw new ServiceError('version_conflict', '事项已有更新，请刷新后重试。');
       }
     } catch (error) {

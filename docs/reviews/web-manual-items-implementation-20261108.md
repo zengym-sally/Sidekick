@@ -16,9 +16,9 @@
 
 | 文件 | SHA-256 |
 |---|---|
-| `server/entries/web-backend-entry.mjs` | `776b9b39b72994106abdf0e71d570347d8c9af6a18c78f56c0caf6e289b44797` |
+| `server/entries/web-backend-entry.mjs` | `c7234a7542c3f21401455f397bbfd739c20c8ded76ec0017df516780727e29aa` |
 | `server/lib/http-server.mjs` | `f4d80e628e863a752848b65e503a14b66e4318a649b088324d5f42cf84ac9ab8` |
-| `server/lib/manual-items-service.mjs` | `3742c994aa035a2c1cd1ca2880ad32efa1668d0524764a10ab8f01d1244ba7c8` |
+| `server/lib/manual-items-service.mjs` | `fa679affa9804d97e9316d37740513659eda6b48bc75375507fae598c86d433f` |
 | `server/lib/session-store.mjs` | `9823db95128835c84f77a35eea68f9fbd63173f9f18156fc8c8f94059609fc1e` |
 | `server/lib/sse-hub.mjs` | `174507c6ce2e36016013546473cdc19b6678799ca38e33bb06f2092840006ade` |
 | `server/lib/static-files.mjs` | `3c07b73eb6be8af6ee903b257d49178735c3f59a6dffb2437a84ee63975251ac` |
@@ -48,7 +48,7 @@
 | 文件 | SHA-256 |
 |---|---|
 | `src-tauri/src/store/web_backend_store_tests.rs` | `5b371d0826dd2ba3946353619da4682e90b00bdf32139c95d3eaaf3936a745be` |
-| `tests/unit/web-manual-items.test.mjs` | `d9bc844696108b84ee25421c296b7b8420ffd0748bd4e119704021ff0e242dce` |
+| `tests/unit/web-manual-items.test.mjs` | `5e00fe45c3748207585cacc800ace639ea9e96b6167292aa17b6121f218bc1f9` |
 
 ## 3. 实现要点
 
@@ -93,11 +93,31 @@
 - **标准线格式核对**：`POST /api/pair` 仅接受请求体 `pairingCode`（移除 `code`/`pairing_code` 别名兜底）；配对与 `GET /api/session` 响应顶层 `csrfToken`；写请求读取 `X-CSRF-Token`（HTTP 头名大小写不敏感）。浏览器客户端 `web-api-client.ts` 已使用同一字面名，无需改动。
 
 **本增量文件 SHA-256**
-- `server/lib/manual-items-service.mjs`：`3742c994aa035a2c1cd1ca2880ad32efa1668d0524764a10ab8f01d1244ba7c8`
+- `server/lib/manual-items-service.mjs`：`fa679affa9804d97e9316d37740513659eda6b48bc75375507fae598c86d433f`
 - `server/lib/http-server.mjs`：`f4d80e628e863a752848b65e503a14b66e4318a649b088324d5f42cf84ac9ab8`
-- `tests/unit/web-manual-items.test.mjs`：`d9bc844696108b84ee25421c296b7b8420ffd0748bd4e119704021ff0e242dce`
+- `tests/unit/web-manual-items.test.mjs`：`5e00fe45c3748207585cacc800ace639ea9e96b6167292aa17b6121f218bc1f9`
 
 **本增量聚焦验证（实跑）**
 - `node --test tests/unit/web-manual-items.test.mjs`：11/11 pass（新增「list rejects unknown status and invalid limit」）。
 - 真实 HTTP smoke（`build/web-manual-items-implementation/smoke-params.mjs`）：`{code}` 别名 → 401 `pair_code_invalid`；`{pairingCode}` → 200 且顶层 `csrfToken`；`status=bogus`/`status=` → 400；`limit=0/201/1.5/abc/空` → 400；`limit=50/200` 与 `status=open/completed/deleted/all` → 200。
 - Rust 侧未改动，沿用 `74c023c` 的 11/11 与 18/18、clippy/fmt 结论。
+
+
+## 7. 2026-11-08 MAJOR-1 退修增量（事务内门控 + 幂等键绑定）
+
+依据 ZCode 对 `74c023c` 的独立审查（MAJOR-1）与任务描述 OBS-2 统一裁定，在 Task I 服务/必要单测范围内修订：
+
+- **MAJOR-1（事务内门控）**：`updateItem` 与 `transitionItem` 的历史插入改为 `INSERT … SELECT … WHERE (SELECT changes()) = 1`（`INSERT_EVENT_GATED`）。条件更新影响 0 行时事件行**不写入**，败者不留幽灵历史、不占幂等键；成功路径事件照常落库。校验从 `results[0].changes` 改为 `results[1].changes`（事件插入行数）。
+- **OBS-2（幂等键绑定动作与目标事项）**：规范输入纳入 `action` 与 `itemId`——create `{action:'create',input}`；update `{action:'update',itemId,expectedVersion,input}`；complete/reopen/delete `{action,itemId,expectedVersion}`。跨动作/跨事项复用同一 operationId 返回 409 `idempotency_conflict`；同意图重放优先守卫、返回当前权威状态不变；不改 DDL/stdio 协议或域内命名空间。
+- **CLI MINOR-1**：`parseArgs` 改为逐旗标解析，`--init` 作为布尔开关不再吞相邻旗标或末位失效；`isDirectRun` 两侧用 `realpathSync` 解析符号链接，经 `/tmp` 符号链接调用也能正常执行。
+
+**本增量文件 SHA-256**
+- `server/lib/manual-items-service.mjs`：`fa679affa9804d97e9316d37740513659eda6b48bc75375507fae598c86d433f`
+- `server/entries/web-backend-entry.mjs`：`c7234a7542c3f21401455f397bbfd739c20c8ded76ec0017df516780727e29aa`
+- `tests/unit/web-manual-items.test.mjs`：`5e00fe45c3748207585cacc800ace639ea9e96b6167292aa17b6121f218bc1f9`
+
+**本增量聚焦验证（实跑）**
+- `node --test tests/unit/web-manual-items.test.mjs`：14/14 pass。新增「failed concurrent writes leave no event and keep the operationId free」对 update/complete/reopen/delete 四条写路径做确定性竞争（败者事务内先注入胜者提交，再执行败者事务）：败者 409 `version_conflict`、无事件行、以原 operationId＋新版本重试成功。新增「idempotency key binds action and item across reuse」验证跨事项/跨动作复用 409、同意图重放 `replayed:true`。新增 `parseArgs` 用例。
+- 真实 HTTP（`build/web-manual-items-implementation/smoke-major1-http.mjs`）：create 200→update 200→stale update 409（历史无该操作）→同 operationId 新版本重试 200→complete 200；跨事项复用 409 `idempotency_conflict`；历史仅含成功事件。
+- CLI（`build/web-manual-items-implementation/smoke-cli.mjs`）：无 `--init` 打开不存在根 exit 1「工作目录不存在」；经符号链接无参调用 exit 1「--root 必须显式给定」；`--init` 居中/末位均正常启动并建库；缺值 exit 1「参数 --root 缺少值」。
+- Rust 侧未改动：store 11/11、schema 18/18、clippy `-D warnings`、`cargo fmt --check` 全绿；冻结 `001`/`002`/`web-api/1` 哈希逐字节不变。
