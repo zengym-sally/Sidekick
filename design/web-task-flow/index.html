@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>跟班 Sidekick · 任务队列交互方案</title><link rel="icon" href="../../src/assets/brand/sidekick-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="../../src/styles/tokens.css"><link rel="stylesheet" href="task-flow.css"></head>
+<body>
+<svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+<symbol id="i-queue" viewBox="0 0 24 24"><path d="M4 6h10M4 12h13M4 18h7"/><circle cx="19" cy="6" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="19" cy="18" r="2"/></symbol>
+<symbol id="i-run" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5 15.5 12 10 15.5Z"/></symbol>
+<symbol id="i-cancel" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></symbol>
+<symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4 2.5 20h19Z"/><path d="M12 10v4M12 17h.01"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5M5.3 7a8 8 0 0 1 13-2L20 8M4 16l1.7 3a8 8 0 0 0 13-2"/></symbol>
+<symbol id="i-link" viewBox="0 0 24 24"><path d="m10 14 4-4m-7 6-2 2a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m8 0 2-2a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0" transform="translate(3 0) scale(.8)"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.8 6.2L21 12l-6.2 2.8L12 21l-2.8-6.2L3 12l6.2-2.8Z"/></symbol>
+<symbol id="i-inbox" viewBox="0 0 24 24"><path d="m5 4-3 11v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4L19 4Z"/><path d="M2 15h6l2 3h4l2-3h6"/></symbol>
+<symbol id="i-source" viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H5V3Z"/><path d="M15 3v5h4M8 12h8M8 16h5"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></symbol>
+<symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v10H3Z"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+<symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v5M15 3v5M6 8h12v4a6 6 0 0 1-12 0Z"/><path d="M12 18v3"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 8-8 3 3-2 2-2-2-2 2 2 2"/></symbol>
+</defs></svg>
+<div class="preview-bar"><span><strong>sidekick</strong> · 任务队列交互方案（W0）</span><span>合成数据 · 不连接真实服务 <span class="preview-note">交互契约见 docs/engineering/web-task-interaction.md</span></span></div>
+<div class="app-shell">
+ <div class="window-bar"><div class="traffic" aria-hidden="true"><span></span><span></span><span></span></div><span>跟班 Sidekick · 任务面板</span><span class="window-demo">设计演示</span></div>
+ <aside class="sidebar" aria-label="主导航">
+  <div class="identity"><img src="../../src/assets/brand/sidekick-mark.svg" alt=""><span>sidekick<small>盯着呢，老板。</small></span></div>
+  <nav>
+   <button class="nav-item active" data-page="queue" aria-current="page"><svg class="icon"><use href="#i-queue"/></svg><span class="nav-label">任务队列</span><b id="nav-queue-count">5</b></button>
+   <button class="nav-item" data-page="review"><svg class="icon"><use href="#i-warn"/></svg><span class="nav-label">待核对</span><b id="nav-review-count">3</b></button>
+   <button class="nav-item" data-page="capability"><svg class="icon"><use href="#i-plug"/></svg><span class="nav-label">能力与壳适配</span></button>
+  </nav>
+  <div class="sidebar-bottom">
+   <div class="connection"><span class="status-dot" id="conn-dot"></span><span id="conn-label">已连接</span></div>
+   <div class="profile"><span class="avatar">我</span><span>我的工作空间<small>仅本地交互演示</small></span></div>
+  </div>
+ </aside>
+ <main class="workspace">
+  <header class="toolbar"><span id="page-label">任务队列</span><div class="toolbar-actions">
+   <button class="icon-button" data-action="submit" aria-label="提交一个演示任务"><svg class="icon"><use href="#i-plus"/></svg></button>
+   <button class="icon-button" data-action="drop-event" aria-label="演示断线重连"><svg class="icon"><use href="#i-refresh"/></svg></button>
+   <span class="toolbar-divider"></span>
+   <span class="small-note">并发上限 <b id="concurrency-value">3</b>（只读，设置在设置页）</span>
+  </div></header>
+  <div id="view" class="view"></div>
+ </main>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<dialog id="task-dialog" class="dialog" aria-labelledby="task-dialog-title"></dialog>
+<script src="task-flow.js"></script>
+</body></html>

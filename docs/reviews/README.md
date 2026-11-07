@@ -13,10 +13,11 @@
 - **索引强制**：新增记录必须登记到本文件；未登记视为未收口。`check:docs` 只校验链接存在，语义一致性靠评审。
 - **新路径**：2026-10-31 结构治理后，新记录使用新路径（`runtime/{entries,lib,workers}/`、`src-tauri/src/{app,store,host,diagnostics}/`、`tests/{unit,integration,probes,fixtures}/`、`scripts/{build,checks,probes}/`）；旧记录保留原路径，按文件名仍可检索。
 
-## 2. 记录索引（46 份）
+## 2. 记录索引（47 份）
 
 | 记录 | 日期 | 范围与结论 | 证据 |
 |---|---|---|---|
+| [web-task-interaction-20261106.md](web-task-interaction-20261106.md) | 2026-11-06 | MAYNE-21 W0 浏览器任务交互契约与静态演示：队列/取消/恢复/核对界面语义、凭据与原生边界、壳适配点；ZCode 两轮独立评审 APPROVE_WITH_CHANGES（占槽集合含取消中、保留待核对不放行恢复、槽号按空闲槽分配、保留项可改选、取消转核对生成核对卡、暂停期拦截重新提交）+ 18 组浏览器交互检查通过，守卫与 175 项既有基线一致；未实现生产 HTTP/队列 | 原始证据 `build/mayne-21/`（gitignored） |
 | [web-backend-direction-20261106.md](web-backend-direction-20261106.md) | 2026-11-06 | owner 五项决定：完整 Web 业务先行、OS 凭据、默认 3 并发持久队列、旧版无兼容桥；文档同步与设计，功能尚未实现 | 原始证据 `build/mayne-16-review/` |
 | [pet-native-20261105.md](pet-native-20261105.md) | 2026-11-05 | 单屏桌宠动效/半隐/原生右键菜单、语义反馈与单色菜单栏图标已接线；双面代码评审/完整门禁通过，正式版物理验收及P4仍开放 | build/pet-native-20261105 完整日志与冻结；正式UI源/包哈希见记录 |
 | [pet-interaction-design-20261105.md](pet-interaction-design-20261105.md) | 2026-11-05 | 桌宠D1–D7分阶段设计及正式UI隔离载体v3.3，两面独立APPROVE/pass；只签设计，不替代代码/原生验收 | 规范核心及评审处置见记录 |

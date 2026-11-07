@@ -1,0 +1,329 @@
+# W0 浏览器任务交互方案（队列、取消与恢复）
+
+> 交付物：交互契约 `docs/engineering/web-task-interaction.md` + 静态演示 `design/web-task-flow/`。只签设计与可交接材料，不实现 HTTP/SSE、不声称生产队列已可用。
+
+## 1. 范围与风险级
+
+| 项 | 内容 |
+|---|---|
+| 任务 | MAYNE-21「W0：交付浏览器队列、取消与恢复的交互方案」 |
+| 实现者 | OhMyPi（独立评审指定 Claude，未参与本项实现） |
+| 工作树 | `/Users/zengym/multica_workspaces_desktop-api.multica.ai/ming-space-bc02289231eb/mayne-21-65bb1c92eedb/worktree`，分支 `agent/ohmypi/mayne-21`，HEAD `b199a36c586ea72f5a2c9d206efb3eee9d11e824` |
+| 基线核实 | `git merge-base --is-ancestor 85feb8aaa431a2a1c9f92b238e26a7a2400baa9e HEAD` 与 `b199a36…` 均通过；未切换共享 main，未使用 `build/team-w0-*` 预备树 |
+| 写入范围 | `design/web-task-flow/`、`docs/engineering/web-task-interaction.md`、本记录；未改生产 `src/`、`DESIGN.md`、其他任务契约、`package.json`、锁文件、schema/migrations、`vendor/pi`、`resources/skills`、identifier |
+| 风险级 | 纯文档与设计原型，无生产代码、无依赖、无 schema、无真实凭据/工作根操作；按低风险处理，仍跑链接与结构守卫 |
+
+## 2. 交付内容
+
+### 2.1 交互契约（`docs/engineering/web-task-interaction.md`）
+
+14 节：范围边界、8 种任务状态与界面语义、队列面板结构与动作矩阵、提交幂等与多客户端、刷新/重连/事件补偿、取消语义、失败分类与逐项核对、备份恢复与旧根激活、凭据与配置不可用、工作根目标、原生不可用能力与壳适配点、文案规范、键盘焦点与无障碍、窄屏适配、演示边界。
+
+对齐的既有权威：
+
+- 状态机与失败语义取自 [Web/后端设计](web-backend-design.md) §5（`queued`/`running`/`cancelling`/`succeeded`/`failed`/`cancelled`/`interrupted`/`needs_review`、attempt/epoch fencing、恢复标记）。
+- 凭据与工作根边界取自 §2/§4；部署形态取自 §3；壳适配点取自 §6（`HostCapabilities`/`PetSnapshot`/`NotificationSink`/`BackendConnection`）。
+- 产品规则取自 [用户流程](../product/02-用户流程.md) §1/§8、[分期验收](../product/04-分期交付与验收.md)「队列与多客户端」「部署、安装与恢复」。
+- 界面语气与状态文案对照生产既有组件（`role="status"`/`role="alert"`、`运行中断`、`核对外部结果后重新整理` 等措辞）。
+
+未擅自新增接口、未改并发/恢复规则：字段名用设计文档已有的逻辑名称，并注明「以契约冻结为准」。
+
+### 2.2 静态演示（`design/web-task-flow/`）
+
+| 文件 | 内容 |
+|---|---|
+| `index.html` | 三页：任务队列、待核对、能力与壳适配；SVG 图标、班班品牌资产、只引用 `src/styles/tokens.css` |
+| `task-flow.css` | 复用生产令牌（`--ink`/`--amber`/`--ivory`/`--line`/`--soft-*`/`--action-*`）；≤760px 卡片化、`prefers-reduced-motion` 降级 |
+| `task-flow.js` | 合成状态机：11 条种子任务覆盖全部 8 种状态；取消、重新提交、提交幂等、并发调整、断线重连、逐项核对、恢复放行 |
+
+演示边界（页面与 `design/README.md` 均已声明）：只用合成数据，不连接模型、飞书、MCP、Bash、SQLite 或本机文件系统；刷新复位；不用合成 IPC 代签真实服务。
+
+## 3. 实际执行的验证
+
+预览服务：`PORT=4181 node design/serve.mjs`（127.0.0.1，只读暴露 `/design/`、`/src/assets/`、`/src/styles/`）。
+
+| 命令 | 退出码 | 结果 |
+|---|---|---|
+| `node --check design/web-task-flow/task-flow.js` | 0 | 语法通过 |
+| `node scripts/checks/check-docs.mjs` | 0 | 18 文件、302 个本地相对链接全部解析 |
+| `node scripts/checks/check-structure.mjs` | 1 | 175 项既有违规，与本任务开始前基线完全一致（见 §4）；本任务新增 0 项 |
+| `PLAYWRIGHT_MODULE=/Users/zengym/.stepfun/releases/deps-6/node_modules/playwright node build/mayne-21/verify-task-flow.cjs` | 0 | 17 组交互检查全部 PASS，7 张截图，浏览器错误 0 |
+
+浏览器检查覆盖（Chrome，headless，deviceScaleFactor 1）：初始队列 3 运行/2 排队与执行槽 3/3；排队位置与「满槽仍入队列」；`cancelling` 未终态（不显示已取消、不释放执行槽、无操作按钮）；取消排队即 `cancelled`；取消运行中 → 无法确认副作用 → `needs_review`；断线重连三态（重连中→快照同步→已连接）；认证类失败停止重试并指向设置；详情中的配置修订固化、操作幂等键、旧事件忽略；任务行键盘可达（Enter 打开、Esc 关闭）；恢复横幅暂停提交/定时/投递；逐项核对三选一、无「全部忽略」、已选项锁定；恢复放行后提交幂等（重复点击只新增 1 行）；并发调低不杀运行任务且新任务按新上限排队；能力页原生不可用与壳适配点、凭据不回读、Linux 无钥匙串、代理模式不签发根切换；状态标签同时有文字与图标；窄屏 390×844 无横向溢出、操作可达、并发条吸顶、位置标签隐藏、待核对选项在视口内。
+
+原始证据：`build/mayne-21/`（`web-task-flow-verification.json`、7 张截图、服务与脚本日志）。该目录已被 `.gitignore` 忽略，不随仓库提交。
+
+### 3.1 演示期间发现并修好的两处问题
+
+1. **并发调低后新任务被分配到超出上限的执行槽**：`槽 3/2`。根因是槽位分母按当前并发实时计算。修为在分配时记录 `slotLimit`，标签按分配时的上限显示；同时把「并发已调低，不杀正在执行的任务，本任务排队等待」与「满槽仍入队列」分成两种说明。
+2. **逐项核对全部完成后恢复横幅不消失**：违反契约「核对关闭前不恢复普通调度」的反面——核对关闭后应放行。修为全部项有选择后清除恢复状态并提示恢复放行。
+
+两处均在演示代码内修复，不属于生产缺陷；契约文档相应措辞已在 §7.3 明确。
+
+## 4. 基线门禁状态（不作为通过证据）
+
+`check:structure` 当前 175 项违规，与本任务开始前逐条一致，均非本任务产生：
+
+| 规则 | 数量 | 归属 |
+|---|---|---|
+| `top.dir` | 172 | `.omp/`（170）与 `.multica/`（2）平台自动元数据，属 MAYNE-18「修复平台元数据导致的开发门禁阻断」范围 |
+| `ref.missing` | 3 | `tests/**` 引用未构建的 `vendor/pi/.../dist/` 产物，需先准备 Pi 源码构建 |
+
+本任务曾引入 1 项 `ref.outside`（原型内相对链接指向 `docs/`）与根目录临时 JSON 文件，均已修复/移出。**不得把本机 175 项基线当作通过，也不得以「只跑了子集」替代完整门禁**；W0 集成须由集成负责人在实际集成版本串行重跑完整 `npm run check`。
+
+## 5. 未验证项
+
+- 生产 HTTP/SSE、SQLite 持久队列、真实取消/恢复状态机：未实现、未验。本项只交付界面语义与可交接材料。
+- 真实模型、真实凭据、真实工作根、Linux 部署与反向代理：未接触、未验。
+- 原生能力（系统通知、桌宠、托盘、快捷键、登录启动、安装包）：未实现、未验；演示仅标注「薄壳阶段提供/不可用」。
+- 接口字段名、错误码取值、并发与恢复规则的最终取值：待契约冻结，由队长对齐。
+- 演示中的合成状态与文案不构成对真实服务行为的证明。
+
+## 6. 结论
+
+设计与交接材料就绪：契约 + 可打开静态原型 + 17 组浏览器交互证据 + 守卫基线对照。**不宣称生产 HTTP/队列已实现，不代替阶段准入。** 独立评审（Claude）与 Codex 收口按项目 workflow 进行。
+
+## 7. 文件哈希（收口时冻结）
+
+| 文件 | SHA-256 |
+|---|---|
+| `docs/engineering/web-task-interaction.md` | `2cb2a0ec199253bbcea934f64dc4bb0283c655731d00a4af4a91ab2231720702` |
+| `design/web-task-flow/index.html` | `d8b98110cff86f8422af24502644a249413127e5bfca789a4b9440fa4fd7d72c` |
+| `design/web-task-flow/task-flow.css` | `889576dee661ecf7a2636e188a7cc25cf7109724551ccb872141ea43358bb6ec` |
+| `design/web-task-flow/task-flow.js` | `252d5617fd23fa564114e1de79f5f17f7f7f02299ec5d6167ef1df92f873a64c` |
+| `design/README.md` | `ec45181be707921a35d26a90f1e6c1404468be4f251cce5d668d8596d0c67174` |
+| `design/index.html` | `6c2e9aaedaa3afe170e5f9dd4498a4faeac081e06c0e368004493174907d3356` |
+
+未获 Git 授权，本项未 commit/push；工作树变更以 diff 形式待审。
+
+## 8. 复审修订（APPROVE_WITH_CHANGES → P1/P2 修复）
+
+ZCode 独立评审结论 `APPROVE_WITH_CHANGES`（2 项 P1 阻塞）。Codex 据此驳回归还，未合入 `main`。本修订只改演示代码与契约相应措辞，不动契约主结构，不扩大写入范围（仍限于 `design/web-task-flow/`、`docs/engineering/web-task-interaction.md`、本记录与既有索引登记）。
+
+### 8.1 P1-1 执行槽计数：占槽集合改为 `running + cancelling`
+
+- `counts()` 改为统计 `running` 与 `cancelling`，新增 `occupied`（占槽数）、`cancelling` 两个出口；`running` 仍是纯运行计数，不再当作占槽数使用。
+- 槽位条、`aria-label`（「执行槽占用 n/3：运行中 x，取消中 y（未确认退出不释放）」）、侧栏队列徽标、提交/重提闸门 `canStart` 与 `slot` 分配全部改用 `occupied`。
+- 任务行徽标对 `cancelling` 也显示「槽 n/3」；行 `aria-label` 追加「仍占执行槽」。
+- 种子数据改为自洽：T-2009（cancelling）占槽 1/3，T-2011、T-2012（running）占槽 2/3、3/3，T-2013/T-2014/T-2015 排队。初始占槽 3/3，运行中 2、取消中 1，无双占。
+- 取消运行中任务的提示文案改为「取消中仍占执行槽 n/3：未确认退出前不释放，也不显示已取消」，与同屏槽位条不再矛盾。
+- 契约 §2 `cancelling` 行、§3.1 结构说明、§3.2 信息表、§3.3 动作矩阵、§11 文案表同步。
+
+### 8.2 P1-2 恢复放行：保留待核对不解除风险
+
+- `reviewChoice()` 放行条件从「每项都有选择」改为「每项都不是保留待核对」：即每项均为已确认完成、标记失败，或用户明确重试/取消后转入的终态。
+- 只要存在保留待核对项：`recovery.active` 保持 `true`，`recovery.pending` 显示剩余项数；队列页暂停横幅保留（并带剩余项数）、提交仍被拒；待核对页横幅显示「恢复未放行（剩余 N 项保留待核对）」。
+- 放行仅在零保留待核对时触发，`recovery.pending` 归零，横幅切换为「核对已全部完成，恢复已放行」。
+- 契约 §7.2「保留待核对」条目、§7.3 第 5 步放行条件、§11 文案表同步。
+
+### 8.3 P3 项处置
+
+| 评审项 | 处置 |
+|---|---|
+| ≤760px 隐藏排队位置，与契约 §13 冲突 | 改为卡片内位置标签（同色块），不隐藏；契约 §13 补充说明 |
+| 并发调低说明分支不可达（死分支） | 随 P1-1 一并移除：占槽文案统一为「当前 N 个执行槽都被占用（运行中 x、取消中 y）」 |
+| ⌘K/Ctrl+K 被 `preventDefault()` 且自称不捕获 | 移除 `preventDefault`，仅 toast 说明由应用级入口处理；契约 §12 明确「不捕获」 |
+| 详情硬编码追加「旧事件：T-2011 running…」 | 改为按当前任务与状态生成（`旧事件：<taskId> <label>`），跨任务语境不再错误 |
+| 详情头重复 `</button></button>` | 已删除多余闭合标签 |
+| 面板内两处可改并发，与契约「入口在设置页、面板只读」不一致 | 删除面板内并发调节入口（工具栏与槽位条），改为只读当前值 + 「去设置页调整并发」链接；契约 §3.1 本来就是入口在设置页，本次对齐实现 |
+| 验证记录写 301 个链接，实际 302 | 已改为 302 |
+| 失败/待核对缺少 `role="alert"` | 任务行提示对 `needs_review`/`failed`/`interrupted` 加 `role="alert"`；恢复暂停横幅加 `role="alert"` |
+
+### 8.4 本修订的验证证据
+
+预览服务：`PORT=4188 node design/serve.mjs`（127.0.0.1，只读暴露 `/design/`、`/src/assets/`、`/src/styles/`），验证结束后已停止（`lsof -ti:4188` 无监听）。
+
+| 命令 | 退出码 | 结果 |
+|---|---|---|
+| `node --check design/web-task-flow/task-flow.js` | 0 | 语法通过 |
+| `node scripts/checks/check-docs.mjs` | 0 | 18 文件、302 个本地相对链接全部解析 |
+| `node scripts/checks/check-structure.mjs` | 1 | 175 项违规 = 172 项平台元数据 `top.dir`（`.omp/` 170、`.multica/` 2）+ 3 项既有 `ref.missing`（未构建 vendor/pi 产物）；与本任务开始前基线逐条一致，本项新增 0 |
+| Playwright/Chrome 交互复现（headless，127.0.0.1:4188，22 组检查） | 0 | 22/22 PASS，console/page 错误 0，外部请求 0（仅本地静态资源） |
+
+浏览器复现覆盖与关键观察值：初始占槽 3/3 = 运行中 2 + 取消中 1，槽位 aria「执行槽占用 3/3：运行中 2，取消中 1（未确认退出不释放）」，无槽位双占；`cancelling` 行徽标带「槽 1/3」且 aria 标注「仍占执行槽」；取消运行中后槽位条保持 3/3 且取消中计数 +1、行 note 明确「取消中仍占执行槽 2/3」；取消中窗口内提交 → 新任务排队（排队 +1、占槽仍 3/3、未领槽）、note 说明「3 个执行槽都被占用（运行中 1、取消中 2）」；三项全部「保留待核对」→ 队列页暂停横幅保留并显示剩余 3 项、提交被拒（toast「恢复未放行」）；三项改为已确认完成/标记失败后恢复放行、横幅消失、提交解禁；≤760px 排队位置以卡片内标签显示（第 1/2/3 位可见，390×844 无横向溢出）；⌘K/Ctrl+K 不再被 `preventDefault` 捕获（`defaultPrevented=false`）；详情旧事件按当前任务生成（T-2009 取消中）、详情头单一关闭按钮；失败/待核对提示带 `role="alert"`；面板内无并发调节入口、仅只读值 + 「去设置页调整并发」链接。
+
+### 8.5 本修订未改变的事项
+
+生产 `src/`、`DESIGN.md`、schema/migrations、`vendor/pi`、`resources/skills`、`package.json`、锁文件、identifier 均未触碰；真实凭据、真实工作根、部署未接触。契约的 14 节结构与权威映射未变，改动只在与两项 P1 直接相关的措辞与 §13/§11 的 P3 对齐上。
+
+### 8.6 修订后文件哈希（收口时冻结）
+
+修订前（`edc8022`，Codex 收口对象的内容身份）哈希见 §7。修订后哈希（本次修订后重算，收口请以本表为准）：
+
+| 文件 | SHA-256 |
+|---|---|
+| `docs/engineering/web-task-interaction.md` | `c72794f7a2e47bd0e27510cb9fedf413d577b3083fbd16b6968a05a81d777cba` |
+| `design/web-task-flow/index.html` | `5ca8e9c6c33036055ea3a2282e6857a032f0706b740265d245929b59cae95b43` |
+| `design/web-task-flow/task-flow.css` | `5455ed6cbe0ff603aaa2570a64982333a98fbcb03fb3629ffe8459c56410531e` |
+| `design/web-task-flow/task-flow.js` | `91cd1ad0add2a5676df7af9b053c683ad9c10ed4f1b71d4f21b48993e264df96` |
+| `design/README.md` | `ec45181be707921a35d26a90f1e6c1404468be4f251cce5d668d8596d0c67174` |
+| `design/index.html` | `6c2e9aaedaa3afe170e5f9dd4498a4faeac081e06c0e368004493174907d3356` |
+
+`design/README.md` 与 `design/index.html` 在本次修订中未改动（仅索引登记，哈希与修订前一致）。
+
+## 9. 第三轮复审修订（`60de6b6` → 新一轮：1 项 P1 + 3 项 P2）
+
+ZCode 第二轮独立复审结论仍为 `APPROVE_WITH_CHANGES`：上一轮两项 P1 的不变量确已关闭，但在同一不变量族与恢复闭环上发现 1 项新 P1 与 3 项 P2。Codex 据此再次驳回归还（未合入 `main`）。本修订只改演示代码与契约相应措辞，写入范围不变。
+
+### 9.1 P1-1 槽号分配：中间槽释放后不再双占
+
+- 新增 `nextFreeSlot()`：在 `1..agentConcurrency` 中取第一个未被 `running`+`cancelling` 占用的槽号；`submitTask` 与 `resubmit` 两处都由 `occupied + 1` 改为该函数。
+- 契约 §3.2 信息表新增「槽号分配」一行，写死该规则与「不使用占槽数 + 1」的原因。
+- 复现路径（ZCode 提供的场景）：恢复放行 → 取消运行中 T-2011（原槽 2）→ 转 `needs_review` 释放槽 2（槽 1 = T-2009 取消中、槽 3 = T-2012 运行中仍占）→ 提交新任务 → 新任务领槽 2/3，槽号集合 `{1,2,3}` 无重复；此前会与 T-2012 双占槽 3。
+
+### 9.2 P2-1「保留待核对」改为可改选
+
+- 核对卡按钮不再 `disabled`；`reviewChoice` 早退条件从「已有选择」改为「所选与当前相同」。
+- 从终态（已确认完成／标记失败／用户明确取消）改选时，任务回到 `needs_review`、note 说明「决议已改回待核对」，事件流记录改选前后；风险重新记为未解除，恢复保持暂停。
+- 契约 §7.2 把「保留待核对」明确为**暂缓而非终局**，并要求改选同样记录；§11 补充「保留待核对未解除」文案的语义说明。
+
+### 9.3 P2-2 取消转 `needs_review` 同步生成核对项
+
+- `cancelTask` 的 2.2s 转态定时器在置 `needs_review` 的同时，向 `state.reviewItems` 追加一条 `fromCancel` 核对项（问题、依据、四选项）。
+- 取消来源的核对项提供第四个选项「用户明确取消」：用户明确承担未知外部副作用风险、取消意图完成，任务转 `cancelled`；「已确认完成」同样收敛到 `cancelled`（确认进程树已退出且无未知副作用）。
+- 契约 §6 新增「执行槽的边界」段：占槽保留到 `cancelling`，转 `needs_review`/`cancelled` 即释放槽（`needs_review` 是隔离不执行的暂停态，不占槽；僵尸 worker 归实例级暂停调度）；并规定转 `needs_review` 必须同时给出可执行的核对入口。
+- 复现：取消 T-2011 → 转待核对 → 待核对页核对卡由 3 张增至 4 张，T-2011 卡可选「用户明确取消」→ 队列页 T-2011 行显示「已取消」+ note「用户明确承担未知外部副作用的风险，取消意图完成」。
+
+### 9.4 P2-3 恢复暂停期间「重新提交」被拦
+
+- `resubmit` 增加与 `submitTask` 相同的恢复闸门与文案（「恢复未放行：已暂停新任务提交。请先完成逐项核对。」），置于副作用未知守卫之前。
+- 契约 §7.3 第 1 步写明「新提交」包含重新提交等一切新建任务入口。
+
+### 9.5 P3 处置
+
+| 评审项 | 处置 |
+|---|---|
+| `recovery.pending` 过期（只在 park 分支更新） | 改为每次决议后按 `reviewItems` 现算：未选择数 + 保留待核对数；修掉了 `boolean + number` 的加法 bug |
+| 「去设置页调整并发」落点是能力页 | 按钮不再跳页，仅 toast 说明生产入口在设置页、本演示没有设置页，并保留契约 §3.1 的只读+链接语义 |
+| 契约 §6 未写转态时槽何时释放 | §6 新增「执行槽的边界」段（见 9.3） |
+| 放行横幅「保留待核对项不会自动重发」不可达 | 改为「每项都已确认完成、标记失败或由你明确重试/取消，没有遗留的待核对风险」 |
+| 取消转核对的 note 缺「是否已停止」半句 | 改为「无法确认进程树是否已停止、工具是否已产生外部结果」 |
+
+### 9.6 本轮验证证据
+
+预览服务：`PORT=4190 node design/serve.mjs`（127.0.0.1，只读暴露 `/design/`、`/src/assets/`、`/src/styles/`），验证结束后已停止（端口无监听）。
+
+| 命令 | 退出码 | 结果 |
+|---|---|---|
+| `node --check design/web-task-flow/task-flow.js` | 0 | 语法通过 |
+| `node scripts/checks/check-docs.mjs` | 0 | 18 文件、302 个本地相对链接全部解析 |
+| `node scripts/checks/check-structure.mjs` | 1 | 175 项 = 172 项平台元数据 `top.dir` + 3 项既有 `ref.missing`，与开工前基线一致，本项新增 0 |
+| Playwright/Chrome 交互复现（127.0.0.1:4190，17 组主检查 + 1 组取消决议路径） | 0 | 17/17 + 1/1 PASS，console/page 错误 0，外部请求 0 |
+
+覆盖的关键路径与观察值：中间槽释放后提交领到空闲槽 2/3 且槽号集合无重复（P1-1 复现场景）；取消运行中 → 2.2s 后转 `needs_review`，占槽由 3/3 降为 2/3、该行无槽位徽标；保留待核对按钮保持可用、可改选为已确认完成且恢复仍暂停、剩余项数实时为 2（不再显示过期 3）；park→改选→全部决议后恢复放行；取消来源核对卡生成（3 → 4 张）并提供「用户明确取消」，选择后任务行转「已取消」+ 相应 note；恢复暂停期间对失败任务点「重新提交」被拒且任务行数不变（11）；并发设置入口 toast 说明演示边界；390×844 排队位置可见、无横向溢出。
+
+### 9.7 本轮修订后文件哈希（收口时冻结）
+
+| 文件 | SHA-256 |
+|---|---|
+| `docs/engineering/web-task-interaction.md` | `3dca1f893f544a11785dc66658e85e8cde2827650e06071c8b42156613218db5` |
+| `design/web-task-flow/index.html` | `5ca8e9c6c33036055ea3a2282e6857a032f0706b740265d245929b59cae95b43` |
+| `design/web-task-flow/task-flow.css` | `5455ed6cbe0ff603aaa2570a64982333a98fbcb03fb3629ffe8459c56410531e` |
+| `design/web-task-flow/task-flow.js` | `d5b68f5d380c32afc28c5419c7739b296090d79376e08297a8d250bcd9eff223` |
+| `design/README.md` | `ec45181be707921a35d26a90f1e6c1404468be4f251cce5d668d8596d0c67174` |
+| `design/index.html` | `6c2e9aaedaa3afe170e5f9dd4498a4faeac081e06c0e368004493174907d3356` |
+
+`index.html`／`task-flow.css`／`design/README.md`／`design/index.html` 本轮未改动，哈希与 §8.6 一致。
+
+## 10. 第四轮复审修订（`2cb0001` → 新一轮：1 项 P1 + 4 项 P2）
+
+Codex 第三轮独立复审结论为 `APPROVE_WITH_CHANGES`：上一轮四条修复路径（领取空闲槽、暂缓项可改选、取消转核对新增可决议卡、恢复暂停期重新提交被拒）均已复现关闭，但在恢复闭环与键盘/模态动线上发现 1 项新 P1 与 4 项 P2。任务按 workflow 退回 `started_2`，由 Claude 接手修订。**Claude 本轮是本修订的实现者，后续独立复审须改派未参与者**（任务原指定的独立评审者 Claude 已不满足「未参与实现」要求）。本修订只改演示代码与契约相应措辞，写入范围不变。
+
+### 10.1 P1-1 撤销恢复决议后重新暂停
+
+- `reviewChoice()` 在每次决议后统一调用 `syncRecoveryPending()`，并据剩余项数重算暂停：剩余为 0 才放行；只要还有未选择或保留待核对的项，`recovery.active` 立即回到 `true`。
+- 放行后再把某项改选为「保留待核对」时，任务回 `needs_review`、横幅切「恢复未放行」、提交与重提闸门同步关闭；补上「放行后再次暂缓」的回归路径。
+- 新增核对项（取消转待核对）只实时计入剩余项数，不使已放行的恢复自动重新暂停；恢复暂停跟随用户对核对项的决议，与上一轮「恢复期重新提交被拦」的闸门语义一致。
+
+### 10.2 P2-1 终态之间改选按目标终态收敛
+
+- 删除「只要此前是终态就覆盖回 `needs_review`」的无条件分支；改为：改选为「保留待核对」才回 `needs_review`，改为另一终态（已确认完成／标记失败／用户明确取消）按目标状态收敛。
+- 契约 §7.2 同步澄清：改选同样记录；改回保留待核对才把风险重新记为未解除，改选另一终态按目标终态完成。放行判定看剩余项数，不只看选择文本。
+
+### 10.3 P2-2 剩余核对数量统一派生
+
+- 新增 `syncRecoveryPending()` 作为唯一计数来源（未选择 + 保留待核对）；`reviewChoice`、`cancelTask` 新增核对项与 `render()` 都调用它，删除 `parked.length` 覆盖总数的分支。
+- 覆盖混合未选与暂缓、新增核对项两条路径；队列横幅、待核对横幅与导航徽标都读同一数字。
+
+### 10.4 P2-3 行内按钮键盘行为与焦点保留
+
+- 行级 `Enter` 只在 `event.target === row`（行本身聚焦）时打开详情；行内按钮（取消／重新提交／逐项核对／详情）保持原生 Enter/Space 行为，不再被行级处理器劫持。
+- `render()` 记录重绘前的焦点归属（任务行或核对项按钮），重绘后恢复到对应任务行（或列表首行）／对应核对按钮，不再掉到 `BODY`。
+
+### 10.5 P2-4 详情进入核对先关模态再聚焦
+
+- `open-review` 先 `close()` 详情模态，再切到待核对页，并把焦点放到目标任务核对卡（卡片加 `data-task-id` 与 `tabindex="-1"`）。
+- 鼠标与键盘入口都直接继续决议，不再需要额外 Esc/关闭。
+
+### 10.6 本轮验证证据
+
+预览服务：`PORT=4221 node design/serve.mjs`（127.0.0.1，只读暴露 `/design/`、`/src/assets/`、`/src/styles/`），验证结束后已停止（端口无监听）。
+
+| 命令 | 退出码 | 结果 |
+|---|---|---|
+| `node --check design/web-task-flow/task-flow.js` | 0 | 语法通过 |
+| `npm run check:docs` | 0 | 18 文件、302 个本地相对链接全部解析 |
+| `node scripts/checks/check-structure.mjs`（HEAD 干净树 vs `85feb8a` 基线） | 1/1 | 输出逐字节相同：仅 3 项既有 `ref.missing`；本项新增 0 |
+| Playwright/Chrome 交互复现（127.0.0.1:4221，22 组检查） | 0 | 22/22 PASS，console/page 错误 0，外部请求 0 |
+
+原始证据：`build/mayne-21/`（`web-task-flow-verification.json`、`verify-task-flow.cjs`、`capture-task-flow.cjs`、5 张截图）。该目录已被 `.gitignore` 忽略，不随仓库提交。
+
+覆盖的关键路径与观察值：放行后改回保留待核对 → `active=true`、`pending=1`、任务 `needs_review`、横幅「恢复未放行」、提交与重提均被拒（任务数不变）；终态间改选（已确认完成→标记失败）→ 任务收敛 `failed`、`pending=0`、`active=false`；混合未选与暂缓 → `pending=3`；恢复期间取消运行中 → 新增第 4 张核对卡、`pending=4`；放行后取消运行中 → 新卡计入 `pending=1` 但 `active=false`、提交仍可用并领到空闲槽 2/3（槽号集合无重复）；聚焦行内「取消」按 Enter → 任务直接取消、不打开详情、焦点留在行；按 Space → 取消且焦点回到任务行；行本身聚焦按 Enter → 打开详情、Esc 关闭后焦点回行；详情内「逐项核对」→ 模态关闭、页面切到待核对、焦点落在目标核对卡；390×844 无横向溢出、排队位置可见。
+
+### 10.7 本轮修订后文件哈希（收口时冻结）
+
+| 文件 | SHA-256 |
+|---|---|
+| `docs/engineering/web-task-interaction.md` | `9905e20495d2d236625655628a198aa21ef52e93a9b957bae843972d5dad5d6c` |
+| `design/web-task-flow/index.html` | `5ca8e9c6c33036055ea3a2282e6857a032f0706b740265d245929b59cae95b43` |
+| `design/web-task-flow/task-flow.css` | `5455ed6cbe0ff603aaa2570a64982333a98fbcb03fb3629ffe8459c56410531e` |
+| `design/web-task-flow/task-flow.js` | `fb1da657c72d0eb7a83d896a84ed324d573dfeae9ddb0c6b827e219ab9a58ae3` |
+| `design/README.md` | `ec45181be707921a35d26a90f1e6c1404468be4f251cce5d668d8596d0c67174` |
+| `design/index.html` | `6c2e9aaedaa3afe170e5f9dd4498a4faeac081e06c0e368004493174907d3356` |
+
+`index.html`／`task-flow.css`／`design/README.md`／`design/index.html` 本轮未改动，哈希与 §8.6 一致；本记录自身是本轮新增证据，不在冻结表内。
+
+## 11. 第五轮复审修订（`e764e0a` → 新一轮：2 项 P2）
+
+Codex 第四轮独立复审结论为 `APPROVE_WITH_CHANGES`：上一轮 1 项 P1、4 项 P2 的聚焦路径均已复现修复，本轮仍发现 2 项 P2，不能合入。任务按 workflow 再次退回 `started_2`，由 Claude 继续修订。本修订只改演示代码与契约相应措辞，写入范围不变。
+
+### 11.1 P2-1 核对按钮重绘后按「项 + option」恢复焦点
+
+- 根因：上一轮的焦点恢复只保存核对项 `index`，重绘后查询该项的第一个按钮，丢失了原按钮的 `data-option`，焦点落到「已确认完成」而非用户刚按下的「保留待核对」。
+- 修复：`render()` 同时记录 `data-index` 与 `data-option`，重绘后按两者定位原按钮；找不到才回退到该项第一个按钮。
+- 契约 §12 补充：逐项核对按钮重绘后按核对项与具体选项回到原按钮，不得默认聚焦该项第一个按钮。
+- 复现保护：聚焦「保留待核对」按一次 Enter 后选择正确、焦点仍在同一按钮；按住 Enter 产生原生重复事件时，第二次触发命中同一 option 的早退分支，选择不变、恢复保持暂停。
+
+### 11.2 P2-2 详情弹窗跟随任务权威状态
+
+- 根因：`render()` 只更新 `#view`，已打开的 `#task-dialog` 保留 `openDetail()` 打开时的内容；从详情发起取消后，弹窗继续显示过期的 `running` 快照与「取消」按钮。
+- 修复：新增 `detailId` 与 `renderDetail(id)`；`render()` 在详情打开时按当前权威状态重绘弹窗，并同步更新动作（`running`→`cancelling` 只读、→`needs_review` 给出「逐项核对」）。详情内焦点优先回到原动作按钮，否则回到第一个动作按钮，不跳到别的决定上。
+- 契约 §3.3 补充：详情与列表同权，打开的详情必须跟随权威状态重绘，不保留过期快照；从详情发起取消后同步显示 `cancelling`→`needs_review` 与对应动作。
+
+### 11.3 本轮验证证据
+
+预览服务：`PORT=4231 node design/serve.mjs`（127.0.0.1，只读暴露 `/design/`、`/src/assets/`、`/src/styles/`），验证结束后已停止（端口无监听）。
+
+| 命令 | 退出码 | 结果 |
+|---|---|---|
+| `node --check design/web-task-flow/task-flow.js` | 0 | 语法通过 |
+| `npm run check:docs` | 0 | 18 文件、302 个本地相对链接全部解析 |
+| `node scripts/checks/check-structure.mjs`（工作树跟踪文件 vs `85feb8a` 基线） | 1/1 | 输出逐字节相同：仅 3 项既有 `ref.missing`；本项新增 0 |
+| Playwright/Chrome 交互复现（127.0.0.1:4231，18 组检查） | 0 | 18/18 PASS，console/page 错误 0，外部请求 0 |
+
+原始证据：`build/mayne-21/`（`web-task-flow-verification.json`、`verify-task-flow.cjs`、`capture-task-flow.cjs`、2 张截图）。该目录已被 `.gitignore` 忽略，不随仓库提交。
+
+覆盖的关键路径与观察值：先确认第二、三项后聚焦 T-2003「保留待核对」按 Enter → 选择 `保留待核对`、`active=true`、`pending=1`、焦点仍在「保留待核对」；紧接着一次重复 Enter → 选择不变、`active=true`（不再被误改为「已确认完成」）；打开运行中 T-2011 详情 → 显示「运行中」与「取消」；在详情点「取消」→ 弹窗同步为「取消中」且取消按钮消失；约 2.2s 后 → 弹窗同步为「待核对」并出现「逐项核对」入口；上一轮的恢复重新暂停、终态互改、混合计数、新增核对项计数、空闲槽复用、行内 Enter/Space、详情鼠标/键盘导航、重复提交、390×844 窄屏均复验通过。
+
+### 11.4 本轮修订后文件哈希（收口时冻结）
+
+| 文件 | SHA-256 |
+|---|---|
+| `docs/engineering/web-task-interaction.md` | `a944acc4fa7e0c3c0b9c384e1aa6fc46926a91877ae064f9bb46c7e0ccb9aa0c` |
+| `design/web-task-flow/index.html` | `5ca8e9c6c33036055ea3a2282e6857a032f0706b740265d245929b59cae95b43` |
+| `design/web-task-flow/task-flow.css` | `5455ed6cbe0ff603aaa2570a64982333a98fbcb03fb3629ffe8459c56410531e` |
+| `design/web-task-flow/task-flow.js` | `9e4627fa2fc977b7186cceabe6dc34850b9558dd6f79d34cb6ad2e4696f9d2a3` |
+| `design/README.md` | `ec45181be707921a35d26a90f1e6c1404468be4f251cce5d668d8596d0c67174` |
+| `design/index.html` | `6c2e9aaedaa3afe170e5f9dd4498a4faeac081e06c0e368004493174907d3356` |
+
+`index.html`／`task-flow.css`／`design/README.md`／`design/index.html` 本轮未改动，哈希与 §8.6 一致；本记录自身是本轮新增证据，不在冻结表内。
