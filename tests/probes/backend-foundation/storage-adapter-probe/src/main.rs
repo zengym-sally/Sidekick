@@ -137,6 +137,7 @@ fn open_check(args: &[String]) -> Value {
         Some("replace-wal") => Fault::ReplaceWal,
         Some("replace-shm") => Fault::ReplaceShm,
         Some("degrade-runs") => Fault::DegradeRuns,
+        Some("degrade-marker") => Fault::DegradeMarker,
         _ => Fault::None,
     };
     let outcome = (|| -> std::result::Result<Value, Error> {
@@ -365,14 +366,55 @@ fn hold(args: &[String]) -> Value {
     exit(0);
 }
 
+/// Identity/version of the worker record file at the moment it was read. It is
+/// compared again before the admission decision is published, so a record that
+/// changed after the read (replacement, permission change, in-place edit) can
+/// never be used to grant admission.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+struct RecordIdentity {
+    dev: u64,
+    ino: u64,
+    mode: u32,
+    nlink: u64,
+    mtime_sec: i64,
+    mtime_nsec: i64,
+    size: u64,
+}
+
+impl RecordIdentity {
+    fn from_metadata(metadata: &fs::Metadata) -> Option<Self> {
+        Some(Self {
+            dev: metadata.dev(),
+            ino: metadata.ino(),
+            mode: metadata.mode() & 0o7777,
+            nlink: metadata.nlink(),
+            mtime_sec: metadata.mtime(),
+            mtime_nsec: metadata.mtime_nsec(),
+            size: metadata.size(),
+        })
+    }
+}
+
+/// The record path plus the identity captured when it was read.
+struct RecordSnapshot {
+    path: PathBuf,
+    identity: RecordIdentity,
+}
+
 /// Outcome of reading the recorded worker file. A missing record means "no
 /// history"; a record that exists but cannot be verified (unreadable, corrupt,
 /// or wrong identity/permissions) must pause scheduling — the design requires
 /// "unverifiable ⇒ pause", not "unverifiable ⇒ assume stopped".
 enum WorkerRecord {
     Absent,
-    Verified { pid: i64 },
-    Unverified { reason: String },
+    Verified {
+        pid: i64,
+        snapshot: RecordSnapshot,
+    },
+    Unverified {
+        reason: String,
+        snapshot: Option<RecordSnapshot>,
+    },
 }
 
 fn read_worker_record(path: &Path) -> WorkerRecord {
@@ -382,41 +424,103 @@ fn read_worker_record(path: &Path) -> WorkerRecord {
         Err(error) => {
             return WorkerRecord::Unverified {
                 reason: format!("记录读取失败：{error}"),
+                snapshot: None,
             }
         }
     };
-    if !metadata.is_file()
-        || metadata.file_type().is_symlink()
-        || metadata.nlink() != 1
-        || metadata.mode() & 0o7777 != 0o600
-    {
-        return WorkerRecord::Unverified {
-            reason: "记录文件身份不符：必须是单一硬链、权限 0600 的普通文件，不能是符号链接。"
-                .into(),
-        };
-    }
-    let text = match fs::read_to_string(path) {
-        Ok(text) => text,
+    let identity = match RecordIdentity::from_metadata(&metadata) {
+        Some(identity) if identity.nlink == 1 && identity.mode == 0o600 => identity,
+        _ => {
+            return WorkerRecord::Unverified {
+                reason: "记录文件身份不符：必须是单一硬链、权限 0600 的普通文件，不能是符号链接。"
+                    .into(),
+                snapshot: None,
+            }
+        }
+    };
+    // Controlled open: read through a handle whose identity is checked against
+    // the lstat result, so a replacement between lstat and open is caught.
+    let mut handle = match OpenOptions::new().read(true).open(path) {
+        Ok(handle) => handle,
         Err(error) => {
             return WorkerRecord::Unverified {
-                reason: format!("记录读取失败：{error}"),
+                reason: format!("记录打开失败：{error}"),
+                snapshot: None,
             }
         }
     };
+    let opened = match handle.metadata() {
+        Ok(metadata) => metadata,
+        Err(error) => {
+            return WorkerRecord::Unverified {
+                reason: format!("记录句柄核对失败：{error}"),
+                snapshot: None,
+            }
+        }
+    };
+    if RecordIdentity::from_metadata(&opened) != Some(identity) {
+        return WorkerRecord::Unverified {
+            reason: "记录在读取期间被替换。".into(),
+            snapshot: None,
+        };
+    }
+    let snapshot = RecordSnapshot {
+        path: path.to_path_buf(),
+        identity,
+    };
+    let mut text = String::new();
+    if let Err(error) = handle.read_to_string(&mut text) {
+        return WorkerRecord::Unverified {
+            reason: format!("记录读取失败：{error}"),
+            snapshot: Some(snapshot),
+        };
+    }
     let parsed: Value = match serde_json::from_str(&text) {
         Ok(parsed) => parsed,
         Err(error) => {
             return WorkerRecord::Unverified {
                 reason: format!("记录不是合法 JSON：{error}"),
+                snapshot: Some(snapshot),
             }
         }
     };
     match parsed.get("pid").and_then(Value::as_i64) {
-        Some(pid) if pid > 0 => WorkerRecord::Verified { pid },
+        Some(pid) if pid > 0 => WorkerRecord::Verified { pid, snapshot },
         _ => WorkerRecord::Unverified {
             reason: "记录缺少有效的 pid 字段。".into(),
+            snapshot: Some(snapshot),
         },
     }
+}
+
+/// Re-verify the record's identity/version immediately before publishing the
+/// admission decision. A record that changed since it was read pauses
+/// scheduling instead of relying on the stale observation.
+fn recheck_worker_record(record: &WorkerRecord) -> Option<String> {
+    let snapshot = match record {
+        WorkerRecord::Verified { snapshot, .. } => snapshot,
+        WorkerRecord::Unverified {
+            snapshot: Some(snapshot),
+            ..
+        } => snapshot,
+        WorkerRecord::Absent | WorkerRecord::Unverified { snapshot: None, .. } => return None,
+    };
+    let metadata = fs::symlink_metadata(&snapshot.path).ok()?;
+    let current = RecordIdentity::from_metadata(&metadata)?;
+    if current != snapshot.identity {
+        return Some(format!(
+            "记录在准入前被替换或版本变化（读取时 mode={:04o} ino={} mtime={}.{:09}，当前 mode={:04o} ino={} mtime={}.{:09}）。",
+            snapshot.identity.mode,
+            snapshot.identity.ino,
+            snapshot.identity.mtime_sec,
+            snapshot.identity.mtime_nsec,
+            current.mode,
+            current.ino,
+            current.mtime_sec,
+            current.mtime_nsec,
+        ));
+    }
+    None
 }
 
 /// Result of asking the OS whether the recorded PID is still alive. Only an
@@ -482,15 +586,17 @@ enum WorkerStatus {
     Unverified { reason: String },
 }
 
-fn classify_worker(path: &Path) -> WorkerStatus {
-    match read_worker_record(path) {
+fn classify_record(record: &WorkerRecord) -> WorkerStatus {
+    match record {
         WorkerRecord::Absent => WorkerStatus::Absent,
-        WorkerRecord::Verified { pid } => match probe_worker(pid) {
-            WorkerLiveness::Alive => WorkerStatus::Alive { pid },
-            WorkerLiveness::Exited => WorkerStatus::Exited { pid },
+        WorkerRecord::Verified { pid, .. } => match probe_worker(*pid) {
+            WorkerLiveness::Alive => WorkerStatus::Alive { pid: *pid },
+            WorkerLiveness::Exited => WorkerStatus::Exited { pid: *pid },
             WorkerLiveness::Unverified(reason) => WorkerStatus::Unverified { reason },
         },
-        WorkerRecord::Unverified { reason } => WorkerStatus::Unverified { reason },
+        WorkerRecord::Unverified { reason, .. } => WorkerStatus::Unverified {
+            reason: reason.clone(),
+        },
     }
 }
 
@@ -503,15 +609,15 @@ fn worker_json(status: &WorkerStatus) -> Value {
     }
 }
 
-/// Scheduler-side admission. The root is opened through the same full
-/// existing-root adapter entry as every other consumer: marker/MAGIC, required
-/// directory identities and database identity/permissions are all verified, and
-/// the root lock is held for the decision. Nothing is created. The recorded
-/// worker PID is then checked; only a confirmed-exited worker may schedule.
+/// Scheduler-side admission. The full existing-root adapter and its lock are
+/// acquired FIRST, so the worker record cannot be replaced by another
+/// adapter-respecting writer between the check and the decision. The record is
+/// then read through a controlled handle, its PID probed, and its
+/// identity/version re-checked immediately before the decision is published.
+/// Only a confirmed-exited worker may schedule.
 fn try_schedule(args: &[String]) -> Value {
     let root = root_arg(args);
-    let status = classify_worker(&root.join("runs/worker.json"));
-    let worker = worker_json(&status);
+    let worker_path = root.join("runs/worker.json");
     let reject = |code: &str, note: &str, worker: Value| {
         json!({
             "command": "try-schedule",
@@ -526,6 +632,9 @@ fn try_schedule(args: &[String]) -> Value {
     let adapter = match StorageAdapter::open(&root, false, Fault::None) {
         Ok(adapter) => adapter,
         Err(error) if error.code == Code::RootInUse => {
+            // Diagnostic only: the decision is REJECT whatever the record says.
+            let record = read_worker_record(&worker_path);
+            let worker = worker_json(&classify_record(&record));
             return reject(
                 "ROOT_IN_USE",
                 "根锁被占用：旧 worker 未退或旧实例仍在，暂停调度。",
@@ -539,6 +648,14 @@ fn try_schedule(args: &[String]) -> Value {
             return value;
         }
     };
+    // The lock is held: read and verify the current record.
+    let record = read_worker_record(&worker_path);
+    let mut status = classify_record(&record);
+    // Re-check before publishing: a record that changed since the read pauses.
+    if let Some(reason) = recheck_worker_record(&record) {
+        status = WorkerStatus::Unverified { reason };
+    }
+    let worker = worker_json(&status);
     match status {
         WorkerStatus::Unverified { reason } => {
             drop(adapter);

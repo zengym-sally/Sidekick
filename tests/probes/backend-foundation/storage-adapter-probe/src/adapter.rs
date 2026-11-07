@@ -112,6 +112,8 @@ pub enum Fault {
     ReplaceShm,
     /// Degrade a required directory's permissions after the connection is live.
     DegradeRuns,
+    /// Degrade the root marker's permissions after the connection is live.
+    DegradeMarker,
 }
 
 impl Fault {
@@ -123,6 +125,7 @@ impl Fault {
             Fault::ReplaceWal => "replace-wal",
             Fault::ReplaceShm => "replace-shm",
             Fault::DegradeRuns => "degrade-runs",
+            Fault::DegradeMarker => "degrade-marker",
         }
     }
 }
@@ -417,6 +420,10 @@ impl StorageAdapter {
                     .open(&marker)
                     .map_err(io_error)?;
             }
+            Fault::DegradeMarker => {
+                fs::set_permissions(&marker, fs::Permissions::from_mode(0o644))
+                    .map_err(io_error)?;
+            }
             Fault::ReplaceWal | Fault::ReplaceShm | Fault::DegradeRuns => {
                 // Materialize the WAL/SHM side files first so the mutation
                 // targets files the adapter already holds, then degrade them
@@ -524,16 +531,10 @@ impl StorageAdapter {
                 same_directory(&self.root.join(name), handle, true)?;
             }
             let marker = self.root.join(ROOT_MARKER);
-            let held = self.lock.metadata().map_err(|_| path_changed())?;
-            let current = fs::symlink_metadata(&marker).map_err(|_| path_changed())?;
-            if !current.is_file()
-                || current.file_type().is_symlink()
-                || current.nlink() != 1
-                || current.dev() != held.dev()
-                || current.ino() != held.ino()
-            {
-                return Err(path_changed());
-            }
+            // Reuse the private-file check: the marker must stay a single-link,
+            // 0600 regular file bound to the held handle. A permission change
+            // after open must stop storage just like an identity change.
+            same_private_file(&marker, &self.lock)?;
             let database = self.root.join("data/sidekick.sqlite");
             same_private_file(&database, &self.database_handle)?;
             for name in ["sidekick.sqlite-wal", "sidekick.sqlite-shm"] {
@@ -734,5 +735,52 @@ mod close_order_tests {
             !released,
             "root lock already available inside SQLite CLOSE callback"
         );
+    }
+}
+
+/// Privacy regression: the root marker must stay 0600 for the whole adapter
+/// lifetime. A permission change after open must stop storage on first use and
+/// keep it stopped afterwards.
+#[cfg(test)]
+mod marker_privacy_tests {
+    use super::*;
+
+    #[test]
+    fn marker_privacy_change_must_stop_storage() {
+        let unique = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let root = std::env::temp_dir().join(format!(
+            "sidekick-probe-marker-privacy-{}-{unique}",
+            std::process::id()
+        ));
+        fs::DirBuilder::new().mode(0o700).create(&root).unwrap();
+        let root = fs::canonicalize(&root).unwrap();
+        let adapter = StorageAdapter::open(&root, true, Fault::None).unwrap();
+        assert_eq!(adapter.count("probe_items").unwrap(), 0);
+        fs::set_permissions(root.join(ROOT_MARKER), fs::Permissions::from_mode(0o644)).unwrap();
+        let observed = adapter.count("probe_items");
+        assert!(
+            matches!(
+                observed,
+                Err(Error {
+                    code: Code::PathChanged,
+                    ..
+                })
+            ),
+            "first use after marker mode change must fail with PATH_CHANGED, got {observed:?}"
+        );
+        assert!(
+            matches!(
+                adapter.count("probe_items"),
+                Err(Error {
+                    code: Code::StorageStopped,
+                    ..
+                })
+            ),
+            "second use must stay STORAGE_STOPPED"
+        );
+        let _ = fs::remove_dir_all(&root);
     }
 }

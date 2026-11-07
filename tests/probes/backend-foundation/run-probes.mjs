@@ -556,6 +556,7 @@ async function main() {
     ['replace-wal', '打开并写入后 -wal 被换成符号链接'],
     ['replace-shm', '打开并写入后 -shm 被换成额外硬链'],
     ['degrade-runs', '打开后 runs/ 权限被降为 0755'],
+    ['degrade-marker', '打开后归属标记权限被降为 0644'],
   ];
   for (const [fault, label] of sideFaultCases) {
     const root = seed(`b-fault-${fault}`);
@@ -730,6 +731,77 @@ async function main() {
           check(`code=${expect}`, schedule.json?.code === expect, `code=${schedule.json?.code}`),
           treeUnchanged(root, before),
         ],
+      );
+    }
+  }
+  // ---- D6. worker record admission race ------------------------------------
+  {
+    // Synthetic probe-time writer: it first tries to take the root lock (to
+    // prove the probe runs under it), then mutates the record WITHOUT the lock
+    // (a non-lock-respecting writer) and reports the probe as "no such process".
+    const raceHook = writeFixture(
+      'worker-race-probe.py',
+      [
+        '#!/usr/bin/env python3',
+        'import fcntl, json, os, sys',
+        'from pathlib import Path',
+        'root = Path(os.environ["SIDEKICK_RACE_ROOT"])',
+        'action = os.environ.get("SIDEKICK_RACE_ACTION", "unchanged")',
+        'marker = (root / ".sidekick-workspace").open("r+")',
+        'available = True',
+        'try:',
+        '    fcntl.flock(marker, fcntl.LOCK_EX | fcntl.LOCK_NB)',
+        'except BlockingIOError:',
+        '    available = False',
+        'marker.close()',
+        'if action == "replace":',
+        '    tmp = root / "runs" / ".worker-next.json"',
+        '    tmp.write_text(json.dumps({"pid": int(os.environ["SIDEKICK_RACE_LIVE_PID"]), "startedAtMs": 1}))',
+        '    tmp.chmod(0o600)',
+        '    tmp.replace(root / "runs" / "worker.json")',
+        'elif action == "chmod":',
+        '    (root / "runs" / "worker.json").chmod(0o644)',
+        '(root / "race-observation.json").write_text(json.dumps({"rootLockAvailableDuringProbe": available, "action": action}))',
+        'print("kill: No such process", file=sys.stderr)',
+        'sys.exit(1)',
+        '',
+      ].join('\n'),
+    );
+    const raceCases = [
+      ['d-race-unchanged', 'unchanged', 'ACCEPT', null, '探测期间记录不变'],
+      ['d-race-replace', 'replace', 'REJECT', 'WORKER_UNVERIFIED', '探测期间记录被原子替换为存活 PID'],
+      ['d-race-chmod', 'chmod', 'REJECT', 'WORKER_UNVERIFIED', '探测期间记录权限被降为 0644'],
+    ];
+    for (const [name, action, decision, code, label] of raceCases) {
+      const root = seed(name);
+      const dead = spawnSync('true');
+      const recordPath = path.join(root, 'runs', 'worker.json');
+      writeFileSync(recordPath, JSON.stringify({ pid: dead.pid, startedAtMs: 1 }));
+      chmodSync(recordPath, 0o600);
+      const schedule = run(['try-schedule', '--root', root], {
+        env: {
+          SIDEKICK_PROBE_KILL: raceHook,
+          SIDEKICK_RACE_ROOT: root,
+          SIDEKICK_RACE_ACTION: action,
+          SIDEKICK_RACE_LIVE_PID: String(process.pid),
+        },
+      });
+      const observation = JSON.parse(readFileSync(path.join(root, 'race-observation.json'), 'utf8'));
+      const checks = [
+        check('exit0', schedule.status === 0, `status=${schedule.status}`),
+        check(`decision=${decision}`, schedule.json?.decision === decision, `decision=${schedule.json?.decision}`),
+        check(
+          'root lock held during probe',
+          observation.rootLockAvailableDuringProbe === false,
+          `available=${observation.rootLockAvailableDuringProbe}`,
+        ),
+      ];
+      if (code) checks.push(check(`code=${code}`, schedule.json?.code === code, `code=${schedule.json?.code}`));
+      record(
+        `D6 worker 记录准入竞争：${label}`,
+        `探测期间记录${label}：探测在根锁保护下进行（available=false），变化即暂停`,
+        [schedule],
+        () => checks,
       );
     }
   }
