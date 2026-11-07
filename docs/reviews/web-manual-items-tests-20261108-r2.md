@@ -22,7 +22,7 @@
 | `tests/integration/web-manual-items-http.test.mjs` | `fc2ce9287bc5ae70` | 18 例（+1 limit 专例）；F-1 修订；`pairingCode` 字面；effective-config 证据 |
 | `tests/integration/web-manual-items-restart.test.mjs` | `2f88a2d473499848` | 2 例；effective-config 证据；头注同步 |
 | `tests/integration/web-manual-items-static.test.mjs` | `c66e8a4d61da772d` | 6 例；F-2/F-3 修订；design 拒绝走夹具；证据扩充 |
-| `tests/fixtures/web-manual-items/backend-process.mjs` | `63b9a26a073ae046` | 字面名常量、失败清理、design 拒绝、effective-config/writeEvidence |
+| `tests/fixtures/web-manual-items/backend-process.mjs` | `224a0b6b57e851c9` | 字面名常量、失败清理、design 拒绝、effective-config/writeEvidence |
 | `tests/fixtures/web-manual-items/browser-probe.mjs` | `57a0fdd65f4bede6` | 新增：CDP 驱动 + 页面内探针 + 共享冷启动断言 |
 | `tests/fixtures/web-manual-items/{backend-child,db-observer,sse-listener,static-root}.mjs` | 未变（`3e7f5ef7…`/`7f2c0428…`/`0ec66505…`/`9b4c4d3e…`） | — |
 
