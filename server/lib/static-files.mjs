@@ -82,5 +82,7 @@ export function serveStatic(req, res, { staticRoot }) {
     res.end();
     return;
   }
-  createReadStream(file).pipe(res);
+  const stream = createReadStream(file);
+  stream.on('error', () => res.destroy());
+  stream.pipe(res);
 }

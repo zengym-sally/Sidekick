@@ -520,7 +520,7 @@ fn validate_read(sql: &str) -> PResult<()> {
     reject_multiple_statements(&masked)?;
     let upper = masked.to_uppercase();
     let first = first_keyword(&upper).ok_or_else(|| p("WEB_BACKEND_SQL_DENIED", "空语句。"))?;
-    if first != "SELECT" && first != "WITH" {
+    if first != "SELECT" {
         return Err(p("WEB_BACKEND_SQL_DENIED", "query 仅接受只读 SELECT。"));
     }
     for keyword in FORBIDDEN_READ_KEYWORDS {

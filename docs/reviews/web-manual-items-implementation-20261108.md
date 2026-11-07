@@ -21,10 +21,10 @@
 | `server/lib/manual-items-service.mjs` | `fb1d28c51aad72993db007443b7ddc83659b7b73fa3fef6afd5c14c2e2a24323` |
 | `server/lib/session-store.mjs` | `9823db95128835c84f77a35eea68f9fbd63173f9f18156fc8c8f94059609fc1e` |
 | `server/lib/sse-hub.mjs` | `174507c6ce2e36016013546473cdc19b6678799ca38e33bb06f2092840006ade` |
-| `server/lib/static-files.mjs` | `bce61fd4821025b4f3bb0abde3902613fbb7680879628c2ec79a5d43a9439c6c` |
+| `server/lib/static-files.mjs` | `3c07b73eb6be8af6ee903b257d49178735c3f59a6dffb2437a84ee63975251ac` |
 | `server/lib/storage-client.mjs` | `c721fc110b1fc96269dea96b1065ada098383fa07d43ce5ac916a3120410bcbe` |
 | `src-tauri/migrations/web-backend/002_manual_items.sql` | `b6cb8e61609f83454164bff6c5628b2c893122b8dbb9bb3ced41bcd3d9e2f97e` |
-| `src-tauri/src/store/web_backend_store.rs` | `b502f717fd391c0cb3fc1229f893dd8f7d1a2ea2b8a63ab6c0c5b59bb24af846` |
+| `src-tauri/src/store/web_backend_store.rs` | `5041d337285f6365de5893741aa36662b56c8188cea310f8c991b89898382542` |
 | `src-tauri/src/bin/web-backend-storage.rs` | `71b83d7a240f50c294db3cbdbc312eaa50af8d8cb2e12a3fa7dd268994f40d0a` |
 | `src/lib/web-api-client.ts` | `678b118e71dd7bcce6efd359cb903b2e733e1f1fb6d71e11e5033884836175f5` |
 | `src/stores/pairing.ts` | `dfb824a9916e4cc8d7a2f89865d0e85e93a11569e96a34dc76d40844354cbddc` |
