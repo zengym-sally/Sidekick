@@ -70,6 +70,13 @@ function nextFreeSlot() {
   for (let n = 1; n <= state.concurrency; n += 1) if (!taken.has(n)) return n;
   return null;
 }
+// 剩余项数实时由 reviewItems 现算：未选择 + 保留待核对。改选、新增核对项（取消转待核对）与渲染都走这里，不缓存过期数字。
+function syncRecoveryPending() {
+  const parked = state.reviewItems.filter((entry) => entry.choice === "保留待核对").length;
+  const undecided = state.reviewItems.filter((entry) => !entry.choice).length;
+  state.recovery.pending = parked + undecided;
+  return state.recovery.pending;
+}
 
 function toast(message) {
   const el = $("#toast"); el.textContent = message; el.hidden = false;
@@ -126,7 +133,7 @@ function renderQueue() {
   $("#conn-dot").className = `status-dot ${connClass}`;
   $("#conn-label").textContent = connText;
   const recoveryBanner = state.recovery.active
-    ? `<div class="banner warn" role="alert">${icon("warn")}<div><strong>正在从备份恢复（${escapeHtml(state.recovery.backupAt)}）。</strong>已暂停新任务提交、定时收集与提醒投递。恢复点之后发生的外部操作可能已执行：快照里的排队任务全部隔离为待核对，核对前不重新执行、不自动重发。<br><span class="small-note">无法核实时由你逐项选择重试或取消；每项都确认完成、标记失败或明确重试/取消后才恢复普通调度。剩余 ${state.recovery.pending} 项保留待核对。</span></div><button class="button small ghost" data-action="go-review">去逐项核对</button></div>`
+    ? `<div class="banner warn" role="alert">${icon("warn")}<div><strong>正在从备份恢复（${escapeHtml(state.recovery.backupAt)}）。</strong>已暂停新任务提交、定时收集与提醒投递。恢复点之后发生的外部操作可能已执行：快照里的排队任务全部隔离为待核对，核对前不重新执行、不自动重发。<br><span class="small-note">无法核实时由你逐项选择重试或取消；每项都确认完成、标记失败或明确重试/取消后才恢复普通调度。剩余 ${state.recovery.pending} 项未决（未选择或保留待核对）。</span></div><button class="button small ghost" data-action="go-review">去逐项核对</button></div>`
     : "";
   return `<div class="page-intro"><h1>老板，任务都排着队呢。</h1><p>默认 ${state.concurrency} 个智能体并发，多余任务持久排队。关闭页面不取消任务，刷新后位置、取消意图与待核对项原样重现。</p></div>
   ${recoveryBanner}
@@ -149,13 +156,13 @@ function renderQueue() {
 function renderReview() {
   const pending = state.tasks.filter((t) => t.state === "needs_review");
   return `<div class="page-intro"><h1>这些要你核对，班班不替你决定。</h1><p>外部副作用结果不明，或恢复后无法证明执行历史连续。核对前不重新执行，也不自动重发。</p></div>
-  ${state.recovery.active ? `<div class="banner info">${icon("warn")}<div><strong>恢复未放行（剩余 ${state.recovery.pending} 项保留待核对）。</strong>定时收集、提醒与补偿投递保持暂停；普通调度保持暂停，直到每项都已确认完成、标记失败或你明确重试/取消。保留待核对只是暂缓：拿到回执后可随时改选，不会把这项永久搁置。</div></div>` : `<div class="banner info">${icon("check")}<div><strong>核对已全部完成，恢复已放行。</strong>定时收集、提醒与补偿投递恢复；普通调度继续。每项都已确认完成、标记失败或由你明确重试/取消，没有遗留的待核对风险。</div></div>`}
+  ${state.recovery.active ? `<div class="banner info">${icon("warn")}<div><strong>恢复未放行（剩余 ${state.recovery.pending} 项未决：未选择或保留待核对）。</strong>定时收集、提醒与补偿投递保持暂停；普通调度保持暂停，直到每项都已确认完成、标记失败或你明确重试/取消。保留待核对只是暂缓：拿到回执后可随时改选，不会把这项永久搁置。</div></div>` : state.recovery.pending > 0 ? `<div class="banner info">${icon("check")}<div><strong>恢复流程已放行。</strong>定时收集、提醒与补偿投递恢复；普通调度继续。仍有 ${state.recovery.pending} 项未决（未选择或保留待核对）待处理。</div></div>` : `<div class="banner info">${icon("check")}<div><strong>核对已全部完成，恢复已放行。</strong>定时收集、提醒与补偿投递恢复；普通调度继续。每项都已确认完成、标记失败或由你明确重试/取消，没有遗留的待核对风险。</div></div>`}
   <div class="section-heading"><h2>待核对任务</h2><span class="count">${pending.length} 条</span></div>
   ${pending.length ? `<ul class="task-list">${pending.map(taskRow).join("")}</ul>` : `<div class="empty"><img src="../../src/assets/brand/banban-done.svg" alt="完成致意的班班"><h2>都核对好了，老板。</h2><p>没有待核对项。普通调度已恢复。</p></div>`}
   <div class="section-heading" style="margin-top:30px"><h2>逐项核对</h2><span class="count">${state.reviewItems.length} 项</span><span class="small-note" style="margin-left:auto">没有「全部忽略」；每项独立记录操作者与时间；保留待核对只是暂缓，可随时改选</span></div>
   <div style="display:grid;gap:12px">${state.reviewItems.map((item, index) => {
     const chosen = item.choice ? `<span class="pill ${item.choice === "保留待核对" ? "amber" : "ok"}">${icon(item.choice === "保留待核对" ? "clock" : "check")} ${escapeHtml(item.choice)} · 已记录</span>` : `<span class="pill amber">${icon("clock")} 未选择</span>`;
-    return `<article class="cap-card"><h3>${icon("warn")} ${escapeHtml(item.taskId)} ${chosen}</h3><p><strong style="color:var(--ink)">${escapeHtml(item.question)}</strong></p><p>依据：${escapeHtml(item.evidence)}</p><div class="review-choice">${item.options.map((option) => `<button class="button small ${item.choice === option ? "primary" : "ghost"}" data-action="review-choice" data-index="${index}" data-option="${escapeHtml(option)}">${escapeHtml(option)}</button>`).join("")}</div></article>`;
+    return `<article class="cap-card" data-task-id="${escapeHtml(item.taskId)}" tabindex="-1"><h3>${icon("warn")} ${escapeHtml(item.taskId)} ${chosen}</h3><p><strong style="color:var(--ink)">${escapeHtml(item.question)}</strong></p><p>依据：${escapeHtml(item.evidence)}</p><div class="review-choice">${item.options.map((option) => `<button class="button small ${item.choice === option ? "primary" : "ghost"}" data-action="review-choice" data-index="${index}" data-option="${escapeHtml(option)}">${escapeHtml(option)}</button>`).join("")}</div></article>`;
   }).join("")}</div>
   <div class="banner info" style="margin-top:22px">${icon("warn")}<div><strong>恢复边界。</strong>可证无副作用的只读任务可安全恢复；未知一律保留待核对。界面不保证重建备份后发生的外部事实，也不静默删除任务。</div></div>`;
 }
@@ -181,6 +188,12 @@ function renderCapability() {
 }
 
 function render() {
+  // 剩余项数永远按当前核对项现算，渲染、增删、改选都不会留下过期数字。
+  syncRecoveryPending();
+  // 重绘会替换 #view 内容：先记住焦点归属，重绘后恢复，避免操作后焦点掉到 BODY（契约 §12）。
+  const active = document.activeElement;
+  const restoreRowId = active?.closest?.(".task-row")?.dataset?.id ?? null;
+  const restoreReviewIndex = active?.dataset?.action === "review-choice" ? active.dataset.index : null;
   const views = { queue: renderQueue, review: renderReview, capability: renderCapability };
   $("#view").innerHTML = views[state.page]();
   document.querySelectorAll(".nav-item").forEach((el) => {
@@ -197,6 +210,14 @@ function render() {
   $("#nav-review-count").textContent = reviewBadge;
   $("#nav-review-count").hidden = reviewBadge === 0;
   $("#concurrency-value").textContent = state.concurrency;
+  if (restoreRowId) {
+    const row = document.querySelector(`.task-row[data-id="${restoreRowId}"]`) || document.querySelector("#view .task-row");
+    if (row) { row.focus(); return; }
+  }
+  if (restoreReviewIndex != null) {
+    const button = document.querySelector(`[data-action="review-choice"][data-index="${restoreReviewIndex}"]`);
+    if (button) button.focus();
+  }
 }
 
 function openDetail(id) {
@@ -265,6 +286,9 @@ function cancelTask(id) {
       // 转 needs_review 同步生成核对项：取消中占槽到此释放，但外部副作用风险必须由用户逐项决议（契约 §6 第 4 行）。
       if (!state.reviewItems.some((entry) => entry.taskId === task.id)) {
         state.reviewItems.push({ taskId: task.id, question: `取消 ${task.id} 后，进程树是否已停止、工具是否已产生外部结果？`, options: ["已确认完成", "用户明确取消", "标记失败", "保留待核对"], choice: null, evidence: "取消中未能确认进程树退出；无 attempt 结果提交记录", fromCancel: true });
+        // 新增核对项只刷新剩余计数：恢复暂停由用户决议驱动（见 reviewChoice），
+        // 已放行的恢复不因一个新任务转待核对而自动重新暂停。
+        syncRecoveryPending();
       }
       render(); toast(`${task.id} 无法确认外部结果，已转待核对，请逐项核对。`);
     }, 2200);
@@ -301,31 +325,31 @@ function reviewChoice(index, option) {
       task.state = item.fromCancel ? "cancelled" : "succeeded";
       task.note = item.fromCancel ? "已确认进程树退出且无未知外部副作用，取消意图完成。" : "已核对外部回执后转终态，回执引用已保留。";
       log(task, item.fromCancel ? "用户确认进程树已退出且无未知副作用，取消意图完成" : "用户确认已完成，保留回执引用");
-    }
-    if (option === "用户明确取消") { task.state = "cancelled"; task.note = "用户明确承担未知外部副作用的风险，取消意图完成；不自动重发。"; log(task, "用户明确取消：未知副作用由用户负责处理"); }
-    if (option === "标记失败") { task.state = "failed"; task.note = "确认真未生效，已转失败，可重新提交。"; log(task, "用户确认为失败，可重新提交"); }
-    if (option === "保留待核对") { task.state = "needs_review"; log(task, "用户选择保留待核对：不重新执行，不自动重发，风险未解除"); }
-    // 从终态改回待核对：撤销此前的决议，任务回到未决状态，等待新的明确选择。
-    if (previous === "已确认完成" || previous === "标记失败" || previous === "用户明确取消") {
-      task.state = "needs_review"; task.note = "决议已改回待核对：在重新确认前不执行、不自动重发。";
-      log(task, `用户把「${previous}」改回待核对，风险重新记为未解除`);
+    } else if (option === "用户明确取消") {
+      task.state = "cancelled"; task.note = "用户明确承担未知外部副作用的风险，取消意图完成；不自动重发。"; log(task, "用户明确取消：未知副作用由用户负责处理");
+    } else if (option === "标记失败") {
+      task.state = "failed"; task.note = "确认真未生效，已转失败，可重新提交。"; log(task, "用户确认为失败，可重新提交");
+    } else if (option === "保留待核对") {
+      // 改为保留待核对：无论此前是未选择还是终态，任务都回到未决状态，风险重新记为未解除。
+      task.state = "needs_review";
+      if (previous && previous !== "保留待核对") {
+        task.note = `决议已改回待核对（原「${previous}」）：在重新确认前不执行、不自动重发。`;
+        log(task, `用户把「${previous}」改回待核对，风险重新记为未解除`);
+      } else {
+        task.note = "用户选择保留待核对：不重新执行，不自动重发，风险未解除。";
+        log(task, "用户选择保留待核对：不重新执行，不自动重发，风险未解除");
+      }
     }
   }
-  // 放行条件：每项均为已确认完成／标记失败（含用户明确重试或取消后的终态）。
-  // 「保留待核对」＝风险未解除，恢复保持暂停，普通调度与定时/投递不得恢复（web-backend-design §5）。
-  const parked = state.reviewItems.filter((entry) => entry.choice === "保留待核对");
-  const undecided = state.reviewItems.filter((entry) => !entry.choice).length;
-  // 剩余项数实时由 reviewItems 现算：未选择 + 保留待核对，避免过期数字。
-  state.recovery.pending = undecided + parked.length;
-  if (undecided === 0 && parked.length === 0) {
+  // 放行条件：每项都是可解除风险的决定（已确认完成／标记失败／用户明确取消）。
+  // 只要还有未选择或保留待核对的项，恢复必须保持暂停——包括放行后再把某项改回保留待核对的情形（P1-1）。
+  const remaining = syncRecoveryPending();
+  if (remaining === 0) {
     state.recovery.active = false;
-    state.recovery.pending = 0;
     toast("核对已全部完成，恢复放行：定时收集与提醒投递恢复，普通调度继续。");
-  } else if (parked.length) {
-    state.recovery.pending = parked.length;
-    toast(`${item.taskId}：${option}，已记录操作者与时间。仍有 ${parked.length} 项保留待核对，恢复保持暂停。`);
   } else {
-    toast(`${item.taskId}：${option}，已记录操作者与时间。`);
+    state.recovery.active = true;
+    toast(`${item.taskId}：${option}，已记录操作者与时间。仍有 ${remaining} 项未决（未选择或保留待核对），恢复保持暂停。`);
   }
   render();
 }
@@ -353,14 +377,21 @@ document.addEventListener("click", (event) => {
   else if (action === "submit") submitTask();
   else if (action === "settings-link") { toast("并发是实例级设置：生产入口在设置页，面板只读当前值并链接过去；本演示没有设置页，此处只作说明（契约 §3.1）。"); }
   else if (action === "drop-event") dropEvent();
-  else if (action === "open-review") { state.page = "review"; render(); $("#view").scrollTop = 0; }
+  else if (action === "open-review") {
+    // 从详情进入核对：先关闭模态框，再切页并把焦点放到目标核对项（契约 §12）。
+    $("#task-dialog").close();
+    state.page = "review"; render(); $("#view").scrollTop = 0;
+    const card = document.querySelector(`.cap-card[data-task-id="${id}"]`);
+    if (card) card.focus();
+  }
   else if (action === "go-review") { state.page = "review"; render(); $("#view").scrollTop = 0; }
   else if (action === "review-choice") reviewChoice(Number(button.dataset.index), button.dataset.option);
 });
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && $("#task-dialog")?.open) { $("#task-dialog").close(); return; }
   const row = event.target.closest?.(".task-row");
-  if (row && event.key === "Enter") { event.preventDefault(); openDetail(row.dataset.id); return; }
+  // 行级 Enter 只在行本身聚焦时打开详情；行内按钮（取消/重新提交/逐项核对/详情）保持原生键盘行为（契约 §12）。
+  if (row && event.key === "Enter" && event.target === row) { event.preventDefault(); openDetail(row.dataset.id); return; }
   // ⌘K／Ctrl+K 是应用级快速录入：演示面板不捕获，放行给现有入口（契约 §12）。
   if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") { toast("快速录入（⌘K／Ctrl+K）由应用级入口处理，本面板不捕获该组合。"); }
 });

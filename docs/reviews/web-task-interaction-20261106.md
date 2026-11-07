@@ -224,3 +224,59 @@ ZCode 第二轮独立复审结论仍为 `APPROVE_WITH_CHANGES`：上一轮两项
 | `design/index.html` | `6c2e9aaedaa3afe170e5f9dd4498a4faeac081e06c0e368004493174907d3356` |
 
 `index.html`／`task-flow.css`／`design/README.md`／`design/index.html` 本轮未改动，哈希与 §8.6 一致。
+
+## 10. 第四轮复审修订（`2cb0001` → 新一轮：1 项 P1 + 4 项 P2）
+
+Codex 第三轮独立复审结论为 `APPROVE_WITH_CHANGES`：上一轮四条修复路径（领取空闲槽、暂缓项可改选、取消转核对新增可决议卡、恢复暂停期重新提交被拒）均已复现关闭，但在恢复闭环与键盘/模态动线上发现 1 项新 P1 与 4 项 P2。任务按 workflow 退回 `started_2`，由 Claude 接手修订。**Claude 本轮是本修订的实现者，后续独立复审须改派未参与者**（任务原指定的独立评审者 Claude 已不满足「未参与实现」要求）。本修订只改演示代码与契约相应措辞，写入范围不变。
+
+### 10.1 P1-1 撤销恢复决议后重新暂停
+
+- `reviewChoice()` 在每次决议后统一调用 `syncRecoveryPending()`，并据剩余项数重算暂停：剩余为 0 才放行；只要还有未选择或保留待核对的项，`recovery.active` 立即回到 `true`。
+- 放行后再把某项改选为「保留待核对」时，任务回 `needs_review`、横幅切「恢复未放行」、提交与重提闸门同步关闭；补上「放行后再次暂缓」的回归路径。
+- 新增核对项（取消转待核对）只实时计入剩余项数，不使已放行的恢复自动重新暂停；恢复暂停跟随用户对核对项的决议，与上一轮「恢复期重新提交被拦」的闸门语义一致。
+
+### 10.2 P2-1 终态之间改选按目标终态收敛
+
+- 删除「只要此前是终态就覆盖回 `needs_review`」的无条件分支；改为：改选为「保留待核对」才回 `needs_review`，改为另一终态（已确认完成／标记失败／用户明确取消）按目标状态收敛。
+- 契约 §7.2 同步澄清：改选同样记录；改回保留待核对才把风险重新记为未解除，改选另一终态按目标终态完成。放行判定看剩余项数，不只看选择文本。
+
+### 10.3 P2-2 剩余核对数量统一派生
+
+- 新增 `syncRecoveryPending()` 作为唯一计数来源（未选择 + 保留待核对）；`reviewChoice`、`cancelTask` 新增核对项与 `render()` 都调用它，删除 `parked.length` 覆盖总数的分支。
+- 覆盖混合未选与暂缓、新增核对项两条路径；队列横幅、待核对横幅与导航徽标都读同一数字。
+
+### 10.4 P2-3 行内按钮键盘行为与焦点保留
+
+- 行级 `Enter` 只在 `event.target === row`（行本身聚焦）时打开详情；行内按钮（取消／重新提交／逐项核对／详情）保持原生 Enter/Space 行为，不再被行级处理器劫持。
+- `render()` 记录重绘前的焦点归属（任务行或核对项按钮），重绘后恢复到对应任务行（或列表首行）／对应核对按钮，不再掉到 `BODY`。
+
+### 10.5 P2-4 详情进入核对先关模态再聚焦
+
+- `open-review` 先 `close()` 详情模态，再切到待核对页，并把焦点放到目标任务核对卡（卡片加 `data-task-id` 与 `tabindex="-1"`）。
+- 鼠标与键盘入口都直接继续决议，不再需要额外 Esc/关闭。
+
+### 10.6 本轮验证证据
+
+预览服务：`PORT=4221 node design/serve.mjs`（127.0.0.1，只读暴露 `/design/`、`/src/assets/`、`/src/styles/`），验证结束后已停止（端口无监听）。
+
+| 命令 | 退出码 | 结果 |
+|---|---|---|
+| `node --check design/web-task-flow/task-flow.js` | 0 | 语法通过 |
+| `npm run check:docs` | 0 | 18 文件、302 个本地相对链接全部解析 |
+| `node scripts/checks/check-structure.mjs`（HEAD 干净树 vs `85feb8a` 基线） | 1/1 | 输出逐字节相同：仅 3 项既有 `ref.missing`；本项新增 0 |
+| Playwright/Chrome 交互复现（127.0.0.1:4221，22 组检查） | 0 | 22/22 PASS，console/page 错误 0，外部请求 0 |
+
+覆盖的关键路径与观察值：放行后改回保留待核对 → `active=true`、`pending=1`、任务 `needs_review`、横幅「恢复未放行」、提交与重提均被拒（任务数不变）；终态间改选（已确认完成→标记失败）→ 任务收敛 `failed`、`pending=0`、`active=false`；混合未选与暂缓 → `pending=3`；恢复期间取消运行中 → 新增第 4 张核对卡、`pending=4`；放行后取消运行中 → 新卡计入 `pending=1` 但 `active=false`、提交仍可用并领到空闲槽 2/3（槽号集合无重复）；聚焦行内「取消」按 Enter → 任务直接取消、不打开详情、焦点留在行；按 Space → 取消且焦点回到任务行；行本身聚焦按 Enter → 打开详情、Esc 关闭后焦点回行；详情内「逐项核对」→ 模态关闭、页面切到待核对、焦点落在目标核对卡；390×844 无横向溢出、排队位置可见。
+
+### 10.7 本轮修订后文件哈希（收口时冻结）
+
+| 文件 | SHA-256 |
+|---|---|
+| `docs/engineering/web-task-interaction.md` | `9905e20495d2d236625655628a198aa21ef52e93a9b957bae843972d5dad5d6c` |
+| `design/web-task-flow/index.html` | `5ca8e9c6c33036055ea3a2282e6857a032f0706b740265d245929b59cae95b43` |
+| `design/web-task-flow/task-flow.css` | `5455ed6cbe0ff603aaa2570a64982333a98fbcb03fb3629ffe8459c56410531e` |
+| `design/web-task-flow/task-flow.js` | `fb1da657c72d0eb7a83d896a84ed324d573dfeae9ddb0c6b827e219ab9a58ae3` |
+| `design/README.md` | `ec45181be707921a35d26a90f1e6c1404468be4f251cce5d668d8596d0c67174` |
+| `design/index.html` | `6c2e9aaedaa3afe170e5f9dd4498a4faeac081e06c0e368004493174907d3356` |
+
+`index.html`／`task-flow.css`／`design/README.md`／`design/index.html` 本轮未改动，哈希与 §8.6 一致；本记录自身是本轮新增证据，不在冻结表内。
