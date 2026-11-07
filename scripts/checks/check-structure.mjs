@@ -49,6 +49,7 @@ const IMMUTABLE_MIGRATIONS = new Map([
   ['src-tauri/migrations/002_ingestion.sql','43d9c92a8948a73cf0bc8bc08f1793c0470fee52dd3f459ebbf14d98ce08ba73'],
   ['src-tauri/migrations/003_agent_runs.sql','b8f89eab2dc8747cbffd0e59cc7c3816439ace21ebfe977babaf7c1b79b586c9'],
   ['src-tauri/migrations/004_mcp_runs.sql','e8960c4f529717776bba87522cc9becd3adda14544147c40135230404fe56a1b'],
+  ['src-tauri/migrations/web-backend/001_web_backend.sql','8511907cf755567932f1526af0db20ce0af9128767c5724f2dd75e3de8ff143d'],
 ]);
 const SCAN_TOPS = ['src/', 'shared/', 'runtime/', 'tests/', 'scripts/', 'design/'];
 const CODE_EXT = /\.(?:mjs|cjs|js|mts|cts|ts|jsx|tsx|vue)$/;
@@ -280,7 +281,7 @@ function collect(options) {
   const add = (rule, file, line, message) => violations.push({ rule, file, line, message });
   for (const [file, expected] of IMMUTABLE_MIGRATIONS) {
     const path = absOf(root, file);
-    if (!existsSync(path) || createHash('sha256').update(readFileSync(path)).digest('hex') !== expected) add('schema.immutable-migration', file, 1, 'Historical migrations 001-004 must retain their original bytes; append a new migration.');
+    if (!existsSync(path) || createHash('sha256').update(readFileSync(path)).digest('hex') !== expected) add('schema.immutable-migration', file, 1, 'Frozen migrations (001-004 and web-backend/1) must retain their original bytes; append a new migration.');
   }
   checkTopLevel(files, add);
   checkRuntimeMetadata(files, tracked, add);
@@ -356,6 +357,16 @@ function runSelfTest() {
   try {
     write('package.json', `${JSON.stringify({ devDependencies: { tailwindcss: '0.0.0' }, scripts: { check: 'node tests/s1-domain.test.mjs && node scripts/probes/bundle-runtime.mjs && npm run probe:bundle' } }, null, 2)}\n`);
     write('src-tauri/migrations/001_todos.sql', 'changed historical migration');
+    // The web-backend/1 lineage migration is frozen byte-exact: the synthetic tree first
+    // holds the repository's original bytes (must stay clean); it is overwritten below to
+    // prove tampering is flagged for this exact path.
+    const frozenNewMigration = 'src-tauri/migrations/web-backend/001_web_backend.sql';
+    const frozenOriginal = join(ROOT, frozenNewMigration);
+    if (!existsSync(frozenOriginal)) {
+      console.log('✗ structure self-test failed: frozen new-lineage migration is missing from the repository.');
+      return 1;
+    }
+    write(frozenNewMigration, readFileSync(frozenOriginal));
     write('.gitignore');
     write('.env.local');
     write('build/leak.txt');
@@ -470,7 +481,20 @@ function runSelfTest() {
       for (const violation of violations.filter((item) => cleanFiles.includes(item.file))) console.log(`  - [${violation.rule}] ${violation.message}`);
       return 1;
     }
-    console.log(`✓ structure self-test passed (${expected.length} violation classes and ${expectedReferences.length} individual reference violations detected in a synthetic tree; clean samples stayed clean).`);
+    // Freeze assertion (positive): the original new-lineage bytes must not be flagged.
+    if (violations.some((violation) => violation.file === frozenNewMigration)) {
+      console.log('✗ structure self-test failed: original frozen new-lineage migration bytes were flagged:');
+      for (const violation of violations.filter((item) => item.file === frozenNewMigration)) console.log(`  - [${violation.rule}] ${violation.message}`);
+      return 1;
+    }
+    // Freeze assertion (negative): tampered new-lineage bytes must be flagged for this exact path.
+    writeFileSync(join(root, ...frozenNewMigration.split('/')), 'tampered new-lineage migration');
+    const tamperedViolations = collect({ root, files, tracked: files.filter((file) => !untrackedPaths.has(file)), packagePath: join(root, 'package.json') }).violations;
+    if (!tamperedViolations.some((violation) => violation.rule === 'schema.immutable-migration' && violation.file === frozenNewMigration)) {
+      console.log('✗ structure self-test failed: tampered new-lineage migration was not flagged.');
+      return 1;
+    }
+    console.log(`✓ structure self-test passed (${expected.length} violation classes and ${expectedReferences.length} individual reference violations detected in a synthetic tree; clean samples stayed clean; frozen new-lineage migration original bytes passed and tampered bytes were flagged).`);
     return 0;
   } finally {
     rmSync(root, { recursive: true, force: true });

@@ -13,10 +13,17 @@
 - **索引强制**：新增记录必须登记到本文件；未登记视为未收口。`check:docs` 只校验链接存在，语义一致性靠评审。
 - **新路径**：2026-10-31 结构治理后，新记录使用新路径（`runtime/{entries,lib,workers}/`、`src-tauri/src/{app,store,host,diagnostics}/`、`tests/{unit,integration,probes,fixtures}/`、`scripts/{build,checks,probes}/`）；旧记录保留原路径，按文件名仍可检索。
 
-## 2. 记录索引（75 份）
+## 2. 记录索引（82 份）
 
 | 记录 | 日期 | 范围与结论 | 证据 |
 |---|---|---|---|
+| [web-foundation-integration-schema-integration-prep-20261107.md](web-foundation-integration-schema-integration-prep-20261107.md) | 2026-11-07 | MAYNE-22 W0 最终集成准备（与 F-1 修正并行）：隔离树逐字节接入已审候选 `67860d3`、`598d2da` 最终提案与全部审查记录；结构守卫冻结新迁移精确哈希 `8511907c…143d` 并补原地自测正/负例；聚焦检查全过（structure 215/466 exit 0、self-test、docs 20/414）；完整门禁与合入未发生，F-1 修订待接入 | 原始证据 `build/web-foundation-integration/`（gitignored） |
+| [web-foundation-integration-schema-implementation-20261107-zcode-review.md](web-foundation-integration-schema-implementation-20261107-zcode-review.md) | 2026-11-07 | MAYNE-22 schema 实施独立评审（ZCode）：候选 `67860d3` 通过——补丁/源码哈希复算一致，19 场景证伪全过；登记 1 项 MINOR（F-1 拒绝路径 WAL 改写）与 4 项 NIT，均不阻塞 | 见记录 |
+| [web-foundation-integration-schema-implementation-20261107.md](web-foundation-integration-schema-implementation-20261107.md) | 2026-11-07 | MAYNE-22 schema 实施记录（Claude）：web-backend/1 四文件交付（`67860d3`），显式 init/普通 open 校验、原子迁移、每连接设置与一致性备份；聚焦 cargo 验证全过，完整门禁留给集成执行者 | 原始证据见原树 `build/`（附件留存于任务） |
+| [web-foundation-integration-main-ff-20261107-kimi-review.md](web-foundation-integration-main-ff-20261107-kimi-review.md) | 2026-11-07 | MAYNE-22 main 快进与守卫/公共文档增量独立审查（Kimi）：`7f536db..b11fd05` 五文件增量通过，补丁 `e5f6eb99…` 逐字节复核；登记 5 项不阻塞观察（含新 lineage 迁移当时无字节冻结，本批准备轮已补） | 见记录 |
+| [web-foundation-integration-schema-authorization-20261107-zcode-r2-review.md](web-foundation-integration-schema-authorization-20261107-zcode-r2-review.md) | 2026-11-07 | MAYNE-22 schema 授权提案修订增量独立复核（ZCode R2）：提案 `bc8876c3…`、DDL `8511907c…` 与裁定八项全部落实，独立 21/21 exit 0，通过 | 见记录 |
+| [web-foundation-integration-schema-authorization-20261107-zcode-review.md](web-foundation-integration-schema-authorization-20261107-zcode-review.md) | 2026-11-07 | MAYNE-22 schema 授权提案首轮独立评审（ZCode）：提案通过并附两项批准前条件（唯一索引/版本镜像），由 R2 复核闭合 | 见记录 |
+| [web-foundation-integration-schema-authorization-20261107.md](web-foundation-integration-schema-authorization-20261107.md) | 2026-11-07 | MAYNE-22 schema 授权最终提案（`598d2da`）：全新建表 web-backend/1 lineage、11 表 DDL `8511907c…143d`、校验与备份契约；经 owner 评论 `01a1b648` 批准后由 `67860d3` 实施 | 见记录 |
 | [web-foundation-integration-main-ff-20261107.md](web-foundation-integration-main-ff-20261107.md) | 2026-11-07 | MAYNE-22 W0（owner 新授权后）：干净本地 main 仅快进 `9ad2d61`→`8bd29c4`（tree 互证一致、无新提交、未 push）；结构守卫核实为无需改动并以合成树正/负例实证；公共文档按已授权/正在实施/已验证区分更新，新 schema 未提前签完成；聚焦检查全过，完整门禁留给最终集成轮 | 原始证据 `build/web-foundation-integration/`（gitignored） |
 | [web-foundation-integration-fullgate-20261107.md](web-foundation-integration-fullgate-20261107.md) | 2026-11-07 | MAYNE-22 W0 R5（本轮补登记）：候选 `8bd29c4` 上原预算完整 `npm run check` exit 0（968/968，s32 长路径 8.83s），Kimi 独立复核证据通过；当时写入清单不含索引，本轮补登 | 原始证据 `build/web-foundation-integration/`（gitignored） |
 | [web-foundation-integration-20261107.md](web-foundation-integration-20261107.md) | 2026-11-07 | MAYNE-22 W0 集成：MAYNE-18 门禁修复按审定补丁接入基座（三文件与候选逐字节一致）；任务面板占槽/退出核实语义按已接受 attemptExitState 契约对齐并动态复现（退出未知仍占槽、决议闸门、释放后领取正确空闲槽、恢复闸门与焦点/窄屏不回归）；聚焦门禁全过，完整门禁因机器高负载在既有 s32 长路径测试如实失败开放 | 原始证据 `build/web-foundation-integration/`（gitignored） |

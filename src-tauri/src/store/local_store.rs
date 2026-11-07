@@ -1468,5 +1468,15 @@ mod today_advice;
 mod today_schema;
 pub use today_advice::*;
 
+#[path = "web_backend_schema.rs"]
+mod web_backend_schema;
+#[cfg(test)]
+#[path = "web_backend_schema_tests.rs"]
+mod web_backend_schema_tests;
+pub use web_backend_schema::{
+    configure_connection, WebBackendSchema, DEFAULT_DB_FILE, SCHEMA_LINEAGE, SCHEMA_VERSION,
+    WEB_BACKEND_APPLICATION_ID,
+};
+
 #[cfg(test)]
 thread_local! { static TODAY_OPEN_FAULT:std::cell::Cell<today_schema::TodayMigrationFault>=const {std::cell::Cell::new(today_schema::TodayMigrationFault::None)}; }
