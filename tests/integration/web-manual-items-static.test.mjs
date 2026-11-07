@@ -1,24 +1,28 @@
-// MAYNE-23 slice II: same-origin static supply and browser cold-start acceptance (contract
-// §9.4, §11 "同源静态供给", NIT-3). The backend must serve the UI, the business API and SSE
-// from one origin: correct MIME, long cache for hashed assets, no cache for index.html, SPA
-// fallback to index.html, and no SPA fallback under /api. A headless Chrome cold start then
-// loads the backend-served UI at 1440x1000 and 640x900 and reaches /api and /api/events
-// same-origin. When no real frontend dist exists yet (slice I/III not landed) the suite runs
-// against a synthetic static root and says so; it never signs the product UI from a
-// prototype and never uses synthetic IPC in place of HTTP.
+// MAYNE-23 slice II (revision r2): same-origin static supply and browser cold-start
+// acceptance (contract §9.4, §11 "同源静态供给", NIT-3). The backend must serve the UI, the
+// business API and SSE from one origin: correct MIME, long cache for hashed assets, no cache
+// for index.html, SPA fallback to index.html, and no SPA fallback under /api. A headless
+// Chrome cold start then loads the backend-served UI at 1440x1000 and 640x900.
+//
+// The browser check drives Chrome through the DevTools Protocol and evaluates a probe inside
+// the served page itself, so it observes what the browser actually rendered and reached: the
+// application must have mounted into #app in the live DOM (an unmounted Vite page leaves #app
+// empty, which a static index.html check cannot detect), every static reference must stay
+// same-origin, the page must reach /api/session and /api/events same-origin and be answered
+// with the frozen 401 envelope (JSON, not HTML), and the page must not overflow horizontally.
+// The same assertions run in both static-root modes; the synthetic fixture root only signs
+// fixture mechanics and is recorded as such. An explicit static root pointing at the
+// repository design/ prototype directory is rejected by the fixture (contract §9.4 forbids
+// design previews as acceptance). No synthetic page can pass these assertions as the product.
 import assert from 'node:assert/strict';
 import test, { before, after } from 'node:test';
 import { existsSync, mkdtempSync, mkdirSync, writeFileSync, rmSync, readdirSync, statSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
-import { startBackend, repositoryRoot } from '../fixtures/web-manual-items/backend-process.mjs';
+import { join } from 'node:path';
+import { startBackend, repositoryRoot, resolveSuiteStaticRoot, writeEvidence, effectiveConfig } from '../fixtures/web-manual-items/backend-process.mjs';
+import { chromeAvailable, probeWithChrome, assertColdStartReport } from '../fixtures/web-manual-items/browser-probe.mjs';
 import { buildSyntheticStaticRoot } from '../fixtures/web-manual-items/static-root.mjs';
 
-const exec = promisify(execFile);
-const chrome = process.env.SIDEKICK_TEST_CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-const chromeAvailable = existsSync(chrome);
 const evidence = join(repositoryRoot, 'build/web-manual-items-tests/static-browser');
 
 let backend;
@@ -28,16 +32,14 @@ let syntheticRoot = null;
 
 before(async () => {
   mkdirSync(evidence, { recursive: true, mode: 0o700 });
-  if (process.env.WEB_MANUAL_ITEMS_STATIC_ROOT) {
-    staticRoot = resolve(process.env.WEB_MANUAL_ITEMS_STATIC_ROOT);
-    staticRootMode = 'explicit';
-  } else if (existsSync(join(repositoryRoot, 'build/web-backend/static/index.html'))) {
-    staticRoot = join(repositoryRoot, 'build/web-backend/static');
-    staticRootMode = 'packaged';
-  } else {
+  const resolved = resolveSuiteStaticRoot();
+  if (resolved.mode === 'synthetic') {
     syntheticRoot = mkdtempSync(join(tmpdir(), 'web-manual-items-static-'));
     staticRoot = buildSyntheticStaticRoot(syntheticRoot);
     staticRootMode = 'synthetic';
+  } else {
+    staticRoot = resolved.root;
+    staticRootMode = resolved.mode;
   }
   assert.ok(existsSync(join(staticRoot, 'index.html')), `static root must contain index.html: ${staticRoot}`);
   backend = await startBackend({ staticRoot });
@@ -46,6 +48,7 @@ before(async () => {
     root: staticRootMode === 'synthetic' ? 'synthetic fixture root (real files, not the product UI)' : staticRoot,
     backendOrigin: backend.origin,
   }, null, 2) + '\n', { mode: 0o600 });
+  writeEvidence('static-effective-config.json', effectiveConfig({ suite: 'web-manual-items-static', staticRootMode }));
 }, { timeout: 60000 });
 
 after(async () => {
@@ -54,6 +57,28 @@ after(async () => {
 });
 
 const LONG_CACHE = /(?:max-age\s*=\s*(\d+)|immutable)/i;
+
+// MIME expectation per hashed-asset extension. The extension — never the readdir order —
+// decides the expected type: a Vite dist emits index-<hash>.css next to index-<hash>.js, and
+// the retired check asserted /javascript/ for whichever file it happened to pick first.
+const HASHED_MIME = {
+  '.js': /javascript/,
+  '.mjs': /javascript/,
+  '.css': /^text\/css/,
+  '.map': /json/,
+  '.woff2': /font\/woff2/,
+  '.woff': /font\/woff/,
+  '.ttf': /font\/ttf/,
+  '.otf': /font\/otf/,
+  '.svg': /image\/svg\+xml/,
+  '.png': /image\/png/,
+  '.jpg': /image\/jpeg/,
+  '.jpeg': /image\/jpeg/,
+  '.gif': /image\/gif/,
+  '.ico': /image\/(x-icon|vnd\.microsoft\.icon)/,
+  '.webp': /image\/webp/,
+  '.avif': /image\/avif/,
+};
 
 test('index.html is served same-origin with correct MIME and without long caching', async () => {
   const response = await backend.request('GET', '/');
@@ -67,16 +92,21 @@ test('index.html is served same-origin with correct MIME and without long cachin
   assert.match(response.text, /id="app"/, 'the served page must contain the application mount point');
 });
 
-test('hashed assets are served with correct MIME and long caching', async () => {
-  const hashed = staticRootMode === 'synthetic' ? '/assets/app-9f8e7d6c5b4a.js' : findHashedAsset(staticRoot);
-  assert.ok(hashed, 'a hashed asset must exist in the static root');
-  const response = await backend.request('GET', hashed);
-  assert.equal(response.status, 200, response.text.slice(0, 200));
-  assert.match(response.headers.get('content-type') ?? '', /javascript/);
-  const cacheControl = response.headers.get('cache-control') ?? '';
-  const match = cacheControl.match(LONG_CACHE);
-  assert.ok(match, `hashed assets must be cacheable: ${cacheControl}`);
-  if (match[1]) assert.ok(Number(match[1]) >= 31536000, `hashed assets need a long max-age: ${cacheControl}`);
+test('hashed assets are served with the MIME their extension requires and with long caching', async () => {
+  const hashed = staticRootMode === 'synthetic' ? ['/assets/app-9f8e7d6c5b4a.js'] : findHashedAssets(staticRoot);
+  assert.ok(hashed.length > 0, 'a hashed asset must exist in the static root');
+  for (const path of hashed) {
+    const response = await backend.request('GET', path);
+    assert.equal(response.status, 200, `${path}: ${response.text.slice(0, 120)}`);
+    const extension = path.slice(path.lastIndexOf('.')).toLowerCase();
+    const expected = HASHED_MIME[extension];
+    assert.ok(expected, `${path}: unclassified hashed asset extension ${extension}; extend the MIME map deliberately`);
+    assert.match(response.headers.get('content-type') ?? '', expected, `${path} MIME must match ${expected}`);
+    const cacheControl = response.headers.get('cache-control') ?? '';
+    const match = cacheControl.match(LONG_CACHE);
+    assert.ok(match, `${path} must be cacheable: ${cacheControl}`);
+    if (match[1]) assert.ok(Number(match[1]) >= 31536000, `${path} needs a long max-age: ${cacheControl}`);
+  }
 });
 
 test('static MIME types are correct for every known extension present in the root', async () => {
@@ -114,51 +144,27 @@ test('SPA routes fall back to index.html while /api paths never do', async () =>
 });
 
 for (const width of [1440, 640]) {
-  test(`browser cold start at ${width}px loads the same-origin UI, reaches /api and /api/events, and does not overflow`, {
+  test(`browser cold start at ${width}px: the served UI mounts, reaches /api and /api/events same-origin with the frozen 401 envelope, and does not overflow`, {
     skip: chromeAvailable ? false : 'Chrome unavailable; browser same-origin acceptance not verified',
     timeout: 60000,
   }, async () => {
-    const profile = join(evidence, `chrome-profile-${width}`);
-    const url = `${backend.origin}/`;
-    const result = await exec(chrome, [
-      '--headless', '--disable-gpu', '--no-first-run', '--no-default-browser-check',
-      '--disable-background-networking', '--disable-component-update', '--disable-sync',
-      '--disable-extensions', '--use-mock-keychain', `--user-data-dir=${profile}`,
-      '--dump-dom', '--virtual-time-budget=15000', `--window-size=${width},1000`,
-      `--screenshot=${join(evidence, `same-origin-${width}.png`)}`, url,
-    ], { timeout: 45000, maxBuffer: 8 * 1024 * 1024 });
-    writeFileSync(join(evidence, `same-origin-${width}.dom.html`), result.stdout, { mode: 0o600 });
-    const dom = result.stdout;
-    assert.match(dom, /<div id="app"/, 'the application mount point must be rendered by the backend-served page');
-    if (staticRootMode === 'synthetic') {
-      const probe = dom.match(/<pre id="probe"[^>]*>(.*?)<\/pre>/s);
-      assert.ok(probe, 'the synthetic probe must render into the page');
-      const report = JSON.parse(probe[1].replaceAll('&quot;', '"').replaceAll('&amp;', '&').replaceAll('&lt;', '<').replaceAll('&gt;', '>'));
-      writeFileSync(join(evidence, `same-origin-${width}.json`), JSON.stringify(report, null, 2) + '\n', { mode: 0o600 });
-      assert.equal(report.mounted, true, 'the page application must mount');
-      assert.equal(report.origin, backend.origin, 'the page must be served from the backend origin');
-      assert.deepEqual(report.crossOriginRefs, [], `all static references must be same-origin: ${JSON.stringify(report.crossOriginRefs)}`);
-      assert.equal(report.overflow, true, `the page must not overflow horizontally: ${JSON.stringify(report)}`);
-      assert.equal(report.session?.status, 401, 'the unpaired page must reach /api/session same-origin and be told to pair');
-      assert.equal(report.session?.json?.error?.code, 'unauthenticated', '/api/session must answer with the frozen envelope');
-      assert.equal(report.events?.status, 401, 'the page must reach /api/events same-origin');
-      assert.equal(report.events?.json?.error?.code, 'unauthenticated', '/api/events must answer with the frozen envelope');
-    } else {
-      const references = [...dom.matchAll(/(?:src|href)="([^"]+)"/g)].map((match) => match[1]);
-      const crossOrigin = references.filter((value) => /^https?:\/\//i.test(value) && !value.startsWith(backend.origin));
-      assert.deepEqual(crossOrigin, [], `all static references must be same-origin: ${JSON.stringify(crossOrigin)}`);
-      writeFileSync(join(evidence, `same-origin-${width}.json`), JSON.stringify({
-        mode: staticRootMode, origin: backend.origin, references: references.length, crossOrigin,
-      }, null, 2) + '\n', { mode: 0o600 });
-    }
+    const { report, dom, screenshot } = await probeWithChrome(`${backend.origin}/`, width, {
+      profileDir: join(evidence, `chrome-profile-${width}`),
+    });
+    writeFileSync(join(evidence, `same-origin-${width}.dom.html`), dom, { mode: 0o600 });
+    if (screenshot) writeFileSync(join(evidence, `same-origin-${width}.png`), Buffer.from(screenshot, 'base64'));
+    writeFileSync(join(evidence, `same-origin-${width}.json`), JSON.stringify({ mode: staticRootMode, report }, null, 2) + '\n', { mode: 0o600 });
+
+    assert.match(dom, /<div id="app"/, 'the live DOM must contain the application mount point');
+    assertColdStartReport(report, { origin: backend.origin, mode: staticRootMode, width });
   });
 }
 
-function findHashedAsset(root) {
+function findHashedAssets(root) {
   const assets = join(root, 'assets');
-  if (!existsSync(assets)) return null;
-  for (const name of readdirSync(assets)) {
-    if (statSync(join(assets, name)).isFile() && /-[A-Za-z0-9_-]{8,}\.(?:js|css)$/.test(name)) return `/assets/${name}`;
-  }
-  return null;
+  if (!existsSync(assets)) return [];
+  return readdirSync(assets)
+    .filter((name) => statSync(join(assets, name)).isFile() && /-[A-Za-z0-9_-]{8,}\.[A-Za-z0-9]+$/.test(name))
+    .sort()
+    .map((name) => `/assets/${name}`);
 }

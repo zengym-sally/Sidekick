@@ -1,5 +1,7 @@
 # MAYNE-23 切片 II 交付：真实 HTTP/重启/同源浏览器验收套件（Kimi）
 
+> 状态：**已被修订取代**。本篇是 MAYNE-23 派发线程 `01a1b81e-3cdb-78b4-8791-d12c8931f8f7` 分派的切片 II 首版交付记录（候选 `c24dc4a`）。OhMyPi 独立审查判**不通过**（3 项必须修订），队长 2026-11-08 接口补充裁定后已由作者退回修订：现行版本为 [web-manual-items-tests-20261108-r2.md](web-manual-items-tests-20261108-r2.md)。本篇 §3 的接口假设（`code` 字段、`x-csrf-token` 头等）**已被裁定取代**，标准线格式为 `pairingCode`／顶层 `csrfToken`／`X-CSRF-Token`；其余设计说明仍为历史背景。以下原文保留备查。
+
 > 状态：**候选已交付，未验业务**。本篇是 MAYNE-23 派发线程 `01a1b81e-3cdb-78b4-8791-d12c8931f8f7` 分派的切片 II 交付记录：按冻结契约与 P2 九条矩阵编写三个 Node 验收套件与夹具，只覆盖写入范围内的文件。所有业务断言在候选 I/III 落地前**未执行通过**——当前基点缺生产入口，套件以显式 PrerequisiteGap 失败（见 §5），不假报业务 pass、不跳过关键断言。
 > 依据：`docs/engineering/web-api-contract.md`（web-api/1，冻结）与最终提案 19045b8 的 `docs/engineering/web-manual-items-contract.md`（SHA-256 `8d752953…b70e8d`，本树由 III 接收，故以行内代码引用）；验收矩阵来源 `docs/reviews/web-manual-items-readiness-20261108.md`（d94de69，OhMyPi f031e21 独立通过）。证据约定见[验证约定](../engineering/verification.md)；测试布局见 [tests/README.md](../../tests/README.md)。
 

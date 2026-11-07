@@ -1,13 +1,17 @@
-// MAYNE-23 slice II: real HTTP acceptance for the web manual-items vertical.
+// MAYNE-23 slice II (revision r2): real HTTP acceptance for the web manual-items vertical.
 // Assertions come from the frozen contract docs/engineering/web-manual-items-contract.md
 // (§4–§7, §11) and the frozen web-api/1 contract (docs/engineering/web-api-contract.md,
 // §2/§6/§10); test ids reference the P2 acceptance matrix (A-1..A-9) from
 // docs/reviews/web-manual-items-readiness-20261108.md. Business setup goes through real
 // HTTP only; database observations are read-only on the same synthetic root.
+// Wire literals follow the 2026-11-08 interface arbitration registered in the MAYNE-23 task
+// description: pair body field pairingCode, session response top-level csrfToken, write
+// header X-CSRF-Token, unknown status or invalid limit rejected 400 validation_failed, list
+// limit default 50 with explicit integers 1–200 only. The fixture pins them as constants.
 import assert from 'node:assert/strict';
 import test, { before, after } from 'node:test';
 import { randomUUID } from 'node:crypto';
-import { startBackend, createRawRequester, readSession } from '../fixtures/web-manual-items/backend-process.mjs';
+import { startBackend, createRawRequester, readSession, pairRequestBody, writeEvidence, effectiveConfig } from '../fixtures/web-manual-items/backend-process.mjs';
 import { tableCounts, itemRow, itemEvents, schemaVersion } from '../fixtures/web-manual-items/db-observer.mjs';
 import { openEventStream } from '../fixtures/web-manual-items/sse-listener.mjs';
 
@@ -67,6 +71,7 @@ let backend;
 
 before(async () => {
   backend = await startBackend();
+  writeEvidence('http-effective-config.json', effectiveConfig({ suite: 'web-manual-items-http' }));
 }, { timeout: 60000 });
 
 after(async () => {
@@ -102,10 +107,10 @@ test('A-9: wrong pairing code is rejected, the correct code sets a strict single
   const isolated = await startBackend({ pair: false });
   try {
     const request = createRawRequester(isolated.origin);
-    const wrong = await request('POST', '/api/pair', { headers: { 'content-type': 'application/json' }, body: { code: 'WRONG-CODE-0001' } });
+    const wrong = await request('POST', '/api/pair', { headers: { 'content-type': 'application/json' }, body: pairRequestBody('WRONG-CODE-0001') });
     assertEnvelope(wrong, 401, 'pair_code_invalid');
     const code = await isolated.receivePairingCode();
-    const pairing = await request('POST', '/api/pair', { headers: { 'content-type': 'application/json' }, body: { code } });
+    const pairing = await request('POST', '/api/pair', { headers: { 'content-type': 'application/json' }, body: pairRequestBody(code) });
     assert.equal(pairing.status, 200, `pair with the delivered one-time code must succeed: ${pairing.text}`);
     const cookie = pairing.setCookie[0] ?? '';
     assert.match(cookie, /HttpOnly/i, 'session cookie must be HttpOnly');
@@ -113,7 +118,7 @@ test('A-9: wrong pairing code is rejected, the correct code sets a strict single
     assert.match(cookie, /Path=/i, 'session cookie must be path-scoped');
     assert.doesNotMatch(cookie, /Domain=/i, 'session cookie must not set Domain');
     const sessionCookie = cookie.split(';', 1)[0];
-    const replay = await request('POST', '/api/pair', { headers: { 'content-type': 'application/json' }, body: { code } });
+    const replay = await request('POST', '/api/pair', { headers: { 'content-type': 'application/json' }, body: pairRequestBody(code) });
     assertEnvelope(replay, 401, 'pair_code_invalid');
     const session = await readSession(isolated.origin, sessionCookie);
     assert.ok(Array.isArray(session.capabilities), 'GET /api/session must return capabilities');
@@ -137,7 +142,7 @@ test('A-9: repeated wrong pairing codes are rejected (401/429) and never create 
     for (let attempt = 0; attempt < 12; attempt += 1) {
       const response = await request('POST', '/api/pair', {
         headers: { 'content-type': 'application/json' },
-        body: { code: `WRONG-CODE-${String(attempt).padStart(4, '0')}` },
+        body: pairRequestBody(`WRONG-CODE-${String(attempt).padStart(4, '0')}`),
       });
       statuses.push(response.status);
       assert.ok(response.status === 401 || response.status === 429,
@@ -339,6 +344,43 @@ test('A-3/M1: list order, detail readback and cursor pagination are stable; new 
   }
 });
 
+test('A-3: the list limit defaults to 50, accepts only integers 1–200, and rejects everything else 400 validation_failed', async () => {
+  const isolated = await startBackend();
+  try {
+    const created = [];
+    for (let index = 0; index < 51; index += 1) {
+      const item = await createItem(isolated, actionInput({ title: `分页边界 ${index}` }));
+      assert.equal(item.response.status, 200, item.response.text);
+      created.push(item.response.json.item);
+    }
+    const defaultList = await isolated.request('GET', '/api/manual-items', { cookie: isolated.cookie });
+    assert.equal(defaultList.status, 200, defaultList.text);
+    assert.equal(defaultList.json.items.length, 50, 'the default page size must be 50');
+    assert.ok(defaultList.json.nextCursor, 'a full default first page must expose nextCursor');
+    const rest = await isolated.request('GET', `/api/manual-items?cursor=${encodeURIComponent(defaultList.json.nextCursor)}`, { cookie: isolated.cookie });
+    assert.equal(rest.status, 200, rest.text);
+    assert.equal(rest.json.items.length, 1, 'the remaining item must arrive on the cursor page');
+    assert.equal(rest.json.nextCursor, null, 'the last page must not expose a cursor');
+    for (const limit of [1, 50, 200]) {
+      const response = await isolated.request('GET', `/api/manual-items?limit=${limit}`, { cookie: isolated.cookie });
+      assert.equal(response.status, 200, `limit=${limit} must be accepted: ${response.text}`);
+      assert.ok(response.json.items.length <= limit, `limit=${limit} must be honored`);
+    }
+    for (const limit of [201, 0, -1, 1.5, 'abc']) {
+      const response = await isolated.request('GET', `/api/manual-items?limit=${encodeURIComponent(limit)}`, { cookie: isolated.cookie });
+      assertEnvelope(response, 400, 'validation_failed');
+    }
+    const historyOk = await isolated.request('GET', `/api/manual-items/${created[0].itemId}/history?limit=1`, { cookie: isolated.cookie });
+    assert.equal(historyOk.status, 200, `history limit=1 must be accepted: ${historyOk.text}`);
+    const historyBad = await isolated.request('GET', `/api/manual-items/${created[0].itemId}/history?limit=0`, { cookie: isolated.cookie });
+    assertEnvelope(historyBad, 400, 'validation_failed');
+    const unknownStatus = await isolated.request('GET', '/api/manual-items?status=someday', { cookie: isolated.cookie });
+    assertEnvelope(unknownStatus, 400, 'validation_failed');
+  } finally {
+    await isolated.close();
+  }
+});
+
 test('A-4: a stale expectedVersion is rejected 409 version_conflict without a lost update; re-read then re-decide succeeds', async () => {
   const created = await createItem(backend, actionInput({ title: '版本冲突事项' }));
   assert.equal(created.response.status, 200, created.response.text);
@@ -378,6 +420,10 @@ test('A-4: a stale expectedVersion is rejected 409 version_conflict without a lo
 });
 
 test('A-6: the same operationId replays the current authoritative state, a different input conflicts, and replay precedes state guards', async () => {
+  // The shared file-level backend root already carries events from earlier tests, so the
+  // global count is captured before this test's writes and the delta is asserted. Comparing
+  // the global count with this item's own count could never hold (F-1 revision).
+  const eventsBefore = tableCounts(backend.root).manualItemEvents;
   const op = operationId();
   const created = await createItem(backend, actionInput({ title: '幂等事项' }), op);
   assert.equal(created.response.status, 200, created.response.text);
@@ -421,7 +467,8 @@ test('A-6: the same operationId replays the current authoritative state, a diffe
   const counts = tableCounts(backend.root);
   const rows = itemRow(backend.root, itemId);
   assert.ok(rows, 'exactly one database row may exist for the item');
-  assert.equal(counts.manualItemEvents, itemEvents(backend.root, itemId).length);
+  assert.equal(counts.manualItemEvents, eventsBefore + 3,
+    'the create/update/delete writes must be the only new event rows; replays and conflicts must not write events');
   const events = itemEvents(backend.root, itemId).map((event) => event.action);
   assert.deepEqual(events, ['create', 'update', 'delete'], 'replays must not write extra event rows');
 });

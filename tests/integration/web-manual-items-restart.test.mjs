@@ -1,16 +1,18 @@
-// MAYNE-23 slice II: same-root SIGKILL restart recovery (P2 matrix A-8, contract §3 path 7,
-// §11 "重启恢复"). A test-owned child process imports the pinned startWebBackend interface
-// and forwards the one-time pairing code over its dedicated IPC channel; the child is killed
-// with SIGKILL and a fresh instance opens the same synthetic root. Committed items, versions,
-// states and history must reappear byte-for-byte; the root lock must be released; the SSE
-// stream must reset on epoch change and clients must compensate by read-back.
+// MAYNE-23 slice II (revision r2): same-root SIGKILL restart recovery (P2 matrix A-8,
+// contract §3 path 7, §11 "重启恢复"). A test-owned child process imports the pinned
+// startWebBackend interface and forwards the one-time pairing code over its dedicated IPC
+// channel; the child is killed with SIGKILL and a fresh instance opens the same synthetic
+// root. Committed items, versions, states and history must reappear byte-for-byte; the root
+// lock must be released; the SSE stream must reset on epoch change and clients must
+// compensate by read-back. Wire literals follow the 2026-11-08 interface arbitration
+// (pairingCode body field, top-level csrfToken, X-CSRF-Token header) pinned in the fixture.
 import assert from 'node:assert/strict';
 import test, { before, after } from 'node:test';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
-import { startBackendChild } from '../fixtures/web-manual-items/backend-process.mjs';
+import { startBackendChild, writeEvidence, effectiveConfig } from '../fixtures/web-manual-items/backend-process.mjs';
 import { tableCounts, itemRow, itemEvents } from '../fixtures/web-manual-items/db-observer.mjs';
 import { openEventStream } from '../fixtures/web-manual-items/sse-listener.mjs';
 
@@ -64,6 +66,7 @@ let firstEpoch;
 before(async () => {
   root = mkdtempSync(join(tmpdir(), 'web-manual-items-restart-'));
   first = await startBackendChild({ root, initialize: true });
+  writeEvidence('restart-effective-config.json', effectiveConfig({ suite: 'web-manual-items-restart' }));
 }, { timeout: 60000 });
 
 after(async () => {
