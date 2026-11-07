@@ -37,6 +37,8 @@ docs/product/
   05-第一阶段实施计划.md      # 切片计划、契约、证据与当前状态
 docs/engineering/
   web-backend-design.md       # Web/后端目标、持久队列、代理与凭据、薄壳接口
+  web-api-contract.md         # 冻结 Web API 契约（web-api/1）：会话/CSRF/Origin、任务流 SSE、错误包络
+  web-manual-items-contract.md # W1 手工事项纵向契约（定稿 2026-11-08）：端点/版本/幂等/软删历史/验收
   architecture.md             # 结构、边界、模块职责、放置决策表、后续落点、已知债
   verification.md             # 门禁矩阵、测试分层、证据新鲜度、留存、独立验证、CI 缺口
   unattended.md               # 已授权连续目标的准入、选取、预算与收口流程

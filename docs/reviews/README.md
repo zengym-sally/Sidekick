@@ -13,10 +13,16 @@
 - **索引强制**：新增记录必须登记到本文件；未登记视为未收口。`check:docs` 只校验链接存在，语义一致性靠评审。
 - **新路径**：2026-10-31 结构治理后，新记录使用新路径（`runtime/{entries,lib,workers}/`、`src-tauri/src/{app,store,host,diagnostics}/`、`tests/{unit,integration,probes,fixtures}/`、`scripts/{build,checks,probes}/`）；旧记录保留原路径，按文件名仍可检索。
 
-## 2. 记录索引（85 份）
+## 2. 记录索引（91 份）
 
 | 记录 | 日期 | 范围与结论 | 证据 |
 |---|---|---|---|
+| [web-manual-items-engineering-20261108.md](web-manual-items-engineering-20261108.md) | 2026-11-08 | MAYNE-23 W1 III 工程候选（OpenCode）：结构守卫按批准 A–D 落地（`server/`＋`src-tauri/src/bin/` 收敛、server 层引用/裸依赖规则、002 精确哈希 `b6cb8e61…f97e` 冻结与自测正/负例）、`build-backend.mjs`（打包规则双重强制）、package 三脚本与 check 接入、公共文档更新与已审记录/契约接收（哈希逐字核对）；聚焦验证自测/docs/diff 全过，仓库模式守卫仅剩 002 待集成一条预期违规；真实打包与完整门禁留集成轮 | 原始证据 `build/web-manual-items-engineering/`（gitignored，含 admission.json 与合成打包用例） |
+| [web-manual-items-authorization-20261108.md](web-manual-items-authorization-20261108.md) | 2026-11-08 | W1 P1 最终授权清单（Claude `19045b8`，ZCode R2 通过后定稿）：逐文件写入清单、002 DDL `b6cb8e61…f97e` 与 A–D 申请；本轮由工程候选接收并按批准事实追加 §12 实施准入登记（owner `01a1b80b` 批准 A–D），§3/§10 保留申请原文 | 见记录 |
+| [web-manual-items-contract-20261108-zcode-r2-review.md](web-manual-items-contract-20261108-zcode-r2-review.md) | 2026-11-08 | W1 P1 修订版独立复审（ZCode R2 `c0f88f6`）：通过——B1 镜像 UPDATE 五用例实证、M1 删除读写与重放顺序闭环、M2 事项提示帧与任务 cursor 隔离、M3 同源静态/构建/测试清单闭合；m1–m7/n1–n7 处置属实，MINOR-1/NIT×3 登记为非阻断 | 见记录 |
+| [web-manual-items-contract-20261108-zcode-review.md](web-manual-items-contract-20261108-zcode-review.md) | 2026-11-08 | W1 P1 首轮独立评审（ZCode `2706044`）：不通过——1 阻断（002 缺 schema_meta 镜像）＋3 主要（删除读取矛盾、事项 SSE 补偿未定义、同源静态缺位），修订量小；身份/引用/授权对应全部核实 | 见记录 |
+| [web-manual-items-readiness-20261108-ohmypi-review.md](web-manual-items-readiness-20261108-ohmypi-review.md) | 2026-11-08 | W1 P2 独立审阅（OhMyPi `f031e21`）：通过（无阻塞项）——四项基座差距从精确基点独立重建成立，九条验收矩阵来源/观测/反例逐条核对，命令与授权判断有据 | 见记录 |
+| [web-manual-items-readiness-20261108.md](web-manual-items-readiness-20261108.md) | 2026-11-08 | W1 P2 启动准备（Kimi `d94de69`）：实际基座差距（HTTP 服务、事项端点、事项表、浏览器传输四项空白）＋九条浏览器验收矩阵＋可复用/拟新增命令与授权缺口，作为实施输入，不视作已实现 | 见记录 |
 | [web-foundation-integration-schema-final-integration-20261107.md](web-foundation-integration-schema-final-integration-20261107.md) | 2026-11-07 | MAYNE-22 W0 最终集成（OpenCode，唯一重门禁执行者）：在通过审查的准备候选 `882e6e3` 上逐字节接入已复核 F-1 修订 `cab73aa`（补丁 `99706d93…ae587`）与 ZCode/Kimi 两份复核记录，四生产文件与 `cab73aa` blob 级一致；修正链接计数 20/414→20/424，公共文档 F-1 状态更新且不预签门禁；冻结前聚焦验证全过（17/17、structure、docs、diff --check），原预算完整 `npm run check` 在冻结提交上串行执行、结果以回执为准 | 原始证据 `build/web-foundation-integration/`（gitignored） |
 | [web-foundation-integration-schema-implementation-20261107-zcode-f1-review.md](web-foundation-integration-schema-implementation-20261107-zcode-f1-review.md) | 2026-11-07 | MAYNE-22 F-1 修订增量独立复核（ZCode）：`67860d3..cab73aa` 通过——增量恰 3 文件 +161/−3、补丁 `99706d93…ae587` 复算一致、DDL 审定哈希不变；同一合成反例修前复现（受写字节 18/19/27/95）、修后 open/init 拒绝零写入，17/17 真树复跑；N-1–N-4 维持登记不修 | 见记录 |
 | [web-foundation-integration-schema-integration-prep-20261107-kimi-review.md](web-foundation-integration-schema-integration-prep-20261107-kimi-review.md) | 2026-11-07 | MAYNE-22 集成准备候选独立审查（Kimi）：`b11fd05..882e6e3` 通过（限准备增量）——补丁 `2a04c62b…7641` 逐字节复核，审定来源 blob 级接收、W0 基座零覆盖、守卫仅新增指定冻结且正/负例独立复现、文档真实状态保留；1 项不阻塞 NIT（docs 计数 414 陈旧，本集成轮已修正） | 见记录 |

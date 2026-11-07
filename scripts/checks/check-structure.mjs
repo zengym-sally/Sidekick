@@ -13,7 +13,7 @@ import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 
 const ROOT = process.cwd();
 
-const TOP_LEVEL_DIRS = new Set(['.cargo', '.impeccable', 'design', 'docs', 'resources', 'runtime', 'scripts', 'shared', 'src', 'src-tauri', 'tests', 'vendor']);
+const TOP_LEVEL_DIRS = new Set(['.cargo', '.impeccable', 'design', 'docs', 'resources', 'runtime', 'scripts', 'server', 'shared', 'src', 'src-tauri', 'tests', 'vendor']);
 const ROOT_FILES = new Set(['.gitignore', '.env.example', 'AGENTS.md', 'DESIGN.md', 'PRODUCT.md', 'README.md', 'index.html', 'package-lock.json', 'package.json', 'tsconfig.json', 'vite.config.ts']);
 const FORBIDDEN_TRACKED = ['build/', 'dist/', 'src-tauri/target/', 'node_modules/'];
 const ENV_FILE = /(^|\/)\.env(\.[^/]*)?$/;
@@ -32,8 +32,12 @@ const METADATA_CODE_EXT = /\.(?:mjs|cjs|js|mts|cts|ts|jsx|tsx|vue|py|pyc|sh|bash
 const RUNTIME_TOP = new Set(['entries', 'lib', 'workers']);
 const SCRIPTS_TOP = new Set(['build', 'checks', 'probes']);
 const TESTS_TOP = new Set(['unit', 'integration', 'probes']);
-const SRC_TAURI_TOP_DIRS = new Set(['app', 'store', 'host', 'diagnostics']);
+const SERVER_TOP = new Set(['entries', 'lib']);
+const SRC_TAURI_TOP_DIRS = new Set(['app', 'bin', 'store', 'host', 'diagnostics']);
 const SRC_TAURI_TOP_FILES = new Set(['lib.rs', 'main.rs']);
+// W1 A-D: the packaged backend storage binary is the only allowed Rust bin source
+// (owner-approved layout; anything else under src-tauri/src/bin/ is rejected).
+const SRC_TAURI_BIN_FILES = new Set(['web-backend-storage.rs']);
 const EXPECTED_ENTRIES = [
   'runtime/entries/probe-entry.mjs',
   'runtime/entries/organizer-entry.mjs',
@@ -50,8 +54,11 @@ const IMMUTABLE_MIGRATIONS = new Map([
   ['src-tauri/migrations/003_agent_runs.sql','b8f89eab2dc8747cbffd0e59cc7c3816439ace21ebfe977babaf7c1b79b586c9'],
   ['src-tauri/migrations/004_mcp_runs.sql','e8960c4f529717776bba87522cc9becd3adda14544147c40135230404fe56a1b'],
   ['src-tauri/migrations/web-backend/001_web_backend.sql','8511907cf755567932f1526af0db20ce0af9128767c5724f2dd75e3de8ff143d'],
+  // W1 manual items (owner-approved exact DDL incl. its comment lines; file lands with
+  // candidate I - repo mode reports this path as a pending violation until then).
+  ['src-tauri/migrations/web-backend/002_manual_items.sql','b6cb8e61609f83454164bff6c5628b2c893122b8dbb9bb3ced41bcd3d9e2f97e'],
 ]);
-const SCAN_TOPS = ['src/', 'shared/', 'runtime/', 'tests/', 'scripts/', 'design/'];
+const SCAN_TOPS = ['src/', 'shared/', 'server/', 'runtime/', 'tests/', 'scripts/', 'design/'];
 const CODE_EXT = /\.(?:mjs|cjs|js|mts|cts|ts|jsx|tsx|vue)$/;
 const CSS_EXT = /\.css$/;
 const HTML_EXT = /\.html?$/;
@@ -151,6 +158,7 @@ function isRelativeSpecifier(specifier, file = '') {
 
 function layerFor(file) {
   if (file.startsWith('src/')) return { rule: 'layer.src', allowed: ['src/', 'shared/'] };
+  if (file.startsWith('server/')) return { rule: 'layer.server', allowed: ['server/', 'shared/'] };
   if (file.startsWith('runtime/')) return { rule: 'layer.runtime', allowed: ['runtime/', 'shared/'] };
   if (file.startsWith('shared/')) return { rule: 'layer.shared', allowed: ['shared/'] };
   if (file.startsWith('design/')) return { rule: 'layer.design', allowed: ['design/', 'src/assets/', 'src/styles/'] };
@@ -218,9 +226,11 @@ function checkLayout(files, add) {
     }
     if (file.startsWith('runtime/') && !RUNTIME_TOP.has(parts[1] ?? '')) add('layout.runtime-top', file, 1, 'runtime/ top level may only contain entries/, lib/, workers/');
     if (file.startsWith('scripts/') && !SCRIPTS_TOP.has(parts[1] ?? '')) add('layout.scripts-top', file, 1, 'scripts/ top level may only contain build/, checks/, probes/');
+    if (file.startsWith('server/') && !SERVER_TOP.has(parts[1] ?? '')) add('layout.server-top', file, 1, 'server/ top level may only contain entries/, lib/');
     if (file.startsWith('src-tauri/src/')) {
       const top = parts[2] ?? '';
-      if (!SRC_TAURI_TOP_DIRS.has(top) && !SRC_TAURI_TOP_FILES.has(top)) add('layout.src-tauri-top', file, 1, 'src-tauri/src top level may only contain lib.rs, main.rs, app/, store/, host/, diagnostics/');
+      if (!SRC_TAURI_TOP_DIRS.has(top) && !SRC_TAURI_TOP_FILES.has(top)) add('layout.src-tauri-top', file, 1, 'src-tauri/src top level may only contain lib.rs, main.rs, app/, bin/, store/, host/, diagnostics/');
+      else if (top === 'bin' && !SRC_TAURI_BIN_FILES.has(base)) add('layout.src-tauri-bin', file, 1, 'src-tauri/src/bin/ may only contain web-backend-storage.rs');
     }
   }
 }
@@ -260,7 +270,8 @@ function checkBareImports(root, files, add) {
     if (!CODE_EXT.test(file)) continue;
     const inShared = file.startsWith('shared/');
     const inDesign = file.startsWith('design/');
-    if (!inShared && !inDesign) continue;
+    const inServer = file.startsWith('server/');
+    if (!inShared && !inDesign && !inServer) continue;
     const text = readFileSync(absOf(root, file), 'utf8');
     for (const { specifier, index } of importSpecifiers(text)) {
       if (isRelativeSpecifier(specifier)) continue;
@@ -270,6 +281,11 @@ function checkBareImports(root, files, add) {
       }
       if (inDesign && specifier.startsWith('node:') && !DESIGN_NODE_TOOLS.has(file)) {
         add('layer.design-node', file, line, `design/ may only use node:* in serve.mjs/verify.cjs tooling; got ${specifier}`);
+      }
+      // W1 server is zero-dependency: bare npm imports would be undeclared production
+      // dependencies; only Node builtins are allowed (relative imports stay server/+shared/).
+      if (inServer && !specifier.startsWith('node:')) {
+        add('layer.server-bare', file, line, `server/ may only import Node builtins by bare specifier (no npm dependencies); got ${specifier}`);
       }
     }
   }
@@ -398,6 +414,14 @@ function runSelfTest() {
     write('scripts/loose.mjs');
     write('src-tauri/src/lib.rs');
     write('src-tauri/src/loose.rs');
+    write('src-tauri/src/bin/web-backend-storage.rs');
+    write('src-tauri/src/bin/scratch.rs');
+    write('server/lib/clean.mjs', "import { createServer } from 'node:http';\nimport { value } from '../../shared/clean.mjs';\n");
+    write('server/lib/bad-bare.mjs', "import express from 'express';\n");
+    write('server/lib/bad-layer.mjs', "import { value } from '../../src/clean.mjs';\n");
+    write('server/other/x.mjs');
+    write('server/loose.mjs');
+    write('src/bad-server.mjs', "import { value } from '../server/lib/clean.mjs';\n");
     write('vendor/pi/README.md');
 
     // Runtime metadata: legitimate untracked platform state stays usable and unflagged.
@@ -428,6 +452,10 @@ function runSelfTest() {
       ['layout.runtime-top', 'file directly under runtime/'],
       ['layout.scripts-top', 'file directly under scripts/'],
       ['layout.src-tauri-top', 'unexpected src-tauri/src top-level file'],
+      ['layout.src-tauri-bin', 'unexpected src-tauri/src/bin file'],
+      ['layer.server', 'server reference outside server/shared'],
+      ['layer.server-bare', 'server bare non-builtin import'],
+      ['layout.server-top', 'file directly under server/ or in an unsupported server/ subdir'],
       ['tracked.forbidden', 'forbidden tracked build/dist path'],
       ['tracked.env', 'tracked .env file'],
       ['top.file', 'unexpected root file'],
@@ -474,7 +502,7 @@ function runSelfTest() {
       for (const [rule, file] of missingMetadata) console.log(`  - [${rule}] ${file}`);
       return 1;
     }
-    const cleanFiles = ['design/clean.html', 'design/clean.css', 'design/assets/style.css', 'design/assets/script.js', 'design/serve.mjs', 'src/clean.mjs', 'src/clean.css', 'shared/clean.mjs', '.multica/daemon_task_context.json', '.multica/project/resources.json', '.opencode/skills/demo/SKILL.md', '.opencode/skills/demo/scripts/tool.mjs'];
+    const cleanFiles = ['design/clean.html', 'design/clean.css', 'design/assets/style.css', 'design/assets/script.js', 'design/serve.mjs', 'src/clean.mjs', 'src/clean.css', 'shared/clean.mjs', 'server/lib/clean.mjs', 'src-tauri/src/bin/web-backend-storage.rs', '.multica/daemon_task_context.json', '.multica/project/resources.json', '.opencode/skills/demo/SKILL.md', '.opencode/skills/demo/scripts/tool.mjs'];
     const cleanFalsePositive = violations.some((violation) => cleanFiles.includes(violation.file));
     if (cleanFalsePositive) {
       console.log('✗ structure self-test failed: valid sample files were flagged:');
@@ -494,7 +522,36 @@ function runSelfTest() {
       console.log('✗ structure self-test failed: tampered new-lineage migration was not flagged.');
       return 1;
     }
-    console.log(`✓ structure self-test passed (${expected.length} violation classes and ${expectedReferences.length} individual reference violations detected in a synthetic tree; clean samples stayed clean; frozen new-lineage migration original bytes passed and tampered bytes were flagged).`);
+    // W1 manual-items migration (002, owner-approved exact DDL): missing and tampered
+    // bytes must both be flagged; once the approved file exists in the repository its
+    // original bytes must pass (positive case activates automatically after candidate I lands).
+    const frozenItemsMigration = 'src-tauri/migrations/web-backend/002_manual_items.sql';
+    const itemsOriginal = join(ROOT, frozenItemsMigration);
+    const itemsAbs = join(root, ...frozenItemsMigration.split('/'));
+    if (!violations.some((violation) => violation.rule === 'schema.immutable-migration' && violation.file === frozenItemsMigration)) {
+      console.log('✗ structure self-test failed: missing W1 manual-items migration was not flagged.');
+      return 1;
+    }
+    writeFileSync(itemsAbs, 'tampered manual-items migration');
+    const tamperedItemsViolations = collect({ root, files, tracked: files.filter((file) => !untrackedPaths.has(file)), packagePath: join(root, 'package.json') }).violations;
+    if (!tamperedItemsViolations.some((violation) => violation.rule === 'schema.immutable-migration' && violation.file === frozenItemsMigration)) {
+      console.log('✗ structure self-test failed: tampered W1 manual-items migration was not flagged.');
+      return 1;
+    }
+    let itemsPositiveVerified = false;
+    if (existsSync(itemsOriginal)) {
+      writeFileSync(itemsAbs, readFileSync(itemsOriginal));
+      const originalItemsViolations = collect({ root, files, tracked: files.filter((file) => !untrackedPaths.has(file)), packagePath: join(root, 'package.json') }).violations;
+      if (originalItemsViolations.some((violation) => violation.rule === 'schema.immutable-migration' && violation.file === frozenItemsMigration)) {
+        console.log('✗ structure self-test failed: original W1 manual-items migration bytes were flagged.');
+        return 1;
+      }
+      itemsPositiveVerified = true;
+    }
+    const itemsFreezeNote = itemsPositiveVerified
+      ? 'W1 manual-items migration original bytes passed and tampered/missing bytes were flagged'
+      : 'W1 manual-items migration is pending candidate I: missing and tampered bytes were flagged (positive original-bytes case activates once the file exists)';
+    console.log(`✓ structure self-test passed (${expected.length} violation classes and ${expectedReferences.length} individual reference violations detected in a synthetic tree; clean samples stayed clean; frozen new-lineage migration original bytes passed and tampered bytes were flagged; ${itemsFreezeNote}).`);
     return 0;
   } finally {
     rmSync(root, { recursive: true, force: true });

@@ -2,6 +2,7 @@
 
 > 目标契约按 MAYNE-16 的 owner 五项决定更新（2026-11-06）。本文是设计，尚未实现；当前代码结构仍见[工程架构](architecture.md)，交付顺序与实际进度见[实施计划](../product/05-第一阶段实施计划.md)。此前 v0.5 中单飞、旧版兼容及 G2/G3 排在薄壳之后的建议已被本次决定替代。
 > **2026-11-07 状态**：owner 已授权按全新建表实施独立新库（web-backend/1 lineage，路径 `<workspaceRoot>/data/web-backend.sqlite`，11 表含 `task_result_payloads`，不做历史迁移或兼容桥）；最终 DDL、实施候选 `67860d3` 及其 F-1 修订 `cab73aa` 均已独立评审通过，最终集成候选已逐字节接入修订、迁移哈希冻结与复核记录——未合入 main；完整门禁在冻结候选上按原预算重跑，结果以回执为准，状态以[实施计划](../product/05-第一阶段实施计划.md)为准。
+> **2026-11-08 状态**：W0 已关闭（本地 main `6546990` 与已测树一致，完整门禁通过）。W1 手工事项切片进入受控实施：owner 批准 A–D（具体 DDL `b6cb8e61…f97e`、`server/` 与 `src-tauri/src/bin/` 布局守卫、`[[bin]]` 登记、`build-backend.mjs` 构建接入），纵向契约定稿见[手工事项契约](web-manual-items-contract.md)、授权与实施登记见[授权清单 §12](../reviews/web-manual-items-authorization-20261108.md)；三项候选（实现/验收测试/工程准备）并行推进，集成与完整门禁由唯一集成执行者在候选齐备后执行。本文仍描述目标设计；实际进度以[实施计划](../product/05-第一阶段实施计划.md)为准。
 
 ## 1. 已确认的边界
 

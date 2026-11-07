@@ -2,9 +2,9 @@
 
 > 本文是仓库结构与依赖边界的唯一权威来源；`AGENTS.md` 只做导航，`scripts/checks/check-structure.mjs` 把这里的规则做成机械守卫。
 > 适用范围：所有新增、移动、重命名的源码与脚本。改动本文中的边界、顶层目录或打包入口时，必须同时改守卫规则，否则 `npm run check:structure` 失败。
-> 最近一次结构调整：2026-10-31 结构治理（前端跨层依赖修复、`runtime/` 与 `src-tauri/` 归组、`tests/` 分层、`scripts/` 归组）。历史记录保留当时路径，见 [实施计划](../product/05-第一阶段实施计划.md) 的路径说明。
+> 最近一次结构调整：2026-11-08 W1 手工事项实施准入（owner 批准 A–D 后新增 `server/` 与 `src-tauri/src/bin/`，守卫同步，见 §2）；2026-10-31 结构治理（前端跨层依赖修复、`runtime/` 与 `src-tauri/` 归组、`tests/` 分层、`scripts/` 归组）。历史记录保留当时路径，见 [实施计划](../product/05-第一阶段实施计划.md) 的路径说明。
 
-> **当前代码与下一目标分开**：本文的结构/守卫规则描述当前 Rust/Tauri 实现。owner 已确认 Web/后端优先目标，详见[Web/后端设计](web-backend-design.md)；产品边界与执行次序以 product/01–05 为准。新后端目录和依赖边界在具体实现切片同步守卫后才生效，本轮不假称生产代码已迁移。
+> **当前代码与下一目标分开**：本文的结构/守卫规则描述当前实现与已批准的落地布局。owner 已确认 Web/后端优先目标，详见[Web/后端设计](web-backend-design.md)；产品边界与执行次序以 product/01–05 为准。2026-11-08 owner 批准 W1 A–D 后，`server/`、`src-tauri/src/bin/` 的布局与依赖边界已写入守卫并生效；对应生产代码（后端入口/库、存储适配二进制、浏览器接线）属 W1 候选 I，正在隔离树实现、尚未集成，本文不假称生产代码已迁移。手工事项纵向接口见[手工事项契约](web-manual-items-contract.md)。
 
 ## 1. 当前代码结构
 
@@ -28,9 +28,14 @@ runtime/                      # 随包 Node JS Runtime（不打包进前端产�
 src-tauri/src/                # Tauri 2 Rust 宿主；lib.rs 只做模块清单与装配（用 #[path] 保持模块名）
   lib.rs  main.rs
   app/                        # Builder／窗口／托盘／事件／run；commands.rs 为 IPC 命令（模块名仍为 store_commands）
+  bin/                        # web-backend-storage.rs：W1 存储适配 stdio 二进制（唯一允许的 bin 源）
   store/                      # local_store 及其特性模块、*_tests.rs（模块名不变）
   host/                       # mcp_host、runtime_host、skills_host
   diagnostics/                # storage_probe、s0_probe、verification、verification_root、mcp_ui_verification
+server/                       # W1 独立 Node 后端（随包分发的源码布局；只允许 entries/ 与 lib/）
+  entries/                    # web-backend-entry.mjs：后端进程入口（显式配置启动，不自动监听）
+  lib/                        # http-server、session-store、manual-items-service、storage-client、
+                              #     sse-hub、static-files
 tests/
   unit/                       # 纯域／客户端模型测试（原文件平移，文件名不变）
   integration/                # 需要构建产物或子进程的测试（含 lifecycle、discovery、native-fd、runtime）
@@ -38,7 +43,7 @@ tests/
   fixtures/                   # 合成输入、配置与本地合成服务（只放输入）
   README.md                   # 切片名→领域映射与命名约定
 scripts/
-  build/                      # bundle-runtime.mjs、build-app.mjs（生产打包入口）
+  build/                      # bundle-runtime.mjs、build-app.mjs、build-backend.mjs（生产打包入口）
   checks/                     # check-structure.mjs、check-docs.mjs（机械守卫）
   probes/                     # prepare-s33-lifecycle.mjs、rustc-host-macro.py（一次性探针）
 design/                       # 设计原型与评审记录；只读消费 src/assets、src/styles；serve.mjs 为窄服务
@@ -54,25 +59,26 @@ build/  dist/  src-tauri/target/   # 本地产物与原始证据，不入库
 
 ## 2. 依赖边界（可机械检查）
 
-守卫对**相对路径引用**做层级与存在性检查；bare specifier（如 `vue`、`node:fs`、`@earendil-works/pi-ai`）通常按依赖／构建或宿主别名处理，不受相对引用规则约束，但 `shared/` 与 `design/` 另有明确禁用的 bare 前缀（见下表与文件级例外）。CSS 的 `@import`、`url()` 与 HTML 的 `src`／`href` 同样检查，且目标必须存在。
+守卫对**相对路径引用**做层级与存在性检查；bare specifier（如 `vue`、`node:fs`、`@earendil-works/pi-ai`）通常按依赖／构建或宿主别名处理，不受相对引用规则约束，但 `shared/`、`design/` 与 `server/` 另有明确禁用的 bare 前缀（见下表与文件级例外）。CSS 的 `@import`、`url()` 与 HTML 的 `src`／`href` 同样检查，且目标必须存在。
 
 | 层 | 允许的相对引用 | 禁止 | 原因 |
 |---|---|---|---|
-| `src/**` | `src/`、`shared/` | `runtime/`、`design/`、`src-tauri/`、`vendor/`、`tests/`、`scripts/` | 生产前端不能依赖设计稿目录或 Node Runtime；品牌与令牌已归 `src/` |
+| `src/**` | `src/`、`shared/` | `server/`、`runtime/`、`design/`、`src-tauri/`、`vendor/`、`tests/`、`scripts/` | 生产前端不能依赖后端进程、设计稿目录或 Node Runtime；品牌与令牌已归 `src/` |
+| `server/**` | `server/`、`shared/` | `src/`、`runtime/`、`design/`、`src-tauri/`、`vendor/`；bare 仅允许 `node:*`（零 npm 依赖） | W1 独立后端只共享跨进程纯逻辑；`scripts/build/build-backend.mjs` 打包时重复校验同一规则 |
 | `runtime/**` | `runtime/`、`shared/` | `src/`、`design/`、`src-tauri/`、`vendor/`（bare 的 `@sidekick/pi-*` 除外） | Runtime 独立随包运行，只共享跨进程纯逻辑 |
 | `shared/**` | `shared/` | `vue`、`@tauri-apps/*`、`node:*`、其他顶层目录 | 中立层必须能同时被前端与 Runtime 引用 |
 | `design/**` | `design/`、`src/assets/`、`src/styles/` | `src/components/`、`runtime/`、`src-tauri/` | 设计稿消费生产资产，方向不可反转；`node:*` 仅限 `serve.mjs`／`verify.cjs` 工具 |
 
 其他结构规则（同一守卫内）：
 
-- **顶层目录白名单**（以 `git ls-files` 为准）：`.cargo`、`.impeccable`、`design`、`docs`、`resources`、`runtime`、`scripts`、`shared`、`src`、`src-tauri`、`tests`、`vendor`，外加根文件白名单。新增一级目录必须同步本文与守卫。
+- **顶层目录白名单**（以 `git ls-files` 为准）：`.cargo`、`.impeccable`、`design`、`docs`、`resources`、`runtime`、`scripts`、`server`、`shared`、`src`、`src-tauri`、`tests`、`vendor`，外加根文件白名单。新增一级目录必须同步本文与守卫。`server` 于 2026-11-08 随 W1 A–D 批准加入（不建仓库根级 `bin/`；Rust 二进制源码收敛在 `src-tauri/src/bin/`）。
 - **本地运行时元数据**：编码代理平台写进检出目录的机器本地元数据（当前仅 `.multica/`、`.opencode/`）不参与顶层白名单判定，本地保持可用、不入库、不打包。它们一旦被 git 跟踪即被拒绝（守卫规则 `metadata.tracked`）；`.multica/` 是守护进程数据目录，其中伪装成元数据的可执行代码仍按生产源码拒绝（`metadata.code`）。这两个目录不进入引用扫描与打包输入；其他任何新顶层目录（含未来新平台目录）仍走 `top.dir`，须先同步本文与守卫并经评审。
 - **入库卫生**：`git ls-files` 不得包含 `build/`、`dist/`、`src-tauri/target/`、`node_modules/`、`.env*`（`.env.example` 除外）。
 - **测试分层**：`tests/**.test.mjs` 只能位于 `unit/`、`integration/`、`probes/`；`fixtures/` 只放输入，不放断言。
-- **目录收敛**：`runtime/` 顶层只允许 `entries/`、`lib/`、`workers/`；`scripts/` 顶层只允许 `build/`、`checks/`、`probes/`；`src-tauri/src/` 顶层只允许 `lib.rs`、`main.rs`、`app/`、`store/`、`host/`、`diagnostics/`。
+- **目录收敛**：`runtime/` 顶层只允许 `entries/`、`lib/`、`workers/`；`scripts/` 顶层只允许 `build/`、`checks/`、`probes/`；`server/` 顶层只允许 `entries/`、`lib/`（守卫规则 `layout.server-top`）；`src-tauri/src/` 顶层只允许 `lib.rs`、`main.rs`、`app/`、`bin/`、`store/`、`host/`、`diagnostics/`，其中 `bin/` 只允许 `web-backend-storage.rs`（守卫规则 `layout.src-tauri-bin`）。
 - **打包入口存在性**：`runtime/entries/{probe-entry,organizer-entry,mcp-probe-entry,skills-manager,today-facts}.mjs`、`runtime/workers/{bash-worker,mcp-guardian}.mjs` 必须存在（产物名 `probe.mjs`／`organizer.mjs`／`skills-manager.mjs`／`mcp-probe.mjs`／`bash-worker.mjs`／`mcp-guardian.mjs` 不变，新增窄纯事实计算产物 `today-facts.mjs`）。
 - **旧路径不得回流**：`package.json` 不得残留 `tests/s[0-9]`、`tests/layout-`、`scripts/probes/bundle-runtime` 等迁移前路径；`check` 必须包含 `check:structure` 与 `check:docs`。
-- **历史迁移字节**：001–004 的原始SHA-256由结构守卫固定；只追加新迁移，禁止原地重写历史SQL。**2026-11-07**：owner 授权全新建表方案后，新独立 web-backend/1 lineage 迁移落 `src-tauri/migrations/web-backend/`（不触碰既有 001–005）；其 `001_web_backend.sql` 的精确 SHA-256（`8511907c…143d`，与审定 DDL 逐字节一致）现同样由结构守卫冻结并纳入原地自测正/负例（见[准备记录](../reviews/web-foundation-integration-schema-integration-prep-20261107.md)）。既有守卫对该路径无需新收敛规则：`src-tauri/src/` 顶层收敛只约束第一层（`store/` 已允许）、`src-tauri/migrations/` 无顶层限制、引用扫描不覆盖 `src-tauri`（见[集成记录](../reviews/web-foundation-integration-main-ff-20261107.md)）。迁移文件已接入但未合入 main，状态见[实施计划](../product/05-第一阶段实施计划.md)。
+- **历史迁移字节**：001–004 的原始SHA-256由结构守卫固定；只追加新迁移，禁止原地重写历史SQL。**2026-11-07**：owner 授权全新建表方案后，新独立 web-backend/1 lineage 迁移落 `src-tauri/migrations/web-backend/`（不触碰既有 001–005）；其 `001_web_backend.sql` 的精确 SHA-256（`8511907c…143d`，与审定 DDL 逐字节一致）现同样由结构守卫冻结并纳入原地自测正/负例（见[准备记录](../reviews/web-foundation-integration-schema-integration-prep-20261107.md)）。既有守卫对该路径无需新收敛规则：`src-tauri/src/` 顶层收敛只约束第一层（`store/` 已允许）、`src-tauri/migrations/` 无顶层限制、引用扫描不覆盖 `src-tauri`（见[集成记录](../reviews/web-foundation-integration-main-ff-20261107.md)）。迁移文件已接入但未合入 main，状态见[实施计划](../product/05-第一阶段实施计划.md)。**2026-11-08**：W1 手工事项迁移 `002_manual_items.sql` 获 owner 批准（A 项，原样 SHA-256 `b6cb8e61…f97e`，含块内注释行），其精确哈希同样入守卫冻结并纳入原地自测正/负例（缺失/篡改拒绝；批准事实见[授权清单 §12](../reviews/web-manual-items-authorization-20261108.md)）；迁移文件本身属候选 I，集成前守卫按“冻结文件缺失”如实报违规。
 - **守卫自测**：`check:structure` 带 `--self-test`，用临时目录合成违规样本逐条断言可检出，再检查仓库；规则不能只写在文档里。
 
 文档规则（`check:docs` 强制）：只校验 `README.md`、`AGENTS.md`、`DESIGN.md`、`design/README.md`、`docs/**/*.md`（`docs/reviews/**` 的历史记录除外，但包含 `docs/reviews/README.md`）；跳过代码围栏、行内代码、外部链接与锚点。新增或修改文档后本地相对链接必须存在。
@@ -89,7 +95,12 @@ build/  dist/  src-tauri/target/   # 本地产物与原始证据，不入库
 
 **共享层 `shared/`**
 
-跨进程纯逻辑，当前为日期与时间锚点（`dates.mjs`／`dates.d.mts`）。不含框架与平台依赖；前端与 Runtime 的相对引用都必须落回本目录。
+跨进程纯逻辑，当前为日期与时间锚点（`dates.mjs`／`dates.d.mts`）。不含框架与平台依赖；前端、server 与 Runtime 的相对引用都必须落回本目录。
+
+**独立后端 `server/`（W1 起步，候选 I 实现中）**
+
+- `entries/web-backend-entry.mjs`：后端进程唯一入口；显式配置（root/port/staticRoot/storageBin 等）启动，模块导入本身不监听，成功返回 `{origin, close}`。
+- `lib/`：`node:http` 路由与会话/CSRF、事项业务事务、Rust 存储适配 stdio 客户端、SSE 广播与同源静态供给；只引用 `server/`、`shared/` 与 Node 内置模块（零 npm 依赖，守卫与打包脚本双重强制）。
 
 **Node Runtime `runtime/`**
 
@@ -102,6 +113,7 @@ build/  dist/  src-tauri/target/   # 本地产物与原始证据，不入库
 
 - `lib.rs`：仅模块清单（`#[path]`）与 `run()` 装配，保持模块名、公开路径与 `cargo test --lib <filter>` 过滤不变。
 - `app/`：Tauri Builder、窗口、托盘、全局快捷键、事件与 IPC 命令注册；`commands.rs` 的模块名仍为 `store_commands`。
+- `bin/web-backend-storage.rs`：W1 存储适配 stdio 二进制入口（由 Node 后端作为子进程调用）；`bin/` 收敛仅此一个源文件，经 `src-tauri/Cargo.toml` 的 `[[bin]]` 构建为 `web-backend-storage`，由 `scripts/build/build-backend.mjs` 装入后端 bundle。
 - `store/`：正常业务唯一写入方（SQLite、迁移、事务、备份与恢复原语），`local_store.rs` 用 `#[path]` 引入特性模块与 `*_tests.rs`。
 - `host/`：外部宿主生命周期（MCP、Runtime、Skills）。
 - `diagnostics/`：探针、诊断、验证载体；不被业务路径依赖。
@@ -109,7 +121,7 @@ build/  dist/  src-tauri/target/   # 本地产物与原始证据，不入库
 **测试与脚本**
 
 - `tests/unit`：纯域与客户端模型断言；`tests/integration`：需要构建产物或真实子进程；`tests/probes`：探针与 probe 契约；`tests/fixtures`：合成输入与本地合成服务。
-- `scripts/build`：生产打包（`bundle-runtime`、`build-app`）；`scripts/checks`：结构与文档守卫；`scripts/probes`：一次性探针辅助。
+- `scripts/build`：生产打包（`bundle-runtime`、`build-app`、`build-backend`）；`scripts/checks`：结构与文档守卫；`scripts/probes`：一次性探针辅助。
 - 切片名（`s1`…`s33`）保留在 npm 脚本名、测试文件名、探针脚本与 fixtures 中（如 `scripts/probes/prepare-s33-lifecycle.mjs`、`tests/probes/s33/`、`tests/fixtures/s33-ui-verify.config.json`），用于对照历史证据；新增测试与脚本使用领域名。
 
 **设计、上游与文档**
@@ -122,7 +134,9 @@ build/  dist/  src-tauri/target/   # 本地产物与原始证据，不入库
 
 | 要新增的东西 | 放到 | 约束 |
 |---|---|---|
-| 跨进程纯逻辑（当前为日期与时间锚点） | `shared/` | 禁 vue／node／tauri；两侧共用同一份实现 |
+| 跨进程纯逻辑（当前为日期与时间锚点） | `shared/` | 禁 vue／node／tauri；前端、server 与 Runtime 共用同一份实现 |
+| 后端进程入口与 HTTP/SSE/会话/事项服务库 | `server/entries/`、`server/lib/` | 只引用 `server/`、`shared/` 与 Node 内置模块；零 npm 依赖；布局收敛 `layout.server-top` |
+| 独立 Rust 存储适配二进制源 | `src-tauri/src/bin/web-backend-storage.rs` | `bin/` 仅此一文件（`layout.src-tauri-bin`）；manifest 登记 `[[bin]]` 需 owner 批准（A–D 已批） |
 | 前端业务规则或类型 | `src/domain/` | 允许 vue 响应式；禁 stores、组件、IPC |
 | IPC 调用、界面状态 | `src/stores/` | 组件不得直连 `@tauri-apps/api` |
 | 业务组件 | `src/components/` | 公共表单控件放 `src/components/ui/` 并复用 |
@@ -134,7 +148,7 @@ build/  dist/  src-tauri/target/   # 本地产物与原始证据，不入库
 | 数据模型、迁移、事务 | `src-tauri/src/store/` | 迁移只追加；备份失败不覆盖原根 |
 | 外部宿主生命周期 | `src-tauri/src/host/` | 不直接写业务表 |
 | 探针、诊断、验证载体 | `src-tauri/src/diagnostics/` | 业务路径不得依赖 |
-| 生产打包脚本 | `scripts/build/` | 产物名与资源目录名保持兼容 |
+| 生产打包脚本 | `scripts/build/` | 产物名与资源目录名保持兼容；`build-backend.mjs` 输出统一 `build/web-backend/`（server 布局、实际引用的 shared、`bin/web-backend-storage`、`static/`=前端 dist） |
 | 结构/文档守卫 | `scripts/checks/` | 无第三方依赖，带 `--self-test` 负例 |
 | 一次性探针辅助脚本 | `scripts/probes/` | 可重建，产物写入 `build/` |
 | 单元测试 | `tests/unit/` | 用领域名，不依赖构建产物 |
