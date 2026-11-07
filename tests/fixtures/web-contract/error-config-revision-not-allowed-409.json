@@ -1,0 +1,12 @@
+{
+  "contractVersion": "web-api/1",
+  "status": 409,
+  "error": {
+    "code": "config_revision_change_not_allowed",
+    "message": "only auth_or_config_invalid / config_revision_unknown failures may change the config revision; submit a new task for other failure codes",
+    "details": {
+      "taskId": "tsk_9c2e5a7b1d4f6083ca5e8b0d2f4a6c91",
+      "failureCode": "model_request_failed"
+    }
+  }
+}

@@ -19,7 +19,7 @@
         "cursor": 1040,
         "epoch": "inst_9f27c1aa40b2",
         "objectType": "task",
-        "objectId": "tsk_1a2b3c4d5e6f708192a3b4c5d6e7f809",
+        "objectId": "tsk_3f8a1c5e9b2d4706fa1c3e5b7d9a2f48",
         "objectVersion": 2,
         "taskState": "running",
         "at": "2026-11-06T12:30:41.000Z"
@@ -33,9 +33,12 @@
         "cursor": 1041,
         "epoch": "inst_9f27c1aa40b2",
         "objectType": "task",
-        "objectId": "tsk_1a2b3c4d5e6f708192a3b4c5d6e7f809",
+        "objectId": "tsk_3f8a1c5e9b2d4706fa1c3e5b7d9a2f48",
         "objectVersion": 2,
-        "progress": { "stage": "extracting", "detail": "organizer pass 1/2 (synthetic sample)" },
+        "progress": {
+          "stage": "extracting",
+          "detail": "organizer pass 1/2 (synthetic sample)"
+        },
         "at": "2026-11-06T12:31:02.000Z"
       }
     },
@@ -47,7 +50,7 @@
         "cursor": 1042,
         "epoch": "inst_9f27c1aa40b2",
         "objectType": "task",
-        "objectId": "tsk_1a2b3c4d5e6f708192a3b4c5d6e7f809",
+        "objectId": "tsk_3f8a1c5e9b2d4706fa1c3e5b7d9a2f48",
         "objectVersion": 3,
         "taskState": "cancelling",
         "at": "2026-11-06T12:31:20.000Z"
@@ -63,7 +66,9 @@
         "objectType": "setting",
         "objectId": "agentConcurrency",
         "objectVersion": 6,
-        "setting": { "agentConcurrency": 4 },
+        "setting": {
+          "agentConcurrency": 4
+        },
         "at": "2026-11-06T12:31:45.000Z"
       }
     },

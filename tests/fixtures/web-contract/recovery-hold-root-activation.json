@@ -19,7 +19,12 @@
       "historyContinuity": "unproven",
       "note": "root A was active until 09:40, then B took over; execution history between the checkpoint and re-activation cannot be proven, so unfinished tasks are isolated for review instead of replay (A→B→A)"
     },
-    "summary": { "total": 3, "needsDecision": 2, "autoSafe": 0, "cancelledWithIntent": 1 }
+    "summary": {
+      "total": 3,
+      "needsDecision": 3,
+      "autoSafe": 0,
+      "pendingCancelIntent": 1
+    }
   },
   "items": [
     {
@@ -39,7 +44,11 @@
           "verifiable": true
         }
       ],
-      "decisionOptions": ["resume", "cancel"]
+      "decisionOptions": [
+        "resume",
+        "cancel"
+      ],
+      "version": 1
     },
     {
       "itemId": "rci_12",
@@ -50,7 +59,11 @@
       "verificationState": "pending",
       "autoSafeEvidence": null,
       "receipts": [],
-      "decisionOptions": ["resume", "cancel"]
+      "decisionOptions": [
+        "resume",
+        "cancel"
+      ],
+      "version": 1
     },
     {
       "itemId": "rci_13",
@@ -61,7 +74,12 @@
       "verificationState": "pending",
       "autoSafeEvidence": null,
       "receipts": [],
-      "decisionOptions": ["resume", "cancel"]
+      "decisionOptions": [
+        "resume",
+        "cancel"
+      ],
+      "version": 1
     }
-  ]
+  ],
+  "summaryNote": "needsDecision counts every item with a pending decision (verificationState=pending); pendingCancelIntent counts items with cancelIntent=true that are still pending and is reported separately, never subtracted from needsDecision."
 }

@@ -1,32 +1,35 @@
 {
   "contractVersion": "web-api/1",
-  "taskId": "tsk_6d3a9f1e4c7b2580a9e3f6c1d0b4e8a2",
-  "operationId": "op_7b1e4d9f2a6c0385b8e1d4f7a0c3e6b9",
+  "taskId": "tsk_1a2b3c4d5e6f708192a3b4c5d6e7f809",
+  "operationId": "op_5f2b91c7a4d63e0817bc2f0a9d4e1b53",
   "type": "organize_text",
   "role": "organizer",
   "state": "succeeded",
-  "version": 3,
-  "createdAt": "2026-11-06T12:20:00.000Z",
-  "updatedAt": "2026-11-06T12:24:12.000Z",
-  "terminalAt": "2026-11-06T12:24:12.000Z",
-  "submitSeq": 1038,
+  "version": 4,
+  "createdAt": "2026-11-06T12:30:00.000Z",
+  "updatedAt": "2026-11-06T12:33:05.000Z",
+  "terminalAt": "2026-11-06T12:33:05.000Z",
+  "submitSeq": 1041,
   "queuePosition": null,
   "attemptCount": 1,
-  "attemptId": "att_5c9d2b7e1a4f0863d2e9c5b8a1f4e7d0",
+  "attemptId": "att_77c1e4a09b3d42f58c6e01a2d9b48e77",
   "cancelIntent": false,
   "configRevision": "cfgrev_0d81fe22",
   "inputRef": {
     "kind": "inline_text",
-    "byteSize": 1180,
-    "contentHash": "sha256:4e8b2c6f0a9d1e5b7c3a8f2d6b0e4a9c1f5d8b2e6a0c4f8b3d7e1a5c9f2b6d0a"
+    "byteSize": 842,
+    "contentHash": "sha256:1f3a9c07e5b2d84c0a6f1e93b7d5c2a8094e6f1bd3c7a5029e8b1d4f6a0c3e52"
   },
   "progress": null,
   "result": {
     "kind": "organize_text_result",
-    "payloadRef": "result://att_5c9d2b7e1a4f0863d2e9c5b8a1f4e7d0/payload",
-    "acceptedByAttempt": "att_5c9d2b7e1a4f0863d2e9c5b8a1f4e7d0",
-    "completedAt": "2026-11-06T12:24:12.000Z"
+    "payloadRef": "result://att_77c1e4a09b3d42f58c6e01a2d9b48e77/payload",
+    "acceptedByAttempt": "att_77c1e4a09b3d42f58c6e01a2d9b48e77",
+    "completedAt": "2026-11-06T12:33:05.000Z"
   },
   "failure": null,
-  "recovery": null
+  "recovery": null,
+  "attemptExitState": "exited_confirmed",
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "resultPendingExit": false
 }

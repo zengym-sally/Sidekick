@@ -30,5 +30,8 @@
     "autoResume": true,
     "reason": "worker exit confirmed by process-tree check; task type proven pre-send only",
     "receipts": []
-  }
+  },
+  "attemptExitState": "exited_confirmed",
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "resultPendingExit": false
 }

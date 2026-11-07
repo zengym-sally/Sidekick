@@ -26,5 +26,8 @@
   },
   "result": null,
   "failure": null,
-  "recovery": null
+  "recovery": null,
+  "attemptExitState": "active",
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "resultPendingExit": false
 }

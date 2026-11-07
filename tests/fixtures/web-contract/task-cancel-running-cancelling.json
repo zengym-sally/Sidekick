@@ -1,7 +1,7 @@
 {
   "contractVersion": "web-api/1",
-  "taskId": "tsk_1a2b3c4d5e6f708192a3b4c5d6e7f809",
-  "operationId": "op_5f2b91c7a4d63e0817bc2f0a9d4e1b53",
+  "taskId": "tsk_3f8a1c5e9b2d4706fa1c3e5b7d9a2f48",
+  "operationId": "op_6c0d2e4f8a1b3579df2e4a6c8b0d2f46",
   "type": "organize_text",
   "role": "organizer",
   "state": "cancelling",
@@ -9,10 +9,10 @@
   "createdAt": "2026-11-06T12:30:00.000Z",
   "updatedAt": "2026-11-06T12:31:20.000Z",
   "terminalAt": null,
-  "submitSeq": 1041,
+  "submitSeq": 1043,
   "queuePosition": null,
   "attemptCount": 1,
-  "attemptId": "att_77c1e4a09b3d42f58c6e01a2d9b48e77",
+  "attemptId": "att_2b9e4d6f8a0c1357fb1d3a5c7e9b0d24",
   "cancelIntent": true,
   "configRevision": "cfgrev_0d81fe22",
   "inputRef": {
@@ -26,5 +26,8 @@
   },
   "result": null,
   "failure": null,
-  "recovery": null
+  "recovery": null,
+  "attemptExitState": "exiting",
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "resultPendingExit": false
 }
