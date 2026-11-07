@@ -129,9 +129,6 @@ impl Fault {
 
 pub struct StorageAdapter {
     root: PathBuf,
-    /// Root lock; dropped exactly when the adapter drops, so the lock lifetime
-    /// equals the connection lifetime.
-    lock: File,
     root_handle: File,
     /// Held handles for every required private directory (including `data/`).
     dir_handles: BTreeMap<&'static str, File>,
@@ -142,6 +139,10 @@ pub struct StorageAdapter {
     db: Connection,
     /// Once any verification fails the adapter stops all reads and writes.
     stopped: Cell<bool>,
+    /// Root lock. Declared last so field-drop order closes the SQLite connection
+    /// before the lock is released: a second opener must not acquire the lock
+    /// while the previous connection is still closing or checkpointing.
+    lock: File,
 }
 
 fn same_directory(path: &Path, held: &File, private: bool) -> Result<()> {
@@ -655,4 +656,83 @@ pub fn default_open_creates(path: &Path) -> Result<bool> {
     let connection = Connection::open(path).map_err(|_| Error::new(Code::Io, "默认打开失败"))?;
     drop(connection);
     Ok(!existed && path.exists())
+}
+
+/// Close-lifetime regression: the root lock must still be held while SQLite
+/// runs its CLOSE callback. If the lock is dropped before the connection, a
+/// second opener can acquire the lock while the old connection is still closing
+/// or checkpointing, which breaks the "connection and lock share one lifetime"
+/// invariant.
+#[cfg(test)]
+mod close_order_tests {
+    use super::*;
+    use std::ffi::c_void;
+    use std::sync::atomic::{AtomicBool, Ordering};
+
+    struct CloseObservation {
+        marker: PathBuf,
+        released: AtomicBool,
+        called: AtomicBool,
+    }
+
+    unsafe extern "C" fn close_trace(
+        event: u32,
+        context: *mut c_void,
+        _: *mut c_void,
+        _: *mut c_void,
+    ) -> i32 {
+        if event == rusqlite::ffi::SQLITE_TRACE_CLOSE {
+            let observation = unsafe { &*(context as *const CloseObservation) };
+            observation.called.store(true, Ordering::SeqCst);
+            let lock = OpenOptions::new()
+                .read(true)
+                .write(true)
+                .open(&observation.marker)
+                .unwrap();
+            observation
+                .released
+                .store(lock.try_lock().is_ok(), Ordering::SeqCst);
+        }
+        0
+    }
+
+    #[test]
+    fn root_lock_must_survive_until_sqlite_close() {
+        let unique = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let root = std::env::temp_dir().join(format!(
+            "sidekick-probe-close-order-{}-{unique}",
+            std::process::id()
+        ));
+        fs::DirBuilder::new().mode(0o700).create(&root).unwrap();
+        let root = fs::canonicalize(&root).unwrap();
+        let adapter = StorageAdapter::open(&root, true, Fault::None).unwrap();
+        let observation = Box::new(CloseObservation {
+            marker: root.join(ROOT_MARKER),
+            released: AtomicBool::new(false),
+            called: AtomicBool::new(false),
+        });
+        unsafe {
+            assert_eq!(
+                rusqlite::ffi::sqlite3_trace_v2(
+                    adapter.db.handle(),
+                    rusqlite::ffi::SQLITE_TRACE_CLOSE,
+                    Some(close_trace),
+                    (&*observation as *const CloseObservation).cast_mut().cast(),
+                ),
+                rusqlite::ffi::SQLITE_OK
+            );
+        }
+        drop(adapter);
+        let called = observation.called.load(Ordering::SeqCst);
+        let released = observation.released.load(Ordering::SeqCst);
+        let _ = fs::remove_dir_all(&root);
+        assert!(called, "SQLite close callback was not called");
+        assert!(
+            !released,
+            "root lock already available inside SQLite CLOSE callback"
+        );
+    }
 }

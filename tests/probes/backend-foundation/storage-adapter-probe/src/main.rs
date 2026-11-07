@@ -4,9 +4,7 @@
 
 mod adapter;
 
-use adapter::{
-    acquire_root_lock, default_open_creates, Code, Error, Fault, StorageAdapter, REQUIRED_DIRS,
-};
+use adapter::{default_open_creates, Code, Error, Fault, StorageAdapter, REQUIRED_DIRS};
 use rusqlite::Connection;
 use serde_json::{json, Value};
 use std::fs::{self, OpenOptions};
@@ -359,8 +357,11 @@ fn hold(args: &[String]) -> Value {
     emit(json!({"ready": true, "pid": std::process::id(), "root": root}));
     let mut buffer = [0u8; 512];
     let _ = std::io::stdin().read(&mut buffer);
-    // stdin EOF models a graceful worker exit; dropping the adapter releases
-    // the root lock. The crash cases never get here: the runner SIGKILLs.
+    // stdin EOF models a graceful worker exit: run the adapter destructor so
+    // the connection closes and the root lock is released through the normal
+    // path. The crash cases never get here: the runner SIGKILLs, and the kernel
+    // releases the lock instead.
+    drop(adapter);
     exit(0);
 }
 
@@ -418,26 +419,99 @@ fn read_worker_record(path: &Path) -> WorkerRecord {
     }
 }
 
-/// Scheduler-side admission: acquiring the root lock alone is not proof that
-/// the previous worker stopped, so the recorded worker PID is verified too —
-/// and a record that cannot be verified pauses scheduling instead of being
-/// silently treated as "no worker".
+/// Result of asking the OS whether the recorded PID is still alive. Only an
+/// explicit "no such process" counts as exited; permission denial, an invalid
+/// PID, or a failed probe command all leave the worker unverified.
+enum WorkerLiveness {
+    Alive,
+    Exited,
+    Unverified(String),
+}
+
+/// Probe the recorded worker PID with `kill -0`. The probe program can be
+/// overridden with `SIDEKICK_PROBE_KILL` so the runner can drive synthetic
+/// permission/spawn failures without touching a real process.
+fn probe_worker(pid: i64) -> WorkerLiveness {
+    if pid <= 0 || pid > i32::MAX as i64 {
+        return WorkerLiveness::Unverified(format!(
+            "pid {pid} 超出进程标识的有效范围（1..={}）",
+            i32::MAX
+        ));
+    }
+    let program = std::env::var_os("SIDEKICK_PROBE_KILL")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| PathBuf::from("/bin/kill"));
+    let output = match std::process::Command::new(&program)
+        .arg("-0")
+        .arg(pid.to_string())
+        .output()
+    {
+        Ok(output) => output,
+        Err(error) => {
+            return WorkerLiveness::Unverified(format!("进程探测命令启动失败：{error}"));
+        }
+    };
+    if output.status.success() {
+        return WorkerLiveness::Alive;
+    }
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    // EPERM means the process exists but this user may not signal it.
+    if stderr.contains("Operation not permitted") {
+        return WorkerLiveness::Alive;
+    }
+    if stderr.contains("No such process") {
+        return WorkerLiveness::Exited;
+    }
+    let code = output
+        .status
+        .code()
+        .map(|code| code.to_string())
+        .unwrap_or_else(|| "terminated-by-signal".into());
+    WorkerLiveness::Unverified(format!(
+        "进程探测未确认状态：exit={code} stderr={}",
+        stderr.trim()
+    ))
+}
+
+/// Worker state used by the scheduler decision, combining record verification
+/// with the liveness probe.
+enum WorkerStatus {
+    Absent,
+    Alive { pid: i64 },
+    Exited { pid: i64 },
+    Unverified { reason: String },
+}
+
+fn classify_worker(path: &Path) -> WorkerStatus {
+    match read_worker_record(path) {
+        WorkerRecord::Absent => WorkerStatus::Absent,
+        WorkerRecord::Verified { pid } => match probe_worker(pid) {
+            WorkerLiveness::Alive => WorkerStatus::Alive { pid },
+            WorkerLiveness::Exited => WorkerStatus::Exited { pid },
+            WorkerLiveness::Unverified(reason) => WorkerStatus::Unverified { reason },
+        },
+        WorkerRecord::Unverified { reason } => WorkerStatus::Unverified { reason },
+    }
+}
+
+fn worker_json(status: &WorkerStatus) -> Value {
+    match status {
+        WorkerStatus::Absent => Value::Null,
+        WorkerStatus::Alive { pid } => json!({"pid": pid, "alive": true}),
+        WorkerStatus::Exited { pid } => json!({"pid": pid, "alive": false}),
+        WorkerStatus::Unverified { reason } => json!({"state": "unverified", "reason": reason}),
+    }
+}
+
+/// Scheduler-side admission. The root is opened through the same full
+/// existing-root adapter entry as every other consumer: marker/MAGIC, required
+/// directory identities and database identity/permissions are all verified, and
+/// the root lock is held for the decision. Nothing is created. The recorded
+/// worker PID is then checked; only a confirmed-exited worker may schedule.
 fn try_schedule(args: &[String]) -> Value {
     let root = root_arg(args);
-    let worker_file = root.join("runs/worker.json");
-    let record = read_worker_record(&worker_file);
-    let worker = match &record {
-        WorkerRecord::Absent => Value::Null,
-        WorkerRecord::Verified { pid } => {
-            let alive = std::process::Command::new("/bin/kill")
-                .args(["-0", &pid.to_string()])
-                .output()
-                .map(|output| output.status.success())
-                .unwrap_or(false);
-            json!({"pid": pid, "alive": alive})
-        }
-        WorkerRecord::Unverified { reason } => json!({"state": "unverified", "reason": reason}),
-    };
+    let status = classify_worker(&root.join("runs/worker.json"));
+    let worker = worker_json(&status);
     let reject = |code: &str, note: &str, worker: Value| {
         json!({
             "command": "try-schedule",
@@ -449,39 +523,41 @@ fn try_schedule(args: &[String]) -> Value {
             "note": note,
         })
     };
-    match acquire_root_lock(&root) {
-        Err(error) if error.code == Code::RootInUse => reject(
-            "ROOT_IN_USE",
-            "根锁被占用：旧 worker 未退或旧实例仍在，暂停调度。",
-            worker,
-        ),
+    let adapter = match StorageAdapter::open(&root, false, Fault::None) {
+        Ok(adapter) => adapter,
+        Err(error) if error.code == Code::RootInUse => {
+            return reject(
+                "ROOT_IN_USE",
+                "根锁被占用：旧 worker 未退或旧实例仍在，暂停调度。",
+                worker,
+            );
+        }
         Err(error) => {
             let mut value = error_json("try-schedule", &error);
+            value["ok"] = Value::Bool(true);
             value["decision"] = Value::String("REJECT".into());
-            value
+            return value;
         }
-        Ok(lock) => {
-            if let WorkerRecord::Unverified { .. } = &record {
-                return reject(
-                    Code::WorkerUnverified.as_str(),
-                    "worker 记录无法核实（缺失内容/损坏/身份或权限不符）：无法证明旧 worker 已停，暂停调度。",
-                    worker,
-                );
-            }
-            if worker.get("alive").and_then(Value::as_bool) == Some(true) {
-                return reject(
-                    "WORKER_ALIVE",
-                    "记录的 worker 进程仍可能存活：拿根锁不等于旧 worker 已停，暂停调度。",
-                    worker,
-                );
-            }
-            let database = root.join("data/sidekick.sqlite");
-            if let Err(error) = StorageAdapter::validate_existing_database(&database, false) {
-                let mut value = error_json("try-schedule", &error);
-                value["decision"] = Value::String("REJECT".into());
-                return value;
-            }
-            drop(lock);
+    };
+    match status {
+        WorkerStatus::Unverified { reason } => {
+            drop(adapter);
+            reject(
+                Code::WorkerUnverified.as_str(),
+                &format!("worker 记录无法核实（{reason}）：无法证明旧 worker 已停，暂停调度。"),
+                worker,
+            )
+        }
+        WorkerStatus::Alive { .. } => {
+            drop(adapter);
+            reject(
+                "WORKER_ALIVE",
+                "记录的 worker 进程仍可能存活：拿根锁不等于旧 worker 已停，暂停调度。",
+                worker,
+            )
+        }
+        WorkerStatus::Absent | WorkerStatus::Exited { .. } => {
+            drop(adapter);
             json!({
                 "command": "try-schedule",
                 "ok": true,
@@ -489,7 +565,7 @@ fn try_schedule(args: &[String]) -> Value {
                 "decision": "ACCEPT",
                 "code": null,
                 "worker": worker,
-                "note": "根锁可获取、记录的 worker 进程已确认退出、数据库可读。",
+                "note": "已有根完整校验通过、根锁可获取、记录的 worker 进程已确认退出、数据库可读。",
             })
         }
     }

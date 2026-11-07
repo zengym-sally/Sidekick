@@ -58,8 +58,13 @@ function commandText(args) {
   return `sidekick-storage-adapter-probe ${args.join(' ')}`;
 }
 
-function run(args, { timeout = 60000 } = {}) {
-  const result = spawnSync(binary, args, { encoding: 'utf8', timeout, maxBuffer: 32 * 1024 * 1024 });
+function run(args, { timeout = 60000, env = {} } = {}) {
+  const result = spawnSync(binary, args, {
+    encoding: 'utf8',
+    timeout,
+    maxBuffer: 32 * 1024 * 1024,
+    env: { ...process.env, ...env },
+  });
   const stdout = result.stdout ?? '';
   const lines = stdout.split('\n').filter((line) => line.trim().length > 0);
   let json = null;
@@ -123,6 +128,17 @@ function freshDir(name) {
   rmSync(root, { recursive: true, force: true });
   mkdirSync(root, { recursive: true });
   return root;
+}
+
+/// Executable fixture used to drive synthetic `kill -0` failures without
+/// touching a real process or raising privileges.
+function writeFixture(name, content) {
+  const dir = path.join(buildDir, 'fixtures');
+  mkdirSync(dir, { recursive: true });
+  const file = path.join(dir, name);
+  writeFileSync(file, content, { mode: 0o755 });
+  chmodSync(file, 0o755);
+  return file;
 }
 
 /// Snapshot of a synthetic root for the "a rejection must not change the file
@@ -610,16 +626,25 @@ async function main() {
       chmodSync(file, mode);
       return file;
     };
+    // Synthetic `kill -0` outcomes: the probe program is overridable so the
+    // runner can produce permission/spawn failures without a real process.
+    const permProbe = writeFixture('kill-perm.sh', '#!/bin/sh\necho "kill: Operation not permitted" >&2\nexit 1\n');
+    const esrchProbe = writeFixture('kill-esrch.sh', '#!/bin/sh\necho "kill: No such process" >&2\nexit 1\n');
+    const spawnProbe = path.join(buildDir, 'fixtures', 'does-not-exist');
     const cases = [
-      ['d-worker-corrupt', '{not-json', 0o600, 'REJECT', 'WORKER_UNVERIFIED', '内容损坏'],
-      ['d-worker-no-pid', { startedAtMs: 1 }, 0o600, 'REJECT', 'WORKER_UNVERIFIED', '缺少 pid 字段'],
-      ['d-worker-symlink', null, 0o600, 'REJECT', 'WORKER_UNVERIFIED', '是符号链接'],
-      ['d-worker-hardlink', { pid: deadPid, startedAtMs: 1 }, 0o600, 'REJECT', 'WORKER_UNVERIFIED', '有额外硬链'],
-      ['d-worker-mode', { pid: deadPid, startedAtMs: 1 }, 0o644, 'REJECT', 'WORKER_UNVERIFIED', '权限 0644'],
-      ['d-worker-live', { pid: process.pid, startedAtMs: Date.now() }, 0o600, 'REJECT', 'WORKER_ALIVE', '存活 PID'],
-      ['d-worker-dead', { pid: deadPid, startedAtMs: 1 }, 0o600, 'ACCEPT', null, '已退出 PID'],
+      ['d-worker-corrupt', '{not-json', 0o600, 'REJECT', 'WORKER_UNVERIFIED', '内容损坏', null],
+      ['d-worker-no-pid', { startedAtMs: 1 }, 0o600, 'REJECT', 'WORKER_UNVERIFIED', '缺少 pid 字段', null],
+      ['d-worker-symlink', null, 0o600, 'REJECT', 'WORKER_UNVERIFIED', '是符号链接', null],
+      ['d-worker-hardlink', { pid: deadPid, startedAtMs: 1 }, 0o600, 'REJECT', 'WORKER_UNVERIFIED', '有额外硬链', null],
+      ['d-worker-mode', { pid: deadPid, startedAtMs: 1 }, 0o644, 'REJECT', 'WORKER_UNVERIFIED', '权限 0644', null],
+      ['d-worker-pid-range', { pid: 9223372036854775000, startedAtMs: 1 }, 0o600, 'REJECT', 'WORKER_UNVERIFIED', 'pid 超出有效范围', null],
+      ['d-worker-live', { pid: process.pid, startedAtMs: Date.now() }, 0o600, 'REJECT', 'WORKER_ALIVE', '存活 PID', null],
+      ['d-worker-dead', { pid: deadPid, startedAtMs: 1 }, 0o600, 'ACCEPT', null, '已退出 PID', null],
+      ['d-worker-probe-spawn', { pid: deadPid, startedAtMs: 1 }, 0o600, 'REJECT', 'WORKER_UNVERIFIED', '探测命令无法启动', { SIDEKICK_PROBE_KILL: spawnProbe }],
+      ['d-worker-probe-perm', { pid: deadPid, startedAtMs: 1 }, 0o600, 'REJECT', 'WORKER_ALIVE', '探测权限不足', { SIDEKICK_PROBE_KILL: permProbe }],
+      ['d-worker-probe-esrch', { pid: deadPid, startedAtMs: 1 }, 0o600, 'ACCEPT', null, '探测确认不存在', { SIDEKICK_PROBE_KILL: esrchProbe }],
     ];
-    for (const [name, payload, mode, decision, code, label] of cases) {
+    for (const [name, payload, mode, decision, code, label, env] of cases) {
       const root = seed(name);
       if (name === 'd-worker-symlink') {
         const aside = path.join(root, 'runs', 'worker-record.json');
@@ -632,7 +657,7 @@ async function main() {
       } else {
         writeRecord(root, payload, mode);
       }
-      const schedule = run(['try-schedule', '--root', root]);
+      const schedule = run(['try-schedule', '--root', root], { env: env ?? {} });
       const checks = [
         check('exit0', schedule.status === 0, `status=${schedule.status}`),
         check(`decision=${decision}`, schedule.json?.decision === decision, `decision=${schedule.json?.decision}`),
@@ -651,6 +676,61 @@ async function main() {
         check('exit0', schedule.status === 0, `status=${schedule.status}`),
         check('decision=ACCEPT', schedule.json?.decision === 'ACCEPT', `decision=${schedule.json?.decision}`),
       ]);
+    }
+  }
+  // ---- D5. scheduler entry reuses the full existing-root validation --------
+  {
+    const markerOf = (root) => path.join(root, '.sidekick-workspace');
+    const databaseOf = (root) => path.join(root, 'data', 'sidekick.sqlite');
+    const scheduleCases = [
+      ['d-schedule-empty', 'UNKNOWN_ROOT', '空目录无归属标记', (root) => {}],
+      ['d-schedule-marker-content', 'UNKNOWN_ROOT', '归属标记内容错误', (root) => {
+        writeFileSync(markerOf(root), 'unrecognized-root\n');
+      }],
+      ['d-schedule-marker-symlink', 'INVALID_ROOT', '归属标记是符号链接', (root) => {
+        renameSync(markerOf(root), path.join(root, 'data', 'marker-aside'));
+        symlinkSync(path.join(root, 'config', 'app.json'), markerOf(root));
+      }],
+      ['d-schedule-marker-hardlink', 'INVALID_ROOT', '归属标记有额外硬链', (root) => {
+        linkSync(markerOf(root), path.join(root, 'data', 'marker-alias'));
+      }],
+      ['d-schedule-missing-dirs', 'INVALID_ROOT', '缺私有目录', (root) => {
+        rmSync(path.join(root, 'data'), { recursive: true, force: true });
+      }],
+      ['d-schedule-missing-db', 'MISSING_DATABASE', '缺数据库', (root) => {
+        rmSync(databaseOf(root), { force: true });
+      }],
+      ['d-schedule-db-hardlink', 'PATH_CHANGED', '数据库有额外硬链', (root) => {
+        linkSync(databaseOf(root), path.join(root, 'data', 'alias.sqlite'));
+      }],
+      ['d-schedule-db-mode', 'PATH_CHANGED', '数据库权限 0644', (root) => {
+        chmodSync(databaseOf(root), 0o644);
+      }],
+      ['d-schedule-runs-symlink', 'PATH_CHANGED', 'runs/ 是符号链接', (root) => {
+        renameSync(path.join(root, 'runs'), path.join(root, 'runs-aside'));
+        symlinkSync(path.join(root, 'runs-aside'), path.join(root, 'runs'));
+      }],
+      ['d-schedule-root-mode', 'PATH_CHANGED', '根目录权限 0755', (root) => {
+        chmodSync(root, 0o755);
+      }],
+    ];
+    for (const [name, expect, label, mutate] of scheduleCases) {
+      const root = name === 'd-schedule-empty' ? freshDir(name) : seed(name);
+      if (name === 'd-schedule-empty') chmodSync(root, 0o700);
+      mutate(root);
+      const before = snapshot(root);
+      const schedule = run(['try-schedule', '--root', root]);
+      record(
+        `D5 调度入口复用完整根校验：${label}`,
+        `try-schedule REJECT/${expect}；拒绝后文件树不变（调度不得旁路 open 的身份/私有性校验）`,
+        [schedule],
+        () => [
+          check('exit0', schedule.status === 0, `status=${schedule.status}`),
+          check('decision=REJECT', schedule.json?.decision === 'REJECT', `decision=${schedule.json?.decision}`),
+          check(`code=${expect}`, schedule.json?.code === expect, `code=${schedule.json?.code}`),
+          treeUnchanged(root, before),
+        ],
+      );
     }
   }
   {
