@@ -366,6 +366,14 @@ fn hold(args: &[String]) -> Value {
     exit(0);
 }
 
+/// `O_NONBLOCK` for the controlled record open, so a special file swapped in
+/// between lstat and open cannot block the probe. Kept local to avoid adding a
+/// direct `libc` dependency to the harness.
+#[cfg(target_os = "macos")]
+const O_NONBLOCK: i32 = 0x0004;
+#[cfg(target_os = "linux")]
+const O_NONBLOCK: i32 = 0o4000;
+
 /// Identity/version of the worker record file at the moment it was read. It is
 /// compared again before the admission decision is published, so a record that
 /// changed after the read (replacement, permission change, in-place edit) can
@@ -429,18 +437,29 @@ fn read_worker_record(path: &Path) -> WorkerRecord {
         }
     };
     let identity = match RecordIdentity::from_metadata(&metadata) {
-        Some(identity) if identity.nlink == 1 && identity.mode == 0o600 => identity,
-        _ => {
-            return WorkerRecord::Unverified {
-                reason: "记录文件身份不符：必须是单一硬链、权限 0600 的普通文件，不能是符号链接。"
-                    .into(),
-                snapshot: None,
-            }
+        Some(identity)
+            if identity.nlink == 1
+                && identity.mode == 0o600
+                && metadata.is_file()
+                && !metadata.file_type().is_symlink() =>
+        {
+            identity
         }
+        _ => return WorkerRecord::Unverified {
+            reason:
+                "记录文件身份不符：必须是单一硬链、权限 0600 的普通文件，不能是符号链接或特殊文件。"
+                    .into(),
+            snapshot: None,
+        },
     };
-    // Controlled open: read through a handle whose identity is checked against
+    // Controlled open: O_NONBLOCK so a special file swapped in between lstat
+    // and open cannot block the probe; the handle identity is checked against
     // the lstat result, so a replacement between lstat and open is caught.
-    let mut handle = match OpenOptions::new().read(true).open(path) {
+    let mut handle = match OpenOptions::new()
+        .read(true)
+        .custom_flags(O_NONBLOCK)
+        .open(path)
+    {
         Ok(handle) => handle,
         Err(error) => {
             return WorkerRecord::Unverified {
@@ -458,6 +477,12 @@ fn read_worker_record(path: &Path) -> WorkerRecord {
             }
         }
     };
+    if !opened.is_file() || opened.file_type().is_symlink() {
+        return WorkerRecord::Unverified {
+            reason: "记录在读取期间被替换为特殊文件或符号链接。".into(),
+            snapshot: None,
+        };
+    }
     if RecordIdentity::from_metadata(&opened) != Some(identity) {
         return WorkerRecord::Unverified {
             reason: "记录在读取期间被替换。".into(),
@@ -505,7 +530,21 @@ fn recheck_worker_record(record: &WorkerRecord) -> Option<String> {
         } => snapshot,
         WorkerRecord::Absent | WorkerRecord::Unverified { snapshot: None, .. } => return None,
     };
-    let metadata = fs::symlink_metadata(&snapshot.path).ok()?;
+    // Distinguish "confirmed unchanged" from "could not re-check": a record
+    // that disappeared or cannot be stat'd must pause scheduling, not inherit
+    // the stale classification.
+    let metadata = match fs::symlink_metadata(&snapshot.path) {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+            return Some("记录在准入前被删除，无法确认其仍为已核实的记录。".into());
+        }
+        Err(error) => {
+            return Some(format!("记录在准入前无法复查：{error}"));
+        }
+    };
+    if !metadata.is_file() || metadata.file_type().is_symlink() {
+        return Some("记录在准入前被替换为特殊文件或符号链接。".into());
+    }
     let current = RecordIdentity::from_metadata(&metadata)?;
     if current != snapshot.identity {
         return Some(format!(

@@ -761,6 +761,10 @@ async function main() {
         '    tmp.replace(root / "runs" / "worker.json")',
         'elif action == "chmod":',
         '    (root / "runs" / "worker.json").chmod(0o644)',
+        'elif action == "delete":',
+        '    (root / "runs" / "worker.json").unlink()',
+        'elif action == "chmod-runs":',
+        '    (root / "runs").chmod(0o644)',
         '(root / "race-observation.json").write_text(json.dumps({"rootLockAvailableDuringProbe": available, "action": action}))',
         'print("kill: No such process", file=sys.stderr)',
         'sys.exit(1)',
@@ -771,6 +775,8 @@ async function main() {
       ['d-race-unchanged', 'unchanged', 'ACCEPT', null, '探测期间记录不变'],
       ['d-race-replace', 'replace', 'REJECT', 'WORKER_UNVERIFIED', '探测期间记录被原子替换为存活 PID'],
       ['d-race-chmod', 'chmod', 'REJECT', 'WORKER_UNVERIFIED', '探测期间记录权限被降为 0644'],
+      ['d-race-delete', 'delete', 'REJECT', 'WORKER_UNVERIFIED', '探测期间记录被删除'],
+      ['d-race-chmod-runs', 'chmod-runs', 'REJECT', 'WORKER_UNVERIFIED', '探测期间记录路径不可复查'],
     ];
     for (const [name, action, decision, code, label] of raceCases) {
       const root = seed(name);
@@ -787,6 +793,10 @@ async function main() {
         },
       });
       const observation = JSON.parse(readFileSync(path.join(root, 'race-observation.json'), 'utf8'));
+      if (action === 'chmod-runs') {
+        // Restore the directory so the runner can clean the synthetic root up.
+        chmodSync(path.join(root, 'runs'), 0o700);
+      }
       const checks = [
         check('exit0', schedule.status === 0, `status=${schedule.status}`),
         check(`decision=${decision}`, schedule.json?.decision === decision, `decision=${schedule.json?.decision}`),
@@ -804,6 +814,33 @@ async function main() {
         () => checks,
       );
     }
+  }
+  // ---- D7. special-file worker record --------------------------------------
+  {
+    const root = seed('d-worker-fifo');
+    const recordPath = path.join(root, 'runs', 'worker.json');
+    rmSync(recordPath, { force: true });
+    const fifo = spawnSync('mkfifo', [recordPath]);
+    if (fifo.status !== 0) throw new Error(`mkfifo failed: ${fifo.stderr}`);
+    chmodSync(recordPath, 0o600);
+    const schedule = run(['try-schedule', '--root', root], { timeout: 5000 });
+    const reopened = run(['open-check', '--root', root]);
+    record(
+      'D7 特殊文件记录：0600 FIFO worker.json 必须有界拒绝并释放根锁',
+      'try-schedule 在 5s 内返回 REJECT/WORKER_UNVERIFIED（不被 FIFO 阻塞）；随后 open-check ok（锁已回收）',
+      [schedule, reopened],
+      () => [
+        check(
+          'bounded (no timeout)',
+          schedule.signal === null && schedule.error === null,
+          `signal=${schedule.signal} error=${schedule.error}`,
+        ),
+        check('exit0', schedule.status === 0, `status=${schedule.status}`),
+        check('decision=REJECT', schedule.json?.decision === 'REJECT', `decision=${schedule.json?.decision}`),
+        check('code=WORKER_UNVERIFIED', schedule.json?.code === 'WORKER_UNVERIFIED', `code=${schedule.json?.code}`),
+        check('lock released', reopened.status === 0 && reopened.json?.ok === true, `status=${reopened.status}`),
+      ],
+    );
   }
   {
     const root = seed('d-crash-during-write');
