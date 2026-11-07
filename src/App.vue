@@ -7,6 +7,7 @@ import Workbench from './components/Workbench.vue';
 import ProbePanel from './components/ProbePanel.vue';
 import QuickEntry from './components/QuickEntry.vue';
 import PetWindow from './components/PetWindow.vue';
+import PairingGate from './components/PairingGate.vue';
 import {desktopSurface} from './domain/desktop';
 import {useDesktopPreferences} from './stores/desktopPreferences';
 const locale=JSON.parse(JSON.stringify(zhCN));
@@ -16,4 +17,4 @@ const preferences=surface==='probe'?null:useDesktopPreferences();
 onMounted(()=>{void preferences?.start(document.documentElement);});
 onUnmounted(()=>preferences?.dispose());
 </script>
-<template><ConfigProvider :global-config="locale"><ProbePanel v-if="surface==='probe'"/><QuickEntry v-else-if="surface==='quick'"/><PetWindow v-else-if="surface==='pet'"/><Workbench v-else/></ConfigProvider></template>
+<template><ConfigProvider :global-config="locale"><ProbePanel v-if="surface==='probe'"/><QuickEntry v-else-if="surface==='quick'"/><PetWindow v-else-if="surface==='pet'"/><PairingGate v-else><Workbench/></PairingGate></ConfigProvider></template>

@@ -31,6 +31,10 @@ s33-mcp-ui-verification = []
 pet-native-probe = []
 pet-ui-verification = []
 
+[[bin]]
+name = "web-backend-storage"
+path = "src/bin/web-backend-storage.rs"
+
 [[example]]
 name = "s33-mcp-host"
 required-features = ["s33-mcp-verification"]

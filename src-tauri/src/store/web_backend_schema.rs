@@ -10,11 +10,12 @@ pub const SCHEMA_LINEAGE: &str = "web-backend/1";
 /// File-level application id, distinct from the legacy store (`0x53444b31`).
 pub const WEB_BACKEND_APPLICATION_ID: i64 = 0x57424b31;
 /// Highest schema version this build knows how to operate.
-pub const SCHEMA_VERSION: i64 = 1;
+pub const SCHEMA_VERSION: i64 = 2;
 /// Default database location relative to the workspace root.
 pub const DEFAULT_DB_FILE: &str = "data/web-backend.sqlite";
 
-const SQL: &str = include_str!("../../migrations/web-backend/001_web_backend.sql");
+const SQL_001: &str = include_str!("../../migrations/web-backend/001_web_backend.sql");
+const SQL_002: &str = include_str!("../../migrations/web-backend/002_manual_items.sql");
 
 #[derive(Clone, Copy, Default, PartialEq)]
 pub(crate) enum WebBackendMigrationFault {
@@ -25,7 +26,7 @@ pub(crate) enum WebBackendMigrationFault {
 }
 
 fn migrations() -> Migrations<'static> {
-    Migrations::new(vec![M::up(SQL)])
+    Migrations::new(vec![M::up(SQL_001), M::up(SQL_002)])
 }
 
 fn missing_database() -> StoreError {
@@ -130,6 +131,10 @@ impl WebBackendSchema {
 
     pub fn conn(&self) -> &Connection {
         &self.conn
+    }
+
+    pub fn conn_mut(&mut self) -> &mut Connection {
+        &mut self.conn
     }
 
     pub fn path(&self) -> &Path {
@@ -384,8 +389,11 @@ fn validate(conn: &Connection) -> Result<()> {
 #[cfg(test)]
 fn apply_migrations(conn: &mut Connection, fault: WebBackendMigrationFault) -> Result<()> {
     if fault == WebBackendMigrationFault::Ddl {
-        let sql = format!("{SQL}\nINSERT INTO missing_web_backend_table VALUES(1);");
-        return Migrations::new(vec![M::up(&sql)])
+        // Inject the failure after the second migration so the fault branch
+        // exercises the dual-migration rollback: 002 must roll back together
+        // with its schema_meta mirror update, leaving the database at v1.
+        let sql = format!("{SQL_002}\nINSERT INTO missing_web_backend_table VALUES(1);");
+        return Migrations::new(vec![M::up(SQL_001), M::up(&sql)])
             .to_latest(conn)
             .map_err(|_| migration_failed());
     }
