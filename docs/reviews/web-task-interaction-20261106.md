@@ -266,6 +266,8 @@ Codex 第三轮独立复审结论为 `APPROVE_WITH_CHANGES`：上一轮四条修
 | `node scripts/checks/check-structure.mjs`（HEAD 干净树 vs `85feb8a` 基线） | 1/1 | 输出逐字节相同：仅 3 项既有 `ref.missing`；本项新增 0 |
 | Playwright/Chrome 交互复现（127.0.0.1:4221，22 组检查） | 0 | 22/22 PASS，console/page 错误 0，外部请求 0 |
 
+原始证据：`build/mayne-21/`（`web-task-flow-verification.json`、`verify-task-flow.cjs`、`capture-task-flow.cjs`、5 张截图）。该目录已被 `.gitignore` 忽略，不随仓库提交。
+
 覆盖的关键路径与观察值：放行后改回保留待核对 → `active=true`、`pending=1`、任务 `needs_review`、横幅「恢复未放行」、提交与重提均被拒（任务数不变）；终态间改选（已确认完成→标记失败）→ 任务收敛 `failed`、`pending=0`、`active=false`；混合未选与暂缓 → `pending=3`；恢复期间取消运行中 → 新增第 4 张核对卡、`pending=4`；放行后取消运行中 → 新卡计入 `pending=1` 但 `active=false`、提交仍可用并领到空闲槽 2/3（槽号集合无重复）；聚焦行内「取消」按 Enter → 任务直接取消、不打开详情、焦点留在行；按 Space → 取消且焦点回到任务行；行本身聚焦按 Enter → 打开详情、Esc 关闭后焦点回行；详情内「逐项核对」→ 模态关闭、页面切到待核对、焦点落在目标核对卡；390×844 无横向溢出、排队位置可见。
 
 ### 10.7 本轮修订后文件哈希（收口时冻结）
