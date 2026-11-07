@@ -1,5 +1,7 @@
 # MAYNE-20 后端基础探针：第三轮修订与作者侧验证记录（2026-11-07）
 
+> **已被第四轮修订记录取代**：本记录对应的修订候选 `fa88332`（tree `6e1b908`）被 Codex 复审出具 BLOCK/needs_revision（复查失败被当作无变化放行、FIFO 阻塞调度并占锁）。第四轮修订后的交付与实际验证证据见 [backend-foundation-20261107-r4.md](backend-foundation-20261107-r4.md)；本记录保留作历史，不再代表当前候选。
+>
 > 本记录是 MAYNE-20 修订候选 `a17a6b4`（tree `f3c455f`）被 Codex 复审出具 BLOCK/needs_revision 后的**第三轮修订侧证据**，结论只到“可再送独立评审”。实现者不给自己签 pass；独立复审由未参与者执行，工作流收口由 Codex 负责。历史记录见 [backend-foundation-20261106.md](backend-foundation-20261106.md)、[backend-foundation-20261107.md](backend-foundation-20261107.md) 与 [backend-foundation-20261107-r2.md](backend-foundation-20261107-r2.md)。
 
 ## 1. 版本可复核性
