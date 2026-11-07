@@ -268,7 +268,17 @@ fn classify(path: &Path) -> Result<Target> {
     let version: i64 = conn
         .pragma_query_value(None, "user_version", |r| r.get(0))
         .unwrap_or(0);
-    if tables == 0 && version == 0 {
+    let application: i64 = conn
+        .pragma_query_value(None, "application_id", |r| r.get(0))
+        .unwrap_or(0);
+    // A blank file, or a partially initialized `web-backend/1` database left
+    // behind by a rolled-back migration, is re-initializable. A database
+    // carrying another lineage's application id is an existing database of
+    // that lineage and must be validated (and normally rejected) instead.
+    if tables == 0
+        && version == 0
+        && (application == 0 || application == WEB_BACKEND_APPLICATION_ID)
+    {
         return Ok(Target::Blank);
     }
     Ok(Target::Initialized)
@@ -318,8 +328,10 @@ fn open_existing_with_fault(
         OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NOFOLLOW,
     )
     .map_err(db_error)?;
-    configure_connection(&conn)?;
+    // Validate before touching the journal mode: a rejected database must not
+    // be written, not even a WAL header conversion.
     validate(&conn)?;
+    configure_connection(&conn)?;
     apply_migrations(&mut conn, fault)?;
     Ok(WebBackendSchema {
         conn,

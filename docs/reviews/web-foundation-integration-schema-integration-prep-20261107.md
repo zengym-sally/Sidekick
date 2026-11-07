@@ -51,7 +51,7 @@
 | `node scripts/checks/check-structure.mjs`（prepare-pi 后） | exit 0，215 文件 / 466 引用 |
 | `node scripts/checks/check-structure.mjs --self-test` | exit 0（含新冻结正/负断言） |
 | 真树篡改新迁移负例 | exit 1，规则命中新路径；还原后哈希复归 |
-| `npm run check:docs` | exit 0（20 文件 / 414 链接） |
+| `npm run check:docs` | exit 0（20 文件 / 424 链接） |
 | `git diff --check` / `git diff --cached --check` | exit 0 |
 | blob / SHA-256 / 补丁哈希核实 | 全部与审定值一致 |
 

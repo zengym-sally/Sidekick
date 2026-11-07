@@ -13,11 +13,14 @@
 - **索引强制**：新增记录必须登记到本文件；未登记视为未收口。`check:docs` 只校验链接存在，语义一致性靠评审。
 - **新路径**：2026-10-31 结构治理后，新记录使用新路径（`runtime/{entries,lib,workers}/`、`src-tauri/src/{app,store,host,diagnostics}/`、`tests/{unit,integration,probes,fixtures}/`、`scripts/{build,checks,probes}/`）；旧记录保留原路径，按文件名仍可检索。
 
-## 2. 记录索引（82 份）
+## 2. 记录索引（85 份）
 
 | 记录 | 日期 | 范围与结论 | 证据 |
 |---|---|---|---|
-| [web-foundation-integration-schema-integration-prep-20261107.md](web-foundation-integration-schema-integration-prep-20261107.md) | 2026-11-07 | MAYNE-22 W0 最终集成准备（与 F-1 修正并行）：隔离树逐字节接入已审候选 `67860d3`、`598d2da` 最终提案与全部审查记录；结构守卫冻结新迁移精确哈希 `8511907c…143d` 并补原地自测正/负例；聚焦检查全过（structure 215/466 exit 0、self-test、docs 20/414）；完整门禁与合入未发生，F-1 修订待接入 | 原始证据 `build/web-foundation-integration/`（gitignored） |
+| [web-foundation-integration-schema-final-integration-20261107.md](web-foundation-integration-schema-final-integration-20261107.md) | 2026-11-07 | MAYNE-22 W0 最终集成（OpenCode，唯一重门禁执行者）：在通过审查的准备候选 `882e6e3` 上逐字节接入已复核 F-1 修订 `cab73aa`（补丁 `99706d93…ae587`）与 ZCode/Kimi 两份复核记录，四生产文件与 `cab73aa` blob 级一致；修正链接计数 20/414→20/424，公共文档 F-1 状态更新且不预签门禁；冻结前聚焦验证全过（17/17、structure、docs、diff --check），原预算完整 `npm run check` 在冻结提交上串行执行、结果以回执为准 | 原始证据 `build/web-foundation-integration/`（gitignored） |
+| [web-foundation-integration-schema-implementation-20261107-zcode-f1-review.md](web-foundation-integration-schema-implementation-20261107-zcode-f1-review.md) | 2026-11-07 | MAYNE-22 F-1 修订增量独立复核（ZCode）：`67860d3..cab73aa` 通过——增量恰 3 文件 +161/−3、补丁 `99706d93…ae587` 复算一致、DDL 审定哈希不变；同一合成反例修前复现（受写字节 18/19/27/95）、修后 open/init 拒绝零写入，17/17 真树复跑；N-1–N-4 维持登记不修 | 见记录 |
+| [web-foundation-integration-schema-integration-prep-20261107-kimi-review.md](web-foundation-integration-schema-integration-prep-20261107-kimi-review.md) | 2026-11-07 | MAYNE-22 集成准备候选独立审查（Kimi）：`b11fd05..882e6e3` 通过（限准备增量）——补丁 `2a04c62b…7641` 逐字节复核，审定来源 blob 级接收、W0 基座零覆盖、守卫仅新增指定冻结且正/负例独立复现、文档真实状态保留；1 项不阻塞 NIT（docs 计数 414 陈旧，本集成轮已修正） | 见记录 |
+| [web-foundation-integration-schema-integration-prep-20261107.md](web-foundation-integration-schema-integration-prep-20261107.md) | 2026-11-07 | MAYNE-22 W0 最终集成准备（与 F-1 修正并行）：隔离树逐字节接入已审候选 `67860d3`、`598d2da` 最终提案与全部审查记录；结构守卫冻结新迁移精确哈希 `8511907c…143d` 并补原地自测正/负例；聚焦检查全过（structure 215/466 exit 0、self-test、docs 20/424）；完整门禁与合入未发生，F-1 修订待接入 | 原始证据 `build/web-foundation-integration/`（gitignored） |
 | [web-foundation-integration-schema-implementation-20261107-zcode-review.md](web-foundation-integration-schema-implementation-20261107-zcode-review.md) | 2026-11-07 | MAYNE-22 schema 实施独立评审（ZCode）：候选 `67860d3` 通过——补丁/源码哈希复算一致，19 场景证伪全过；登记 1 项 MINOR（F-1 拒绝路径 WAL 改写）与 4 项 NIT，均不阻塞 | 见记录 |
 | [web-foundation-integration-schema-implementation-20261107.md](web-foundation-integration-schema-implementation-20261107.md) | 2026-11-07 | MAYNE-22 schema 实施记录（Claude）：web-backend/1 四文件交付（`67860d3`），显式 init/普通 open 校验、原子迁移、每连接设置与一致性备份；聚焦 cargo 验证全过，完整门禁留给集成执行者 | 原始证据见原树 `build/`（附件留存于任务） |
 | [web-foundation-integration-main-ff-20261107-kimi-review.md](web-foundation-integration-main-ff-20261107-kimi-review.md) | 2026-11-07 | MAYNE-22 main 快进与守卫/公共文档增量独立审查（Kimi）：`7f536db..b11fd05` 五文件增量通过，补丁 `e5f6eb99…` 逐字节复核；登记 5 项不阻塞观察（含新 lineage 迁移当时无字节冻结，本批准备轮已补） | 见记录 |

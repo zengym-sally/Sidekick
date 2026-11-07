@@ -62,3 +62,31 @@
 - 模块当前无并行调用方；函数签名随候选交付给后续使用者。
 - 完整 `npm run check` 由唯一集成执行者在实际最终版本串行执行，本记录不预支该绿证。
 - 独立审查：实现交付后由未参与实现的 ZCode 复核增量。
+
+## 5. F-1 修订（2026-11-07）
+
+ZCode 独立评审 F-1（MINOR）：对 DELETE 模式的外来／旧标记库，`open()`／`init()` 在拒绝前执行 `journal_mode=WAL`，被拒文件头部发生转换写入（字节 18/19：1/1→2/2）。数据零丢失、不合并不覆盖、错误如实，但与本项「拒绝不写入」验收存在实测偏差。
+
+**最小修正**
+
+- `open_existing_with_fault` 顺序调整为 `validate` → `configure_connection` → `apply_migrations`：校验通过前不触碰日志模式，被拒库零写入。
+- `classify` 增加 `application_id` 判定：空白文件或迁移回滚遗留的 `web-backend/1` 半成品（`application_id = 0x57424b31`、无表、`user_version=0`）视为可重新初始化；携带其他 lineage application_id 的库视为既有库并走校验拒绝。
+
+**新增回归（5 例，共 17 例全过）**
+
+- `rejection_leaves_foreign_delete_mode_database_untouched`：旧库标记 `0x53444b31` 的 DELETE-mode 库，`open`／`init` 均拒绝，文件字节与旁文件集合不变，无 `-wal`／`-shm`。
+- `rejection_leaves_wrong_application_id_database_untouched`：错误 application_id（12345）同上。
+- `rejection_leaves_legacy_marked_empty_database_untouched`：仅旧标记、无表的库，`init` 拒绝且字节不变。
+- `lineage_rejection_leaves_database_untouched`：lineage 不符拒绝前后字节不变。
+- `version_rejection_leaves_database_untouched`：版本镜像不符拒绝前后字节不变。
+
+**保留行为**：合法 `init`／`open`、幂等、每连接 `foreign_keys=ON`／WAL／FULL、迁移失败回滚与重试均不变（原 12 例仍全过）。
+
+**NIT 登记（不修）**
+
+- N-1：备份副本终态为 WAL，目标 `journal_mode=DELETE` 未生效（无害）。
+- N-2：备份版本校验对构建最新值而非源库实际值（当前不可达，002+ 前改）。
+- N-3：符号链接拒绝误标 `CORRUPT_DATABASE`（错误码语义）。
+- N-4：备份父目录失败走 `WORKSPACE_IO`（错误码语义）。
+
+**聚焦验证**：`cargo fmt --check` 0；`cargo check --lib` 0；`cargo test --lib web_backend_schema` 0（17 passed／0 failed）；`cargo clippy --all-targets -- -D warnings` 0；`check:docs` 0。未改 DDL，未跑完整重门禁。提交号见 `build/web-foundation-schema-authorization/implementation-manifest.json`。
