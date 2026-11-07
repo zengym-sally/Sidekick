@@ -1,6 +1,7 @@
 # Web 与后端优先：服务边界、任务队列与薄壳接入
 
 > 目标契约按 MAYNE-16 的 owner 五项决定更新（2026-11-06）。本文是设计，尚未实现；当前代码结构仍见[工程架构](architecture.md)，交付顺序与实际进度见[实施计划](../product/05-第一阶段实施计划.md)。此前 v0.5 中单飞、旧版兼容及 G2/G3 排在薄壳之后的建议已被本次决定替代。
+> **2026-11-07 状态**：owner 已授权按全新建表实施独立新库（web-backend/1 lineage，路径 `<workspaceRoot>/data/web-backend.sqlite`，11 表含 `task_result_payloads`，不做历史迁移或兼容桥）；最终 DDL 已独立评审通过，四文件实现正在隔离树进行——未验证、未合入，状态以[实施计划](../product/05-第一阶段实施计划.md)为准。
 
 ## 1. 已确认的边界
 
@@ -88,6 +89,8 @@ SQLite 足以作为当前**单后端实例**的队列与状态来源；并发 3 
 ### 持久状态与失败语义
 
 以下是待实施的数据契约，表名与 DDL 在对应切片定案。逻辑字段包含 taskId、操作幂等键、类型/角色、输入引用、配置修订、state、attemptId、owner epoch、进度、取消意图、nextAttemptAt、结果引用和有序事件游标。业务结果、任务终态及可见事件在同一事务提交，签收仍单独由用户确认，不能把 task success 当正式事项已签收。
+
+> **2026-11-07 定案（已授权实施中）**：新库为独立 web-backend/1 lineage（application_id `0x57424b31`），路径 `<workspaceRoot>/data/web-backend.sqlite`，11 表并采纳 `task_result_payloads` 承载 `result://<attemptId>/<name>` 结果负载；每任务至多一个未结束 attempt 由部分唯一索引在 schema 层强制；迁移进度以 `PRAGMA user_version` 为权威、`schema_meta.schema_version` 为同事务镜像，不符显式拒绝。旧库与既有 001–005 不动，不做历史迁移或兼容桥。最终 DDL 以 `docs/reviews/web-foundation-integration-schema-authorization-20261107.md`（随实现交付合入）及实施计划登记为准；实现未验证、未合入前，本节其余内容仍是设计而非现状。
 
 | 状态/动作 | 规则 |
 |---|---|

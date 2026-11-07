@@ -13,10 +13,12 @@
 - **索引强制**：新增记录必须登记到本文件；未登记视为未收口。`check:docs` 只校验链接存在，语义一致性靠评审。
 - **新路径**：2026-10-31 结构治理后，新记录使用新路径（`runtime/{entries,lib,workers}/`、`src-tauri/src/{app,store,host,diagnostics}/`、`tests/{unit,integration,probes,fixtures}/`、`scripts/{build,checks,probes}/`）；旧记录保留原路径，按文件名仍可检索。
 
-## 2. 记录索引（72 份）
+## 2. 记录索引（75 份）
 
 | 记录 | 日期 | 范围与结论 | 证据 |
 |---|---|---|---|
+| [web-foundation-integration-main-ff-20261107.md](web-foundation-integration-main-ff-20261107.md) | 2026-11-07 | MAYNE-22 W0（owner 新授权后）：干净本地 main 仅快进 `9ad2d61`→`8bd29c4`（tree 互证一致、无新提交、未 push）；结构守卫核实为无需改动并以合成树正/负例实证；公共文档按已授权/正在实施/已验证区分更新，新 schema 未提前签完成；聚焦检查全过，完整门禁留给最终集成轮 | 原始证据 `build/web-foundation-integration/`（gitignored） |
+| [web-foundation-integration-fullgate-20261107.md](web-foundation-integration-fullgate-20261107.md) | 2026-11-07 | MAYNE-22 W0 R5（本轮补登记）：候选 `8bd29c4` 上原预算完整 `npm run check` exit 0（968/968，s32 长路径 8.83s），Kimi 独立复核证据通过；当时写入清单不含索引，本轮补登 | 原始证据 `build/web-foundation-integration/`（gitignored） |
 | [web-foundation-integration-20261107.md](web-foundation-integration-20261107.md) | 2026-11-07 | MAYNE-22 W0 集成：MAYNE-18 门禁修复按审定补丁接入基座（三文件与候选逐字节一致）；任务面板占槽/退出核实语义按已接受 attemptExitState 契约对齐并动态复现（退出未知仍占槽、决议闸门、释放后领取正确空闲槽、恢复闸门与焦点/窄屏不回归）；聚焦门禁全过，完整门禁因机器高负载在既有 s32 长路径测试如实失败开放 | 原始证据 `build/web-foundation-integration/`（gitignored） |
 | [web-contract-independent-review-round9-20261107.md](web-contract-independent-review-round9-20261107.md) | 2026-11-07 | MAYNE-19 第九轮验收收口：接收候选 `9d094d3`（JSON 字节未变，仅元信息适用范围）；契约 web-api/1 定稿 | 见记录 |
 | [web-contract-rework-round8-20261107.md](web-contract-rework-round8-20261107.md) | 2026-11-07 | MAYNE-19 第八轮修订：仅规范文本一处（attemptExitState 口径），返工记录 | 见记录 |
