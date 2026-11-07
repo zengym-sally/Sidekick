@@ -4,7 +4,7 @@ use super::web_backend_schema::{
 };
 use super::*;
 use rusqlite::Connection;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 const TASK_COLUMNS: &str = "task_id,operation_id,type,role,state,version,submit_seq,attempt_exit_state,result_pending_exit,pending_outcome,config_revision,original_config_revision,input_ref,cancel_intent,next_attempt_at,attempt_budget,result_ref,failure,created_at,updated_at,terminal_at";
 
@@ -349,5 +349,123 @@ fn constraint_counterexamples() {
         )
         .is_ok());
     drop(schema);
+    let _ = fs::remove_dir_all(&dir);
+}
+
+fn snapshot(dir: &Path) -> (Vec<u8>, Vec<String>) {
+    let mut names: Vec<String> = fs::read_dir(dir)
+        .unwrap()
+        .map(|entry| entry.unwrap().file_name().to_string_lossy().into_owned())
+        .collect();
+    names.sort();
+    let bytes = fs::read(dir.join("web-backend.sqlite")).unwrap();
+    (bytes, names)
+}
+
+#[test]
+fn rejection_leaves_foreign_delete_mode_database_untouched() {
+    let (dir, path) = temp_db("no-side-effect");
+    {
+        let conn = Connection::open(&path).unwrap();
+        conn.execute_batch(
+            "PRAGMA journal_mode=DELETE; PRAGMA application_id = 0x53444b31; CREATE TABLE legacy(x);",
+        )
+        .unwrap();
+    }
+    let (before, files_before) = snapshot(&dir);
+    assert_eq!(
+        WebBackendSchema::open(&path).unwrap_err().code,
+        "WEB_BACKEND_UNKNOWN_DATABASE"
+    );
+    assert_eq!(fs::read(&path).unwrap(), before);
+    assert_eq!(snapshot(&dir).1, files_before);
+    assert_eq!(
+        WebBackendSchema::init(&path).unwrap_err().code,
+        "WEB_BACKEND_UNKNOWN_DATABASE"
+    );
+    assert_eq!(fs::read(&path).unwrap(), before);
+    assert_eq!(snapshot(&dir).1, files_before);
+    assert!(!dir.join("web-backend.sqlite-wal").exists());
+    assert!(!dir.join("web-backend.sqlite-shm").exists());
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn rejection_leaves_wrong_application_id_database_untouched() {
+    let (dir, path) = temp_db("wrong-app-id");
+    {
+        let conn = Connection::open(&path).unwrap();
+        conn.execute_batch(
+            "PRAGMA journal_mode=DELETE; PRAGMA application_id = 12345; CREATE TABLE other(x);",
+        )
+        .unwrap();
+    }
+    let (before, files_before) = snapshot(&dir);
+    assert_eq!(
+        WebBackendSchema::open(&path).unwrap_err().code,
+        "WEB_BACKEND_UNKNOWN_DATABASE"
+    );
+    assert_eq!(fs::read(&path).unwrap(), before);
+    assert_eq!(snapshot(&dir).1, files_before);
+    assert_eq!(
+        WebBackendSchema::init(&path).unwrap_err().code,
+        "WEB_BACKEND_UNKNOWN_DATABASE"
+    );
+    assert_eq!(fs::read(&path).unwrap(), before);
+    assert_eq!(snapshot(&dir).1, files_before);
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn rejection_leaves_legacy_marked_empty_database_untouched() {
+    let (dir, path) = temp_db("legacy-empty");
+    {
+        let conn = Connection::open(&path).unwrap();
+        conn.execute_batch("PRAGMA journal_mode=DELETE; PRAGMA application_id = 0x53444b31;")
+            .unwrap();
+    }
+    let (before, files_before) = snapshot(&dir);
+    assert_eq!(
+        WebBackendSchema::init(&path).unwrap_err().code,
+        "WEB_BACKEND_UNKNOWN_DATABASE"
+    );
+    assert_eq!(fs::read(&path).unwrap(), before);
+    assert_eq!(snapshot(&dir).1, files_before);
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn lineage_rejection_leaves_database_untouched() {
+    let (dir, path) = temp_db("lineage-no-write");
+    let schema = WebBackendSchema::init(&path).unwrap();
+    schema
+        .conn()
+        .execute_batch("UPDATE schema_meta SET schema_lineage = 'other/1' WHERE id = 1;")
+        .unwrap();
+    drop(schema);
+    let (before, _) = snapshot(&dir);
+    assert_eq!(
+        WebBackendSchema::open(&path).unwrap_err().code,
+        "WEB_BACKEND_SCHEMA_LINEAGE_MISMATCH"
+    );
+    assert_eq!(fs::read(&path).unwrap(), before);
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn version_rejection_leaves_database_untouched() {
+    let (dir, path) = temp_db("version-no-write");
+    let schema = WebBackendSchema::init(&path).unwrap();
+    schema
+        .conn()
+        .execute_batch("UPDATE schema_meta SET schema_version = 2 WHERE id = 1;")
+        .unwrap();
+    drop(schema);
+    let (before, _) = snapshot(&dir);
+    assert_eq!(
+        WebBackendSchema::open(&path).unwrap_err().code,
+        "WEB_BACKEND_SCHEMA_VERSION_MISMATCH"
+    );
+    assert_eq!(fs::read(&path).unwrap(), before);
     let _ = fs::remove_dir_all(&dir);
 }
