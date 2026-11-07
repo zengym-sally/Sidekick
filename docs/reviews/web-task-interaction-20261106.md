@@ -160,3 +160,67 @@ ZCode 独立评审结论 `APPROVE_WITH_CHANGES`（2 项 P1 阻塞）。Codex 据
 | `design/index.html` | `6c2e9aaedaa3afe170e5f9dd4498a4faeac081e06c0e368004493174907d3356` |
 
 `design/README.md` 与 `design/index.html` 在本次修订中未改动（仅索引登记，哈希与修订前一致）。
+
+## 9. 第三轮复审修订（`60de6b6` → 新一轮：1 项 P1 + 3 项 P2）
+
+ZCode 第二轮独立复审结论仍为 `APPROVE_WITH_CHANGES`：上一轮两项 P1 的不变量确已关闭，但在同一不变量族与恢复闭环上发现 1 项新 P1 与 3 项 P2。Codex 据此再次驳回归还（未合入 `main`）。本修订只改演示代码与契约相应措辞，写入范围不变。
+
+### 9.1 P1-1 槽号分配：中间槽释放后不再双占
+
+- 新增 `nextFreeSlot()`：在 `1..agentConcurrency` 中取第一个未被 `running`+`cancelling` 占用的槽号；`submitTask` 与 `resubmit` 两处都由 `occupied + 1` 改为该函数。
+- 契约 §3.2 信息表新增「槽号分配」一行，写死该规则与「不使用占槽数 + 1」的原因。
+- 复现路径（ZCode 提供的场景）：恢复放行 → 取消运行中 T-2011（原槽 2）→ 转 `needs_review` 释放槽 2（槽 1 = T-2009 取消中、槽 3 = T-2012 运行中仍占）→ 提交新任务 → 新任务领槽 2/3，槽号集合 `{1,2,3}` 无重复；此前会与 T-2012 双占槽 3。
+
+### 9.2 P2-1「保留待核对」改为可改选
+
+- 核对卡按钮不再 `disabled`；`reviewChoice` 早退条件从「已有选择」改为「所选与当前相同」。
+- 从终态（已确认完成／标记失败／用户明确取消）改选时，任务回到 `needs_review`、note 说明「决议已改回待核对」，事件流记录改选前后；风险重新记为未解除，恢复保持暂停。
+- 契约 §7.2 把「保留待核对」明确为**暂缓而非终局**，并要求改选同样记录；§11 补充「保留待核对未解除」文案的语义说明。
+
+### 9.3 P2-2 取消转 `needs_review` 同步生成核对项
+
+- `cancelTask` 的 2.2s 转态定时器在置 `needs_review` 的同时，向 `state.reviewItems` 追加一条 `fromCancel` 核对项（问题、依据、四选项）。
+- 取消来源的核对项提供第四个选项「用户明确取消」：用户明确承担未知外部副作用风险、取消意图完成，任务转 `cancelled`；「已确认完成」同样收敛到 `cancelled`（确认进程树已退出且无未知副作用）。
+- 契约 §6 新增「执行槽的边界」段：占槽保留到 `cancelling`，转 `needs_review`/`cancelled` 即释放槽（`needs_review` 是隔离不执行的暂停态，不占槽；僵尸 worker 归实例级暂停调度）；并规定转 `needs_review` 必须同时给出可执行的核对入口。
+- 复现：取消 T-2011 → 转待核对 → 待核对页核对卡由 3 张增至 4 张，T-2011 卡可选「用户明确取消」→ 队列页 T-2011 行显示「已取消」+ note「用户明确承担未知外部副作用的风险，取消意图完成」。
+
+### 9.4 P2-3 恢复暂停期间「重新提交」被拦
+
+- `resubmit` 增加与 `submitTask` 相同的恢复闸门与文案（「恢复未放行：已暂停新任务提交。请先完成逐项核对。」），置于副作用未知守卫之前。
+- 契约 §7.3 第 1 步写明「新提交」包含重新提交等一切新建任务入口。
+
+### 9.5 P3 处置
+
+| 评审项 | 处置 |
+|---|---|
+| `recovery.pending` 过期（只在 park 分支更新） | 改为每次决议后按 `reviewItems` 现算：未选择数 + 保留待核对数；修掉了 `boolean + number` 的加法 bug |
+| 「去设置页调整并发」落点是能力页 | 按钮不再跳页，仅 toast 说明生产入口在设置页、本演示没有设置页，并保留契约 §3.1 的只读+链接语义 |
+| 契约 §6 未写转态时槽何时释放 | §6 新增「执行槽的边界」段（见 9.3） |
+| 放行横幅「保留待核对项不会自动重发」不可达 | 改为「每项都已确认完成、标记失败或由你明确重试/取消，没有遗留的待核对风险」 |
+| 取消转核对的 note 缺「是否已停止」半句 | 改为「无法确认进程树是否已停止、工具是否已产生外部结果」 |
+
+### 9.6 本轮验证证据
+
+预览服务：`PORT=4190 node design/serve.mjs`（127.0.0.1，只读暴露 `/design/`、`/src/assets/`、`/src/styles/`），验证结束后已停止（端口无监听）。
+
+| 命令 | 退出码 | 结果 |
+|---|---|---|
+| `node --check design/web-task-flow/task-flow.js` | 0 | 语法通过 |
+| `node scripts/checks/check-docs.mjs` | 0 | 18 文件、302 个本地相对链接全部解析 |
+| `node scripts/checks/check-structure.mjs` | 1 | 175 项 = 172 项平台元数据 `top.dir` + 3 项既有 `ref.missing`，与开工前基线一致，本项新增 0 |
+| Playwright/Chrome 交互复现（127.0.0.1:4190，17 组主检查 + 1 组取消决议路径） | 0 | 17/17 + 1/1 PASS，console/page 错误 0，外部请求 0 |
+
+覆盖的关键路径与观察值：中间槽释放后提交领到空闲槽 2/3 且槽号集合无重复（P1-1 复现场景）；取消运行中 → 2.2s 后转 `needs_review`，占槽由 3/3 降为 2/3、该行无槽位徽标；保留待核对按钮保持可用、可改选为已确认完成且恢复仍暂停、剩余项数实时为 2（不再显示过期 3）；park→改选→全部决议后恢复放行；取消来源核对卡生成（3 → 4 张）并提供「用户明确取消」，选择后任务行转「已取消」+ 相应 note；恢复暂停期间对失败任务点「重新提交」被拒且任务行数不变（11）；并发设置入口 toast 说明演示边界；390×844 排队位置可见、无横向溢出。
+
+### 9.7 本轮修订后文件哈希（收口时冻结）
+
+| 文件 | SHA-256 |
+|---|---|
+| `docs/engineering/web-task-interaction.md` | `3dca1f893f544a11785dc66658e85e8cde2827650e06071c8b42156613218db5` |
+| `design/web-task-flow/index.html` | `5ca8e9c6c33036055ea3a2282e6857a032f0706b740265d245929b59cae95b43` |
+| `design/web-task-flow/task-flow.css` | `5455ed6cbe0ff603aaa2570a64982333a98fbcb03fb3629ffe8459c56410531e` |
+| `design/web-task-flow/task-flow.js` | `d5b68f5d380c32afc28c5419c7739b296090d79376e08297a8d250bcd9eff223` |
+| `design/README.md` | `ec45181be707921a35d26a90f1e6c1404468be4f251cce5d668d8596d0c67174` |
+| `design/index.html` | `6c2e9aaedaa3afe170e5f9dd4498a4faeac081e06c0e368004493174907d3356` |
+
+`index.html`／`task-flow.css`／`design/README.md`／`design/index.html` 本轮未改动，哈希与 §8.6 一致。
