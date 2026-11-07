@@ -1,0 +1,9 @@
+{
+  "contractVersion": "web-api/1",
+  "decision": "cancel",
+  "acknowledgedReceipts": [
+    "rct_0a1e5c8f2d4b"
+  ],
+  "decisionReason": "user verified in Feishu that the reminder card was already delivered before the backup point",
+  "expectedVersion": 1
+}

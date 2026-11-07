@@ -1,0 +1,52 @@
+{
+  "contractVersion": "web-api/1",
+  "taskId": "tsk_0a4e8c2f6b9d1573e0a8c4f2b6d0e9a3",
+  "operationId": "op_5f8b2d4a7c1e3069fb3d5a7c9e1b4d62",
+  "type": "reminder_send",
+  "role": "organizer",
+  "state": "needs_review",
+  "version": 6,
+  "createdAt": "2026-11-06T12:30:00.000Z",
+  "updatedAt": "2026-11-06T14:02:30.000Z",
+  "terminalAt": null,
+  "submitSeq": 1028,
+  "queuePosition": null,
+  "attemptCount": 1,
+  "attemptId": null,
+  "attemptExitState": "exited_confirmed",
+  "cancelIntent": false,
+  "configRevision": "cfgrev_0d81fe22",
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "inputRef": {
+    "kind": "inline_text",
+    "byteSize": 842,
+    "contentHash": "sha256:1f3a9c07e5b2d84c0a6f1e93b7d5c2a8094e6f1bd3c7a5029e8b1d4f6a0c3e52"
+  },
+  "progress": null,
+  "result": null,
+  "failure": null,
+  "recovery": {
+    "cause": "root_activation",
+    "sideEffectKnown": false,
+    "autoResume": false,
+    "holdId": "rec_8f14b7a2d5c9",
+    "itemId": "rci_11",
+    "historyContinuity": "unproven",
+    "reason": "root A was re-activated after B took over; execution history between the last checkpoint and re-activation cannot be proven, so unfinished tasks are isolated instead of replayed",
+    "receipts": [
+      {
+        "receiptId": "rct_3b7e1d5a9c2f",
+        "kind": "lark_message_send",
+        "externalRef": "om_synthetic_41d8a2",
+        "recordedAt": "2026-11-06T09:38:55.000Z",
+        "verifiable": true
+      }
+    ],
+    "decisionOptions": [
+      "resume",
+      "cancel"
+    ],
+    "itemVersion": 1
+  },
+  "resultPendingExit": false
+}

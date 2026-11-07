@@ -1,0 +1,13 @@
+{
+  "contractVersion": "web-api/1",
+  "status": 409,
+  "error": {
+    "code": "exit_unconfirmed",
+    "message": "the worker process-tree exit has not been confirmed; resolve is refused until recovery reclaims the attempt",
+    "details": {
+      "taskId": "tsk_3f8a1c5e9b2d4706fa1c3e5b7d9a2f48",
+      "attemptExitState": "exited_unknown",
+      "state": "needs_review"
+    }
+  }
+}

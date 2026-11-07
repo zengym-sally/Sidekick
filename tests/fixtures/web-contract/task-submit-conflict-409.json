@@ -1,0 +1,12 @@
+{
+  "contractVersion": "web-api/1",
+  "status": 409,
+  "error": {
+    "code": "idempotency_conflict",
+    "message": "operationId is already bound to a different canonical input; the existing task was not modified",
+    "details": {
+      "operationId": "op_5f2b91c7a4d63e0817bc2f0a9d4e1b53",
+      "existingTaskId": "tsk_1a2b3c4d5e6f708192a3b4c5d6e7f809"
+    }
+  }
+}

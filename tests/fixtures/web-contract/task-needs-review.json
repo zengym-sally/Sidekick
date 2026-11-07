@@ -1,0 +1,50 @@
+{
+  "contractVersion": "web-api/1",
+  "taskId": "tsk_7d1f4b8e2a6c0d93f5b8e2a4c6d0f7b1",
+  "operationId": "op_e4a7c0f3b6d2915e8a4c7f0b3d6e9a2c",
+  "type": "reminder_send",
+  "role": "organizer",
+  "state": "needs_review",
+  "version": 6,
+  "createdAt": "2026-11-06T11:52:44.000Z",
+  "updatedAt": "2026-11-06T12:33:00.000Z",
+  "terminalAt": null,
+  "submitSeq": 1031,
+  "queuePosition": null,
+  "attemptCount": 1,
+  "attemptId": null,
+  "cancelIntent": true,
+  "configRevision": "cfgrev_0d81fe22",
+  "inputRef": {
+    "kind": "source_ref",
+    "sourceId": "src_2f8b4d0e6a2c8e0b4d6f8a0c2e4b6d8f",
+    "byteSize": 512,
+    "contentHash": "sha256:a7d0e3b6c9f2a5d8e1b4c7f0a3d6e9b2c5f8a1d4e7b0c3f6a9d2e5b8c1f4a7d0"
+  },
+  "progress": null,
+  "result": null,
+  "failure": null,
+  "recovery": {
+    "cause": "restart_unknown_side_effect",
+    "sideEffectKnown": false,
+    "autoResume": false,
+    "reason": "external send may have completed before the backend stopped; automatic replay is forbidden",
+    "receipts": [
+      {
+        "receiptId": "rct_0a1e5c8f2d4b",
+        "kind": "lark_message_send",
+        "externalRef": "om_synthetic_9c31e7",
+        "recordedAt": "2026-11-06T11:53:12.000Z",
+        "verifiable": true
+      }
+    ],
+    "decisionOptions": [
+      "resume",
+      "cancel"
+    ],
+    "itemVersion": 1
+  },
+  "attemptExitState": "exited_confirmed",
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "resultPendingExit": false
+}

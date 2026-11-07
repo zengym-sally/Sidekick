@@ -1,0 +1,85 @@
+{
+  "contractVersion": "web-api/1",
+  "hold": {
+    "holdId": "rec_8f14b7a2d5c9",
+    "cause": "root_activation",
+    "openedAt": "2026-11-06T14:02:00.000Z",
+    "closedAt": null,
+    "paused": {
+      "submissions": true,
+      "scheduling": true,
+      "timers": true,
+      "outbox": true
+    },
+    "root": {
+      "id": "root_a1b2c3d4e5f6",
+      "activationSource": "previously_registered_root",
+      "previousActiveRoot": "root_b7d2e1c4a9f3",
+      "lastKnownCheckpoint": "2026-11-06T09:40:00.000Z",
+      "historyContinuity": "unproven",
+      "note": "root A was active until 09:40, then B took over; execution history between the checkpoint and re-activation cannot be proven, so unfinished tasks are isolated for review instead of replay (A→B→A)"
+    },
+    "summary": {
+      "total": 3,
+      "needsDecision": 3,
+      "autoSafe": 0,
+      "pendingCancelIntent": 1
+    }
+  },
+  "items": [
+    {
+      "itemId": "rci_11",
+      "taskId": "tsk_0a4e8c2f6b9d1573e0a8c4f2b6d0e9a3",
+      "type": "reminder_send",
+      "state": "needs_review",
+      "cancelIntent": false,
+      "verificationState": "pending",
+      "autoSafeEvidence": null,
+      "receipts": [
+        {
+          "receiptId": "rct_3b7e1d5a9c2f",
+          "kind": "lark_message_send",
+          "externalRef": "om_synthetic_41d8a2",
+          "recordedAt": "2026-11-06T09:38:55.000Z",
+          "verifiable": true
+        }
+      ],
+      "decisionOptions": [
+        "resume",
+        "cancel"
+      ],
+      "version": 1
+    },
+    {
+      "itemId": "rci_12",
+      "taskId": "tsk_1f6b3d8e0a2c9475f3b1d6e8a0c4f7b2",
+      "type": "tracker_collect",
+      "state": "needs_review",
+      "cancelIntent": false,
+      "verificationState": "pending",
+      "autoSafeEvidence": null,
+      "receipts": [],
+      "decisionOptions": [
+        "resume",
+        "cancel"
+      ],
+      "version": 1
+    },
+    {
+      "itemId": "rci_13",
+      "taskId": "tsk_2b8d4e9f1c3a0682a4c2e7f9b1d5a8c3",
+      "type": "reminder_send",
+      "state": "needs_review",
+      "cancelIntent": true,
+      "verificationState": "pending",
+      "autoSafeEvidence": null,
+      "receipts": [],
+      "decisionOptions": [
+        "resume",
+        "cancel"
+      ],
+      "version": 1
+    }
+  ],
+  "summaryNote": "needsDecision counts every item with a pending decision (verificationState=pending); pendingCancelIntent counts items with cancelIntent=true that are still pending and is reported separately, never subtracted from needsDecision."
+}

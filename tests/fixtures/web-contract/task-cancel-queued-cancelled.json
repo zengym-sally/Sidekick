@@ -1,0 +1,30 @@
+{
+  "contractVersion": "web-api/1",
+  "taskId": "tsk_8e4f2a6b0c9d3e71f5a8b2c4d6e0f913",
+  "operationId": "op_2d94a1f8c5b04e7d9a3c6f1b8e2d5a07",
+  "type": "organize_text",
+  "role": "organizer",
+  "state": "cancelled",
+  "version": 2,
+  "createdAt": "2026-11-06T12:31:02.000Z",
+  "updatedAt": "2026-11-06T12:31:05.000Z",
+  "terminalAt": "2026-11-06T12:31:05.000Z",
+  "submitSeq": 1042,
+  "queuePosition": null,
+  "attemptCount": 0,
+  "attemptId": null,
+  "cancelIntent": false,
+  "configRevision": "cfgrev_0d81fe22",
+  "inputRef": {
+    "kind": "inline_text",
+    "byteSize": 640,
+    "contentHash": "sha256:9b02d4f8a1c3e6507b8d2f4a6c0e9b1d3f5a7c9e0b2d4f6a8c0e2b4d6f8a0c2e4"
+  },
+  "progress": null,
+  "result": null,
+  "failure": null,
+  "recovery": null,
+  "attemptExitState": "not_started",
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "resultPendingExit": false
+}
