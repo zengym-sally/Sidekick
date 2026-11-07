@@ -14,6 +14,9 @@ import {
   linkSync,
   mkdirSync,
   openSync,
+  readdirSync,
+  readFileSync,
+  lstatSync,
   renameSync,
   rmSync,
   symlinkSync,
@@ -120,6 +123,28 @@ function freshDir(name) {
   rmSync(root, { recursive: true, force: true });
   mkdirSync(root, { recursive: true });
   return root;
+}
+
+/// Snapshot of a synthetic root for the "a rejection must not change the file
+/// tree" assertions: every entry as `kind relpath mode`, sorted. A rejected
+/// open must leave the snapshot identical.
+function snapshot(root) {
+  const entries = [];
+  const walk = (dir, prefix) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const rel = prefix ? `${prefix}/${entry.name}` : entry.name;
+      const stat = lstatSync(path.join(dir, entry.name));
+      const kind = stat.isSymbolicLink() ? 'symlink' : stat.isDirectory() ? 'dir' : 'file';
+      entries.push(`${kind} ${rel} ${stat.mode & 0o7777}`);
+      if (kind === 'dir') walk(path.join(dir, entry.name), rel);
+    }
+  };
+  walk(root, '');
+  return entries.sort();
+}
+
+function treeUnchanged(root, before) {
+  return check('tree unchanged', JSON.stringify(snapshot(root)) === JSON.stringify(before));
 }
 
 function buildHarness() {
@@ -244,15 +269,17 @@ async function main() {
   {
     const root = seed('a-missing-db');
     rmSync(path.join(root, 'data', 'sidekick.sqlite'), { force: true });
+    const before = snapshot(root);
     const rejected = run(['open-reject', '--root', root, '--expect', 'MISSING_DATABASE']);
     record(
       'A2 无 CREATE 的已有库打开：缺库拒绝且不新建文件',
-      'open-reject 期望 MISSING_DATABASE；库文件仍未出现',
+      'open-reject 期望 MISSING_DATABASE；库文件仍未出现；拒绝后文件树不变',
       [rejected],
       () => [
         check('exit0', rejected.status === 0, `status=${rejected.status}`),
         check('code=MISSING_DATABASE', rejected.json?.code === 'MISSING_DATABASE', `code=${rejected.json?.code}`),
         check('db still absent', !existsSync(path.join(root, 'data', 'sidekick.sqlite'))),
+        treeUnchanged(root, before),
       ],
     );
   }
@@ -269,6 +296,100 @@ async function main() {
         check('exit0', control.status === 0, `status=${control.status}`),
         check('created=true', control.json?.created === true),
         check('file exists', existsSync(target)),
+      ],
+    );
+  }
+
+  // ---- A4. explicit init is the only creating flow -------------------------
+  {
+    const root = freshDir('a-init');
+    chmodSync(root, 0o700);
+    const initialized = run(['init', '--root', root]);
+    const reopened = run(['open-check', '--root', root]);
+    record(
+      'A4 显式初始化：init 创建归属标记、私有目录与数据库，产物可作已有根打开',
+      'init ok（标记含 MAGIC、7 个 0700 目录、0600 数据库并写入身份）；随后 open-check ok 且 countBefore=0',
+      [initialized, reopened],
+      () => [
+        check('init exit0', initialized.status === 0, `status=${initialized.status}`),
+        check('init ok', initialized.json?.ok === true),
+        check(
+          'marker created with magic',
+          existsSync(path.join(root, '.sidekick-workspace'))
+            && readFileSync(path.join(root, '.sidekick-workspace'), 'utf8') === 'sidekick-workspace-v1\n',
+        ),
+        check(
+          'private dirs created 0700',
+          ['data', 'runs', 'config', 'skills', 'mcp', 'logs', 'backups'].every((name) => {
+            const stat = lstatSync(path.join(root, name));
+            return stat.isDirectory() && (stat.mode & 0o7777) === 0o700;
+          }),
+        ),
+        check(
+          'database created 0600',
+          (() => {
+            const stat = lstatSync(path.join(root, 'data', 'sidekick.sqlite'));
+            return stat.isFile() && (stat.mode & 0o7777) === 0o600;
+          })(),
+        ),
+        check('reopen exit0', reopened.status === 0, `status=${reopened.status}`),
+        check('reopen ok', reopened.json?.ok === true),
+        check('countBefore=0', reopened.json?.countBefore === 0, `countBefore=${reopened.json?.countBefore}`),
+      ],
+    );
+  }
+  {
+    const root = freshDir('a-init-reject');
+    writeFileSync(path.join(root, 'unrelated.txt'), 'not a sidekick root');
+    const before = snapshot(root);
+    const rejected = run(['init', '--root', root]);
+    record(
+      'A4b 显式初始化不吞并非有目录：非空无标记目录 init 期望 UNKNOWN_ROOT 且文件树不变',
+      'init 期望 UNKNOWN_ROOT（ok=false、exit 1）；unrelated.txt 仍在，未创建标记/目录/数据库',
+      [rejected],
+      () => [
+        check('exit1', rejected.status === 1, `status=${rejected.status}`),
+        check('ok=false', rejected.json?.ok === false),
+        check('code=UNKNOWN_ROOT', rejected.json?.code === 'UNKNOWN_ROOT', `code=${rejected.json?.code}`),
+        treeUnchanged(root, before),
+      ],
+    );
+  }
+
+  // ---- A5. ordinary open never creates anything ----------------------------
+  {
+    const root = freshDir('a-open-empty');
+    chmodSync(root, 0o700);
+    const before = snapshot(root);
+    const rejected = run(['open-reject', '--root', root, '--expect', 'UNKNOWN_ROOT']);
+    record(
+      'A5 普通打开零创建副作用：空目录 open-reject 期望 UNKNOWN_ROOT 且目录仍为空',
+      'open-reject 期望 UNKNOWN_ROOT；未创建归属标记、目录或数据库（文件树不变）',
+      [rejected],
+      () => [
+        check('exit0', rejected.status === 0, `status=${rejected.status}`),
+        check('code=UNKNOWN_ROOT', rejected.json?.code === 'UNKNOWN_ROOT', `code=${rejected.json?.code}`),
+        check('still empty', snapshot(root).length === 0),
+        treeUnchanged(root, before),
+      ],
+    );
+  }
+  {
+    const root = freshDir('a-open-missing-dirs');
+    chmodSync(root, 0o700);
+    const marker = path.join(root, '.sidekick-workspace');
+    writeFileSync(marker, 'sidekick-workspace-v1\n');
+    chmodSync(marker, 0o600);
+    const before = snapshot(root);
+    const rejected = run(['open-reject', '--root', root, '--expect', 'INVALID_ROOT']);
+    record(
+      'A5b 普通打开不补建结构：有标记缺私有目录 open-reject 期望 INVALID_ROOT 且文件树不变',
+      'open-reject 期望 INVALID_ROOT；未创建 data/runs/config 等目录（文件树不变）',
+      [rejected],
+      () => [
+        check('exit0', rejected.status === 0, `status=${rejected.status}`),
+        check('code=INVALID_ROOT', rejected.json?.code === 'INVALID_ROOT', `code=${rejected.json?.code}`),
+        treeUnchanged(root, before),
       ],
     );
   }
@@ -293,6 +414,39 @@ async function main() {
       chmodSync(path.join(root, 'data/other.bin'), 0o600);
       linkSync(path.join(root, 'data/other.bin'), path.join(root, 'data/sidekick.sqlite-wal'));
     }],
+    ['shm-symlink', 'PATH_CHANGED', (root) => {
+      symlinkSync(path.join(root, 'config/app.json'), path.join(root, 'data/sidekick.sqlite-shm'));
+    }],
+    ['shm-hardlink', 'PATH_CHANGED', (root) => {
+      writeFileSync(path.join(root, 'data/shm-alias.bin'), 'shm alias');
+      chmodSync(path.join(root, 'data/shm-alias.bin'), 0o600);
+      linkSync(path.join(root, 'data/shm-alias.bin'), path.join(root, 'data/sidekick.sqlite-shm'));
+    }],
+    ['shm-mode', 'PATH_CHANGED', (root) => {
+      writeFileSync(path.join(root, 'data/sidekick.sqlite-shm'), 'stale shm');
+      chmodSync(path.join(root, 'data/sidekick.sqlite-shm'), 0o644);
+    }],
+    ['data-symlink', 'PATH_CHANGED', (root) => {
+      renameSync(path.join(root, 'data'), path.join(root, 'data-aside'));
+      symlinkSync(path.join(root, 'data-aside'), path.join(root, 'data'));
+    }],
+    ['data-mode', 'PATH_CHANGED', (root) => {
+      chmodSync(path.join(root, 'data'), 0o755);
+    }],
+    ['runs-symlink', 'PATH_CHANGED', (root) => {
+      renameSync(path.join(root, 'runs'), path.join(root, 'runs-aside'));
+      symlinkSync(path.join(root, 'runs-aside'), path.join(root, 'runs'));
+    }],
+    ['runs-mode', 'PATH_CHANGED', (root) => {
+      chmodSync(path.join(root, 'runs'), 0o755);
+    }],
+    ['config-symlink', 'PATH_CHANGED', (root) => {
+      renameSync(path.join(root, 'config'), path.join(root, 'config-aside'));
+      symlinkSync(path.join(root, 'config-aside'), path.join(root, 'config'));
+    }],
+    ['config-mode', 'PATH_CHANGED', (root) => {
+      chmodSync(path.join(root, 'config'), 0o755);
+    }],
     ['marker-symlink', 'INVALID_ROOT', (root) => {
       renameSync(path.join(root, '.sidekick-workspace'), path.join(root, 'data/marker-aside'));
       symlinkSync(path.join(root, 'config/app.json'), path.join(root, '.sidekick-workspace'));
@@ -310,47 +464,58 @@ async function main() {
   for (const [name, expect, mutate] of safetyCases) {
     const root = seed(`b-${name}`);
     mutate(root);
+    const before = snapshot(root);
     const rejected = run(['open-reject', '--root', root, '--expect', expect]);
-    record(`B 文件身份拒绝 ${name}`, `open-reject 期望 ${expect}`, [rejected], () => [
+    record(`B 文件身份拒绝 ${name}`, `open-reject 期望 ${expect}；拒绝后文件树不变`, [rejected], () => [
       check('exit0', rejected.status === 0, `status=${rejected.status}`),
       check(`code=${expect}`, rejected.json?.code === expect, `code=${rejected.json?.code}`),
+      treeUnchanged(root, before),
     ]);
   }
   {
     const root = seed('b-corrupt');
     writeFileSync(path.join(root, 'data/sidekick.sqlite'), Buffer.alloc(4096, 7));
+    const before = snapshot(root);
     const rejected = run(['open-reject', '--root', root, '--expect', 'CORRUPT_DATABASE']);
-    record('B 文件身份拒绝 corrupt-db', 'open-reject 期望 CORRUPT_DATABASE', [rejected], () => [
+    record('B 文件身份拒绝 corrupt-db', 'open-reject 期望 CORRUPT_DATABASE；拒绝后文件树不变', [rejected], () => [
       check('exit0', rejected.status === 0, `status=${rejected.status}`),
       check('code=CORRUPT_DATABASE', rejected.json?.code === 'CORRUPT_DATABASE', `code=${rejected.json?.code}`),
+      treeUnchanged(root, before),
     ]);
   }
   {
     const root = seed('b-app-id');
     const mutated = run(['mutate', '--root', root, '--application-id', '123']);
+    const before = snapshot(root);
     const rejected = run(['open-reject', '--root', root, '--expect', 'UNKNOWN_DATABASE']);
-    record('B 文件身份拒绝 wrong-app-id', 'mutate 后 open-reject 期望 UNKNOWN_DATABASE', [mutated, rejected], () => [
+    record('B 文件身份拒绝 wrong-app-id', 'mutate 后 open-reject 期望 UNKNOWN_DATABASE；拒绝后文件树不变', [mutated, rejected], () => [
       check('mutate ok', mutated.json?.ok === true),
       check('exit0', rejected.status === 0, `status=${rejected.status}`),
       check('code=UNKNOWN_DATABASE', rejected.json?.code === 'UNKNOWN_DATABASE', `code=${rejected.json?.code}`),
+      treeUnchanged(root, before),
     ]);
   }
   {
     const root = seed('b-future');
     run(['mutate', '--root', root, '--user-version', '6']);
+    const before = snapshot(root);
     const rejected = run(['open-reject', '--root', root, '--expect', 'SCHEMA_TOO_NEW']);
-    record('B 文件身份拒绝 future-version', 'open-reject 期望 SCHEMA_TOO_NEW', [rejected], () => [
+    record('B 文件身份拒绝 future-version', 'open-reject 期望 SCHEMA_TOO_NEW；拒绝后文件树不变', [rejected], () => [
       check('exit0', rejected.status === 0, `status=${rejected.status}`),
       check('code=SCHEMA_TOO_NEW', rejected.json?.code === 'SCHEMA_TOO_NEW', `code=${rejected.json?.code}`),
+      treeUnchanged(root, before),
     ]);
   }
   {
     const root = freshDir('b-unknown-root');
     writeFileSync(path.join(root, 'unrelated.txt'), 'not a sidekick root');
+    const before = snapshot(root);
     const rejected = run(['open-reject', '--root', root, '--expect', 'UNKNOWN_ROOT']);
-    record('B 文件身份拒绝 unknown-root', '非空且无归属标记的目录 open-reject 期望 UNKNOWN_ROOT', [rejected], () => [
+    record('B 文件身份拒绝 unknown-root', '非空且无归属标记的目录 open-reject 期望 UNKNOWN_ROOT；未创建归属标记，文件树不变', [rejected], () => [
       check('exit0', rejected.status === 0, `status=${rejected.status}`),
       check('code=UNKNOWN_ROOT', rejected.json?.code === 'UNKNOWN_ROOT', `code=${rejected.json?.code}`),
+      check('marker not created', !existsSync(path.join(root, '.sidekick-workspace'))),
+      treeUnchanged(root, before),
     ]);
   }
   {
@@ -366,6 +531,20 @@ async function main() {
     const root = seed('b-replace-marker');
     const replaced = run(['open-check', '--root', root, '--fault', 'replace-marker']);
     record('B 标记替换 fault replace-marker：首次使用停止、后续保持停止', 'open-check ok；faultFirstUse=PATH_CHANGED；faultSecondUseStopped=true', [replaced], () => [
+      check('exit0', replaced.status === 0, `status=${replaced.status}`),
+      check('faultFirstUse=PATH_CHANGED', replaced.json?.faultFirstUse === 'PATH_CHANGED', `faultFirstUse=${replaced.json?.faultFirstUse}`),
+      check('faultSecondUseStopped', replaced.json?.faultSecondUseStopped === true),
+    ]);
+  }
+  const sideFaultCases = [
+    ['replace-wal', '打开并写入后 -wal 被换成符号链接'],
+    ['replace-shm', '打开并写入后 -shm 被换成额外硬链'],
+    ['degrade-runs', '打开后 runs/ 权限被降为 0755'],
+  ];
+  for (const [fault, label] of sideFaultCases) {
+    const root = seed(`b-fault-${fault}`);
+    const replaced = run(['open-check', '--root', root, '--fault', fault]);
+    record(`B 打开后身份变化 fault ${fault}：${label}`, 'open-check ok；faultFirstUse=PATH_CHANGED；faultSecondUseStopped=true', [replaced], () => [
       check('exit0', replaced.status === 0, `status=${replaced.status}`),
       check('faultFirstUse=PATH_CHANGED', replaced.json?.faultFirstUse === 'PATH_CHANGED', `faultFirstUse=${replaced.json?.faultFirstUse}`),
       check('faultSecondUseStopped', replaced.json?.faultSecondUseStopped === true),
@@ -421,21 +600,58 @@ async function main() {
       ],
     );
   }
+  // ---- D2. worker record verification: unverifiable pauses scheduling ------
   {
-    const root = seed('d-lock-not-proof');
-    writeFileSync(path.join(root, 'runs/worker.json'), JSON.stringify({ pid: process.pid, startedAtMs: Date.now() }));
-    const liveWorker = run(['try-schedule', '--root', root]);
-    rmSync(path.join(root, 'runs/worker.json'), { force: true });
-    const noRecord = run(['try-schedule', '--root', root]);
-    record(
-      'D2 根锁不是 worker 已停的证明：活 PID 记录下拒绝调度',
-      'worker.json 记录存活 PID：try-schedule REJECT/WORKER_ALIVE；移除记录后 ACCEPT',
-      [liveWorker, noRecord],
-      () => [
-        check('reject WORKER_ALIVE', liveWorker.json?.decision === 'REJECT' && liveWorker.json?.code === 'WORKER_ALIVE', `decision=${liveWorker.json?.decision} code=${liveWorker.json?.code}`),
-        check('accept after record removed', noRecord.json?.decision === 'ACCEPT', `decision=${noRecord.json?.decision}`),
-      ],
-    );
+    const gone = spawnSync('true');
+    const deadPid = gone.pid;
+    const writeRecord = (root, payload, mode = 0o600) => {
+      const file = path.join(root, 'runs', 'worker.json');
+      writeFileSync(file, typeof payload === 'string' ? payload : JSON.stringify(payload));
+      chmodSync(file, mode);
+      return file;
+    };
+    const cases = [
+      ['d-worker-corrupt', '{not-json', 0o600, 'REJECT', 'WORKER_UNVERIFIED', '内容损坏'],
+      ['d-worker-no-pid', { startedAtMs: 1 }, 0o600, 'REJECT', 'WORKER_UNVERIFIED', '缺少 pid 字段'],
+      ['d-worker-symlink', null, 0o600, 'REJECT', 'WORKER_UNVERIFIED', '是符号链接'],
+      ['d-worker-hardlink', { pid: deadPid, startedAtMs: 1 }, 0o600, 'REJECT', 'WORKER_UNVERIFIED', '有额外硬链'],
+      ['d-worker-mode', { pid: deadPid, startedAtMs: 1 }, 0o644, 'REJECT', 'WORKER_UNVERIFIED', '权限 0644'],
+      ['d-worker-live', { pid: process.pid, startedAtMs: Date.now() }, 0o600, 'REJECT', 'WORKER_ALIVE', '存活 PID'],
+      ['d-worker-dead', { pid: deadPid, startedAtMs: 1 }, 0o600, 'ACCEPT', null, '已退出 PID'],
+    ];
+    for (const [name, payload, mode, decision, code, label] of cases) {
+      const root = seed(name);
+      if (name === 'd-worker-symlink') {
+        const aside = path.join(root, 'runs', 'worker-record.json');
+        writeFileSync(aside, JSON.stringify({ pid: deadPid, startedAtMs: 1 }));
+        chmodSync(aside, 0o600);
+        symlinkSync(aside, path.join(root, 'runs', 'worker.json'));
+      } else if (name === 'd-worker-hardlink') {
+        writeRecord(root, payload, mode);
+        linkSync(path.join(root, 'runs', 'worker.json'), path.join(root, 'runs', 'worker-alias.json'));
+      } else {
+        writeRecord(root, payload, mode);
+      }
+      const schedule = run(['try-schedule', '--root', root]);
+      const checks = [
+        check('exit0', schedule.status === 0, `status=${schedule.status}`),
+        check(`decision=${decision}`, schedule.json?.decision === decision, `decision=${schedule.json?.decision}`),
+      ];
+      if (code) checks.push(check(`code=${code}`, schedule.json?.code === code, `code=${schedule.json?.code}`));
+      if (code === 'WORKER_UNVERIFIED') {
+        checks.push(check('worker unverified', schedule.json?.worker?.state === 'unverified', `worker=${JSON.stringify(schedule.json?.worker)}`));
+      }
+      record(`D2 worker 记录${label}：try-schedule ${decision}${code ? `/${code}` : ''}`, `worker.json ${label}：${decision}${code ? ` ${code}` : ''}（不可核实的记录不等于无记录）`, [schedule], () => checks);
+    }
+    {
+      const root = seed('d-worker-absent');
+      rmSync(path.join(root, 'runs', 'worker.json'), { force: true });
+      const schedule = run(['try-schedule', '--root', root]);
+      record('D2 无历史记录：try-schedule ACCEPT', '无 worker.json：ACCEPT（无记录与记录不可核实是两种状态）', [schedule], () => [
+        check('exit0', schedule.status === 0, `status=${schedule.status}`),
+        check('decision=ACCEPT', schedule.json?.decision === 'ACCEPT', `decision=${schedule.json?.decision}`),
+      ]);
+    }
   }
   {
     const root = seed('d-crash-during-write');
@@ -483,17 +699,37 @@ async function main() {
   {
     const facts = run(['host-facts']);
     const keychain = run(['keychain-facts']);
+    const darwin = process.platform === 'darwin';
     record(
-      'E 主机部署/凭据能力事实：合成根上的 Keychain 往返（仅合成 fixture）',
-      'host-facts ok；keychain-facts ok（macOS 登录钥匙串，仅合成条目，读取后删除）',
+      darwin
+        ? 'E 主机部署/凭据能力事实：合成根上的 Keychain 往返（仅合成 fixture）'
+        : 'E 主机部署/凭据能力事实：非 macOS 平台只断言 Keychain 不受支持',
+      darwin
+        ? 'host-facts ok；keychain-facts ok（macOS 登录钥匙串，仅合成条目，读取后删除）'
+        : 'host-facts ok；keychain-facts supported=false（不跨 OS 代签，Linux 准入见工程文档 §6）',
       [facts, keychain],
-      () => [
-        check('host-facts ok', facts.json?.ok === true),
-        check('sqlite version recorded', typeof facts.json?.sqliteVersion === 'string' && facts.json.sqliteVersion.length > 0),
-        check('keychain ok', keychain.json?.ok === true, `status=${keychain.status}`),
-        check('keychain synthetic only', keychain.json?.syntheticOnly === true),
-        check('keychain fixture removed', keychain.json?.fixtureRemoved === true),
-      ],
+      () => {
+        const checks = [
+          check('host-facts ok', facts.json?.ok === true),
+          check(
+            'sqlite version recorded',
+            typeof facts.json?.sqliteVersion === 'string' && facts.json.sqliteVersion.length > 0,
+          ),
+        ];
+        if (darwin) {
+          checks.push(
+            check('keychain ok', keychain.json?.ok === true, `status=${keychain.status}`),
+            check('keychain synthetic only', keychain.json?.syntheticOnly === true),
+            check('keychain fixture removed', keychain.json?.fixtureRemoved === true),
+          );
+        } else {
+          checks.push(
+            check('keychain reports unsupported', keychain.json?.supported === false, `supported=${keychain.json?.supported}`),
+            check('keychain not claimed verified', keychain.json?.syntheticOnly === undefined),
+          );
+        }
+        return checks;
+      },
     );
   }
 

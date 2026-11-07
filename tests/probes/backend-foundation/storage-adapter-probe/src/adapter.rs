@@ -10,12 +10,16 @@ use std::cell::Cell;
 use std::collections::BTreeMap;
 use std::fs::{self, File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom, Write};
-use std::os::unix::fs::{DirBuilderExt, MetadataExt, OpenOptionsExt};
+use std::os::unix::fs::{DirBuilderExt, MetadataExt, OpenOptionsExt, PermissionsExt};
 use std::path::{Path, PathBuf};
 
 pub const ROOT_MARKER: &str = ".sidekick-workspace";
 pub const MAGIC: &[u8] = b"sidekick-workspace-v1\n";
 pub const APPLICATION_ID: i64 = 0x53444b31;
+
+/// Required private directories of a workspace root. An ordinary open verifies
+/// their identity and never creates them; only the explicit init flow creates.
+pub const REQUIRED_DIRS: [&str; 7] = ["data", "runs", "config", "skills", "mcp", "logs", "backups"];
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Code {
@@ -28,6 +32,7 @@ pub enum Code {
     SchemaTooNew,
     PathChanged,
     StorageStopped,
+    WorkerUnverified,
     Io,
 }
 
@@ -43,6 +48,7 @@ impl Code {
             Code::SchemaTooNew => "SCHEMA_TOO_NEW",
             Code::PathChanged => "PATH_CHANGED",
             Code::StorageStopped => "STORAGE_STOPPED",
+            Code::WorkerUnverified => "WORKER_UNVERIFIED",
             Code::Io => "IO",
         }
     }
@@ -76,6 +82,13 @@ fn invalid_root() -> Error {
     )
 }
 
+fn incomplete_root(name: &str) -> Error {
+    Error::new(
+        Code::InvalidRoot,
+        format!("工作目录缺少必需的 {name}/ 目录，未创建。"),
+    )
+}
+
 fn path_changed() -> Error {
     Error::new(
         Code::PathChanged,
@@ -93,6 +106,25 @@ pub enum Fault {
     SwapDatabase,
     /// Replace the root marker with a different file after a successful open.
     ReplaceMarker,
+    /// Replace the WAL side file with a symlink after the connection is live.
+    ReplaceWal,
+    /// Replace the SHM side file with an extra hard link after the connection is live.
+    ReplaceShm,
+    /// Degrade a required directory's permissions after the connection is live.
+    DegradeRuns,
+}
+
+impl Fault {
+    pub fn name(self) -> &'static str {
+        match self {
+            Fault::None => "none",
+            Fault::SwapDatabase => "swap-db",
+            Fault::ReplaceMarker => "replace-marker",
+            Fault::ReplaceWal => "replace-wal",
+            Fault::ReplaceShm => "replace-shm",
+            Fault::DegradeRuns => "degrade-runs",
+        }
+    }
 }
 
 pub struct StorageAdapter {
@@ -101,7 +133,8 @@ pub struct StorageAdapter {
     /// equals the connection lifetime.
     lock: File,
     root_handle: File,
-    data_handle: File,
+    /// Held handles for every required private directory (including `data/`).
+    dir_handles: BTreeMap<&'static str, File>,
     database_handle: File,
     /// WAL/SHM side files appear when WAL mode is enabled; newly appeared
     /// private side files are adopted, held ones must keep their identity.
@@ -161,11 +194,18 @@ fn open_private(path: &Path) -> Result<File> {
 fn private_dir(path: &Path) -> Result<()> {
     if path.exists() {
         let metadata = fs::symlink_metadata(path).map_err(io_error)?;
-        if !metadata.is_dir() || metadata.file_type().is_symlink() || metadata.mode() & 0o7777 != 0o700 {
+        if !metadata.is_dir()
+            || metadata.file_type().is_symlink()
+            || metadata.mode() & 0o7777 != 0o700
+        {
             return Err(path_changed());
         }
     } else {
-        fs::DirBuilder::new().recursive(true).mode(0o700).create(path).map_err(io_error)?;
+        fs::DirBuilder::new()
+            .recursive(true)
+            .mode(0o700)
+            .create(path)
+            .map_err(io_error)?;
     }
     Ok(())
 }
@@ -196,7 +236,8 @@ pub fn acquire_root_lock(root: &Path) -> Result<File> {
         || current.mode() & 0o7777 != 0o600
         || opened.dev() != current.dev()
         || opened.ino() != current.ino()
-        || metadata.is_some_and(|before| before.dev() != opened.dev() || before.ino() != opened.ino())
+        || metadata
+            .is_some_and(|before| before.dev() != opened.dev() || before.ino() != opened.ino())
     {
         return Err(invalid_root());
     }
@@ -209,8 +250,10 @@ pub fn acquire_root_lock(root: &Path) -> Result<File> {
 
 impl StorageAdapter {
     /// Open an existing synthetic root. `allow_init` distinguishes the explicit
-    /// creation flow (new root) from ordinary open (existing root); the latter
-    /// must never silently create a database.
+    /// creation flow (new root) from ordinary open (existing root); an ordinary
+    /// open verifies the marker, the required directories and the database and
+    /// never creates anything — a missing piece is an error, never a silent
+    /// repair. Only `allow_init` creates the workspace structure.
     pub fn open(root: &Path, allow_init: bool, fault: Fault) -> Result<Self> {
         if !root.is_absolute() {
             return Err(Error::new(Code::InvalidRoot, "工作目录必须是绝对路径。"));
@@ -237,6 +280,14 @@ impl StorageAdapter {
                 "这个目录已有其他内容，未识别为跟班工作目录。",
             ));
         }
+        // An ordinary open must not create the marker: without one the
+        // directory is simply not a workspace root, whatever else it holds.
+        if !allow_init && fs::symlink_metadata(&marker).is_err() {
+            return Err(Error::new(
+                Code::UnknownRoot,
+                "这个目录没有跟班归属标记，未创建新标记。",
+            ));
+        }
         let mut lock = acquire_root_lock(&root)?;
         let mut content = Vec::new();
         lock.read_to_end(&mut content).map_err(io_error)?;
@@ -248,7 +299,10 @@ impl StorageAdapter {
                 ));
             }
             if !allow_init {
-                return Err(Error::new(Code::UnknownRoot, "归属标记未写完，未继续初始化。"));
+                return Err(Error::new(
+                    Code::UnknownRoot,
+                    "归属标记未写完，未继续初始化。",
+                ));
             }
             lock.seek(SeekFrom::Start(0)).map_err(io_error)?;
             lock.set_len(0).map_err(io_error)?;
@@ -257,14 +311,30 @@ impl StorageAdapter {
         }
         let root_handle = File::open(&root).map_err(io_error)?;
         same_directory(&root, &root_handle, true)?;
-        private_dir(&root.join("data"))?;
-        let data_handle = File::open(root.join("data")).map_err(io_error)?;
-        same_directory(&root.join("data"), &data_handle, true)?;
-        for name in ["runs", "config", "skills", "mcp", "logs", "backups"] {
-            private_dir(&root.join(name))?;
+        // Required directories: an ordinary open only verifies their identity
+        // (existence, plain directory, 0700, not a symlink); the explicit init
+        // flow is the only place that creates them.
+        let mut dir_handles = BTreeMap::new();
+        for name in REQUIRED_DIRS {
+            let path = root.join(name);
+            if !allow_init {
+                let metadata = fs::symlink_metadata(&path).map_err(|_| incomplete_root(name))?;
+                if !metadata.is_dir()
+                    || metadata.file_type().is_symlink()
+                    || metadata.mode() & 0o7777 != 0o700
+                {
+                    return Err(path_changed());
+                }
+            } else {
+                private_dir(&path)?;
+            }
+            let handle = File::open(&path).map_err(io_error)?;
+            same_directory(&path, &handle, true)?;
+            dir_handles.insert(name, handle);
         }
         let path = root.join("data/sidekick.sqlite");
-        if fs::symlink_metadata(&path).is_err() {
+        let database_missing = fs::symlink_metadata(&path).is_err();
+        if database_missing {
             if !allow_init {
                 return Err(Error::new(
                     Code::MissingDatabase,
@@ -292,14 +362,14 @@ impl StorageAdapter {
             // must no longer match the path.
             let replacement = root.join("data/replacement.sqlite");
             fs::rename(&path, root.join("data/original.sqlite")).map_err(io_error)?;
-            fs::copy(&root.join("data/original.sqlite"), &replacement).map_err(io_error)?;
+            fs::copy(root.join("data/original.sqlite"), &replacement).map_err(io_error)?;
             fs::rename(&replacement, &path).map_err(io_error)?;
         }
         let mut adapter = Self {
             root: root.clone(),
             lock,
             root_handle,
-            data_handle,
+            dir_handles,
             database_handle,
             side_files: std::cell::RefCell::new(side_files),
             // The connection is opened only after every file-safety check.
@@ -315,15 +385,70 @@ impl StorageAdapter {
         .map_err(|_| Error::new(Code::Io, "数据库打开失败"))?;
         adapter.db = db;
         adapter.configure()?;
+        if database_missing && allow_init {
+            // Only the init flow stamps a freshly created database with the
+            // workspace identity (and this harness's synthetic schema) so the
+            // root opens as an existing root afterwards.
+            adapter
+                .db
+                .pragma_update(None, "application_id", APPLICATION_ID)
+                .map_err(|_| Error::new(Code::Io, "application_id 写入失败"))?;
+            adapter
+                .db
+                .pragma_update(None, "user_version", 1)
+                .map_err(|_| Error::new(Code::Io, "user_version 写入失败"))?;
+            adapter
+                .db
+                .execute_batch(
+                    "CREATE TABLE probe_items(id TEXT PRIMARY KEY, status TEXT NOT NULL);",
+                )
+                .map_err(|_| Error::new(Code::Io, "初始 schema 创建失败"))?;
+        }
         adapter.verify(true)?;
-        if fault == Fault::ReplaceMarker {
-            fs::rename(&marker, root.join("data/marker-replaced")).map_err(io_error)?;
-            OpenOptions::new()
-                .write(true)
-                .create_new(true)
-                .mode(0o600)
-                .open(&marker)
-                .map_err(io_error)?;
+        match fault {
+            Fault::None | Fault::SwapDatabase => {}
+            Fault::ReplaceMarker => {
+                fs::rename(&marker, root.join("data/marker-replaced")).map_err(io_error)?;
+                OpenOptions::new()
+                    .write(true)
+                    .create_new(true)
+                    .mode(0o600)
+                    .open(&marker)
+                    .map_err(io_error)?;
+            }
+            Fault::ReplaceWal | Fault::ReplaceShm | Fault::DegradeRuns => {
+                // Materialize the WAL/SHM side files first so the mutation
+                // targets files the adapter already holds, then degrade them
+                // the way a hostile or racing process would.
+                adapter
+                    .short_write("INSERT INTO probe_items VALUES('fault-side','pending')")
+                    .map_err(|_| Error::new(Code::Io, "故障注入准备失败"))?;
+                match fault {
+                    Fault::ReplaceWal => {
+                        let side = root.join("data/sidekick.sqlite-wal");
+                        fs::rename(&side, root.join("data/wal-aside")).map_err(io_error)?;
+                        std::os::unix::fs::symlink(root.join("config/app.json"), &side)
+                            .map_err(io_error)?;
+                    }
+                    Fault::ReplaceShm => {
+                        let side = root.join("data/sidekick.sqlite-shm");
+                        fs::rename(&side, root.join("data/shm-aside")).map_err(io_error)?;
+                        let other = root.join("data/other-side.bin");
+                        OpenOptions::new()
+                            .write(true)
+                            .create_new(true)
+                            .mode(0o600)
+                            .open(&other)
+                            .map_err(io_error)?;
+                        fs::hard_link(&other, &side).map_err(io_error)?;
+                    }
+                    Fault::DegradeRuns => {
+                        fs::set_permissions(root.join("runs"), fs::Permissions::from_mode(0o755))
+                            .map_err(io_error)?;
+                    }
+                    _ => {}
+                }
+            }
         }
         Ok(adapter)
     }
@@ -333,22 +458,20 @@ impl StorageAdapter {
             .busy_timeout(std::time::Duration::from_secs(5))
             .map_err(|_| Error::new(Code::Io, "busy_timeout 设置失败"))?;
         self.db
-            .execute_batch("PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;")
+            .execute_batch(
+                "PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;",
+            )
             .map_err(|_| Error::new(Code::Io, "WAL/同步模式设置失败"))?;
         Ok(())
     }
 
-    pub fn validate_existing_database(path: &Path, initializing: bool) -> Result<()> {        // No CREATE flag: a missing database is an error, never a new file.
+    pub fn validate_existing_database(path: &Path, initializing: bool) -> Result<()> {
+        // No CREATE flag: a missing database is an error, never a new file.
         let db = Connection::open_with_flags(
             path,
             OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NOFOLLOW,
         )
-        .map_err(|_| {
-            Error::new(
-                Code::CorruptDatabase,
-                "数据库无法打开，原文件未重置。",
-            )
-        })?;
+        .map_err(|_| Error::new(Code::CorruptDatabase, "数据库无法打开，原文件未重置。"))?;
         let version: i64 = db
             .pragma_query_value(None, "user_version", |row| row.get(0))
             .map_err(|_| Error::new(Code::CorruptDatabase, "user_version 读取失败"))?;
@@ -380,7 +503,10 @@ impl StorageAdapter {
             .query_row("PRAGMA quick_check", [], |row| row.get(0))
             .map_err(|_| Error::new(Code::CorruptDatabase, "完整性检查失败"))?;
         if check != "ok" {
-            return Err(Error::new(Code::CorruptDatabase, "数据库完整性检查失败，原文件未重置。"));
+            return Err(Error::new(
+                Code::CorruptDatabase,
+                "数据库完整性检查失败，原文件未重置。",
+            ));
         }
         Ok(())
     }
@@ -393,7 +519,9 @@ impl StorageAdapter {
                 return Err(path_changed());
             }
             same_directory(&self.root, &self.root_handle, private_root)?;
-            same_directory(&self.root.join("data"), &self.data_handle, true)?;
+            for (name, handle) in &self.dir_handles {
+                same_directory(&self.root.join(name), handle, true)?;
+            }
             let marker = self.root.join(ROOT_MARKER);
             let held = self.lock.metadata().map_err(|_| path_changed())?;
             let current = fs::symlink_metadata(&marker).map_err(|_| path_changed())?;
@@ -473,7 +601,9 @@ impl StorageAdapter {
         self.ensure_live()?;
         self.verify(true)?;
         self.db
-            .query_row(&format!("SELECT count(*) FROM {table}"), [], |row| row.get(0))
+            .query_row(&format!("SELECT count(*) FROM {table}"), [], |row| {
+                row.get(0)
+            })
             .map_err(|_| Error::new(Code::Io, "计数失败"))
     }
 

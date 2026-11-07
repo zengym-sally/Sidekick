@@ -5,18 +5,16 @@
 mod adapter;
 
 use adapter::{
-    acquire_root_lock, default_open_creates, Code, Error, Fault, StorageAdapter,
+    acquire_root_lock, default_open_creates, Code, Error, Fault, StorageAdapter, REQUIRED_DIRS,
 };
 use rusqlite::Connection;
 use serde_json::{json, Value};
 use std::fs::{self, OpenOptions};
 use std::io::{Read, Write};
-use std::os::unix::fs::{DirBuilderExt, OpenOptionsExt};
+use std::os::unix::fs::{DirBuilderExt, MetadataExt, OpenOptionsExt};
 use std::path::{Path, PathBuf};
 use std::process::exit;
 use std::time::{SystemTime, UNIX_EPOCH};
-
-const PRIVATE_DIRS: [&str; 7] = ["config", "data", "runs", "skills", "mcp", "logs", "backups"];
 
 fn fail(message: impl Into<String>) -> ! {
     eprintln!("probe error: {}", message.into());
@@ -56,7 +54,7 @@ fn seed(root: &Path) -> Value {
             .mode(0o700)
             .create(root)
             .map_err(adapter::io_error)?;
-        for name in PRIVATE_DIRS {
+        for name in REQUIRED_DIRS {
             fs::DirBuilder::new()
                 .recursive(true)
                 .mode(0o700)
@@ -103,11 +101,44 @@ fn seed(root: &Path) -> Value {
     }
 }
 
+/// Explicit creation flow for a new workspace root: the only path that may
+/// create the marker, the private directories and the database. Ordinary open
+/// (`StorageAdapter::open` with `allow_init=false`) never creates anything.
+fn init(args: &[String]) -> Value {
+    let root = root_arg(args);
+    let before = json!({
+        "marker": fs::symlink_metadata(root.join(adapter::ROOT_MARKER)).is_ok(),
+        "dirs": REQUIRED_DIRS
+            .iter()
+            .map(|name| root.join(name).exists())
+            .collect::<Vec<_>>(),
+        "database": root.join("data/sidekick.sqlite").exists(),
+    });
+    match StorageAdapter::open(&root, true, Fault::None) {
+        Ok(adapter) => {
+            drop(adapter);
+            json!({
+                "command": "init",
+                "ok": true,
+                "root": root,
+                "before": before,
+                "marker": adapter::ROOT_MARKER,
+                "dirs": REQUIRED_DIRS,
+                "database": "data/sidekick.sqlite",
+            })
+        }
+        Err(error) => error_json("init", &error),
+    }
+}
+
 fn open_check(args: &[String]) -> Value {
     let root = root_arg(args);
     let fault = match arg_value(args, "--fault").as_deref() {
         Some("swap-db") => Fault::SwapDatabase,
         Some("replace-marker") => Fault::ReplaceMarker,
+        Some("replace-wal") => Fault::ReplaceWal,
+        Some("replace-shm") => Fault::ReplaceShm,
+        Some("degrade-runs") => Fault::DegradeRuns,
         _ => Fault::None,
     };
     let outcome = (|| -> std::result::Result<Value, Error> {
@@ -124,7 +155,7 @@ fn open_check(args: &[String]) -> Value {
         // the same root from this process must fail with ROOT_IN_USE.
         let second = StorageAdapter::open(&root, false, Fault::None).err();
         let root_in_use = second.as_ref().map(|error| error.code) == Some(Code::RootInUse);
-        if fault == Fault::ReplaceMarker {
+        if fault != Fault::None {
             // First use after the fault must stop storage; the second use must
             // stay stopped instead of silently resuming.
             let first = adapter.count("probe_items").err();
@@ -136,7 +167,7 @@ fn open_check(args: &[String]) -> Value {
                 "root": root,
                 "facts": facts,
                 "secondOpenRootInUse": root_in_use,
-                "fault": "replace-marker",
+                "fault": fault.name(),
                 "faultFirstUse": first.as_ref().map(|error| error.code.as_str()),
                 "faultSecondUseStopped": stopped,
             }));
@@ -175,7 +206,9 @@ fn open_reject(args: &[String]) -> Value {
     };
     let mut value = match outcome {
         Ok(_adapter) => json!({"command":"open-reject","ok":ok,"root":root,"unexpected":"opened"}),
-        Err(error) => json!({"command":"open-reject","ok":ok,"root":root,"code":error.code.as_str(),"message":error.message}),
+        Err(error) => {
+            json!({"command":"open-reject","ok":ok,"root":root,"code":error.code.as_str(),"message":error.message})
+        }
     };
     if !ok {
         value["ok"] = Value::Bool(false);
@@ -196,7 +229,7 @@ fn wal_check(args: &[String]) -> Value {
         // A second read-only connection may read while the adapter holds the
         // root lock: WAL readers do not block on the writer.
         let reader = Connection::open_with_flags(
-            &root.join("data/sidekick.sqlite"),
+            root.join("data/sidekick.sqlite"),
             rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY | rusqlite::OpenFlags::SQLITE_OPEN_NOFOLLOW,
         )
         .map_err(|_| Error::new(Code::Io, "只读连接打开失败"))?;
@@ -208,7 +241,10 @@ fn wal_check(args: &[String]) -> Value {
             .begin_write()
             .map_err(|_| Error::new(Code::Io, "事务创建失败"))?;
         transaction
-            .execute("INSERT INTO probe_items VALUES('wal-uncommitted','pending')", [])
+            .execute(
+                "INSERT INTO probe_items VALUES('wal-uncommitted','pending')",
+                [],
+            )
             .map_err(|_| Error::new(Code::Io, "事务写入失败"))?;
         let reader_during: i64 = reader
             .query_row("SELECT count(*) FROM probe_items", [], |row| row.get(0))
@@ -218,7 +254,10 @@ fn wal_check(args: &[String]) -> Value {
         let rolled = adapter
             .begin_write()
             .map_err(|_| Error::new(Code::Io, "事务创建失败"))?;
-        let _ = rolled.execute("INSERT INTO probe_items VALUES('wal-rollback','pending')", []);
+        let _ = rolled.execute(
+            "INSERT INTO probe_items VALUES('wal-rollback','pending')",
+            [],
+        );
         let failed = rolled
             .execute("INSERT INTO missing_table VALUES(1)", [])
             .is_err();
@@ -263,7 +302,9 @@ fn hold(args: &[String]) -> Value {
             exit(1);
         }
     };
-    if let Err(error) = adapter.short_write("INSERT INTO probe_items VALUES('worker-committed','pending')") {
+    if let Err(error) =
+        adapter.short_write("INSERT INTO probe_items VALUES('worker-committed','pending')")
+    {
         emit(error_json("hold", &error));
         exit(1);
     }
@@ -301,7 +342,16 @@ fn hold(args: &[String]) -> Value {
                 .map(|span| span.as_millis())
                 .unwrap_or(0)
         );
-        if let Err(error) = fs::write(path, payload) {
+        // The scheduler re-reads this record and only trusts a private,
+        // single-hard-link 0600 file: a loose record is not verifiable.
+        if let Err(error) = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .mode(0o600)
+            .open(path)
+            .and_then(|mut file| file.write_all(payload.as_bytes()))
+        {
             emit(error_json("hold", &adapter::io_error(error)));
             exit(1);
         }
@@ -314,22 +364,81 @@ fn hold(args: &[String]) -> Value {
     exit(0);
 }
 
+/// Outcome of reading the recorded worker file. A missing record means "no
+/// history"; a record that exists but cannot be verified (unreadable, corrupt,
+/// or wrong identity/permissions) must pause scheduling — the design requires
+/// "unverifiable ⇒ pause", not "unverifiable ⇒ assume stopped".
+enum WorkerRecord {
+    Absent,
+    Verified { pid: i64 },
+    Unverified { reason: String },
+}
+
+fn read_worker_record(path: &Path) -> WorkerRecord {
+    let metadata = match fs::symlink_metadata(path) {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return WorkerRecord::Absent,
+        Err(error) => {
+            return WorkerRecord::Unverified {
+                reason: format!("记录读取失败：{error}"),
+            }
+        }
+    };
+    if !metadata.is_file()
+        || metadata.file_type().is_symlink()
+        || metadata.nlink() != 1
+        || metadata.mode() & 0o7777 != 0o600
+    {
+        return WorkerRecord::Unverified {
+            reason: "记录文件身份不符：必须是单一硬链、权限 0600 的普通文件，不能是符号链接。"
+                .into(),
+        };
+    }
+    let text = match fs::read_to_string(path) {
+        Ok(text) => text,
+        Err(error) => {
+            return WorkerRecord::Unverified {
+                reason: format!("记录读取失败：{error}"),
+            }
+        }
+    };
+    let parsed: Value = match serde_json::from_str(&text) {
+        Ok(parsed) => parsed,
+        Err(error) => {
+            return WorkerRecord::Unverified {
+                reason: format!("记录不是合法 JSON：{error}"),
+            }
+        }
+    };
+    match parsed.get("pid").and_then(Value::as_i64) {
+        Some(pid) if pid > 0 => WorkerRecord::Verified { pid },
+        _ => WorkerRecord::Unverified {
+            reason: "记录缺少有效的 pid 字段。".into(),
+        },
+    }
+}
+
 /// Scheduler-side admission: acquiring the root lock alone is not proof that
-/// the previous worker stopped, so the recorded worker PID is verified too.
+/// the previous worker stopped, so the recorded worker PID is verified too —
+/// and a record that cannot be verified pauses scheduling instead of being
+/// silently treated as "no worker".
 fn try_schedule(args: &[String]) -> Value {
     let root = root_arg(args);
     let worker_file = root.join("runs/worker.json");
-    let worker = fs::read_to_string(&worker_file).ok().and_then(|text| {
-        let parsed: Value = serde_json::from_str(&text).ok()?;
-        let pid = parsed.get("pid").and_then(Value::as_i64)?;
-        let alive = std::process::Command::new("/bin/kill")
-            .args(["-0", &pid.to_string()])
-            .output()
-            .map(|output| output.status.success())
-            .unwrap_or(false);
-        Some(json!({"pid": pid, "alive": alive}))
-    });
-    let reject = |code: &str, note: &str, worker: Option<Value>| {
+    let record = read_worker_record(&worker_file);
+    let worker = match &record {
+        WorkerRecord::Absent => Value::Null,
+        WorkerRecord::Verified { pid } => {
+            let alive = std::process::Command::new("/bin/kill")
+                .args(["-0", &pid.to_string()])
+                .output()
+                .map(|output| output.status.success())
+                .unwrap_or(false);
+            json!({"pid": pid, "alive": alive})
+        }
+        WorkerRecord::Unverified { reason } => json!({"state": "unverified", "reason": reason}),
+    };
+    let reject = |code: &str, note: &str, worker: Value| {
         json!({
             "command": "try-schedule",
             "ok": true,
@@ -352,9 +461,14 @@ fn try_schedule(args: &[String]) -> Value {
             value
         }
         Ok(lock) => {
-            if worker.as_ref().and_then(|entry| entry.get("alive")).and_then(Value::as_bool)
-                == Some(true)
-            {
+            if let WorkerRecord::Unverified { .. } = &record {
+                return reject(
+                    Code::WorkerUnverified.as_str(),
+                    "worker 记录无法核实（缺失内容/损坏/身份或权限不符）：无法证明旧 worker 已停，暂停调度。",
+                    worker,
+                );
+            }
+            if worker.get("alive").and_then(Value::as_bool) == Some(true) {
                 return reject(
                     "WORKER_ALIVE",
                     "记录的 worker 进程仍可能存活：拿根锁不等于旧 worker 已停，暂停调度。",
@@ -499,6 +613,7 @@ fn main() {
     let rest = &args[1..];
     let value = match command.as_str() {
         "seed" => seed(&root_arg(rest)),
+        "init" => init(rest),
         "open-check" => open_check(rest),
         "open-reject" => open_reject(rest),
         "wal-check" => wal_check(rest),
