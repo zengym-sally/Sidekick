@@ -1,0 +1,49 @@
+{
+  "contractVersion": "web-api/1",
+  "taskId": "tsk_7d1f4b8e2a6c0d93f5b8e2a4c6d0f7b1",
+  "operationId": "op_e4a7c0f3b6d2915e8a4c7f0b3d6e9a2c",
+  "type": "organize_text",
+  "role": "organizer",
+  "state": "needs_review",
+  "version": 7,
+  "createdAt": "2026-11-06T12:30:00.000Z",
+  "updatedAt": "2026-11-06T12:45:30.000Z",
+  "terminalAt": null,
+  "submitSeq": 1031,
+  "queuePosition": null,
+  "attemptCount": 1,
+  "attemptId": null,
+  "attemptExitState": "exited_confirmed",
+  "cancelIntent": true,
+  "configRevision": "cfgrev_0d81fe22",
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "inputRef": {
+    "kind": "inline_text",
+    "byteSize": 842,
+    "contentHash": "sha256:1f3a9c07e5b2d84c0a6f1e93b7d5c2a8094e6f1bd3c7a5029e8b1d4f6a0c3e52"
+  },
+  "progress": null,
+  "result": null,
+  "failure": null,
+  "recovery": {
+    "cause": "backup_restore",
+    "sideEffectKnown": false,
+    "autoResume": false,
+    "holdId": "rec_3d81f0c2b6a4",
+    "itemId": "rci_02",
+    "reason": "task was unfinished when the old snapshot was taken; the backup point cannot prove whether the external send already happened, so it is isolated for review",
+    "receipts": [
+      {
+        "receiptId": "rct_0a1e5c8f2d4b",
+        "kind": "lark_message_send",
+        "externalRef": "om_synthetic_9c31e7",
+        "recordedAt": "2026-11-06T11:53:12.000Z",
+        "verifiable": true
+      }
+    ],
+    "decisionOptions": [
+      "resume",
+      "cancel"
+    ]
+  }
+}

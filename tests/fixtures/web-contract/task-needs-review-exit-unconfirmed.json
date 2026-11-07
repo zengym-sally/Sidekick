@@ -1,0 +1,35 @@
+{
+  "contractVersion": "web-api/1",
+  "taskId": "tsk_3f8a1c5e9b2d4706fa1c3e5b7d9a2f48",
+  "operationId": "op_6c0d2e4f8a1b3579df2e4a6c8b0d2f46",
+  "type": "organize_text",
+  "role": "organizer",
+  "state": "needs_review",
+  "version": 4,
+  "createdAt": "2026-11-06T12:30:00.000Z",
+  "updatedAt": "2026-11-06T12:33:00.000Z",
+  "terminalAt": null,
+  "submitSeq": 1041,
+  "queuePosition": null,
+  "attemptCount": 1,
+  "attemptId": "att_2b9e4d6f8a0c1357fb1d3a5c7e9b0d24",
+  "attemptExitState": "exited_unknown",
+  "cancelIntent": true,
+  "configRevision": "cfgrev_0d81fe22",
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "inputRef": {
+    "kind": "inline_text",
+    "byteSize": 842,
+    "contentHash": "sha256:1f3a9c07e5b2d84c0a6f1e93b7d5c2a8094e6f1bd3c7a5029e8b1d4f6a0c3e52"
+  },
+  "progress": null,
+  "result": null,
+  "failure": null,
+  "recovery": {
+    "cause": "cancel_exit_unconfirmed",
+    "sideEffectKnown": false,
+    "autoResume": false,
+    "reason": "cancel intent persisted, but the worker process-tree exit could not be confirmed; the execution slot stays occupied and resolve is refused until recovery reclaims it",
+    "receipts": []
+  }
+}

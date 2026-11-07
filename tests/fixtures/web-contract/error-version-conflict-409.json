@@ -1,0 +1,14 @@
+{
+  "contractVersion": "web-api/1",
+  "status": 409,
+  "error": {
+    "code": "version_conflict",
+    "message": "expectedVersion is stale; re-read the task and decide again",
+    "details": {
+      "taskId": "tsk_3f8a1c5e9b2d4706fa1c3e5b7d9a2f48",
+      "expectedVersion": 2,
+      "currentVersion": 3,
+      "currentState": "cancelling"
+    }
+  }
+}

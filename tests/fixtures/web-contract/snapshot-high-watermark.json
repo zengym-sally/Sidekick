@@ -1,0 +1,87 @@
+{
+  "contractVersion": "web-api/1",
+  "epoch": "inst_9f27c1aa40b2",
+  "highWatermark": 1042,
+  "generatedAt": "2026-11-06T12:32:00.000Z",
+  "lastEventId": "inst_9f27c1aa40b2:1042",
+  "settings": {
+    "agentConcurrency": 3,
+    "version": 5
+  },
+  "workspace": {
+    "mode": "local",
+    "currentRoot": {
+      "id": "root_a1b2c3d4e5f6",
+      "label": "默认工作根（合成示例）"
+    },
+    "capabilities": [
+      "workspace.manage",
+      "workspace.backup"
+    ],
+    "recovery": null
+  },
+  "tasks": [
+    {
+      "contractVersion": "web-api/1",
+      "taskId": "tsk_3f8a1c5e9b2d4706fa1c3e5b7d9a2f48",
+      "operationId": "op_6c0d2e4f8a1b3579df2e4a6c8b0d2f46",
+      "type": "organize_text",
+      "role": "organizer",
+      "state": "cancelling",
+      "version": 3,
+      "createdAt": "2026-11-06T12:30:00.000Z",
+      "updatedAt": "2026-11-06T12:31:20.000Z",
+      "terminalAt": null,
+      "submitSeq": 1043,
+      "queuePosition": null,
+      "attemptCount": 1,
+      "attemptId": "att_2b9e4d6f8a0c1357fb1d3a5c7e9b0d24",
+      "cancelIntent": true,
+      "configRevision": "cfgrev_0d81fe22",
+      "inputRef": {
+        "kind": "inline_text",
+        "byteSize": 842,
+        "contentHash": "sha256:1f3a9c07e5b2d84c0a6f1e93b7d5c2a8094e6f1bd3c7a5029e8b1d4f6a0c3e52"
+      },
+      "progress": {
+        "stage": "stopping",
+        "detail": "cancel intent persisted; waiting for worker exit confirmation"
+      },
+      "result": null,
+      "failure": null,
+      "recovery": null,
+      "attemptExitState": "exiting",
+      "originalConfigRevision": "cfgrev_0d81fe22"
+    },
+    {
+      "contractVersion": "web-api/1",
+      "taskId": "tsk_8e4f2a6b0c9d3e71f5a8b2c4d6e0f913",
+      "operationId": "op_2d94a1f8c5b04e7d9a3c6f1b8e2d5a07",
+      "type": "organize_text",
+      "role": "organizer",
+      "state": "queued",
+      "version": 1,
+      "createdAt": "2026-11-06T12:31:02.000Z",
+      "updatedAt": "2026-11-06T12:31:02.000Z",
+      "terminalAt": null,
+      "submitSeq": 1042,
+      "queuePosition": 2,
+      "attemptCount": 0,
+      "attemptId": null,
+      "cancelIntent": false,
+      "configRevision": "cfgrev_0d81fe22",
+      "inputRef": {
+        "kind": "inline_text",
+        "byteSize": 640,
+        "contentHash": "sha256:9b02d4f8a1c3e6507b8d2f4a6c0e9b1d3f5a7c9e0b2d4f6a8c0e2b4d6f8a0c2e4"
+      },
+      "progress": null,
+      "result": null,
+      "failure": null,
+      "recovery": null,
+      "attemptExitState": "not_started",
+      "originalConfigRevision": "cfgrev_0d81fe22"
+    }
+  ],
+  "note": "snapshot includes the authoritative state of all events up to and including highWatermark (cursor 1042 moved tsk_1a2b… to cancelling/v3, and this snapshot already reflects it); task entries share the full §3.1 task-resource shape; clients resubscribe with lastEventId"
+}

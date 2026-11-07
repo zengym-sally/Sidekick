@@ -1,0 +1,12 @@
+{
+  "contractVersion": "web-api/1",
+  "status": 404,
+  "error": {
+    "code": "result_not_found",
+    "message": "the result is no longer available (expired or purged); re-read the task and do not resubmit",
+    "details": {
+      "taskId": "tsk_1a2b3c4d5e6f708192a3b4c5d6e7f809",
+      "state": "succeeded"
+    }
+  }
+}

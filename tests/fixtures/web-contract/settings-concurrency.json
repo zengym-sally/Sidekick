@@ -1,0 +1,8 @@
+{
+  "contractVersion": "web-api/1",
+  "agentConcurrency": 3,
+  "default": 3,
+  "version": 5,
+  "runningCount": 3,
+  "queuedCount": 2
+}

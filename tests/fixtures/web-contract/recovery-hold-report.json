@@ -1,0 +1,90 @@
+{
+  "contractVersion": "web-api/1",
+  "hold": {
+    "holdId": "rec_3d81f0c2b6a4",
+    "cause": "backup_restore",
+    "openedAt": "2026-11-06T12:45:00.000Z",
+    "closedAt": null,
+    "paused": {
+      "submissions": true,
+      "scheduling": true,
+      "timers": true,
+      "outbox": true
+    },
+    "root": {
+      "id": "root_a1b2c3d4e5f6",
+      "restoredFromBackupId": "bak_6e2c9a4d0f8b",
+      "historyContinuity": "unproven"
+    },
+    "summary": {
+      "total": 4,
+      "needsDecision": 3,
+      "autoSafe": 1,
+      "pendingCancelIntent": 2
+    }
+  },
+  "items": [
+    {
+      "itemId": "rci_01",
+      "taskId": "tsk_4c7e0a2d9b1f5e83a6c0d4b8f2e6a1c5",
+      "type": "organize_text",
+      "state": "needs_review",
+      "cancelIntent": false,
+      "verificationState": "auto_safe",
+      "autoSafeEvidence": "task type proven read-only model pass; no external tool calls recorded in attempt ledger",
+      "receipts": [],
+      "decisionOptions": []
+    },
+    {
+      "itemId": "rci_02",
+      "taskId": "tsk_7d1f4b8e2a6c0d93f5b8e2a4c6d0f7b1",
+      "type": "reminder_send",
+      "state": "needs_review",
+      "cancelIntent": true,
+      "verificationState": "pending",
+      "autoSafeEvidence": null,
+      "receipts": [
+        {
+          "receiptId": "rct_0a1e5c8f2d4b",
+          "kind": "lark_message_send",
+          "externalRef": "om_synthetic_9c31e7",
+          "recordedAt": "2026-11-06T11:53:12.000Z",
+          "verifiable": true
+        }
+      ],
+      "decisionOptions": [
+        "resume",
+        "cancel"
+      ]
+    },
+    {
+      "itemId": "rci_03",
+      "taskId": "tsk_9a3f6c1e4b8d2067f5a9c3e1b7d4f0a8",
+      "type": "tracker_collect",
+      "state": "needs_review",
+      "cancelIntent": false,
+      "verificationState": "pending",
+      "autoSafeEvidence": null,
+      "receipts": [],
+      "decisionOptions": [
+        "resume",
+        "cancel"
+      ]
+    },
+    {
+      "itemId": "rci_04",
+      "taskId": "tsk_2c6e9b3a7f0d4581e2b6c9a3d7f0c4e8",
+      "type": "reminder_send",
+      "state": "needs_review",
+      "cancelIntent": true,
+      "verificationState": "pending",
+      "autoSafeEvidence": null,
+      "receipts": [],
+      "decisionOptions": [
+        "resume",
+        "cancel"
+      ]
+    }
+  ],
+  "summaryNote": "needsDecision counts every item with a pending decision (verificationState=pending); pendingCancelIntent counts items with cancelIntent=true that are still pending and is reported separately, never subtracted from needsDecision; autoSafe items need no decision."
+}

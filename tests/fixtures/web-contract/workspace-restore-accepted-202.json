@@ -1,0 +1,13 @@
+{
+  "contractVersion": "web-api/1",
+  "status": 202,
+  "operationId": "op_9a1f4e2c7b5d3a806e2c9f1b4d7a0e35",
+  "kind": "restore",
+  "state": "pending",
+  "backupId": "bak_6e2c9a4d0f8b",
+  "deploymentMode": "proxy",
+  "capability": "workspace.backup",
+  "updatedAt": "2026-11-06T13:02:10.000Z",
+  "note": "restore is a workspace.backup capability available in proxy deployment; the hold is created synchronously with operation acceptance and the operation enters the §8.3 recovery hold before any data change",
+  "holdId": "rec_3d81f0c2b6a4"
+}

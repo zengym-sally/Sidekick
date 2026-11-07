@@ -1,0 +1,38 @@
+{
+  "contractVersion": "web-api/1",
+  "backendOs": "linux",
+  "credentialBackend": {
+    "osCapability": "env_only",
+    "keychainAvailable": false,
+    "detail": "macOS Keychain is not available on a Linux service; only environment references are provided"
+  },
+  "providers": [
+    {
+      "providerId": "deepseek",
+      "enabled": true,
+      "authMode": "api_key",
+      "apiFormat": "openai_compatible",
+      "credentialRefs": [
+        { "ref": "env:DEEPSEEK_API_KEY", "status": "available" }
+      ]
+    },
+    {
+      "providerId": "openai",
+      "enabled": true,
+      "authMode": "api_key",
+      "apiFormat": "openai_compatible",
+      "credentialRefs": [
+        { "ref": "keychain://sidekick/openai", "status": "unavailable", "detail": "keychain_unavailable_on_linux" }
+      ]
+    },
+    {
+      "providerId": "moonshot",
+      "enabled": false,
+      "authMode": "api_key",
+      "apiFormat": "openai_compatible",
+      "credentialRefs": [
+        { "ref": "env:MOONSHOT_API_KEY", "status": "missing", "detail": "env var not set" }
+      ]
+    }
+  ]
+}

@@ -1,572 +1,385 @@
-# Web 任务提交到结果查询的端到端契约（W0 候选草案）
+# Web API 契约：任务提交到结果查询（W0 提案）
 
-> **状态：候选草案，未经独立评审，未被冻结。** 任何成员不得按本文开工；契约由队长在阶段末统一冻结（见 §15）。
-> 契约标识：`sidekick.web-contract/1.0.0`。本文所有 JSON 样例与 `tests/fixtures/web-contract/` 内样例携带同一版本。
-> 编写基点：`85feb8aaa431a2a1c9f92b238e26a7a2400baa9e`（本机基线，尚未 push）；日期 2026-11-06。
-> 权威来源：[产品定义](../product/01-产品定义.md)、[用户流程](../product/02-用户流程.md)、[智能体与架构](../product/03-智能体与架构.md)、[分期交付与验收](../product/04-分期交付与验收.md)、[Web/后端设计](web-backend-design.md)、[工程架构](architecture.md)、[验证约定](verification.md)。
-> 本任务是 W0 四项并行交付之一，唯一写入范围为 `docs/engineering/web-api-contract.md`、`tests/fixtures/web-contract/` 的合成 JSON 样例、`docs/reviews/web-contract-*.md`。
+> 状态：**提案（proposal），未冻结、未实现**。本文是 MAYNE-19 的交付物；契约冻结由队长在 W0 阶段末统一宣布，冻结前任何成员不得按本文草案开工实现。契约内容以[Web/后端设计](web-backend-design.md)为设计权威，两者不一致时以设计为准并回改本文。
+> 实施状态唯一来源是[第一阶段实施计划](../product/05-第一阶段实施计划.md)。本文只定义接口、字段、错误、状态与边界；不含 DDL、迁移文件、依赖安装或实现代码。第 12–13 节是提案，不是已批准变更。
+> 合成样例在 [tests/fixtures/web-contract/](../../tests/fixtures/web-contract/task-submit-request.json)（全部 JSON 均携带相同 `contractVersion: "web-api/1"`），逐场景映射见第 11 节。样例用于评审契约形状，不是可运行服务或实测报文。
 
-## 0. 范围、边界与前提
+## 1. 总则
 
-### 0.1 覆盖
-
-沿[Web/后端设计](web-backend-design.md)的既定方向，冻结从**任务提交**到**用户看到结果或错误**的端到端契约：
-
-- 提交、查询、取消、重试四类操作，以及任务幂等与版本规则；
-- 默认 3 并发的实例设置与排队语义（满槽只排队，不丢任务）；
-- SSE 事件、游标、实例 epoch 与高水位快照补偿；
-- worker `attempt`/`epoch`、退出与进程清理、宿主消失检测；
-- 重启、旧备份恢复、已有工作根激活的恢复语义与持久标记；
-- 受限工作根管理的会话能力、目标白名单、操作 ID 与结果读回；
-- provider 能力与控制通道边界；
-- 字段、错误、状态与边界，覆盖 `queued`/`cancelling`/`interrupted`/`needs_review`、响应未知与副作用未知；
-- 场景矩阵与可解析 JSON 样例；拟议任务台账／事件／恢复数据结构与 schema/migration 变更建议；可复用依赖与确需新增生产依赖清单。
-
-### 0.2 不覆盖（明确排除）
-
-- 不执行真实 DDL、不改 `src-tauri/src/store/` 的 001–005 迁移、不改 `package.json`／锁文件、不安装依赖；
-- 不读取真实模型环境／凭据、不操作真实工作根、不部署、不提交／推送／合并；
-- 不定义旧 IPC／旧 schema 兼容桥；不恢复 `RUNTIME_BUSY` 作为普通提交契约；
-- 不定义业务表（事项／候选／来源／进展／提醒／日报）的完整结构，只定义任务队列与恢复所必需的任务侧结构；
-- 不替代 MAYNE-20（存储与平台探针）的 `node:sqlite`／Keychain／Linux 结论，也不替代 MAYNE-21（浏览器交互方案）的界面状态设计；本文只引用其后续结论，不等待其完成即可评审。
-
-### 0.3 前提
-
-- 单后端实例、单工作根、唯一正常业务写入方；浏览器与后端默认同机，主机部署经可信反向代理（设计 §3）。
-- 凭据随后端 OS（macOS 可用 Keychain，Linux 默认环境引用）；秘密不入库、不入队、不入日志／SSE（设计 §4）。
-- 任务入队即已接收，提交成功代表已落 SQLite；满槽进入 `queued`，原 `RUNTIME_BUSY`/409 不再作为普通提交契约（设计 §5）。
-
-## 1. 通用约定
-
-### 1.1 版本与媒体类型
-
-- 业务 API 与 SSE 同源，默认 `http://127.0.0.1:<port>`；代理模式为单个 HTTPS 公共 origin（设计 §3）。
-- 请求体 `application/json; charset=utf-8`；响应体同名，SSE 为 `text/event-stream`。
-- 契约版本通过请求头 `X-Sidekick-Contract: sidekick.web-contract/1.0.0` 声明；响应头回显 `X-Sidekick-Contract` 与 `X-Sidekick-Epoch`。版本不一致时以响应头为准，客户端不得混用两版语义。
-
-### 1.2 标识与时间
-
-- `taskId`：`tsk_` + 24 位小写十六进制；`operationId`：`op_` + UUID；`attemptId`：`att_` + UUID；`epoch`：`ep_` + UUID；`requestId`：`req_` + UUID；`cursor`：实例内单调递增整数。
-- 所有时间点序列化为 ISO 8601 UTC（`...Z`）；带时区的业务时间另存时区与原表达，规则见[用户流程](../product/02-用户流程.md) §3。
-
-### 1.3 会话、来源与 CSRF
-
-- 写请求校验精确 `Host`/`Origin` 与 CSRF；会话 cookie 为 `HttpOnly`、`SameSite=Strict`、限制 `Path`、不设 `Domain`；回环 HTTP 不依赖 `Secure`，代理模式强制 `Secure`（设计 §3）。
-- 代理模式必须显式配置 `publicOrigin`、允许来源与代理秘密头；秘密缺失或来源不符一律拒绝，不因 `X-Forwarded-*` 切换信任模式。
-- 不符合来源／CSRF 的请求不得入队、不得启动 worker，返回 `403`。
-
-### 1.4 错误信封
-
-所有错误响应使用同一信封，HTTP 状态与 `error.code` 对齐：
-
-```json
-{
-  "error": {
-    "code": "TASK_NOT_FOUND",
-    "message": "任务不存在或已被清除。",
-    "details": { "taskId": "tsk_000000000000000000000000" },
-    "requestId": "req_00000000-0000-4000-8000-000000000000"
-  }
-}
-```
-
-- `details` 只含非敏感字段；`message` 面向用户，可本地化；`requestId` 用于服务端检索，不携带秘密。
-- 日志与 SSE 不得回显密钥、凭据引用明文、模型原始输出中的敏感片段；脱敏规则沿用设计 §4 与 §7。
-
-### 1.5 幂等与版本
-
-- `POST /api/tasks` 必须携带 `Idempotency-Key` 头（即业务操作 ID），长度 ≤255，字符集 `[A-Za-z0-9._:-]`。
-- 服务端在**同一短事务**内保存任务、输入引用、角色／配置修订、提交顺序与初始事件；提交成功才返回 `202 + taskId + state`。
-- 同一 `Idempotency-Key` 重复提交：输入摘要一致时返回**同一个** `taskId`（幂等重放）；摘要不一致时返回 `409 IDEMPOTENCY_KEY_CONFLICT`，不新建任务。
-- 输入摘要 = `sha256(canonicalJson({type, roleId, input, configRevision}))`，秘密不参与摘要。
-- 响应丢失但服务端已接收时，客户端用同一 `Idempotency-Key` 重试或按 `operationId` 查询；不得再次创建任务。
-- 所有变更型操作接受 `expectedVersion`；版本不匹配返回 `409 TASK_VERSION_CONFLICT`，不产生副作用。
-
-## 2. 任务状态机
-
-### 2.1 状态定义
-
-| 状态 | 含义 | 是否终态 | 可转 |
-|---|---|---|---|
-| `queued` | 已接收并持久化，未领取 | 否 | `running`、`cancelled`、`queued`（重试重置） |
-| `running` | 已原子领取，worker 执行中 | 否 | `cancelling`、`succeeded`、`failed`、`needs_review`、`interrupted` |
-| `cancelling` | 已持久取消意图，worker／工具树停止中 | 否 | `cancelled`、`needs_review`、`interrupted` |
-| `succeeded` | 结果被当前 attempt 接受并持久化 | 是 | — |
-| `failed` | 无结果，且已判定为可安全重试或终止 | 是 | `queued`（仅显式重试） |
-| `cancelled` | 取消已确认，无未知副作用 | 是 | — |
-| `interrupted` | 宿主／worker 消失，无外部副作用证据，等待显式处理 | 是（需显式动作离开） | `queued`（显式重试） |
-| `needs_review` | 外部副作用结果不明，禁止自动重放 | 是（需人工核对） | `queued`（用户确认重试）、`cancelled`（用户确认取消） |
-
-`RUNTIME_BUSY` 与“满槽即 409 丢任务”不再是本契约的提交语义；满槽一律 `202 queued`。
-
-### 2.2 转换规则与不变量
-
-| 从 | 事件 | 到 | 保证 |
-|---|---|---|---|
-| — | 提交（新操作 ID） | `queued` | 任务与初始事件同事务提交；失败则未接收 |
-| `queued` | 领取 | `running` | 原子检查状态并写入 `attemptId`/`epoch`；每个 attempt 只启动一次 worker |
-| `queued` | 取消 | `cancelled` | 与领取竞争必须有一个确定结果；调度器不得启动 |
-| `running` | 取消请求 | `cancelling` | 先持久取消意图，再停止 worker／工具树；未确认退出不释放槽 |
-| `cancelling` | worker 退出且无未知副作用 | `cancelled` | 释放槽；结果仅被当前 attempt 接受 |
-| `cancelling` | worker 退出但副作用未知 | `needs_review` | 释放槽；保留输入与已知回执，禁止自动重放 |
-| `running` | 正常结束 | `succeeded`／`failed` | 结果、终态与可见事件同事务提交 |
-| `running` | 认证／配置错误 | `failed` | 停止重试 |
-| `running` | 副作用未知 | `needs_review` | 保留输入与已知回执 |
-| `running`／`cancelling` | 宿主／worker 消失 | `interrupted`／`needs_review` | 重启扫描全部未终态 attempt，保留取消意图 |
-| `interrupted`／`needs_review`／`failed` | 显式重试 | `queued` | `retryCount + 1`，写入新 attempt；不得覆盖已确认结果 |
-| `needs_review` | 用户确认取消 | `cancelled` | 需 `mode: "user_confirmed"` |
-
-不变量：
-
-1. 已 ACK 的 `queued` 任务不因排队满、页面关闭或服务重启被静默丢弃。
-2. 晚到结果不得覆盖新 attempt 或已取消任务；结果仅被当前 `attemptId`/`epoch` 接受。
-3. 取消意图跨重启保留；未确认进程树退出且无未知副作用前不得显示已取消。
-4. 任务终态与可见事件在同一事务提交；签收仍由用户单独确认，`task success` 不等于正式事项已签收。
-5. `version` 在每次持久状态变更时递增，作为乐观并发锚点。
-
-### 2.4 未知语义
-
-| 未知 | 触发 | 处置 | 场景 |
-|---|---|---|---|
-| 响应未知 | 提交／迁移请求已到达服务端，但调用方未收到响应 | 用同一 `Idempotency-Key`／操作 ID 重放或读回；服务端幂等，不重复创建任务或重复迁移 | S03、S24 |
-| 副作用未知 | 外部工具／来源／迁移可能已执行，结果不明 | 任务置 `needs_review`，保留输入与已知回执，禁止自动重放；由用户核对后显式重试或取消 | S13、S22、S23 |
-
-### 2.3 attempt 与 epoch
-
-- `epoch` 是后端实例代次；领取时写入，修复“旧 worker 未停就恢复调度”的问题。
-- `attemptId` 单次领取唯一；worker 结果必须携带 `attemptId` 与 `epoch`，服务端 fencing 拒绝过期提交。
-- worker 以父管道／guardian 检测宿主消失；下一实例拿根锁不等于旧 worker 已停，启动前必须清理或核实上次实例所属进程，无法核实则暂停调度并显示原因。
-
-## 3. 拟议任务台账与事件数据结构
-
-以下为**逻辑结构与建议 DDL 提案**，未执行；表名与 DDL 在实施切片定案，由 Rust 存储适配统一拥有连接、短事务与根锁（设计 §2）。旧 `src-tauri/src/store/` 的 001–005 迁移保持历史，不被改写。
-
-### 3.1 `tasks`（任务台账）
-
-| 字段 | 类型 | 说明 |
-|---|---|---|
-| `task_id` | TEXT PK | `tsk_...` |
-| `operation_id` | TEXT UNIQUE NOT NULL | 幂等操作 ID |
-| `type` | TEXT NOT NULL | 见 §4.1 |
-| `role_id` | TEXT | 固定三角色之一；非角色任务为 NULL |
-| `channel` | TEXT NOT NULL | `agent`（模型槽）或 `service`（有界非模型资源） |
-| `state` | TEXT NOT NULL | §2.1 |
-| `version` | INTEGER NOT NULL | 每次变更 +1 |
-| `attempt_id` | TEXT | 当前 attempt，未领取为 NULL |
-| `epoch` | TEXT | 当前实例代次，未领取为 NULL |
-| `input_ref` | TEXT NOT NULL | 不可变输入引用（`runs/<runId>/input.json`） |
-| `input_hash` | TEXT NOT NULL | 幂等摘要 |
-| `config_revision` | TEXT NOT NULL | 启动时配置／技能快照修订 |
-| `snapshot_ref` | TEXT | 私有 run 快照引用（cwd、凭据引用、技能） |
-| `result_ref` | TEXT | 结果引用，未完成为 NULL |
-| `error_code` | TEXT | 失败／需核对的错误码 |
-| `cancel_intent` | INTEGER NOT NULL | 0/1，取消意图跨重启保留 |
-| `retry_count` | INTEGER NOT NULL | 已重试次数 |
-| `next_attempt_at` | INTEGER | 延迟重试时间，未到期不阻塞后续就绪任务 |
-| `queued_at` / `started_at` / `ended_at` / `updated_at` | INTEGER | 毫秒时间戳 |
-
-### 3.2 `task_events`（有序事件）
-
-| 字段 | 类型 | 说明 |
-|---|---|---|
-| `cursor` | INTEGER PK AUTOINCREMENT | 实例内递增游标，SSE `id` |
-| `epoch` | TEXT NOT NULL | 实例代次 |
-| `task_id` | TEXT NOT NULL | 关联任务 |
-| `event_type` | TEXT NOT NULL | `task.created`/`task.state`/`task.progress`/`task.result`/`task.error` |
-| `version` | INTEGER NOT NULL | 任务版本 |
-| `state` | TEXT NOT NULL | 事件后状态 |
-| `payload_json` | TEXT NOT NULL | 非敏感载荷 |
-| `created_at` | INTEGER NOT NULL | 毫秒时间戳 |
-
-索引：`(task_id, cursor)`、`(cursor)`、`(epoch, cursor)`。
-
-### 3.3 `task_attempts`（尝试与清理证据）
-
-| 字段 | 类型 | 说明 |
-|---|---|---|
-| `attempt_id` | TEXT PK | `att_...` |
-| `task_id` | TEXT NOT NULL | 关联任务 |
-| `epoch` | TEXT NOT NULL | 领取实例 |
-| `worker_pid` | INTEGER | 子进程 PID，用于清理核实 |
-| `guard_ref` | TEXT | guardian／管道引用，用于宿主消失检测 |
-| `started_at` / `ended_at` | INTEGER | 毫秒时间戳 |
-| `outcome` | TEXT | `running`/`succeeded`/`failed`/`cancelled`/`interrupted`/`needs_review` |
-
-### 3.4 `recovery_markers`（持久恢复标记）
-
-| 字段 | 类型 | 说明 |
-|---|---|---|
-| `marker_id` | TEXT PK | |
-| `kind` | TEXT NOT NULL | `backup_restore`／`existing_root_activation` |
-| `state` | TEXT NOT NULL | `pending`/`blocked`/`resolved` |
-| `payload_json` | TEXT NOT NULL | 待核对任务、来源游标、备份标识 |
-| `created_at` | INTEGER NOT NULL | 毫秒时间戳 |
-
-恢复期间调度、定时收集、提醒／outbox 与补偿投递全部暂停；标记未解决前，变更型接口返回 `409 RECOVERY_ACTIVE`。
-
-### 3.5 `workspace_operations`（受限工作根操作）
-
-| 字段 | 类型 | 说明 |
-|---|---|---|
-| `operation_id` | TEXT PK | 持久操作 ID |
-| `kind` | TEXT NOT NULL | `switch_root`／`restore_backup` |
-| `target_id` | TEXT | 目标根白名单 ID |
-| `expected_version` | INTEGER | 预期版本校验 |
-| `state` | TEXT NOT NULL | `pending`/`succeeded`/`failed`/`unknown` |
-| `result_json` | TEXT | 结果或失败详情 |
-| `created_at` / `resolved_at` | INTEGER | 毫秒时间戳 |
-
-### 3.6 建议迁移
-
-- 新增 Web 后端迁移 `001_web_init`（或实施切片约定的命名），建上述五表与索引；**不追加、不改写**旧 001–005。
-- 迁移由 Rust 存储适配执行，遵循“只追加、失败不回滚原根”的既有约定（[工程架构](architecture.md) §5）。
-- 具体 DDL、索引与约束在实施切片提交可审清单，按仓库授权执行；本文仅为提案。
-
-## 4. HTTP 契约
-
-### 4.1 任务类型与通道
-
-| `type` | `roleId` | `channel` | 槽 |
-|---|---|---|---|
-| `extract` | `organizer` | `agent` | 模型槽 |
-| `revise` | `organizer` | `agent` | 模型槽 |
-| `role_trial` | 三角色之一 | `agent` | 模型槽 |
-| `advice` | `advisor` | `agent` | 模型槽 |
-| `model_test` | NULL | `agent` | 模型槽 |
-| `source_collect` | `tracker` | `service` | 有界非模型资源 |
-| `mcp_probe` | NULL | `service` | 有界非模型资源 |
-
-模型任务共用默认 3 个执行槽；`service` 通道不占模型槽，但同样受每任务取消、cwd 与清理归属约束（设计 §5）。
-
-### 4.2 端点总表
-
-| 方法 | 路径 | 用途 | 写操作 |
-|---|---|---|---|
-| POST | `/api/tasks` | 提交任务（幂等） | 是 |
-| GET | `/api/tasks` | 列表；`?operationId=` 按操作 ID 查询 | 否 |
-| GET | `/api/tasks/{taskId}` | 查询单任务 | 否 |
-| POST | `/api/tasks/{taskId}/cancel` | 取消 | 是 |
-| POST | `/api/tasks/{taskId}/retry` | 显式重试 | 是 |
-| GET | `/api/tasks/{taskId}/events` | 单任务事件（轮询回退） | 否 |
-| GET | `/api/events` | SSE 订阅 | 否 |
-| GET | `/api/capabilities` | provider／凭据能力 | 否 |
-| GET | `/api/config` | 实例设置（含并发） | 否 |
-| PATCH | `/api/config/agent-concurrency` | 调整并发 | 是 |
-| GET | `/api/workspace` | 当前工作根 | 否 |
-| GET | `/api/workspace/targets` | 允许目标列表 | 否 |
-| POST | `/api/workspace/switch-intents` | 提交切换意图 | 是 |
-| GET | `/api/workspace/operations/{operationId}` | 切换结果读回 | 否 |
-| POST | `/api/backups` | 创建备份 | 是 |
-| GET | `/api/backups` | 列出备份 | 否 |
-| GET | `/api/backups/{backupId}` | 备份详情 | 否 |
-| POST | `/api/backups/{backupId}/restore-intents` | 提交恢复意图 | 是 |
-| GET | `/api/recovery` | 恢复状态 | 否 |
-| POST | `/api/pairing` | 一次性配对码交换 | 是 |
-| POST | `/api/session` | 建立／刷新会话 | 是 |
-| DELETE | `/api/session` | 退出并撤销会话 | 是 |
-
-控制通道（发现、退出、任意主机管理）**不在**上述业务路由内，使用独立 control token 与独立端口／origin，代理不得暴露（设计 §2、§3）。
-
-### 4.3 提交任务
-
-`POST /api/tasks`
-
-```json
-{
-  "type": "extract",
-  "roleId": "organizer",
-  "input": { "rawText": "合成样例：下周五17点前交付方案。" },
-  "configRevision": "rev_000000000000000000000001",
-  "anchorAtMs": 1793884800000,
-  "timeZone": "Asia/Shanghai"
-}
-```
-
-- 头：`Idempotency-Key: op_...`（必填）、`X-Sidekick-Contract`、CSRF。
-- 成功：`202`，体：
-
-```json
-{
-  "taskId": "tsk_000000000000000000000001",
-  "state": "queued",
-  "version": 1,
-  "position": 1,
-  "queueLength": 1,
-  "runningCount": 0,
-  "acceptedAt": "2026-11-06T10:00:00.000Z"
-}
-```
-
-- 满槽：仍 `202`，`state: "queued"`，`position` 为持久提交顺序位置；不返回忙碌错误。
-- 幂等重放：同一 `Idempotency-Key` 且输入摘要一致，返回同一 `taskId` 与当前 `state`/`version`，不新建。
-- 错误：`400 INVALID_INPUT`／`IDEMPOTENCY_KEY_REQUIRED`、`409 IDEMPOTENCY_KEY_CONFLICT`、`403 ORIGIN_REJECTED`／`CSRF_REJECTED`／`PROXY_SECRET_MISSING`、`503 NOT_ACCEPTED`（存储失败，操作 ID 未被消费，可原键重试）。
-
-### 4.4 查询任务
-
-`GET /api/tasks/{taskId}` → `200`：
-
-```json
-{
-  "taskId": "tsk_000000000000000000000001",
-  "operationId": "op_00000000-0000-4000-8000-000000000001",
-  "type": "extract",
-  "roleId": "organizer",
-  "state": "running",
-  "version": 4,
-  "attemptId": "att_00000000-0000-4000-8000-000000000001",
-  "epoch": "ep_00000000-0000-4000-8000-000000000001",
-  "position": null,
-  "queueLength": 2,
-  "runningCount": 3,
-  "configRevision": "rev_000000000000000000000001",
-  "inputRef": "runs/att_00000000-0000-4000-8000-000000000001/input.json",
-  "snapshotRef": "runs/att_00000000-0000-4000-8000-000000000001/snapshot.json",
-  "resultRef": null,
-  "error": null,
-  "cancelIntent": false,
-  "retryCount": 0,
-  "nextAttemptAt": null,
-  "queuedAt": "2026-11-06T10:00:00.000Z",
-  "startedAt": "2026-11-06T10:00:01.000Z",
-  "endedAt": null,
-  "updatedAt": "2026-11-06T10:00:01.000Z"
-}
-```
-
-- `GET /api/tasks?operationId=op_...` 返回同一任务或 `404`，用于响应丢失后读回。
-- `GET /api/tasks?state=queued&limit=50&cursor=...` 按持久提交顺序返回队列；不承诺不准确的等待时长。
-- 错误：`404 TASK_NOT_FOUND`。
-
-### 4.5 取消
-
-`POST /api/tasks/{taskId}/cancel`，体 `{ "reason": "user", "expectedVersion": 4 }`。
-
-- `queued` → `cancelled`：原子置终态，调度器不得启动。
-- `running` → `cancelling`：先持久取消意图，再停止 worker／工具树；未确认退出前不释放槽、不显示已取消。
-- 终态任务返回 `409 TASK_NOT_CANCELLABLE`；版本不匹配返回 `409 TASK_VERSION_CONFLICT`。
-- 取消与领取竞争必须有一个确定结果：领取事务与取消事务在同一状态机上串行化，先到者生效，后到者按结果返回或拒绝。
-
-### 4.6 重试
-
-`POST /api/tasks/{taskId}/retry`，体 `{ "expectedVersion": 4, "mode": "user_confirmed" }`。
-
-- 仅 `failed`（可安全重试的临时失败）、`interrupted`、`needs_review` 可显式重试；`needs_review` 必须 `mode: "user_confirmed"`。
-- 成功：`202`，任务回到 `queued`，`retryCount + 1`，写入新 attempt；已确认结果不被覆盖。
-- 认证／配置错误等不可重试终态返回 `409 TASK_NOT_RETRYABLE`。
-- 自动重试仅用于已证“发送前／可安全重复”的临时失败，有界退避；未知 MCP／飞书发送或 Bash 副作用不得自动重放。
-
-### 4.7 事件与轮询回退
-
-`GET /api/tasks/{taskId}/events?since=<cursor>` → `200`，返回该任务的事件数组（`cursor` 递增）。用于 SSE 不可用时的降级；权威状态始终以查询为准。
-
-## 5. SSE 契约与高水位快照补偿
-
-`GET /api/events`（可带 `Last-Event-ID` 头或 `?since=<cursor>`）。
-
-事件帧：
-
-```
-id: 42
-event: task.changed
-data: {"epoch":"ep_...","cursor":42,"taskId":"tsk_...","version":3,"state":"running","objectVersion":3,"updatedAt":"..."}
-
-: heartbeat
-```
-
-- 事件只通知**已经提交**的变化，附实例 `epoch`、递增 `cursor`、对象 `version`。
-- 客户端忽略 `cursor` ≤ 已应用游标或 `version` ≤ 对象已见版本的事件；不得用旧 `running` 覆盖新 `interrupted`。
-
-快照补偿：
-
-1. 无 `Last-Event-ID`：发送 `snapshot` 事件，含全量任务列表、`epoch` 与 `highWaterCursor`（当前游标），随后从 `highWaterCursor + 1` 续传实时事件。
-2. `Last-Event-ID` 超出留存或 `epoch` 变化：同样发送 `snapshot`，客户端整体替换本地状态。
-3. `Last-Event-ID` 在留存内：重放 `cursor > lastEventId` 的事件，再转实时。
-4. 快照与订阅之间的变化必须可补发；事件丢失不能丢任务，权威队列与业务状态在 SQLite。
-
-```
-id: 0
-event: snapshot
-data: {"epoch":"ep_...","highWaterCursor":128,"tasks":[...],"capabilities":{...}}
-```
-
-SSE 关闭代理缓冲与缓存，配置心跳、读取超时与会话过期后的断开／重新认证（设计 §3）。
-
-## 6. 场景矩阵（提交到用户可见结果／错误）
-
-下表覆盖正常提交、重复提交、满槽、取消竞争、重启、旧备份、旧根、凭据缺失、跨源拒绝，以及响应未知、副作用未知与晚到结果。每行指向可解析样例；样例与本文同版本。
-
-| ID | 场景 | 前置 | 请求 | 期望（用户可见） | 样例 |
-|---|---|---|---|---|---|
-| S01 | 正常提交并排队 | 已配对会话 | `POST /api/tasks` | `202 queued`，返回 `taskId` 与队列位置 | [submit-accepted-202.json](../../tests/fixtures/web-contract/submit-accepted-202.json) |
-| S02 | 重复提交（同操作 ID 同输入） | 已提交 S01 | 同 `Idempotency-Key` 再提交 | 返回**同一** `taskId`，不新建 | [submit-duplicate-idempotent-202.json](../../tests/fixtures/web-contract/submit-duplicate-idempotent-202.json) |
-| S03 | 响应丢失后按操作 ID 读回 | S01 已接收但响应丢失 | `GET /api/tasks?operationId=...` | `200` 同一任务，不重复创建 | [submit-response-unknown-query-200.json](../../tests/fixtures/web-contract/submit-response-unknown-query-200.json) |
-| S04 | 同操作 ID 不同输入 | 已提交 S01 | 同键不同 `input` | `409 IDEMPOTENCY_KEY_CONFLICT`，不新建 | [submit-duplicate-conflict-409.json](../../tests/fixtures/web-contract/submit-duplicate-conflict-409.json) |
-| S05 | 满槽排队（默认 3） | 3 个运行中 | 再提交 2 个 | 均 `202 queued`，返回位置；无忙碌错误 | [queue-full-accepted-202.json](../../tests/fixtures/web-contract/queue-full-accepted-202.json) |
-| S06 | 查询排队 | 任务已排队 | `GET /api/tasks/{id}` | `200 queued`，含 `position` | [task-queued-200.json](../../tests/fixtures/web-contract/task-queued-200.json) |
-| S07 | 查询运行中 | 任务已领取 | 同上 | `200 running`，含 `attemptId`/`epoch` | [task-running-200.json](../../tests/fixtures/web-contract/task-running-200.json) |
-| S08 | 查询成功结果 | 任务完成 | 同上 | `200 succeeded`，含 `resultRef` | [task-succeeded-200.json](../../tests/fixtures/web-contract/task-succeeded-200.json) |
-| S09 | 查询失败错误 | 任务失败 | 同上 | `200 failed`，含 `error.code` | [task-failed-200.json](../../tests/fixtures/web-contract/task-failed-200.json) |
-| S10 | 取消排队任务 | 任务 `queued` | `POST .../cancel` | `200 cancelled`，永不执行 | [cancel-queued-200.json](../../tests/fixtures/web-contract/cancel-queued-200.json) |
-| S11 | 取消与领取竞争 | 任务 `queued`，调度器同时领取 | `cancel` 与领取并发 | 确定结果：`cancelled` 或 `running`，不出现“已取消却运行” | [cancel-race-200.json](../../tests/fixtures/web-contract/cancel-race-200.json) |
-| S12 | 取消运行中 | 任务 `running` | `POST .../cancel` | `200 cancelling`，确认退出后 `cancelled` | [cancel-running-cancelling-200.json](../../tests/fixtures/web-contract/cancel-running-cancelling-200.json) |
-| S13 | 取消中重启 | 任务 `cancelling`，宿主消失 | 重启扫描 | 保留取消意图；副作用未知则 `needs_review`，不自动重入队 | [cancel-restart-needs-review-200.json](../../tests/fixtures/web-contract/cancel-restart-needs-review-200.json) |
-| S14 | 重启后 running 中断 | 任务 `running`，宿主消失 | 重启扫描 | `interrupted`，队列其余保留 | [restart-interrupted-snapshot.json](../../tests/fixtures/web-contract/restart-interrupted-snapshot.json) |
-| S15 | 晚到结果被拒 | 任务已取消／已新 attempt | 旧 worker 提交结果 | fencing 拒绝，不覆盖新状态 | [late-result-rejected-200.json](../../tests/fixtures/web-contract/late-result-rejected-200.json) |
-| S16 | 安全临时失败重试 | 任务 `failed`（可安全重试） | `POST .../retry` | `202 queued`，`retryCount + 1`，新 attempt | [retry-safe-202.json](../../tests/fixtures/web-contract/retry-safe-202.json) |
-| S17 | 认证／配置错误不重试 | 任务 `failed`（401／配置） | `POST .../retry` | `409 TASK_NOT_RETRYABLE` | [retry-blocked-409.json](../../tests/fixtures/web-contract/retry-blocked-409.json) |
-| S18 | 凭据缺失 | 任务执行前凭据引用不存在 | 任务执行 | 仅该任务 `failed`，`CREDENTIAL_REF_MISSING`；其他任务不受影响 | [credential-missing-failed-200.json](../../tests/fixtures/web-contract/credential-missing-failed-200.json) |
-| S19 | Provider 能力查询 | 已配对 | `GET /api/capabilities` | 返回 provider 能力与可用性，不回读秘密 | [capabilities-200.json](../../tests/fixtures/web-contract/capabilities-200.json) |
-| S20 | 跨源拒绝 | 恶意／未知 Origin | 任意写请求 | `403 ORIGIN_REJECTED`，不入队、不启动 worker | [cross-origin-rejected-403.json](../../tests/fixtures/web-contract/cross-origin-rejected-403.json) |
-| S21 | 代理伪造头／缺秘密 | 代理模式 | 写请求 | `403 PROXY_SECRET_MISSING`，不切换信任模式 | [proxy-secret-missing-403.json](../../tests/fixtures/web-contract/proxy-secret-missing-403.json) |
-| S22 | 旧备份恢复 | 存在旧快照 | `POST .../restore-intents` | `202` 操作 ID；恢复后未完成任务隔离为 `needs_review`，调度暂停 | [backup-restore-request-202.json](../../tests/fixtures/web-contract/backup-restore-request-202.json)、[backup-restore-recovery-state-200.json](../../tests/fixtures/web-contract/backup-restore-recovery-state-200.json) |
-| S23 | 旧根激活无连续性证明 | 目标为已有／退役根 | 激活请求 | 进入持久恢复核对，暂停调度，不自动重发 | [workspace-existing-root-continuity-409.json](../../tests/fixtures/web-contract/workspace-existing-root-continuity-409.json) |
-| S24 | 工作根切换意图 | 本机、有 `workspace.manage` 能力 | `POST /api/workspace/switch-intents` | `202` 操作 ID，结果按 ID 读回 | [workspace-switch-intent-202.json](../../tests/fixtures/web-contract/workspace-switch-intent-202.json) |
-| S25 | 工作根切换被拒 | 代理模式／无能力／目标非法／版本不符 | 同上 | `403`／`409`，不执行 | [workspace-switch-rejected-403.json](../../tests/fixtures/web-contract/workspace-switch-rejected-403.json) |
-| S26 | SSE 高水位快照补偿 | 游标超留存／epoch 变化 | `GET /api/events` | `snapshot` + `highWaterCursor`，再续实时 | [sse-snapshot-compensation-200.json](../../tests/fixtures/web-contract/sse-snapshot-compensation-200.json) |
-| S27 | 并发调整 | 实例运行中 | `PATCH /api/config/agent-concurrency` | `200`，上调补发空槽，下调不杀运行任务 | [concurrency-adjust-200.json](../../tests/fixtures/web-contract/concurrency-adjust-200.json) |
-| S28 | 错误信封 | 任意失败 | — | 统一 `error` 信封，状态与码对齐 | [error-envelope-400.json](../../tests/fixtures/web-contract/error-envelope-400.json) |
-
-完整场景—样例映射见 [scenario-manifest.json](../../tests/fixtures/web-contract/scenario-manifest.json)。
-
-## 7. 错误目录
-
-| `code` | HTTP | 触发 | 客户端处置 |
-|---|---|---|---|
-| `INVALID_INPUT` | 400 | 字段缺失／非法 | 修正后重试 |
-| `IDEMPOTENCY_KEY_REQUIRED` | 400 | 缺少操作 ID 头 | 补头重试 |
-| `IDEMPOTENCY_KEY_CONFLICT` | 409 | 同键不同输入 | 不新建，提示冲突 |
-| `CONCURRENCY_INVALID` | 400 | 并发值非正整数 | 修正后重试 |
-| `TASK_NOT_FOUND` | 404 | 任务不存在 | 视为未知，重新读取 |
-| `TASK_VERSION_CONFLICT` | 409 | `expectedVersion` 不匹配 | 重读后重试 |
-| `TASK_NOT_CANCELLABLE` | 409 | 终态任务取消 | 停止重试 |
-| `TASK_NOT_RETRYABLE` | 409 | 不可重试终态 | 人工核对 |
-| `RECOVERY_ACTIVE` | 409 | 恢复标记未解决 | 等待恢复流程 |
-| `CREDENTIAL_REF_MISSING` | 200（任务失败） | 引用不存在／无权重读 | 仅该任务失败，修复引用或换 provider |
-| `CREDENTIAL_UNAVAILABLE` | 200（任务失败） | provider 不可用（如钥匙串未解锁） | 显式报错，不无限重试 |
-| `ORIGIN_REJECTED` | 403 | Host／Origin 不符 | 不重试 |
-| `CSRF_REJECTED` | 403 | CSRF 校验失败 | 重新建立会话 |
-| `PROXY_SECRET_MISSING` | 403 | 代理秘密缺失／来源不符 | 不重试，检查部署 |
-| `WORKSPACE_CAPABILITY_REQUIRED` | 403 | 无 `workspace.manage` 能力 | 不重试 |
-| `WORKSPACE_TARGET_NOT_ALLOWED` | 409 | 目标不在白名单 | 不重试 |
-| `WORKSPACE_VERSION_MISMATCH` | 409 | 目标版本不符 | 重新读取后核对 |
-| `WORKSPACE_SWITCH_REJECTED_PROXY` | 403 | 代理模式请求切换 | 不重试 |
-| `WORKSPACE_OPERATION_UNKNOWN` | 404 | 操作 ID 未知 | 用原 ID 读回，不重复迁移 |
-| `BACKUP_VALIDATION_FAILED` | 409 | 备份校验失败 | 不恢复，保留原根 |
-| `NOT_ACCEPTED` | 503 | 存储失败，未接收 | 可原操作 ID 重试 |
-| `SESSION_REQUIRED` | 401 | 会话缺失／过期 | 重新配对／登录 |
-| `RATE_LIMITED` | 429 | 配对／登录限速 | 退避重试 |
-
-## 8. 恢复语义
-
-### 8.1 原库重启
-
-1. 取根锁，核实旧实例进程树已退出（guardian／管道／PID 归属）。
-2. 扫描全部未终态 attempt：`running` → `interrupted`；有外部副作用证据不明 → `needs_review`。
-3. 保留 `cancelling` 与取消意图；确认进程树退出且无未知副作用才置 `cancelled`，否则保留意图并 `needs_review`。
-4. `queued` 保留；无法核实旧 worker 时暂停调度并显示原因，避免默认 3 实际超发。
-5. 正常关停：先停新提交与调度，保留队列，再取消／等待运行任务并 reap，最后关库释放锁。
-
-### 8.2 旧备份恢复
-
-- 使用独立入口与持久恢复标记，不是原库重启。
-- 先停提交／调度并确认旧进程树退出，再校验恢复数据。
-- 恢复出的未完成任务全部保留并隔离为待核对；取消意图仍保留。
-- 定时收集、提醒／outbox 与补偿投递同时暂停；重启服务不能绕过恢复标记重新触发。
-- 快照中的 `queued` 可能在备份后已完成外部操作，幂等键与 attempt fencing 不能证明其尚未发送；无法核实时须用户明确选择重试／取消。
-- 对可证无副作用的只读任务可安全恢复，判定须由可信任务类型／工具记录证明；未知一律保留待核对。
-
-### 8.3 已有根激活
-
-- 更换到已有工作根、重新激活退役迁移源根或导入工作根副本时，除校验数据格式外，还须证明它延续当前执行历史。
-- 无法证明连续性或已知发生状态回退，一律进入上述持久恢复核对流程，暂停任务、定时／提醒／outbox，保留取消意图与全部任务。
-- 不得凭根锁可获取、格式合法或 `queued` 状态自动调度。
-- 验收覆盖 A→B 迁移、B 发生外部操作、再激活保留的 A 时不重发。
-
-## 9. 受限工作根管理
-
-- 本机配对会话由后端签发受限 `workspace.manage` 能力，仅允许：查看当前根、列出启动配置允许的目标 ID、提交选定 ID 的切换意图、查询其结果。
-- 能力不由页面自行声明，也不授予任意路径访问、进程启停或控制秘密。
-- 后端校验会话能力、`local` 模式、目标白名单与预期版本，再以持久操作 ID 执行停止调度／处理任务／一致性迁移／校验／切换。
-- 响应丢失按操作 ID 读回，不盲目重复迁移。
-- 代理模式不签发根切换能力，后端拒绝此类请求（`403 WORKSPACE_SWITCH_REJECTED_PROXY`），即使客户端绕过 UI 或代理路由限制也不能调用。
-- Linux 固定根的变更由服务操作者完成；浏览器仍能在业务会话下申请受限的备份创建、下载和恢复已校验备份。
-
-## 10. Provider 能力与控制通道
-
-- `GET /api/capabilities` 返回 provider 能力与可用性（如 macOS Keychain 可用／不可用、Linux 环境引用），不回读秘密。
-- Linux 不模拟 macOS 钥匙串，也不自动降级成明文凭据文件；无桌面会话的 macOS 服务也可能无法解锁 Keychain，须显式报错。
-- 引用不存在或无权读取时，只影响依赖该凭据的任务；前端禁止保存无法兑现的钥匙串引用。
-- 任务入队只保存配置修订与凭据引用，秘密到执行前由后端解析，按 run 私有 stdin／环境注入 worker；不写入队列、SQLite、argv、配置、日志或 SSE。
-- 控制通道（发现、退出、任意主机管理）使用独立 control token 与独立端口／origin，不放进代理暴露的业务路由；代理公开 HTTP 服务不能关停宿主或获得控制秘密。
-
-## 11. 信任边界与威胁控制
-
-| 威胁 | 控制落点 | 失败行为 | 验证 |
-|---|---|---|---|
-| 外站诱导本机浏览器提交任务 | 会话 + CSRF + 精确 Origin/Host | `403`，不入队 | S20、S21；部署实测（W5） |
-| 代理客户端伪造转发头 | 代理秘密 + 来源双核验 | `403 PROXY_SECRET_MISSING` | S21；设计 §3 |
-| 多次提交／取消与晚到结果竞争 | 持久幂等键、原子领取、attempt/epoch fencing | 确定结果，不重复写 | S02、S04、S11、S15 |
-| 重启后重发工具 | 持久化 `interrupted`／`needs_review`、取消意图保留 | 禁止自动重放 | S13、S14 |
-| 凭据被写进排队快照 | 只存引用、执行前解析、run 私有注入 | 任务失败，秘密不落盘 | S18、S19；设计 §4 |
-| 普通业务会话请求退出服务／读凭据 | 控制通道独立、控制秘密不交页面 | `403`／不可达 | 设计 §2、§3；W0 探针 |
-| 恢复旧备份／旧根导致重发 | 持久恢复标记、任务隔离待核对、调度暂停 | 不自动重发 | S22、S23 |
-| 模型／来源文本诱导 Bash 越界 | 模型输出按不可信输入校验，签收走可信 API | 通用 Bash 无沙箱，残余风险明确 | 设计 §7；不在本契约扩大边界 |
-
-## 12. 依赖清单
-
-### 12.1 可复用现有依赖与能力
-
-| 项 | 版本／位置 | 用途 | 备注 |
-|---|---|---|---|
-| Node 内置 `node:http`／`node:fs`／`node:crypto`／`node:child_process` | Node ≥24（`package.json` engines） | HTTP/SSE、进程与哈希 | 无需新依赖 |
-| `node:sqlite` | Node ≥24 内置 | 直接 SQLite 的备选 | 设计 §2 倾向由 Rust 适配统一拥有连接，是否使用待 MAYNE-20 探针结论 |
-| `shared/dates.mjs` | 仓库 `shared/` | 日期／时间锚点 | 跨进程纯逻辑，已锁定 |
-| `runtime/lib/organizer-contract.mjs` 校验风格 | 仓库 `runtime/` | 手写契约校验 | 沿用既有约定，不引第三方校验库 |
-| Pi（`@sidekick/pi-*`） | `vendor/pi` 固定源码 | 模型／工具循环 | 只读上游，版本以固定提交为准 |
-| `@larksuite/cli` | 1.0.98（`package.json`） | 飞书读取／提醒 | 既有依赖 |
-| Vue／Pinia／Vite／TDesign／Tailwind／motion-v／@vueuse/core | 见 `package.json` | 前端 | 既有锁定版本 |
-
-### 12.2 确需新增生产依赖（提案，未安装）
-
-| 候选 | 版本依据 | 用途 | 可替代项 | 授权动作 |
-|---|---|---|---|---|
-| macOS Keychain 访问 | 系统 `security` CLI（macOS 自带） | 读取 `apiKeyRef` 指向的钥匙串项 | ① `security` CLI + `child_process`（零依赖，推荐 W0）；② 小型原生 helper／Swift 封装；③ 第三方 keytar 类模块（维护状态差） | 新增原生构建或第三方依赖需 owner 明确授权；W0 先用 ① |
-| HTTP 框架 | — | 路由／中间件 | ① Node 内置 `node:http`（推荐 W0）；② `fastify`／`hono`／`express` | 若 ① 不满足，单列名称／版本／理由再授权 |
-| 校验库 | — | 请求／响应校验 | ① 手写（沿用既有约定，推荐）；② `zod`／`valibot` | 同上一行 |
-| SQLite 驱动 | — | 直接建连 | ① Rust 存储适配（设计 §2，推荐）；② `node:sqlite`；③ `better-sqlite3` | 改动存储所有权需授权 |
-
-**结论**：W0 契约层面**不要求新增生产依赖**；上述候选均为条件项，在未获 owner 明确授权前不安装、不写入 `package.json`／锁文件。
-
-## 13. 授权清单
-
-### 13.1 本任务已获授权并在范围内完成
-
-- 在任务工作树 `agent/claude/mayne-19` 写入 §0 所列三处文件；
-- 运行只读与本地校验命令（JSON 解析、文档链接检查、哈希核对）；
-- 形成契约、样例、schema／依赖提案与评审记录。
-
-### 13.2 本任务未做、仍需具体授权的动作
-
-| 动作 | 状态 |
+| 项 | 契约 |
 |---|---|
-| commit／push／合并、建远端 PR | 未做；由队长按后续 Git 授权收口 |
-| 新增生产依赖、改 `package.json`／锁文件 | 未做；仅提案 |
-| 执行真实 DDL／迁移、改业务 schema | 未做；仅提案 |
-| 读取真实模型环境／凭据、操作真实工作根 | 未做 |
-| 部署、代理配置、真实服务启停 | 未做 |
-| 改 `vendor/pi`／`resources/skills`／identifier | 未做 |
-| 修改共享 `product/05`、根 `README`、`package.json`、锁文件、全局文档索引 | 未做 |
+| 契约版本 | `web-api/1`；任务资源、事件、快照与错误包络均携带 `contractVersion` 字段。不兼容变更必须升版本并在冻结记录中说明 |
+| 传输 | HTTP/1.1 及以上；业务路径前缀 `/api`；请求与响应体为 UTF-8 JSON（SSE 除外） |
+| 时间 | ISO 8601 UTC 毫秒（如 `2026-11-06T12:30:00.000Z`）；本地化呈现由前端按工作根时区处理 |
+| 标识 | `taskId`=`tsk_<32hex>`；`operationId`=`op_<32hex>`（提交方生成）；`attemptId`=`att_<32hex>`；实例 `epoch`=`inst_<12hex>`；事件 `cursor` 为实例内单调递增整数；SSE 重连令牌 `Last-Event-ID` 为 `<epoch>:<cursor>`（§6） |
+| 会话 | 配对码经 POST 请求体换短时会话（cookie：HttpOnly、SameSite=Strict、限定 Path、不设 Domain；代理模式强制 Secure）；写请求同时校验会话、CSRF token 与精确 Host/Origin |
+| 幂等 | 提交与迁移类请求携带提交方 `operationId`；同 ID 同规范输入的重试返回同一对象的当前权威状态，不重复创建 |
+| 响应丢失 | 异步操作一律可按 ID 读回：任务按 `taskId` 或重放 `operationId`，工作根／备份／恢复操作按 `operationId`（含 restore，§8.2）；客户端不得盲目重复提交或迁移 |
+| 错误包络 | 见第 10 节；错误体一律 JSON，不含内部路径、SQL、堆栈或秘密 |
+| 已移除语义 | 旧实现的 `RUNTIME_BUSY`/409 忙碌拒绝不再是提交契约；满槽一律入 `queued`（场景 4）。恢复、重启或重试流程不得重新引入"忙碌丢任务" |
 
-## 14. 未验证项
+### 1.1 接收与"未接收"的边界
 
-- 本文为**设计契约候选**，未实现、未部署；没有真实服务、真实凭据、Linux 或原生证据。
-- 未运行全量 `npm run check`：既有结构守卫与平台 `.multica` 元数据冲突（MAYNE-18 范围），不在本任务收口。
-- `node:sqlite` 在目标 Node 的行为、macOS Keychain 服务身份解锁、Linux 环境与代理部署均为 MAYNE-20／后续切片的验证项，本文只引用其结论位置。
-- SSE 在真实代理下的缓冲、重连与快照补偿需部署实测；本文只定义契约。
-- 场景矩阵与样例为合成输入，不证明任何运行时行为。
+- 校验失败（400）、会话/来源不合格（401/403）、服务处于恢复保持或关停排水（503 `intake_closed`）时，请求**未接收**：不落库、不产生 `taskId`、不绑定幂等键；服务恢复后可携带同一 `operationId` 重新提交。
+- 一旦返回 `202`，任务已落 SQLite：页面关闭、排队满、服务重启均不得使其消失（设计 §5）。
 
-## 15. 与现有实现的关系与冻结程序
+## 2. 会话、配对与跨源边界
 
-- 当前生产代码仍为 Tauri/Rust 宿主；`RUNTIME_BUSY` 单飞槽与 store v1–v5 是**现状**，不是本契约的一部分（[Web/后端设计](web-backend-design.md) §8）。新后端不建旧 IPC／旧 schema 兼容桥。
-- 本契约是 W0 候选交付，**未冻结**。契约冻结由队长在阶段末统一宣布；在冻结前，任何成员不得按本文开工，也不得把它作为已批准的目标契约引用。
-- 独立评审：OpenCode（不参与本项实现）；最终收口与阶段晋级由 Codex 依据评审结论、精确版本／补丁哈希与本项证据处理。
+| 端点 | 方法 | 说明 |
+|---|---|---|
+| `/api/pair` | POST | 一次性配对码换会话。码仅存在于请求体，不进 URL/日志/metadata；单次有效、5–10 分钟过期、失败限速（401 `pair_code_invalid` / 429 `pair_rate_limited`） |
+| `/api/session` | GET | 会话自检：返回 `session`（含 `capabilities`）与 CSRF token。local 模式签发 `workspace.manage` + `workspace.backup`；代理模式仅签发 `workspace.backup`（§8） |
+| `/api/session` | DELETE | 退出并撤销会话；SSE 断开 |
+
+- 所有非配对请求要求有效会话；写请求另校验 CSRF 与精确 `Host`/`Origin`，不合格返回 403 `origin_rejected` 或 `csrf_invalid`，请求不入队（场景 13）。
+- 代理模式：后端只对可信代理（秘密头 + 完整外部 Host/Origin 校验）接受 public origin 语义；秘密缺失即拒绝（403 `proxy_trust_invalid`）。代理认证不代替业务写请求的 CSRF 校验。
+
+## 3. 任务资源与状态机
+
+### 3.1 任务资源字段
+
+`GET /api/tasks/{taskId}` 与所有任务类响应共用的资源形状（样例：[task-resource-running.json](../../tests/fixtures/web-contract/task-resource-running.json)）：
+
+| 字段 | 类型 | 说明 |
+|---|---|---|
+| `contractVersion` | string | 恒为 `web-api/1` |
+| `taskId` / `operationId` | string | 标识；`operationId` 为提交方幂等键 |
+| `type` / `role` | string | 任务类型与固定角色（`organizer`/`tracker`/`advisor` 及模型测试类）；类型集合由 W1+ 切片按需扩充，未知类型提交即 400 |
+| `state` | enum | 见 §3.2 |
+| `version` | int | 任务乐观并发版本；每次状态迁移递增；变更类请求必须携带提交方已见的 `expectedVersion`（取消除外，见 §4.4） |
+| `createdAt` / `updatedAt` / `terminalAt` | string | 时间；`terminalAt` 仅终态为非空时间，其余状态恒为 `null` |
+| `submitSeq` | int | 实例内持久提交顺序；就绪任务按此 FIFO 领取 |
+| `queuePosition` | int \| null | 仅 `queued` 存在；服务返回队列位置，不承诺等待时长 |
+| `attemptCount` / `attemptId` | int / string \| null | 已耗尝试数与当前 attempt；每 attempt 只启动一次 worker |
+| `attemptExitState` | enum | `not_started` \| `active` \| `exiting` \| `exited_unknown` \| `exited_confirmed`：当前 attempt 的**进程退出确认状态**。槽位占用跟随该字段而不是业务状态（§3.2）；`resolve` 在 `exited_unknown` 下一律拒绝 |
+| `cancelIntent` | bool | 取消意图已持久且任务**未终态**（`cancelling` 或恢复保持中）时为 true；终态一律 false，取消过程留痕在事件历史（§3.2） |
+| `configRevision` | string | 当前生效的非秘密配置修订；待执行期间编辑/删除配置不影响本任务；可被 §4.5 的 `retry` 显式更新 |
+| `originalConfigRevision` | string | 首次入队时的配置修订，审计用，不随 `retry` 改变 |
+| `inputRef` | object | 不可变输入引用（inline 或来源引用）；不含秘密 |
+| `progress` | object \| null | 运行中进度（阶段、可读描述）；仅展示，不作为业务事实 |
+| `result` | object \| null | 终态结果信封：`{kind, payloadRef, acceptedByAttempt, completedAt}`；`payloadRef` 使用后端解析的 `result://` scheme，读取协议见 §4.3；业务 payload 结构由各业务切片另行定义 |
+| `failure` | object \| null | 终态失败信封：`{code, message, retryable, sideEffectSafety, nextAttemptAt?}`；`retryable` 只区分重试发起方（`auto_backoff`／`manual`／`none`）；`sideEffectSafety ∈ proven_safe \| unknown \| proven_unsafe` 决定自动重入队是否放行（§4.6）。任务级失败码注册表见 §4.6 |
+| `recovery` | object \| null | 仅 `interrupted`/`needs_review` 存在；按 `cause` 的 discriminated union，见 §3.5 |
+
+### 3.2 状态集合与迁移
+
+状态集合：`queued`、`running`、`cancelling`、`succeeded`、`failed`、`cancelled`、`interrupted`、`needs_review`。终态：`succeeded`/`failed`/`cancelled`。
+
+| 当前态 | 事件 | 次态 | 守卫与边界 |
+|---|---|---|---|
+| —（新建） | `POST /api/tasks` 接收 | `queued` | 短事务保存任务、输入引用、配置修订、提交顺序与初始事件；成功才返回 202；`attemptExitState=not_started` |
+| `queued` | 调度器领取（原子条件更新） | `running` | 占一个执行槽；事务内写入 `attemptId` + 实例 epoch，执行不在事务内；`attemptExitState=active` |
+| `queued` | 取消（事务内条件更新） | `cancelled` | 调度器此后不得启动；与领取竞争恰有一个胜出（场景 5/6）；`attemptExitState=not_started` |
+| `running` | 当前 attempt 提交结果 | `succeeded` / `failed` | 仅接受 `attemptId` 与 epoch 都匹配的结果；晚到结果记审计事件，不覆盖新尝试或终态；`attemptExitState=exited_confirmed` |
+| `running` | 取消（先持久取消意图） | `cancelling` | 再停止 worker/工具树；`attemptExitState=exiting`；槽不释放；不显示"已取消"（场景 6） |
+| `cancelling` | 退出已确认且无未知副作用 | `cancelled` | `attemptExitState=exited_confirmed`；释放槽 |
+| `cancelling` | 退出已确认但副作用未知 | `needs_review` | `attemptExitState=exited_confirmed`；**释放槽**（进程已停）；`cancelIntent` 保持 true；不得自动重入队（场景 9） |
+| `cancelling` | 退出无法确认 | `needs_review` | `attemptExitState=exited_unknown`；**槽位保持占用**；`resolve` 一律 409 `exit_unconfirmed`；不得补发新 worker；仅新实例恢复扫描确认旧进程树已退出后释放（§3.4，场景 19） |
+| `running` | 后端重启，旧 worker 已确认停止，无未知副作用 | `interrupted` | 由恢复扫描处置（§3.4，场景 8）；`attemptExitState=exited_confirmed` |
+| `running` | 后端重启，外部副作用结果不明 | `needs_review` | `attemptExitState=exited_confirmed`；保留输入与已知回执；禁止自动重放 |
+| `needs_review`（`exited_unknown`） | 新实例恢复扫描确认进程树已退出 | `needs_review`（`exited_confirmed`） | 释放槽；业务状态不变；此后才允许 `resolve`（场景 19） |
+| `interrupted` | 恢复扫描判定可安全重跑 | `queued` | 类型/工具记录证明无外部副作用或仅发送前副作用，且重试预算未耗尽；有界重入队（新 attempt） |
+| `interrupted` | 恢复扫描判定未知或预算耗尽 | `needs_review` / `failed` | `failed` 时 `failure.code=worker_lost`、`retryable=manual` |
+| `failed` | 自动重试（`auto_backoff` 到期**且** `failure.sideEffectSafety=proven_safe`）或用户 `retry`（仅 `retryable=manual`） | `queued` | 有界退避；`nextAttemptAt` 未到不阻塞后续就绪任务；安全证明缺失时不得自动重入队（场景 20） |
+| `failed` | `auto_backoff` 但 `sideEffectSafety` 非 `proven_safe` | `needs_review` | 失败码不构成副作用安全证明；转 `needs_review`（`cause=failure_unknown_side_effect`），不自动重入队（场景 20） |
+| `needs_review` | `resolve(decision=resume)` 且回执核对完成、`attemptExitState=exited_confirmed` | `queued` | 仅用户显式；不自动 |
+| `needs_review` | `resolve(decision=cancel)` | `cancelled` | 仅用户显式；取消意图保留在事件历史 |
+| 终态 | 同 `operationId` 重放 / 晚到结果 | 不变更 | 幂等返回当前态；晚到结果不入账 |
+
+- `queued` 的取消与领取在同一行上竞争：两个条件更新只有一个生效。取消**携带** `expectedVersion` 时按 §3.3 严格校验（版本过期即 409 `version_conflict`，客户端读回后按新版本重新决策，场景 7）；**省略** `expectedVersion` 时为 best-effort 条件更新（仅要求当前态允许取消），响应如实反映最终态（赢→`cancelled` 200；输→202 `cancelling`，场景 6）。同一时序不得同时签署两种预期。
+- 槽位核算：**槽位跟随 attempt 的进程退出确认，不跟随业务状态**。`attemptExitState ∈ {active, exiting, exited_unknown}` 各占一个执行槽；`exited_confirmed` 与 `not_started` 释放槽。`needs_review` 若为 `exited_unknown` 仍占槽，调度器不得补发；`queued`/终态不占槽。
+- 没有 `RUNTIME_BUSY` 状态，也没有"忙碌拒绝提交"路径。
+
+### 3.3 幂等、版本与 attempt/epoch fencing
+
+- 提交：`POST /api/tasks` 以 `operationId` 为幂等键。同 ID + 同规范输入 → 返回既有任务当前权威状态（200，`replayed:true`）；同 ID + 不同规范输入 → 409 `idempotency_conflict`（场景 2/3）。规范输入含 `type`、`role`、规范化后的 `input` 与 `configRevision`。
+- 变更：重试/处置/并发调整携带 `expectedVersion`；过期返回 409 `version_conflict`，客户端重读后按新版本重新决策（场景 7）。**取消的 `expectedVersion` 可选**（§4.4）。同 ID 重放不消耗版本。
+- fencing：结果仅被"当前 attempt"接受（`attemptId` 匹配 + 实例 `epoch` 匹配 + 状态可接受）。后端重启后新实例 epoch 变化，旧实例的任何残留写入一律拒绝。晚到结果以事件留痕（`rejected_late_result`），不产生业务写入。
+- 自动重入队守卫：`retryable=auto_backoff` 只是必要条件；调度器自动重入队还要求 `failure.sideEffectSafety == "proven_safe"`，否则转 `needs_review`（§4.6、场景 20）。
+- 取消不是外部副作用撤销：`cancelled` 不承诺已发出的消息/已写文件被回滚（设计 §5）。
+
+### 3.4 重启与恢复扫描
+
+- 后端重启：`queued` 全部保留；新实例必须先清理/核实上一实例所属 worker 进程树，无法核实则暂停调度并暴露原因，不得按默认并发直接开工。
+- 上次 `running` 的 attempt 记为 `interrupted`，随后逐任务扫描：可证无外部副作用（可信任务类型/工具台账证明）→ 有界重入队；副作用未知 → `needs_review`，保留全部已知回执，禁止自动重放。
+- 重启时有取消意图的：保留 `cancelling`/`cancelIntent`，确认进程树退出且无副作用未知后才置 `cancelled`；未知则保持取消意图并置 `needs_review`。
+- **`exited_unknown` 回收**：新实例启动时扫描所有 `attemptExitState=exited_unknown` 的 attempt，核实旧进程树确已退出后把该字段改为 `exited_confirmed` 并**释放槽位**；业务状态保持 `needs_review` 不变（仍禁止自动重放）。在回收完成前，调度器不得把该槽位分配给新任务，用户 `resolve` 也不得绕过退出确认。
+
+### 3.5 `recovery` 对象结构（按 `cause` 的 discriminated union）
+
+所有取值共享基础字段：`cause`、`sideEffectKnown`、`autoResume`、`reason`、`receipts`（已知外部回执数组，元素结构同 §12 `side_effect_receipts`）；其余字段只按 `cause` 出现，客户端不得依赖所在取值未声明的字段（样例：[task-interrupted.json](../../tests/fixtures/web-contract/task-interrupted.json)、[task-needs-review.json](../../tests/fixtures/web-contract/task-needs-review.json)、[task-needs-review-exit-unconfirmed.json](../../tests/fixtures/web-contract/task-needs-review-exit-unconfirmed.json)、[task-recovery-backup-restore.json](../../tests/fixtures/web-contract/task-recovery-backup-restore.json)）：
+
+| cause | 出现状态 | 附加字段 | 语义 |
+|---|---|---|---|
+| `backend_restart` | `interrupted` | `resumeEligible: bool` | 恢复扫描判定；`resumeEligible=true` 且重试预算未耗尽时可自动重入队（`autoResume=true`） |
+| `restart_unknown_side_effect` | `needs_review` | `decisionOptions: ["resume","cancel"]` | 重启时外部副作用结果不明；退出已确认（`attemptExitState=exited_confirmed`）；禁止自动重放，仅用户显式处置 |
+| `cancel_unknown_side_effect` | `needs_review` | `decisionOptions: ["resume","cancel"]` | 取消退出已确认但副作用未知；`cancelIntent` 保持 true，仅用户显式处置 |
+| `cancel_exit_unconfirmed` | `needs_review` | 无 `decisionOptions` | 退出无法确认；`attemptExitState=exited_unknown`，槽位保持占用；`resolve` → 409 `exit_unconfirmed`；仅恢复扫描回收后可处置（场景 19） |
+| `failure_unknown_side_effect` | `needs_review` | `decisionOptions: ["resume","cancel"]` | 失败码本身允许重试，但工具台账存在 `provable_readonly=false` 的调用且失败点在其之后，副作用安全无法证明；禁止自动重入队（场景 20） |
+| `backup_restore` | `needs_review` | `holdId`、`itemId`、`decisionOptions` | 备份恢复隔离待核对；`attemptExitState=exited_confirmed`（场景 22） |
+| `root_activation` | `needs_review` | `holdId`、`itemId`、`historyContinuity`、`decisionOptions` | 已有根／退役源根再激活，执行历史连续性未证明（A→B→A）；禁止自动重发（场景 22） |
+| `root_import` | `needs_review` | `holdId`、`itemId`、`decisionOptions` | 导入根副本，适用与 `root_activation` 相同边界 |
+
+- 任务 `resolve` 与 hold 条目 `resolve` 是**同一操作**：任务 `recovery.itemId` 指向 `recovery_items` 的一行，`POST /api/tasks/{taskId}/resolve` 等价于 `POST /api/recovery/items/{itemId}/resolve`，两者更新同一行并递增任务与条目版本；hold 内全部条目处置完毕才关闭 hold（§8.3）。
+- `backup_restore`/`root_activation`/`root_import` 取值的 `autoResume` 恒为 `false`；这些任务在 hold 关闭前不参与调度。
+
+## 4. 任务 API
+
+| 端点 | 方法 | 请求 → 成功响应 | 主要错误 |
+|---|---|---|---|
+| `/api/tasks` | POST | 提交体（样例 [task-submit-request.json](../../tests/fixtures/web-contract/task-submit-request.json)）→ 202 `{taskId, state, version, queuePosition}`（样例 [task-submit-202-queued.json](../../tests/fixtures/web-contract/task-submit-202-queued.json)）；重放同 ID → 200 `{replayed:true, task}`（样例 [task-submit-replay-200.json](../../tests/fixtures/web-contract/task-submit-replay-200.json)） | 400 `validation_failed`/`unknown_task_type`；409 `idempotency_conflict`（样例 [task-submit-conflict-409.json](../../tests/fixtures/web-contract/task-submit-conflict-409.json)）；503 `intake_closed` |
+| `/api/tasks/{taskId}` | GET | — → 200 任务资源 | 404 `task_not_found` |
+| `/api/tasks` | GET | `?state=&cursor=&limit=`（按 `submitSeq` 稳定分页）→ 200 `{tasks:[...], nextCursor}` | 400 |
+| `/api/tasks/{taskId}/result` | GET | — → 200 结果信封（§4.3） | 404 `task_not_found`；409 `state_conflict`（未 `succeeded`）；404 `result_not_found`（结果过期/缺失） |
+| `/api/tasks/{taskId}/cancel` | POST | `{expectedVersion?}` → 赢得竞争且原为 queued：200 任务资源（`cancelled`，样例 [task-cancel-queued-cancelled.json](../../tests/fixtures/web-contract/task-cancel-queued-cancelled.json)）；原为 running：202 任务资源（`cancelling`，样例 [task-cancel-running-cancelling.json](../../tests/fixtures/web-contract/task-cancel-running-cancelling.json)） | 404；409 `version_conflict`（样例 [error-version-conflict-409.json](../../tests/fixtures/web-contract/error-version-conflict-409.json)）/`state_conflict`（终态） |
+| `/api/tasks/{taskId}/retry` | POST | `{expectedVersion, configRevision?}` → 202 任务资源（`queued`，新 attempt） | 409 `state_conflict`（仅 `retryable=manual` 可用；`auto_backoff` 由调度器处理，`none` 无重试入口）；409 `config_revision_change_not_allowed` |
+| `/api/tasks/{taskId}/resolve` | POST | `{expectedVersion, decision:"resume"\|"cancel", acknowledgedReceipts:[receiptId]}` → 202 任务资源 | 409 `exit_unconfirmed`；409；400（`acknowledgedReceipts` 未覆盖全部可核对回执时拒绝 resume） |
+
+### 4.1 提交与幂等
+
+- 提交体不含秘密：凭据只允许引用形态（§7）；`configRevision` 必须指向已存在的修订，否则 400 `config_revision_unknown`。
+- 页面关闭不取消任务；所有操作按 `taskId` + `expectedVersion` 定位，不依赖发起窗口的内存状态。
+
+### 4.2 查询
+
+- `GET /api/tasks/{taskId}` 返回 §3.1 全字段资源；列表按 `submitSeq` 稳定分页，`nextCursor` 为空表示没有更多。
+- `GET /api/tasks?operationId=<id>` 返回同一任务或 404，用于响应丢失后读回。
+
+### 4.3 结果读取（提交 → 用户看到结果的闭环）
+
+- `GET /api/tasks/{taskId}/result`：读取任务结果。授权与任务查询相同（同一会话、同一来源）；GET 不要求 CSRF。
+- `result://<attemptId>/<name>` 是**后端解析的引用 scheme**，不是客户端可直接请求的 URL；客户端只调用本端点，不得自行拼接路径。
+- 成功响应：`{contractVersion, taskId, kind, payload, payloadRef?, acceptedByAttempt, completedAt}`。`payload` 内联返回且有界；超限时只返回 `payloadRef` 并支持 `Range`/分页读取。
+- 业务 payload 的字段结构由各业务切片（W1+）定义，本契约只定义信封与读取协议。
+- 错误：任务未 `succeeded` → 409 `state_conflict`；结果已过期/被清理 → 404 `result_not_found`；任务不存在 → 404 `task_not_found`。
+- 场景 1 必须用**同一 `taskId`** 串起 提交 → `running` → `succeeded` → 结果读取，不得用不同任务拼凑完整链路。
+
+### 4.4 取消与版本
+
+- `expectedVersion` **可选**：
+  - 携带 → 严格校验，过期返回 409 `version_conflict`，客户端读回后按新版本重新决策（场景 7）。
+  - 省略 → best-effort 条件更新（仅要求当前态允许取消），响应如实反映最终态。
+- 竞争时序（场景 6）：`queued`/v1 先被领取为 `running`/v2，随后旧窗口发起取消：
+  - 携带 `expectedVersion=1` → 409 `version_conflict` → 读回 → 携带 `expectedVersion=2` → 202 `cancelling`；
+  - 省略 `expectedVersion` → 直接 202 `cancelling`。
+  - 不得以同一时序同时签署"旧版本 409"与"领取赢后 202"两种预期。
+- 取消不撤销已发生的外部副作用；`cancelling` 期间槽位不释放。
+
+### 4.5 重试与处置
+
+- `retry` 请求体 `{expectedVersion, configRevision?}`：
+  - 省略 `configRevision` → 沿用任务当前 `configRevision`（原修订），适用于发送前失败、凭据引用恢复等非配置问题。
+  - 提供且与当前修订不同 → **仅当** `failure.code ∈ {auth_or_config_invalid, config_revision_unknown}` 时允许；任务 `configRevision` 更新为新修订，`originalConfigRevision` 保留首次入队值，变更写入事件历史并递增任务 `version`。
+  - 其他失败码携带 `configRevision` → 409 `config_revision_change_not_allowed`。
+  - 凭据引用不通过 `retry` 切换：凭据只按原引用重新解析；修复凭据引用属于配置修订变更，走 `configRevision` 路径。
+  - `retry` 成功后任务回到 `queued` 并写入新 attempt；重复 `retry` 因版本已递增而返回 409 `version_conflict`，不产生第二次重入队。
+- `resolve`：`needs_review` 且 `attemptExitState=exited_unknown` → 409 `exit_unconfirmed`（必须先由恢复扫描确认退出，§3.4）；`acknowledgedReceipts` 必须覆盖 `recovery.receipts` 中全部 `verifiable=true` 条目，否则 400。
+- `retry` 与 `resolve` 是仅有的用户驱动重入队路径；`needs_review` 没有"自动恢复"。
+
+### 4.6 任务级失败码（`failure.code`）
+
+| code | retryable 默认 | 说明 |
+|---|---|---|
+| `model_request_failed` | `auto_backoff` | 有界退避重入队**仅当** `sideEffectSafety=proven_safe`（失败点之前没有任何 `provable_readonly=false` 且可能已生效的外部调用）；否则转 `needs_review` |
+| `auth_or_config_invalid` | `manual` | 认证/配置错误不自动重试；修正后用户 `retry`，可携带新 `configRevision`（§4.5） |
+| `credential_unavailable` | `manual` | 执行前解析凭据引用失败；保留可重试输入，不无限占槽（场景 12） |
+| `tool_execution_failed` | `manual` | MCP/Bash 明确失败；副作用未知或未证明安全时转 `needs_review` |
+| `worker_lost` | `manual` | 恢复扫描预算耗尽或不可自动续跑 |
+| `output_contract_invalid` | `auto_backoff` | 模型输出不满足结构契约；**自动重入队仅当**失败点在所有外部副作用工具调用之前，否则转 `needs_review`（场景 20） |
+
+- `retryable` 只决定重试由谁发起：`auto_backoff` 由调度器自动处理；`manual` 表示禁止自动重试但保留用户 `retry` 入口；`none` 表示任务终局，`retry` 一律 409 `state_conflict`。
+- `sideEffectSafety` 由可信任务类型/工具台账证明（§12 `side_effect_receipts`）：`proven_safe` 要求失败点之前不存在 `provable_readonly=false` 且可能已生效的调用；无法证明即 `unknown`，转 `needs_review`。失败码本身不构成安全证明。
+
+## 5. 并发配置
+
+| 端点 | 方法 | 说明 |
+|---|---|---|
+| `/api/settings/agent-concurrency` | GET | 返回 `{contractVersion, agentConcurrency, default, runningCount, queuedCount}`（样例 [settings-concurrency.json](../../tests/fixtures/web-contract/settings-concurrency.json)） |
+| `/api/settings/agent-concurrency` | PUT | `{agentConcurrency, expectedVersion}` → 200；校验正整数，否则 400 `validation_failed` |
+
+- 默认 3；实例级设置，持久保存。
+- 上调：立即补发空槽；下调：不杀正在执行的任务，待自然退出后满足新上限。
+- 调整不影响既有任务的 `version`；变更以 `settings.changed` 事件广播。
+- **补发计数只统计已释放的槽**：`attemptExitState=exited_unknown` 的 attempt 仍占槽（§3.2），不计入可用空槽。
+
+## 6. SSE 事件与高水位快照补偿
+
+| 端点 | 说明 |
+|---|---|
+| `GET /api/events`（SSE） | 只推送已提交的变化；心跳周期发送注释行；会话过期/代理超时按重连与重认证处理 |
+| `GET /api/snapshot` | 全量快照 + 高水位游标；断线补偿入口 |
+
+事件信封（样例 [sse-events-sample.json](../../tests/fixtures/web-contract/sse-events-sample.json)）：
+
+```text
+event: task.changed
+id: inst_9f27c1aa40b2:1043
+data: {"contractVersion":"web-api/1","cursor":1043,"epoch":"inst_9f27c1aa40b2",
+       "objectType":"task","objectId":"tsk_1a2b…","objectVersion":3,
+       "taskState":"cancelling","at":"2026-11-06T12:31:20.000Z"}
+```
+
+- 事件携带实例 `epoch`、实例内递增 `cursor`、对象 `objectVersion` 与 `objectType`/`objectId`；`event` 类型：`task.changed`、`task.progress`、`settings.changed`、`workspace.changed`、`recovery.changed`；`objectType` ∈ `task`/`setting`/`workspace`/`recovery_hold`。
+- 订阅握手：每次订阅（首次或重连）服务端必须先发一帧 `stream.ready`，`data` 携带 `{contractVersion, epoch, cursor}`（服务端当前水位）；该帧无 `id` 行，不参与重放与游标推进。
+- 重连令牌：事件帧的 SSE `id` 为 `<epoch>:<cursor>`（如 `inst_9f27c1aa40b2:1043`）；客户端持久保存最后应用的 `(epoch, cursor)` 对，重连时回传 `Last-Event-ID: <epoch>:<cursor>`。
+- 短断线（epoch 一致且游标仍在留存窗口）：从该 cursor 之后重放；SSE 留存短期有界，权威状态在 SQLite，事件丢失不能丢任务。
+- epoch 变化：令牌 `epoch` ≠ 当前实例 `epoch`、令牌无法解析或游标超出留存时，服务端先发一帧 `stream.reset`（`data` 携带当前 `epoch` 与原因，无 `id` 行），客户端必须调用 `GET /api/snapshot` 重新同步——禁止跨 `epoch` 就地合并。cursor 是实例内值，新实例游标回退不构成"旧事件"，一律按本条走快照。
+- 补偿规则：`GET /api/snapshot` 返回带 `highWatermark` 的全量快照；任务条目与 §3.1 任务资源**同形（全字段）**；快照包含 `highWatermark` 及之前全部事件的权威状态（游标 N 事件的最终状态必须已体现在 `highWatermark=N` 的快照中），不得返回落后于高水位的对象版本。客户端以快照返回的 `lastEventId`（`<epoch>:<highWatermark>`）重新订阅，快照生成期间发生的变化按 `cursor > highWatermark` 补发（样例 [snapshot-high-watermark.json](../../tests/fixtures/web-contract/snapshot-high-watermark.json)）。
+- 客户端应用规则：只应用与当前 `epoch` 一致的事件；`cursor ≤` 已应用游标或 `objectVersion` 低于本地对象版本的事件直接忽略——不能用旧 `running` 覆盖新 `interrupted`。
+
+## 7. 凭据与 provider 能力
+
+| 端点 | 说明 |
+|---|---|
+| `GET /api/providers` | 返回 provider 能力与凭据引用状态：`{providerId, enabled, authMode, apiFormat?, credentialRefs:[{ref, status: available\|missing\|unavailable, detail?}]}`；`authMode` 为认证方式（如 `api_key`/`oauth`，必填），`apiFormat` 为可选的接口格式描述（如 `openai_compatible`）；不含任何秘密值（样例 [providers-capability.json](../../tests/fixtures/web-contract/providers-capability.json)） |
+
+- 任务入队只保存配置修订与凭据**引用**；秘密在执行前由后端 CredentialProvider 解析，经 run 私有 stdin/环境注入 worker，不进队列、SQLite、argv、配置、日志或 SSE。
+- 凭据引用随后端 OS：macOS 本机/壳可用 Keychain 引用；Linux 默认 env 引用，不模拟钥匙串、不生成明文文件。保存当前环境不可兑现的引用（Linux 上保存 Keychain 引用）→ 422 `credential_ref_unsavable`。
+- 队列等待期间凭据可撤销；执行时解析失败 → 任务 `failed`（`credential_unavailable`、`manual`），保留可重试输入，不无限占槽（场景 12）。
+- 前端禁止回读秘密；API/事件只返回引用与状态。
+
+## 8. 受限工作根管理与恢复
+
+### 8.1 能力模型
+
+- 会话能力由后端签发，页面不可自行声明；按授权对象拆为两组：
+  - `workspace.manage`（根切换，**仅 local 模式签发**）：仅允许查看当前根、列出启动配置允许的目标 ID、提交选定 ID 的切换意图、查询切换结果。不授予任意路径访问、进程启停或控制秘密。
+  - `workspace.backup`（受限数据管理，**local 与代理模式均签发给已配对业务会话**）：允许列出/创建一致性备份、经业务会话受限入口下载、恢复已校验备份；恢复一律进入 §8.3 恢复保持状态机。
+- 代理模式不签发 `workspace.manage`：根切换请求返回 403 `workspace_manage_denied`，即使客户端绕过 UI 也不能调用（场景 15）。代理模式的备份创建、下载与恢复**不受影响**（设计 §2 与[用户流程](../product/02-用户流程.md)的已承诺能力）；这是受限数据管理业务，不等于持有宿主 control token。
+
+### 8.2 端点
+
+| 端点 | 方法 | 说明 |
+|---|---|---|
+| `/api/workspace` | GET | 当前根（逻辑位置）、部署模式、目标白名单、会话能力 |
+| `/api/workspace/switch-operations` | POST | `{operationId, targetId, expectedRootVersion}` → 202 `{state:"pending"}`；后端校验会话能力（`workspace.manage`）、local 模式、目标白名单与预期版本后以持久操作 ID 执行（样例 [workspace-switch-request.json](../../tests/fixtures/web-contract/workspace-switch-request.json)）。有未终态任务/进行中操作时 409 `workspace_busy` |
+| `/api/workspace/switch-operations/{operationId}` | GET | 读回操作结果：`succeeded` / `failed` / `pending`（响应丢失时持续按同一 ID 查询，不提交新的迁移；样例 [workspace-operation-pending.json](../../tests/fixtures/web-contract/workspace-operation-pending.json)） |
+| `/api/workspace/restore-operations` | POST | `{operationId, backupId}` → 202（需 `workspace.backup`；**local 与代理模式均可用**，样例 [workspace-restore-accepted-202.json](../../tests/fixtures/web-contract/workspace-restore-accepted-202.json)）；进入恢复保持（§8.3） |
+| `/api/workspace/operations/{operationId}` | GET | **统一操作读回**（switch/restore/backup）：`{operationId, kind, state, holdId?, updatedAt}`；响应丢失后按同一 `operationId` 查询，客户端无需猜测具体端点；未知 → 404 `operation_not_found`（不得盲目重提，场景 23） |
+| `/api/workspace/restore-operations/{operationId}` | GET | restore 专用读回，形状与统一端点一致；`holdId` 在 hold 创建后返回 |
+| `/api/workspace/backups` | GET / POST | 列出/创建一致性备份（需 `workspace.backup`；local 与代理模式均可用）；下载经业务会话受限入口 |
+| `/api/recovery/holds/{holdId}` | GET | 恢复报告：暂停面、逐项核对清单（样例 [recovery-hold-report.json](../../tests/fixtures/web-contract/recovery-hold-report.json)、[recovery-hold-root-activation.json](../../tests/fixtures/web-contract/recovery-hold-root-activation.json)） |
+| `/api/recovery/items/{itemId}/resolve` | POST | `{decision:"resume"\|"cancel", acknowledgedReceipts:[...]}` 逐项放行（样例 [recovery-resolve-request.json](../../tests/fixtures/web-contract/recovery-resolve-request.json)） |
+
+- **hold 与操作 ID 的关系**：restore 操作在受理时同步创建 hold，202 响应即返回 `holdId`；`operationId → holdId` 的发现的唯一途径是操作读回端点（统一端点或 restore 专用端点）。hold 创建前不允许任何数据变更。
+- 备份创建（`POST /api/workspace/backups`）不进入恢复保持；只有 restore 与根激活/导入进入。
+
+### 8.3 恢复保持（备份恢复与已有根激活共用）
+
+**备份恢复不是原库重启**；**已有根激活/退役源根再激活/导入根副本适用同一边界**：
+
+1. 打开持久恢复标记（`hold`）：停止新提交（503 `intake_closed`）、停止调度、暂停定时收集/提醒/outbox/补偿投递；确认旧进程树退出并校验恢复数据。
+2. 恢复出/激活出的未完成任务全部保留并隔离为 `needs_review`，取消意图保留；不按 `queued` 状态、旧成功回执或定时周期自动重发。
+3. 逐项核对：可验证外部回执（如飞书 message_id）核对后才能放行；无法核实的须用户显式选择 `resume`/`cancel`；可证无副作用的只读任务标记 `auto_safe`，但其执行仍等调度恢复后进行。
+4. 全部条目处置完毕（或用户显式确认）才关闭 hold、恢复普通调度；不静默删除任务；不承诺重建备份之后发生的外部事实。
+5. 恢复出的任务其 `recovery` 对象按 §3.5 的 `backup_restore`/`root_activation`/`root_import` 取值出现，含 `holdId` 与 `itemId`；任务 `resolve` 与 hold 条目 `resolve` 是同一操作（§3.5）。
+6. 验收锚点：备份时 queued → 外部执行成功 → 恢复旧备份，不再执行；A→B 执行外部操作 → 再激活 A，不重发（设计 §5、[分期验收](../product/04-分期交付与验收.md)）。
+
+## 9. 控制通道与退出/清理
+
+- 宿主控制接口（服务发现、退出、任意主机管理）使用独立控制通道与 control token，**不在 `/api` 业务路由内、不经代理暴露、不向页面发放**；业务会话请求退出服务 → 403/404，不执行。
+- 正常关停顺序（控制通道触发，样例契约仅记录顺序）：① 停止接收新提交与调度（新提交 503 `intake_closed`）；② 取消/等待运行任务并 reap；③ 关库、释放根锁。队列保留，不走"丢任务退出"。
+- worker 生命周期：以父管道/guardian 检测宿主消失；下一实例拿到根锁不等于旧 worker 已停——启动前必须清理/核实，无法核实则暂停调度并显示原因，避免默认 3 实际超发。
+
+## 10. 错误码注册表
+
+HTTP 错误包络：`{"contractVersion":"web-api/1","status":<int>,"error":{"code","message","details"?}}`。
+
+| HTTP | code | 场景 | 客户端处置 |
+|---|---|---|---|
+| 400 | `validation_failed` | 字段缺失/类型/时间格式非法 | 修正后重试；未消耗幂等键 |
+| 400 | `unknown_task_type` / `unknown_role` | 类型或角色不在固定集合 | 不重试 |
+| 400 | `config_revision_unknown` | 配置修订不存在/已删除 | 不自动重试；换修订提交视为不同输入 |
+| 401 | `unauthenticated` | 无会话/过期 | 重新配对 |
+| 401 | `pair_code_invalid` | 配对码错/过期/已用 | 取新配对码 |
+| 429 | `pair_rate_limited` | 配对失败限速 | 等待后重试 |
+| 403 | `csrf_invalid` | 写请求缺/错 CSRF token | 刷新 token；不入队 |
+| 403 | `origin_rejected` | Host/Origin 不匹配（跨源拒绝） | 不入队；不得重试（场景 13） |
+| 403 | `proxy_trust_invalid` | 代理秘密/来源校验失败 | 不入队 |
+| 403 | `workspace_manage_denied` | 无 `workspace.manage` 能力请求根切换（代理模式不签发该能力） | 不重试（场景 15）；同会话的备份/恢复走 `workspace.backup`，不受影响 |
+| 403 | `workspace_target_not_allowed` | 目标不在启动配置白名单 | 不重试 |
+| 404 | `task_not_found` / `operation_not_found` | ID 不存在 | 不重试；操作类用原 ID 读回，不盲目重提（场景 23） |
+| 404 | `result_not_found` | 结果已过期/被清理 | 重读任务；不重复提交 |
+| 409 | `idempotency_conflict` | 同 `operationId` 不同规范输入 | 停止重放；换新 ID（场景 3） |
+| 409 | `version_conflict` | `expectedVersion` 过期 | 重读后按新版本决策（场景 7） |
+| 409 | `state_conflict` | 动作与当前状态不允许（含对未 `succeeded` 任务读取结果） | 重读当前态 |
+| 409 | `exit_unconfirmed` | `attemptExitState=exited_unknown` 时请求 `resolve` | 等待恢复扫描确认退出（场景 19） |
+| 409 | `config_revision_change_not_allowed` | 非配置类失败携带 `configRevision` | 去掉该字段或改用新任务 |
+| 409 | `workspace_busy` | 有未终态任务/进行中迁移时请求切换 | 先处理任务或等待 |
+| 422 | `credential_ref_unsavable` | 保存当前环境不可兑现的凭据引用 | 改用 env 引用 |
+| 500 | `internal_error` | 未分类服务错误 | 按 ID 重读；不盲目重复提交 |
+| 503 | `intake_closed` | 恢复保持/关停排水期拒绝新提交 | 等待；恢复后同 ID 重试 |
+| 503 | `backend_unavailable` | 服务不可达/重启中 | 重读 |
+
+## 11. 契约场景矩阵（提交 → 用户看到结果/错误）
+
+| # | 场景 | 触发 | 契约行为（用户可见结果） | 样例 |
+|---|---|---|---|---|
+| 1 | 正常提交到结果 | 提交 → 领取 → 完成 → 读取结果 | 202 `queued` → SSE `task.changed` → `succeeded` + `result` 信封 → `GET /api/tasks/{taskId}/result` 200；**同一 `taskId`** 贯穿全链路；签收独立于任务成功 | [task-submit-202-queued.json](../../tests/fixtures/web-contract/task-submit-202-queued.json)、[task-resource-running.json](../../tests/fixtures/web-contract/task-resource-running.json)、[task-succeeded-result.json](../../tests/fixtures/web-contract/task-succeeded-result.json)、[task-result-read-200.json](../../tests/fixtures/web-contract/task-result-read-200.json) |
+| 2 | 重复提交 | 响应丢失后同 `operationId` 重放 | 200 `replayed:true` 返回同一任务当前态；不创建第二个任务 | [task-submit-replay-200.json](../../tests/fixtures/web-contract/task-submit-replay-200.json) |
+| 3 | 幂等键冲突 | 同 ID 不同输入 | 409 `idempotency_conflict`，指向既有任务 | [task-submit-conflict-409.json](../../tests/fixtures/web-contract/task-submit-conflict-409.json) |
+| 4 | 满槽 | 3 个槽被占时第 4 个任务提交 | 202 `queued` + `queuePosition`；无 `RUNTIME_BUSY`/忙碌拒绝 | [task-submit-202-queued.json](../../tests/fixtures/web-contract/task-submit-202-queued.json) |
+| 5 | 取消竞争·取消赢 | queued 上取消先于领取 | 事务置 `cancelled`；调度器不得再启动该任务 | [task-cancel-queued-cancelled.json](../../tests/fixtures/web-contract/task-cancel-queued-cancelled.json) |
+| 6 | 取消竞争·领取赢 | 领取先于取消（旧窗口取消） | 省略 `expectedVersion` → 202 `cancelling`；携带过期版本 → 409 后读回再取消；先持久取消意图再停 worker；确认退出前槽不释放、不显示已取消 | [task-cancel-running-cancelling.json](../../tests/fixtures/web-contract/task-cancel-running-cancelling.json)、[error-version-conflict-409.json](../../tests/fixtures/web-contract/error-version-conflict-409.json) |
+| 7 | 过期版本操作 | 旧窗口携过期 `expectedVersion` 取消 | 409 `version_conflict`；重读后重新决策 | [error-version-conflict-409.json](../../tests/fixtures/web-contract/error-version-conflict-409.json) |
+| 8 | 重启·可安全恢复 | 后端重启，旧 worker 确认停止、无未知副作用 | 上次 running → `interrupted`；扫描后有界重入队（新 attempt、新 epoch） | [task-interrupted.json](../../tests/fixtures/web-contract/task-interrupted.json) |
+| 9 | 重启·副作用未知 | 重启时工具副作用不明，退出已确认 | `needs_review`（`cause=restart_unknown_side_effect`）：保留输入、已知回执；禁止自动重放；仅 `resolve` 放行 | [task-needs-review.json](../../tests/fixtures/web-contract/task-needs-review.json) |
+| 10 | 旧备份恢复 | 恢复旧快照（备份时 queued 的任务其后已完成外部操作） | 恢复保持：提交/调度/定时/outbox 暂停；未完成任务隔离待核对；不自动重发；逐项核对回执后放行 | [recovery-hold-report.json](../../tests/fixtures/web-contract/recovery-hold-report.json) |
+| 11 | 已有根/退役源根激活 | 激活无法证明执行历史连续的根（A→B→A） | 与场景 10 同一恢复核对流程；激活不证明连续性，未完成任务隔离待核对，不自动重发 | [recovery-hold-root-activation.json](../../tests/fixtures/web-contract/recovery-hold-root-activation.json) |
+| 12 | 凭据缺失 | 提交成功但执行时引用解析失败 | 提交仍 202（只存引用）；执行 → `failed` `credential_unavailable`（`manual`）；输入保留，不无限占槽 | [task-failed-credential.json](../../tests/fixtures/web-contract/task-failed-credential.json)、[providers-capability.json](../../tests/fixtures/web-contract/providers-capability.json) |
+| 13 | 跨源拒绝 | 外站页面诱导提交 | 403 `origin_rejected`；不入队、不启动 worker | [error-origin-rejected-403.json](../../tests/fixtures/web-contract/error-origin-rejected-403.json) |
+| 14 | 迁移响应丢失 | 工作根切换后响应未达 | 按同一 `operationId` 读回 `pending`/终态；不盲目重复迁移 | [workspace-operation-pending.json](../../tests/fixtures/web-contract/workspace-operation-pending.json) |
+| 15 | 代理模式请求根切换 | 无 `workspace.manage` 能力的会话请求根切换 | 403 `workspace_manage_denied`；同会话的备份创建/下载/恢复（`workspace.backup`）不受影响，恢复照常进入 §8.3 恢复保持 | [workspace-switch-denied-403.json](../../tests/fixtures/web-contract/workspace-switch-denied-403.json)、[workspace-switch-request.json](../../tests/fixtures/web-contract/workspace-switch-request.json)、[workspace-restore-accepted-202.json](../../tests/fixtures/web-contract/workspace-restore-accepted-202.json) |
+| 16 | SSE 断线补偿 | 短断线 / 实例更替 / 游标缺口 | `Last-Event-ID` 重放；否则高水位快照 + 重新订阅；旧事件按 cursor/objectVersion 忽略 | [sse-events-sample.json](../../tests/fixtures/web-contract/sse-events-sample.json)、[snapshot-high-watermark.json](../../tests/fixtures/web-contract/snapshot-high-watermark.json) |
+| 17 | 并发调整 | PUT `agent-concurrency`（3→4、3→1） | 校验正整数；上调补发空槽、下调待自然退出；不影响任务 `version`；`exited_unknown` 不计入空槽 | [settings-concurrency.json](../../tests/fixtures/web-contract/settings-concurrency.json) |
+| 18 | 结果读取失败 | 任务未 `succeeded` 或结果已过期 | 409 `state_conflict` / 404 `result_not_found`；客户端不得自行拼接 `result://` 路径 | [error-result-not-found-404.json](../../tests/fixtures/web-contract/error-result-not-found-404.json) |
+| 19 | 取消后退出未确认 | 取消 running 任务，进程退出无法确认 | `needs_review` + `attemptExitState=exited_unknown`，槽位保持占用、不释放；`resolve` → 409 `exit_unconfirmed`；新实例恢复扫描确认退出后释放槽 | [task-needs-review-exit-unconfirmed.json](../../tests/fixtures/web-contract/task-needs-review-exit-unconfirmed.json)、[error-exit-unconfirmed-409.json](../../tests/fixtures/web-contract/error-exit-unconfirmed-409.json) |
+| 20 | 工具已执行后失败 | 失败码为 `auto_backoff`，但工具台账存在外部副作用调用且失败点在其之后 | `sideEffectSafety=unknown` → `needs_review`（`cause=failure_unknown_side_effect`），不自动重入队 | [task-needs-review-side-effect-unknown.json](../../tests/fixtures/web-contract/task-needs-review-side-effect-unknown.json) |
+| 21 | 配置修正后重试 | 任务因错误端点失败，用户修正配置 | `retry` 携带新 `configRevision` → 202 `queued`，`configRevision` 更新、`originalConfigRevision` 保留；非配置类失败携带该字段 → 409 | [task-retry-new-config-202.json](../../tests/fixtures/web-contract/task-retry-new-config-202.json)、[error-config-revision-not-allowed-409.json](../../tests/fixtures/web-contract/error-config-revision-not-allowed-409.json) |
+| 22 | 恢复后任务资源 | 备份恢复/已有根激活后读取任务 | 任务 `recovery` 按 `backup_restore`/`root_activation` 取值出现，含 `holdId`/`itemId`；`resolve` 与 hold 条目 `resolve` 同一操作 | [task-recovery-backup-restore.json](../../tests/fixtures/web-contract/task-recovery-backup-restore.json)、[task-recovery-root-activation.json](../../tests/fixtures/web-contract/task-recovery-root-activation.json) |
+| 23 | restore 响应丢失 | restore 已受理但 202 丢失 | 按同一 `operationId` 读回操作与 `holdId`；未知 → 404 `operation_not_found`，不盲目重提 | [workspace-restore-operation-pending.json](../../tests/fixtures/web-contract/workspace-restore-operation-pending.json)、[workspace-restore-accepted-202.json](../../tests/fixtures/web-contract/workspace-restore-accepted-202.json) |
+
+## 12. 数据结构提案（逻辑字段；非 DDL，表名与类型由实施切片定案）
+
+以下为任务台账、事件与恢复逻辑的最小对象集，全部为**提案**；不改真实 DDL、manifest 或锁文件。
+
+| 对象（拟） | 逻辑字段（拟） | 说明 |
+|---|---|---|
+| `tasks` | `task_id` PK、`operation_id` UNIQUE、`type`、`role`、`state`、`version`、`submit_seq` UNIQUE、`attempt_exit_state`(not_started/active/exiting/exited_unknown/exited_confirmed)、`config_revision`、`original_config_revision`、`input_ref`(JSON)、`cancel_intent`、`next_attempt_at` NULL、`attempt_budget`、`result_ref`(JSON) NULL、`failure`(JSON) NULL、`created_at`、`updated_at`、`terminal_at` NULL | 幂等键全局唯一；`submit_seq` 定 FIFO；槽位占用读 `attempt_exit_state` |
+| `task_attempts` | `attempt_id` PK、`task_id` FK、`epoch`、`worker_pid` NULL、`started_at`、`ended_at` NULL、`exit_confirmed_at` NULL、`exit_reason` NULL | 每任务多 attempt；fencing 与槽位回收依据 |
+| `task_events` | `cursor` PK 自增、`object_type`、`object_id`、`type`、`payload`(JSON)、`object_version`、`epoch`、`created_at` | SSE 与审计同源的**通用对象事件流**：`object_type` ∈ task/setting/workspace/recovery_hold，与 SSE 信封 `objectType`/`objectId` 一一对应，不在表上按域分叉；留存短期有界，快照补偿。索引见下方 `task_events(object_type, object_id)` |
+| `side_effect_receipts` | `receipt_id` PK、`attempt_id` FK、`kind`、`external_ref`、`recorded_at`、`provable_readonly` | 已知外部回执；`needs_review`、恢复核对与 `sideEffectSafety` 判定的数据基础：`provable_readonly=false` 的调用存在即无法证明 `proven_safe` |
+| `workspace_operations` | `operation_id` PK、`kind`(switch/restore/backup)、`target_root_id` NULL、`backup_id` NULL、`hold_id` NULL、`state`(pending/succeeded/failed)、`created_at`、`updated_at` | 响应丢失读回；`hold_id` 在 hold 创建后回填；不盲目重复迁移 |
+| `recovery_holds` | `hold_id` PK、`cause`(backup_restore/root_activation/import)、`paused_submissions`、`paused_scheduling`、`paused_timers`、`paused_outbox`、`opened_at`、`closed_at` NULL | 持久恢复标记；关闭前不恢复普通调度 |
+| `recovery_items` | `item_id` PK、`hold_id` FK、`task_id`、`verification_state`(pending/verified/auto_safe/resumed/cancelled)、`decision` NULL、`decided_by` NULL、`decided_at` NULL | 逐项核对台账；任务 `recovery.itemId` 指向此行 |
+| `settings` | `key` PK、`value`(JSON)、`version` | `agentConcurrency` 等；PUT 携带 `expectedVersion` |
+| `instance_epochs` | `epoch` PK、`started_at`、`stopped_at` NULL | 实例更替与旧写入拒绝 |
+
+schema/migration 建议（提案）：新服务数据库独立 lineage（元数据表记录 `schema_lineage = "web-backend/1"`、`schema_version` 从 1 起），遇 lineage 不符的既有库一律显式报错，不静默新建或续用；迁移工具沿用已锁定的 `rusqlite_migration` 正向迁移模式；开启 WAL；全部状态迁移用带状态/版本条件的 UPDATE 并校验影响行数（fencing 的机械实现）；索引：`tasks(operation_id)`、`tasks(state)`（部分索引）、`tasks(submit_seq)`、`task_events(object_type, object_id)`。与旧 v1–v5 store 之间不做迁移桥。
+
+## 13. 依赖清单提案（只提案；本轮不安装、不改 manifest/锁文件）
+
+复用现有锁定版本（依据 `package.json` 与 `src-tauri/Cargo.toml` 当前清单）：
+
+| 依赖 | 已锁版本 | 用途 | 说明 |
+|---|---|---|---|
+| `rusqlite` | =0.39.0（bundled+backup） | Rust 存储适配的 SQLite 连接/备份 | 新后端存储适配直接复用；`node:sqlite` 不得按路径重开业务库 |
+| `rusqlite_migration` | =2.5.0 | 正向 schema 迁移 | 与 §12 迁移建议一致 |
+| `keyring-core` / `apple-native-keyring-store` | =1.0.1 / =1.0.2 | macOS Keychain 凭据 provider | 已锁定；Linux 侧按设计走 env 引用，不新增 |
+| `serde` / `serde_json` | 当前锁定 | 契约序列化 | 错误包络与事件负载 |
+| Vue 3 / Pinia / TDesign / Tailwind v4 | 当前锁定 | 前端 | 不因本契约变化 |
+
+确需新增的生产依赖候选（引入前须锁版本、按仓库授权单独批准；含替代项）：
+
+| 候选 | 用途 | 替代项 | 建议处置 |
+|---|---|---|---|
+| 无（HTTP 层） | `node:http` + 自建薄路由 + 原生 SSE（`text/event-stream`） | `h3`/`fastify` | 首选零依赖；路由/SSE 复杂度超出阈值时再评审框架候选 |
+| 无（会话/CSRF/限速/UUID） | `node:crypto`（CSPRNG、HMAC、`randomUUID`）+ 内存令牌桶 | — | 零依赖实现 |
+| 校验库（如 `zod`，版本待锁定调查） | 请求/事件运行时校验与类型推导 | 手写校验函数（仓库既有模式） | 引入前按 R3 列清单评审；非 W0 必需 |
+
+## 14. 冻结与变更流程
+
+- 本文为提案；契约冻结由队长在 W0 阶段末统一宣布，成员不得自行宣布冻结或通知他人按草案开工（MAYNE-19 约束）。
+- 冻结后变更：不兼容字段/语义变更必须升 `contractVersion` 并在冻结记录中写明迁移方式；新增可选字段按兼容变更处理。
+- 原生适配/跨平台探针由独立负责人推进，可引用其后续结论；本契约不等待其它候选交付即可评审。
+- 实现切片接入时，本文的字段/错误/状态表是对应测试断言的独立预期来源；实现与契约不一致按缺陷处理，不反向改契约迁就实现。

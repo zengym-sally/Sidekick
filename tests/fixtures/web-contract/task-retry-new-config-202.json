@@ -1,0 +1,34 @@
+{
+  "contractVersion": "web-api/1",
+  "status": 202,
+  "task": {
+    "contractVersion": "web-api/1",
+    "taskId": "tsk_5b9e2c7a0d4f8b1e6a3c9f0d2b5e8a4c",
+    "operationId": "op_1d8f4a2c6e09b3d7f5a1c8e4b0d6f2a9",
+    "type": "organize_text",
+    "role": "organizer",
+    "state": "queued",
+    "version": 5,
+    "createdAt": "2026-11-06T12:30:00.000Z",
+    "updatedAt": "2026-11-06T12:38:00.000Z",
+    "terminalAt": null,
+    "submitSeq": 1044,
+    "queuePosition": null,
+    "attemptCount": 1,
+    "attemptId": null,
+    "attemptExitState": "not_started",
+    "cancelIntent": false,
+    "configRevision": "cfgrev_1a2b3c4d",
+    "originalConfigRevision": "cfgrev_0d81fe22",
+    "inputRef": {
+      "kind": "inline_text",
+      "byteSize": 842,
+      "contentHash": "sha256:1f3a9c07e5b2d84c0a6f1e93b7d5c2a8094e6f1bd3c7a5029e8b1d4f6a0c3e52"
+    },
+    "progress": null,
+    "result": null,
+    "failure": null,
+    "recovery": null
+  },
+  "note": "retry with a different configRevision is allowed only for auth_or_config_invalid / config_revision_unknown; configRevision is updated while originalConfigRevision keeps the first-enqueue value and the change is recorded in the event history"
+}
