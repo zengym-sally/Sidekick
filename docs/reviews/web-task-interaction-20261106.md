@@ -311,6 +311,8 @@ Codex 第四轮独立复审结论为 `APPROVE_WITH_CHANGES`：上一轮 1 项 P1
 | `node scripts/checks/check-structure.mjs`（工作树跟踪文件 vs `85feb8a` 基线） | 1/1 | 输出逐字节相同：仅 3 项既有 `ref.missing`；本项新增 0 |
 | Playwright/Chrome 交互复现（127.0.0.1:4231，18 组检查） | 0 | 18/18 PASS，console/page 错误 0，外部请求 0 |
 
+原始证据：`build/mayne-21/`（`web-task-flow-verification.json`、`verify-task-flow.cjs`、`capture-task-flow.cjs`、2 张截图）。该目录已被 `.gitignore` 忽略，不随仓库提交。
+
 覆盖的关键路径与观察值：先确认第二、三项后聚焦 T-2003「保留待核对」按 Enter → 选择 `保留待核对`、`active=true`、`pending=1`、焦点仍在「保留待核对」；紧接着一次重复 Enter → 选择不变、`active=true`（不再被误改为「已确认完成」）；打开运行中 T-2011 详情 → 显示「运行中」与「取消」；在详情点「取消」→ 弹窗同步为「取消中」且取消按钮消失；约 2.2s 后 → 弹窗同步为「待核对」并出现「逐项核对」入口；上一轮的恢复重新暂停、终态互改、混合计数、新增核对项计数、空闲槽复用、行内 Enter/Space、详情鼠标/键盘导航、重复提交、390×844 窄屏均复验通过。
 
 ### 11.4 本轮修订后文件哈希（收口时冻结）
