@@ -247,6 +247,48 @@ test('history paginates by sequence DESC', async () => {
   assert.equal(second.nextCursor, null);
 });
 
+test('list rejects unknown status and invalid limit (2026-11-08 ruling)', async () => {
+  const { service, tick } = makeService();
+  for (let index = 0; index < 3; index += 1) {
+    tick();
+    await service.createItem(`op_rej_${index}`, { ...SAMPLE, title: `事项 ${index}` });
+  }
+  const item = (await service.listItems()).items[0];
+
+  for (const status of ['bogus', '', 'OPEN', 'all ']) {
+    await assert.rejects(() => service.listItems({ status }), (error) => {
+      assert.equal(error.code, 'validation_failed');
+      return true;
+    });
+  }
+  for (const limit of [0, -1, 201, 1.5, 'abc', '', Number.NaN]) {
+    await assert.rejects(() => service.listItems({ limit }), (error) => {
+      assert.equal(error.code, 'validation_failed');
+      return true;
+    });
+    await assert.rejects(() => service.history(item.itemId, { limit }), (error) => {
+      assert.equal(error.code, 'validation_failed');
+      return true;
+    });
+  }
+
+  // Explicit bounds and every allowed status are accepted.
+  const limited = await service.listItems({ limit: 1 });
+  assert.equal(limited.items.length, 1);
+  assert.ok(limited.nextCursor);
+  const max = await service.listItems({ limit: 200 });
+  assert.equal(max.items.length, 3);
+  assert.equal(max.nextCursor, null);
+  const defaults = await service.listItems();
+  assert.equal(defaults.items.length, 3);
+  for (const status of ['open', 'completed', 'deleted', 'all']) {
+    const result = await service.listItems({ status });
+    assert.ok(Array.isArray(result.items));
+  }
+  const history = await service.history(item.itemId, { limit: 200 });
+  assert.ok(Array.isArray(history.events));
+});
+
 test('canonicalize is key-order independent', () => {
   assert.equal(canonicalize({ a: 1, b: [2, 3] }), canonicalize({ b: [2, 3], a: 1 }));
   assert.notEqual(canonicalize({ a: 1 }), canonicalize({ a: 2 }));

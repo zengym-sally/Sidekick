@@ -207,8 +207,10 @@ export class HttpServer {
 
   async pair(req, res) {
     const body = await jsonBody(req);
-    const code = body.pairingCode ?? body.code ?? body.pairing_code;
-    const result = this.sessions.pair(code);
+    // The standard wire field is `pairingCode`; no alias fallback, so a client
+    // sending a different name fails instead of silently pairing (2026-11-08
+    // interface ruling).
+    const result = this.sessions.pair(body.pairingCode);
     this.sendJson(
       res,
       200,

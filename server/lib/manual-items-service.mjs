@@ -31,6 +31,7 @@ const INSERT_EVENT = `INSERT INTO manual_item_events
 
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 200;
+const ALLOWED_STATUSES = ['open', 'completed', 'deleted', 'all'];
 
 export class ServiceError extends Error {
   constructor(code, message, details) {
@@ -184,6 +185,18 @@ function toWire(item) {
     version: item.version,
     source: item.source,
   };
+}
+
+/// Parse a pagination `limit`: absent means the default, an explicit value must
+/// be an integer in 1..MAX_LIMIT (2026-11-08 interface ruling — no silent
+/// clamping or fallback).
+function parseLimit(value) {
+  if (value === undefined || value === null) return DEFAULT_LIMIT;
+  const numeric = typeof value === 'number' ? value : Number(value);
+  if (!Number.isInteger(numeric) || numeric < 1 || numeric > MAX_LIMIT) {
+    throw validation(`limit 必须是 1–${MAX_LIMIT} 的整数。`);
+  }
+  return numeric;
 }
 
 function decodeCursor(cursor, kind) {
@@ -438,16 +451,20 @@ export class ManualItemsService {
   async listItems({ status, kind, cursor, limit } = {}) {
     const clauses = [];
     const params = [];
-    if (status === 'all') {
-      // no filter
-    } else if (status === 'deleted') {
-      clauses.push('status=?');
-      params.push('deleted');
-    } else if (status === 'open' || status === 'completed') {
-      clauses.push('status=?');
-      params.push(status);
-    } else {
+    if (status === undefined || status === null) {
       clauses.push("status IN ('open','completed')");
+    } else if (ALLOWED_STATUSES.includes(status)) {
+      if (status === 'all') {
+        // no filter
+      } else if (status === 'deleted') {
+        clauses.push('status=?');
+        params.push('deleted');
+      } else {
+        clauses.push('status=?');
+        params.push(status);
+      }
+    } else {
+      throw validation('status 无效。');
     }
     if (kind === 'action' || kind === 'followup') {
       clauses.push('kind=?');
@@ -458,7 +475,7 @@ export class ManualItemsService {
       clauses.push('(created_at_ms < ? OR (created_at_ms = ? AND item_id > ?))');
       params.push(watermark.createdAtMs, watermark.createdAtMs, watermark.itemId);
     }
-    const pageSize = Math.min(Math.max(Number(limit) || DEFAULT_LIMIT, 1), MAX_LIMIT);
+    const pageSize = parseLimit(limit);
     const where = clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '';
     const result = await this.storage.command('query', {
       sql: `${SELECT_ITEM}${where} ORDER BY created_at_ms DESC, item_id ASC LIMIT ?`,
@@ -476,7 +493,7 @@ export class ManualItemsService {
 
   async history(itemId, { cursor, limit } = {}) {
     await this.getItem(itemId);
-    const pageSize = Math.min(Math.max(Number(limit) || DEFAULT_LIMIT, 1), MAX_LIMIT);
+    const pageSize = parseLimit(limit);
     const watermark = decodeCursor(cursor, 'history');
     const clauses = ['item_id=?'];
     const params = [itemId];

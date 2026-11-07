@@ -17,8 +17,8 @@
 | 文件 | SHA-256 |
 |---|---|
 | `server/entries/web-backend-entry.mjs` | `776b9b39b72994106abdf0e71d570347d8c9af6a18c78f56c0caf6e289b44797` |
-| `server/lib/http-server.mjs` | `6b1a2064b6db734a457b91bf90a721acc976e6dc52a4a7b291121953cea3ebe3` |
-| `server/lib/manual-items-service.mjs` | `fb1d28c51aad72993db007443b7ddc83659b7b73fa3fef6afd5c14c2e2a24323` |
+| `server/lib/http-server.mjs` | `f4d80e628e863a752848b65e503a14b66e4318a649b088324d5f42cf84ac9ab8` |
+| `server/lib/manual-items-service.mjs` | `3742c994aa035a2c1cd1ca2880ad32efa1668d0524764a10ab8f01d1244ba7c8` |
 | `server/lib/session-store.mjs` | `9823db95128835c84f77a35eea68f9fbd63173f9f18156fc8c8f94059609fc1e` |
 | `server/lib/sse-hub.mjs` | `174507c6ce2e36016013546473cdc19b6678799ca38e33bb06f2092840006ade` |
 | `server/lib/static-files.mjs` | `3c07b73eb6be8af6ee903b257d49178735c3f59a6dffb2437a84ee63975251ac` |
@@ -48,7 +48,7 @@
 | 文件 | SHA-256 |
 |---|---|
 | `src-tauri/src/store/web_backend_store_tests.rs` | `5b371d0826dd2ba3946353619da4682e90b00bdf32139c95d3eaaf3936a745be` |
-| `tests/unit/web-manual-items.test.mjs` | `de61d638545da3ff6dc2f0dd8e8180c86e5195ddfa007cdf8c04d997128e2b38` |
+| `tests/unit/web-manual-items.test.mjs` | `d9bc844696108b84ee25421c296b7b8420ffd0748bd4e119704021ff0e242dce` |
 
 ## 3. 实现要点
 
@@ -83,3 +83,21 @@
 3. **结构检查中的环境性失败**：本工作树存在平台运行时目录 `.claude/` 与 `CLAUDE.md`（非本任务创建，守卫未白名单），以及 `vendor/pi` 未构建导致的 3 条 `ref.missing`；这些与本候选无关，需在集成环境按实际状态处理。
 4. **未验边界**：Linux/代理部署、真实凭据/用户工作根/模型、push 与发布仍未授权，不在本切片验收范围；浏览器同源 UI 的 Playwright 矩阵由 II 在候选齐备后执行。
 5. **独立审查**：本增量由未参与实现的 ZCode 承担（队长按精确版本派发）；作者不自签 APPROVE。
+
+
+## 6. 2026-11-08 接口补充裁定增量
+
+依据任务描述 §「2026-11-08 接口字面名与列表参数协调裁定」，在 Task I 服务与必要单测范围内落实：
+
+- **参数拒绝**：`manual-items-service.mjs` 新增 `parseLimit` 与 `ALLOWED_STATUSES`。列表/历史 `limit` 缺省 50；显式值必须是 1–200 整数，否则 400 `validation_failed`（不再静默截断/回退）。列表 `status` 缺省 open+completed；显式未知值返回 400 `validation_failed`。
+- **标准线格式核对**：`POST /api/pair` 仅接受请求体 `pairingCode`（移除 `code`/`pairing_code` 别名兜底）；配对与 `GET /api/session` 响应顶层 `csrfToken`；写请求读取 `X-CSRF-Token`（HTTP 头名大小写不敏感）。浏览器客户端 `web-api-client.ts` 已使用同一字面名，无需改动。
+
+**本增量文件 SHA-256**
+- `server/lib/manual-items-service.mjs`：`3742c994aa035a2c1cd1ca2880ad32efa1668d0524764a10ab8f01d1244ba7c8`
+- `server/lib/http-server.mjs`：`f4d80e628e863a752848b65e503a14b66e4318a649b088324d5f42cf84ac9ab8`
+- `tests/unit/web-manual-items.test.mjs`：`d9bc844696108b84ee25421c296b7b8420ffd0748bd4e119704021ff0e242dce`
+
+**本增量聚焦验证（实跑）**
+- `node --test tests/unit/web-manual-items.test.mjs`：11/11 pass（新增「list rejects unknown status and invalid limit」）。
+- 真实 HTTP smoke（`build/web-manual-items-implementation/smoke-params.mjs`）：`{code}` 别名 → 401 `pair_code_invalid`；`{pairingCode}` → 200 且顶层 `csrfToken`；`status=bogus`/`status=` → 400；`limit=0/201/1.5/abc/空` → 400；`limit=50/200` 与 `status=open/completed/deleted/all` → 200。
+- Rust 侧未改动，沿用 `74c023c` 的 11/11 与 18/18、clippy/fmt 结论。
