@@ -168,7 +168,7 @@
 - **成功结局·分段路径**：超限时同一端点返回**索引响应**（200）：`{contractVersion, taskId, outcome: "succeeded", kind, totalBytes, maxInlineBytes, maxSegmentBytes, inline: false, payload: null, payloadRef, failure: null, nextOffset: 0, done: false, acceptedByAttempt, completedAt}`。
 - **分段请求**：`GET /api/tasks/{taskId}/result?offset=<n>&limit=<b>`。`offset` 为字节偏移（默认 0）；`limit` 为本次请求的字节数（默认 `maxSegmentBytes`，最大 `maxSegmentBytes`）。
 - **分段响应**（200）：`{contractVersion, taskId, outcome: "succeeded", failure: null, offset, limit, bytesReturned, totalBytes, nextOffset, done, payloadBase64}`；`payloadBase64` 为该字节段的 base64（二进制安全）。`done = (offset + bytesReturned >= totalBytes)`；未结束时 `nextOffset = offset + bytesReturned`，结束时 `nextOffset = null`。
-- **判别与元信息的作用范围**：`outcome`/`failure` 是**所有读取响应**（内联、索引、分段、失败结局）的公共判别字段；`totalBytes`/`maxInlineBytes`/`maxSegmentBytes`/`nextOffset`/`done` 是成功结局的大小与分段元信息，仅出现在索引与分段响应中。失败结局不带分段元信息。
+- **判别与元信息的作用范围**：`outcome`/`failure` 是**所有读取响应**（内联、索引、分段、失败结局）的公共判别字段。成功结局的大小/分段元信息按下列范围出现：`totalBytes` 用于内联、索引、分段；`maxInlineBytes`/`maxSegmentBytes` 用于内联与索引；`nextOffset`/`done` 用于索引与分段。失败结局不带任何大小/分段元信息。
 - **完成条件**：收到 `done=true`，或客户端累计收到 `totalBytes` 字节。
 - **失败结局读取**：`outcome=failed` 时响应为 `{contractVersion, taskId, outcome: "failed", kind: null, payload: null, failure: {code, message, retryable, sideEffectSafety, nextAttemptAt?}, acceptedByAttempt, completedAt}`；不分段、不支持 `offset`/`limit`（携带即 400 `result_range_invalid`）。
 - **读取白名单**：仅 `state=succeeded`（成功结局），或 `state=needs_review` 且 `recovery.cause=result_exit_unconfirmed` 且 `attemptExitState=exited_confirmed`（按暂存判别给出成功或失败结局）时可读取；其余状态一律 409 `state_conflict`。
