@@ -194,6 +194,8 @@ function render() {
   const active = document.activeElement;
   const restoreRowId = active?.closest?.(".task-row")?.dataset?.id ?? null;
   const restoreReviewIndex = active?.dataset?.action === "review-choice" ? active.dataset.index : null;
+  const restoreReviewOption = active?.dataset?.action === "review-choice" ? (active.dataset.option ?? null) : null;
+  const restoreDialogAction = active?.closest?.("#task-dialog") ? (active.dataset?.action ?? null) : null;
   const views = { queue: renderQueue, review: renderReview, capability: renderCapability };
   $("#view").innerHTML = views[state.page]();
   document.querySelectorAll(".nav-item").forEach((el) => {
@@ -210,22 +212,39 @@ function render() {
   $("#nav-review-count").textContent = reviewBadge;
   $("#nav-review-count").hidden = reviewBadge === 0;
   $("#concurrency-value").textContent = state.concurrency;
+  // 详情弹窗跟随任务权威状态：打开时按当前状态重绘，避免保留过期快照（契约 §2/§3.3/§6）。
+  if (detailId) {
+    const el = $("#task-dialog");
+    if (el.open) {
+      renderDetail(detailId);
+      // 详情内焦点：优先回到原动作按钮，否则回到第一个动作按钮，不跳到别的决定上。
+      const target = restoreDialogAction ? document.querySelector(`#task-dialog [data-action="${restoreDialogAction}"]`) : null;
+      (target || document.querySelector("#task-dialog .review-choice button"))?.focus();
+    } else {
+      detailId = null;
+    }
+    return;
+  }
   if (restoreRowId) {
     const row = document.querySelector(`.task-row[data-id="${restoreRowId}"]`) || document.querySelector("#view .task-row");
     if (row) { row.focus(); return; }
   }
   if (restoreReviewIndex != null) {
-    const button = document.querySelector(`[data-action="review-choice"][data-index="${restoreReviewIndex}"]`);
+    // 按核对项与具体 option 回到原按钮：只存 index 会落到该项第一个按钮（另一项决定）上。
+    const button = (restoreReviewOption != null && document.querySelector(`[data-action="review-choice"][data-index="${restoreReviewIndex}"][data-option="${restoreReviewOption}"]`))
+      || document.querySelector(`[data-action="review-choice"][data-index="${restoreReviewIndex}"]`);
     if (button) button.focus();
   }
 }
 
-function openDetail(id) {
+// 当前打开的任务详情：render() 会按权威状态重绘它，避免保留过期快照。
+let detailId = null;
+
+function renderDetail(id) {
   const task = state.tasks.find((t) => t.id === id); if (!task) return;
   const meta = STATE_META[task.state];
   const stale = [{ t: "09:39:12", text: `旧事件：${task.id} ${meta.label}（低于快照游标，已忽略）`, stale: true }];
-  const el = $("#task-dialog");
-  el.innerHTML = `<header class="dialog-header"><h2 id="task-dialog-title">${icon(meta.icon)} ${escapeHtml(task.kind)} · ${escapeHtml(task.id)}</h2><button class="icon-button" data-action="close" aria-label="关闭任务详情">${icon("close")}</button></header>
+  $("#task-dialog").innerHTML = `<header class="dialog-header"><h2 id="task-dialog-title">${icon(meta.icon)} ${escapeHtml(task.kind)} · ${escapeHtml(task.id)}</h2><button class="icon-button" data-action="close" aria-label="关闭任务详情">${icon("close")}</button></header>
   <div class="dialog-body">
    <div style="display:flex;gap:8px;flex-wrap:wrap">${stateLabel(task)}<span class="pill">${icon("inbox")} ${escapeHtml(task.role)}</span>${task.attempt ? `<span class="pill">attempt ${escapeHtml(task.attempt)} · epoch ${escapeHtml(task.epoch)}</span>` : ""}</div>
    <dl class="detail-grid">
@@ -245,7 +264,18 @@ function openDetail(id) {
    </div>
    <p class="small-note">演示数据：不连接模型、飞书、MCP、Bash、SQLite 或本机文件系统；接口字段名以契约冻结为准。</p>
   </div>`;
+}
+
+function openDetail(id) {
+  detailId = id;
+  renderDetail(id);
+  const el = $("#task-dialog");
   if (!el.open) el.showModal();
+}
+
+function closeDetail() {
+  detailId = null;
+  $("#task-dialog").close();
 }
 
 function findTask(id) { return state.tasks.find((t) => t.id === id); }
@@ -370,7 +400,7 @@ document.addEventListener("click", (event) => {
   if (navButton) { state.page = navButton.dataset.page; render(); $("#view").scrollTop = 0; return; }
   const button = event.target.closest("[data-action]"); if (!button || button.disabled) return;
   const { action, id } = button.dataset;
-  if (action === "close") { $("#task-dialog").close(); return; }
+  if (action === "close") { closeDetail(); return; }
   if (action === "detail") openDetail(id);
   else if (action === "cancel") cancelTask(id);
   else if (action === "resubmit") resubmit(id);
@@ -379,7 +409,7 @@ document.addEventListener("click", (event) => {
   else if (action === "drop-event") dropEvent();
   else if (action === "open-review") {
     // 从详情进入核对：先关闭模态框，再切页并把焦点放到目标核对项（契约 §12）。
-    $("#task-dialog").close();
+    closeDetail();
     state.page = "review"; render(); $("#view").scrollTop = 0;
     const card = document.querySelector(`.cap-card[data-task-id="${id}"]`);
     if (card) card.focus();
@@ -388,7 +418,7 @@ document.addEventListener("click", (event) => {
   else if (action === "review-choice") reviewChoice(Number(button.dataset.index), button.dataset.option);
 });
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && $("#task-dialog")?.open) { $("#task-dialog").close(); return; }
+  if (event.key === "Escape" && $("#task-dialog")?.open) { closeDetail(); return; }
   const row = event.target.closest?.(".task-row");
   // 行级 Enter 只在行本身聚焦时打开详情；行内按钮（取消/重新提交/逐项核对/详情）保持原生键盘行为（契约 §12）。
   if (row && event.key === "Enter" && event.target === row) { event.preventDefault(); openDetail(row.dataset.id); return; }
@@ -398,6 +428,6 @@ document.addEventListener("keydown", (event) => {
 $("#task-dialog").addEventListener("click", (event) => {
   if (event.target !== $("#task-dialog")) return;
   const b = $("#task-dialog").getBoundingClientRect();
-  if (event.clientX < b.left || event.clientX > b.right || event.clientY < b.top || event.clientY > b.bottom) $("#task-dialog").close();
+  if (event.clientX < b.left || event.clientX > b.right || event.clientY < b.top || event.clientY > b.bottom) closeDetail();
 });
 render();

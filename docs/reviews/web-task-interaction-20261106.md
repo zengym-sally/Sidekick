@@ -282,3 +282,46 @@ Codex 第三轮独立复审结论为 `APPROVE_WITH_CHANGES`：上一轮四条修
 | `design/index.html` | `6c2e9aaedaa3afe170e5f9dd4498a4faeac081e06c0e368004493174907d3356` |
 
 `index.html`／`task-flow.css`／`design/README.md`／`design/index.html` 本轮未改动，哈希与 §8.6 一致；本记录自身是本轮新增证据，不在冻结表内。
+
+## 11. 第五轮复审修订（`e764e0a` → 新一轮：2 项 P2）
+
+Codex 第四轮独立复审结论为 `APPROVE_WITH_CHANGES`：上一轮 1 项 P1、4 项 P2 的聚焦路径均已复现修复，本轮仍发现 2 项 P2，不能合入。任务按 workflow 再次退回 `started_2`，由 Claude 继续修订。本修订只改演示代码与契约相应措辞，写入范围不变。
+
+### 11.1 P2-1 核对按钮重绘后按「项 + option」恢复焦点
+
+- 根因：上一轮的焦点恢复只保存核对项 `index`，重绘后查询该项的第一个按钮，丢失了原按钮的 `data-option`，焦点落到「已确认完成」而非用户刚按下的「保留待核对」。
+- 修复：`render()` 同时记录 `data-index` 与 `data-option`，重绘后按两者定位原按钮；找不到才回退到该项第一个按钮。
+- 契约 §12 补充：逐项核对按钮重绘后按核对项与具体选项回到原按钮，不得默认聚焦该项第一个按钮。
+- 复现保护：聚焦「保留待核对」按一次 Enter 后选择正确、焦点仍在同一按钮；按住 Enter 产生原生重复事件时，第二次触发命中同一 option 的早退分支，选择不变、恢复保持暂停。
+
+### 11.2 P2-2 详情弹窗跟随任务权威状态
+
+- 根因：`render()` 只更新 `#view`，已打开的 `#task-dialog` 保留 `openDetail()` 打开时的内容；从详情发起取消后，弹窗继续显示过期的 `running` 快照与「取消」按钮。
+- 修复：新增 `detailId` 与 `renderDetail(id)`；`render()` 在详情打开时按当前权威状态重绘弹窗，并同步更新动作（`running`→`cancelling` 只读、→`needs_review` 给出「逐项核对」）。详情内焦点优先回到原动作按钮，否则回到第一个动作按钮，不跳到别的决定上。
+- 契约 §3.3 补充：详情与列表同权，打开的详情必须跟随权威状态重绘，不保留过期快照；从详情发起取消后同步显示 `cancelling`→`needs_review` 与对应动作。
+
+### 11.3 本轮验证证据
+
+预览服务：`PORT=4231 node design/serve.mjs`（127.0.0.1，只读暴露 `/design/`、`/src/assets/`、`/src/styles/`），验证结束后已停止（端口无监听）。
+
+| 命令 | 退出码 | 结果 |
+|---|---|---|
+| `node --check design/web-task-flow/task-flow.js` | 0 | 语法通过 |
+| `npm run check:docs` | 0 | 18 文件、302 个本地相对链接全部解析 |
+| `node scripts/checks/check-structure.mjs`（工作树跟踪文件 vs `85feb8a` 基线） | 1/1 | 输出逐字节相同：仅 3 项既有 `ref.missing`；本项新增 0 |
+| Playwright/Chrome 交互复现（127.0.0.1:4231，18 组检查） | 0 | 18/18 PASS，console/page 错误 0，外部请求 0 |
+
+覆盖的关键路径与观察值：先确认第二、三项后聚焦 T-2003「保留待核对」按 Enter → 选择 `保留待核对`、`active=true`、`pending=1`、焦点仍在「保留待核对」；紧接着一次重复 Enter → 选择不变、`active=true`（不再被误改为「已确认完成」）；打开运行中 T-2011 详情 → 显示「运行中」与「取消」；在详情点「取消」→ 弹窗同步为「取消中」且取消按钮消失；约 2.2s 后 → 弹窗同步为「待核对」并出现「逐项核对」入口；上一轮的恢复重新暂停、终态互改、混合计数、新增核对项计数、空闲槽复用、行内 Enter/Space、详情鼠标/键盘导航、重复提交、390×844 窄屏均复验通过。
+
+### 11.4 本轮修订后文件哈希（收口时冻结）
+
+| 文件 | SHA-256 |
+|---|---|
+| `docs/engineering/web-task-interaction.md` | `a944acc4fa7e0c3c0b9c384e1aa6fc46926a91877ae064f9bb46c7e0ccb9aa0c` |
+| `design/web-task-flow/index.html` | `5ca8e9c6c33036055ea3a2282e6857a032f0706b740265d245929b59cae95b43` |
+| `design/web-task-flow/task-flow.css` | `5455ed6cbe0ff603aaa2570a64982333a98fbcb03fb3629ffe8459c56410531e` |
+| `design/web-task-flow/task-flow.js` | `9e4627fa2fc977b7186cceabe6dc34850b9558dd6f79d34cb6ad2e4696f9d2a3` |
+| `design/README.md` | `ec45181be707921a35d26a90f1e6c1404468be4f251cce5d668d8596d0c67174` |
+| `design/index.html` | `6c2e9aaedaa3afe170e5f9dd4498a4faeac081e06c0e368004493174907d3356` |
+
+`index.html`／`task-flow.css`／`design/README.md`／`design/index.html` 本轮未改动，哈希与 §8.6 一致；本记录自身是本轮新增证据，不在冻结表内。
