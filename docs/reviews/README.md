@@ -13,10 +13,35 @@
 - **索引强制**：新增记录必须登记到本文件；未登记视为未收口。`check:docs` 只校验链接存在，语义一致性靠评审。
 - **新路径**：2026-10-31 结构治理后，新记录使用新路径（`runtime/{entries,lib,workers}/`、`src-tauri/src/{app,store,host,diagnostics}/`、`tests/{unit,integration,probes,fixtures}/`、`scripts/{build,checks,probes}/`）；旧记录保留原路径，按文件名仍可检索。
 
-## 2. 记录索引（47 份）
+## 2. 记录索引（72 份）
 
 | 记录 | 日期 | 范围与结论 | 证据 |
 |---|---|---|---|
+| [web-foundation-integration-20261107.md](web-foundation-integration-20261107.md) | 2026-11-07 | MAYNE-22 W0 集成：MAYNE-18 门禁修复按审定补丁接入基座（三文件与候选逐字节一致）；任务面板占槽/退出核实语义按已接受 attemptExitState 契约对齐并动态复现（退出未知仍占槽、决议闸门、释放后领取正确空闲槽、恢复闸门与焦点/窄屏不回归）；聚焦门禁全过，完整门禁因机器高负载在既有 s32 长路径测试如实失败开放 | 原始证据 `build/web-foundation-integration/`（gitignored） |
+| [web-contract-independent-review-round9-20261107.md](web-contract-independent-review-round9-20261107.md) | 2026-11-07 | MAYNE-19 第九轮验收收口：接收候选 `9d094d3`（JSON 字节未变，仅元信息适用范围）；契约 web-api/1 定稿 | 见记录 |
+| [web-contract-rework-round8-20261107.md](web-contract-rework-round8-20261107.md) | 2026-11-07 | MAYNE-19 第八轮修订：仅规范文本一处（attemptExitState 口径），返工记录 | 见记录 |
+| [web-contract-independent-review-round8-20261107.md](web-contract-independent-review-round8-20261107.md) | 2026-11-07 | MAYNE-19 第八轮聚焦复审：候选 `6e8b56a`（3 文件） | 见记录 |
+| [web-contract-rework-round7-20261107.md](web-contract-rework-round7-20261107.md) | 2026-11-07 | MAYNE-19 第七轮修订返工记录 | 见记录 |
+| [web-contract-independent-review-round7-20261107.md](web-contract-independent-review-round7-20261107.md) | 2026-11-07 | MAYNE-19 第七轮聚焦复审：候选 `369ce00`（6 文件） | 见记录 |
+| [web-contract-rework-round6-20261107.md](web-contract-rework-round6-20261107.md) | 2026-11-07 | MAYNE-19 第六轮修订返工记录 | 见记录 |
+| [web-contract-independent-review-round6-20261107.md](web-contract-independent-review-round6-20261107.md) | 2026-11-07 | MAYNE-19 第六轮独立复审：候选 `bd374a1`（10 文件） | 见记录 |
+| [web-contract-rework-round5-20261107.md](web-contract-rework-round5-20261107.md) | 2026-11-07 | MAYNE-19 第五轮修订返工记录 | 见记录 |
+| [web-contract-independent-review-round5-20261107.md](web-contract-independent-review-round5-20261107.md) | 2026-11-07 | MAYNE-19 第五轮独立复审：候选 `307c7b9`（11 文件） | 见记录 |
+| [web-contract-rework-round4-20261107.md](web-contract-rework-round4-20261107.md) | 2026-11-07 | MAYNE-19 第四轮修订返工记录 | 见记录 |
+| [web-contract-independent-review-round4-20261107.md](web-contract-independent-review-round4-20261107.md) | 2026-11-07 | MAYNE-19 第四轮独立复审：候选 `d29bccc`（25 文件） | 见记录 |
+| [web-contract-rework-round3-20261107.md](web-contract-rework-round3-20261107.md) | 2026-11-07 | MAYNE-19 第三轮修订返工记录 | 见记录 |
+| [web-contract-independent-review-round3-20261107.md](web-contract-independent-review-round3-20261107.md) | 2026-11-07 | MAYNE-19 第三轮独立复审：候选 `b08bf02`（38 文件） | 见记录 |
+| [web-contract-rework-20261107.md](web-contract-rework-20261107.md) | 2026-11-07 | MAYNE-19 第二轮修订（返工）记录，配套 `tests/fixtures/web-contract/` | 见记录 |
+| [web-contract-independent-review-20261107.md](web-contract-independent-review-20261107.md) | 2026-11-07 | MAYNE-19 第二轮独立复审：候选 `7ade737` | 见记录 |
+| [web-contract-revision-20261107.md](web-contract-revision-20261107.md) | 2026-11-07 | MAYNE-19 第一轮修订记录（契约与 fixture） | 见记录 |
+| [web-contract-independent-review-20261106.md](web-contract-independent-review-20261106.md) | 2026-11-06 | MAYNE-19 第一轮独立复核：候选 `9750467`（23 文件） | 见记录 |
+| [web-contract-20261106.md](web-contract-20261106.md) | 2026-11-06 | MAYNE-19 初版 W0 Web API 契约与样例交付记录 | 见记录 |
+| [backend-foundation-20261107-r4.md](backend-foundation-20261107-r4.md) | 2026-11-07 | MAYNE-20 第五轮作者侧记录（候选 `5cd3538`），随后 ZCode R3 独立复审 APPROVE 并收口 | 原始证据见记录 |
+| [backend-foundation-20261107-r3.md](backend-foundation-20261107-r3.md) | 2026-11-07 | MAYNE-20 第四轮修订作者记录（`fa88332`），被 Codex 复审 BLOCK 后由 r4 取代；历史保留 | 见记录 |
+| [backend-foundation-20261107-r2.md](backend-foundation-20261107-r2.md) | 2026-11-07 | MAYNE-20 第三轮修订作者记录（`a17a6b4`），被 Codex 复审 BLOCK 后由 r3 取代；历史保留 | 见记录 |
+| [backend-foundation-20261107.md](backend-foundation-20261107.md) | 2026-11-07 | MAYNE-20 第二轮修订作者记录（`55684a2`），被 Codex 复审 BLOCK 后由 r2 取代；历史保留 | 见记录 |
+| [backend-foundation-20261106.md](backend-foundation-20261106.md) | 2026-11-06 | MAYNE-20 首轮作者记录（`355d1a0`），ZCode 出具 BLOCK/needs_revision 后由后续修订取代；历史保留 | 见记录 |
+| [runtime-metadata-20261106.md](runtime-metadata-20261106.md) | 2026-11-06 | MAYNE-18 W0 门禁修复：结构守卫区分平台运行时元数据（`.multica/`、`.opencode/`）与生产源码；本工作树新完整 check exit 0（attempt1 失败已归因既有冷启动抖动）；ZCode APPROVE | 原始证据 `build/runtime-metadata-20261106/` |
 | [web-task-interaction-20261106.md](web-task-interaction-20261106.md) | 2026-11-06 | MAYNE-21 W0 浏览器任务交互契约与静态演示：队列/取消/恢复/核对界面语义、凭据与原生边界、壳适配点；ZCode 两轮独立评审 APPROVE_WITH_CHANGES（占槽集合含取消中、保留待核对不放行恢复、槽号按空闲槽分配、保留项可改选、取消转核对生成核对卡、暂停期拦截重新提交）+ 18 组浏览器交互检查通过，守卫与 175 项既有基线一致；未实现生产 HTTP/队列 | 原始证据 `build/mayne-21/`（gitignored） |
 | [web-backend-direction-20261106.md](web-backend-direction-20261106.md) | 2026-11-06 | owner 五项决定：完整 Web 业务先行、OS 凭据、默认 3 并发持久队列、旧版无兼容桥；文档同步与设计，功能尚未实现 | 原始证据 `build/mayne-16-review/` |
 | [pet-native-20261105.md](pet-native-20261105.md) | 2026-11-05 | 单屏桌宠动效/半隐/原生右键菜单、语义反馈与单色菜单栏图标已接线；双面代码评审/完整门禁通过，正式版物理验收及P4仍开放 | build/pet-native-20261105 完整日志与冻结；正式UI源/包哈希见记录 |

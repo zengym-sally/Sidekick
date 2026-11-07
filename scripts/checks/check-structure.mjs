@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // Mechanical structure guard for the Sidekick repository.
 // - Working set: `git ls-files` (tracked + untracked, ignored paths excluded).
-// - Checks: relative-reference boundaries/existence, top-level whitelist, tracked forbidden paths,
-//   directory layout, expected packaging entries, package.json path hygiene.
+// - Checks: relative-reference boundaries/existence, top-level whitelist, runtime metadata
+//   hygiene, tracked forbidden paths, directory layout, expected packaging entries,
+//   package.json path hygiene.
 // - `--self-test` builds a synthetic tree under a temp directory and asserts violations are detected.
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -16,6 +17,17 @@ const TOP_LEVEL_DIRS = new Set(['.cargo', '.impeccable', 'design', 'docs', 'reso
 const ROOT_FILES = new Set(['.gitignore', '.env.example', 'AGENTS.md', 'DESIGN.md', 'PRODUCT.md', 'README.md', 'index.html', 'package-lock.json', 'package.json', 'tsconfig.json', 'vite.config.ts']);
 const FORBIDDEN_TRACKED = ['build/', 'dist/', 'src-tauri/target/', 'node_modules/'];
 const ENV_FILE = /(^|\/)\.env(\.[^/]*)?$/;
+
+// Coding-agent platforms keep machine-local runtime metadata inside the checkout
+// (task context, project resources, installed agent skills). It is working state:
+// usable locally, never committed, never packaged, and never scanned as production
+// source. Only these explicit directories are tolerated while untracked; anything
+// else still fails the top-level whitelist and must be reviewed before adoption.
+const RUNTIME_METADATA_DIRS = new Set(['.multica', '.opencode']);
+// Daemon-written state directories only ever hold data files; executable code
+// hiding there is production source in disguise and stays rejected.
+const METADATA_DATA_ONLY_DIRS = new Set(['.multica']);
+const METADATA_CODE_EXT = /\.(?:mjs|cjs|js|mts|cts|ts|jsx|tsx|vue|py|pyc|sh|bash|zsh|rs|go|rb|pl|php|java|kt|kts|swift|c|cc|cpp|h|hpp|exe|so|dylib|dll|wasm)$/;
 
 const RUNTIME_TOP = new Set(['entries', 'lib', 'workers']);
 const SCRIPTS_TOP = new Set(['build', 'checks', 'probes']);
@@ -217,9 +229,19 @@ function checkTopLevel(files, add) {
     const parts = splitPath(file);
     if (parts.length === 1) {
       if (!ROOT_FILES.has(parts[0])) add('top.file', file, 1, `unexpected tracked root file: ${parts[0]}`);
-    } else if (!TOP_LEVEL_DIRS.has(parts[0])) {
+    } else if (!TOP_LEVEL_DIRS.has(parts[0]) && !RUNTIME_METADATA_DIRS.has(parts[0])) {
       add('top.dir', file, 1, `unexpected top-level directory: ${parts[0]}`);
     }
+  }
+}
+
+function checkRuntimeMetadata(files, tracked, add) {
+  const trackedSet = new Set(tracked);
+  for (const file of files) {
+    const parts = splitPath(file);
+    if (parts.length < 2 || !RUNTIME_METADATA_DIRS.has(parts[0])) continue;
+    if (trackedSet.has(file)) add('metadata.tracked', file, 1, 'platform runtime metadata must stay untracked; un-stage it instead of committing local working state');
+    else if (METADATA_DATA_ONLY_DIRS.has(parts[0]) && METADATA_CODE_EXT.test(parts.at(-1) ?? '')) add('metadata.code', file, 1, 'executable code is not platform metadata; production source cannot hide inside a runtime state directory');
   }
 }
 
@@ -261,6 +283,7 @@ function collect(options) {
     if (!existsSync(path) || createHash('sha256').update(readFileSync(path)).digest('hex') !== expected) add('schema.immutable-migration', file, 1, 'Historical migrations 001-004 must retain their original bytes; append a new migration.');
   }
   checkTopLevel(files, add);
+  checkRuntimeMetadata(files, tracked, add);
   checkTrackedForbidden(tracked, add);
   checkLayout(files, add);
   checkBareImports(root, files, add);
@@ -317,12 +340,18 @@ function runRepoCheck() {
 function runSelfTest() {
   const root = mkdtempSync(join(tmpdir(), 'sidekick-structure-self-test-'));
   const files = [];
+  const untrackedPaths = new Set();
   const write = (relativePath, content = '') => {
     const abs = join(root, ...relativePath.split('/'));
     mkdirSync(dirname(abs), { recursive: true });
     writeFileSync(abs, content);
     files.push(relativePath);
     return relativePath;
+  };
+  const writeUntracked = (relativePath, content = '') => {
+    const path = write(relativePath, content);
+    untrackedPaths.add(path);
+    return path;
   };
   try {
     write('package.json', `${JSON.stringify({ devDependencies: { tailwindcss: '0.0.0' }, scripts: { check: 'node tests/s1-domain.test.mjs && node scripts/probes/bundle-runtime.mjs && npm run probe:bundle' } }, null, 2)}\n`);
@@ -360,7 +389,21 @@ function runSelfTest() {
     write('src-tauri/src/loose.rs');
     write('vendor/pi/README.md');
 
-    const { violations } = collect({ root, files, tracked: files, packagePath: join(root, 'package.json') });
+    // Runtime metadata: legitimate untracked platform state stays usable and unflagged.
+    writeUntracked('.multica/daemon_task_context.json', '{"taskId": "synthetic", "workspace": "/Synthetic/Local/Only"}\n');
+    writeUntracked('.multica/project/resources.json', '{"local_directory": {"label": "synthetic"}}\n');
+    writeUntracked('.opencode/skills/demo/SKILL.md', '# synthetic agent skill\n');
+    // The agent runtime installs its own tooling payload; untracked script files there are
+    // tolerated exactly like the data files, but committed state is still rejected below.
+    writeUntracked('.opencode/skills/demo/scripts/tool.mjs', "export const tool = 'synthetic';\n");
+    // Negative: runtime metadata must never be tracked, and production code cannot hide
+    // inside the daemon state directory - even with a cross-layer import attached.
+    write('.multica/project/committed-metadata.json', '{}\n');
+    writeUntracked('.multica/sneaky.mjs', "import { value } from '../shared/clean.mjs';\n");
+    // Negative: any other untracked top-level directory is still unexpected.
+    writeUntracked('randomtool/cache.json');
+
+    const { violations } = collect({ root, files, tracked: files.filter((file) => !untrackedPaths.has(file)), packagePath: join(root, 'package.json') });
     const observed = new Set(violations.map((violation) => violation.rule));
     const expected = [
       ['layer.src', 'cross-layer import outside src/shared'],
@@ -377,6 +420,9 @@ function runSelfTest() {
       ['tracked.forbidden', 'forbidden tracked build/dist path'],
       ['tracked.env', 'tracked .env file'],
       ['top.file', 'unexpected root file'],
+      ['top.dir', 'unexpected top-level directory'],
+      ['metadata.tracked', 'tracked platform runtime metadata'],
+      ['metadata.code', 'business code disguised as platform metadata'],
       ['pkg.check-order', 'npm check does not run structure/docs guards'],
       ['pkg.old-test-path', 'legacy flat tests/s<slice> path'],
       ['pkg.old-script-path', 'legacy scripts/probes/bundle-runtime path'],
@@ -406,7 +452,18 @@ function runSelfTest() {
       for (const [rule, file, line] of missingReferences) console.log(`  - [${rule}] ${file}:${line}`);
       return 1;
     }
-    const cleanFiles = ['design/clean.html', 'design/clean.css', 'design/assets/style.css', 'design/assets/script.js', 'design/serve.mjs', 'src/clean.mjs', 'src/clean.css', 'shared/clean.mjs'];
+    const expectedMetadataViolations = [
+      ['metadata.tracked', '.multica/project/committed-metadata.json'],
+      ['metadata.code', '.multica/sneaky.mjs'],
+      ['top.dir', 'randomtool/cache.json'],
+    ];
+    const missingMetadata = expectedMetadataViolations.filter(([rule, file]) => !violations.some((violation) => violation.rule === rule && violation.file === file));
+    if (missingMetadata.length) {
+      console.log('✗ structure self-test failed; expected runtime-metadata violations were not detected:');
+      for (const [rule, file] of missingMetadata) console.log(`  - [${rule}] ${file}`);
+      return 1;
+    }
+    const cleanFiles = ['design/clean.html', 'design/clean.css', 'design/assets/style.css', 'design/assets/script.js', 'design/serve.mjs', 'src/clean.mjs', 'src/clean.css', 'shared/clean.mjs', '.multica/daemon_task_context.json', '.multica/project/resources.json', '.opencode/skills/demo/SKILL.md', '.opencode/skills/demo/scripts/tool.mjs'];
     const cleanFalsePositive = violations.some((violation) => cleanFiles.includes(violation.file));
     if (cleanFalsePositive) {
       console.log('✗ structure self-test failed: valid sample files were flagged:');

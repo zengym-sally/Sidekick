@@ -66,6 +66,7 @@ build/  dist/  src-tauri/target/   # 本地产物与原始证据，不入库
 其他结构规则（同一守卫内）：
 
 - **顶层目录白名单**（以 `git ls-files` 为准）：`.cargo`、`.impeccable`、`design`、`docs`、`resources`、`runtime`、`scripts`、`shared`、`src`、`src-tauri`、`tests`、`vendor`，外加根文件白名单。新增一级目录必须同步本文与守卫。
+- **本地运行时元数据**：编码代理平台写进检出目录的机器本地元数据（当前仅 `.multica/`、`.opencode/`）不参与顶层白名单判定，本地保持可用、不入库、不打包。它们一旦被 git 跟踪即被拒绝（守卫规则 `metadata.tracked`）；`.multica/` 是守护进程数据目录，其中伪装成元数据的可执行代码仍按生产源码拒绝（`metadata.code`）。这两个目录不进入引用扫描与打包输入；其他任何新顶层目录（含未来新平台目录）仍走 `top.dir`，须先同步本文与守卫并经评审。
 - **入库卫生**：`git ls-files` 不得包含 `build/`、`dist/`、`src-tauri/target/`、`node_modules/`、`.env*`（`.env.example` 除外）。
 - **测试分层**：`tests/**.test.mjs` 只能位于 `unit/`、`integration/`、`probes/`；`fixtures/` 只放输入，不放断言。
 - **目录收敛**：`runtime/` 顶层只允许 `entries/`、`lib/`、`workers/`；`scripts/` 顶层只允许 `build/`、`checks/`、`probes/`；`src-tauri/src/` 顶层只允许 `lib.rs`、`main.rs`、`app/`、`store/`、`host/`、`diagnostics/`。

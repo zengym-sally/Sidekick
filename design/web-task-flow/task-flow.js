@@ -26,15 +26,15 @@ const state = {
   submitting: false,
   submittedKey: null,
   tasks: [
-    { id: "T-2011", seq: 1, kind: "整理", role: "事项整理", input: "接入评审纪要 · 2,140 字", revision: "cfg-17", state: "running", slot: 2, slotLimit: 3, attempt: "a3", epoch: "e1", events: [{ t: "09:41:02", text: "提交成功，已落队列（操作 ID op-9f21）" }, { t: "09:41:05", text: "领取执行槽 2/3，attempt a3 启动" }], note: "" },
-    { id: "T-2012", seq: 2, kind: "三角色试跑", role: "进展跟踪", input: "样例：方案已发待验收", revision: "cfg-17", state: "running", slot: 3, slotLimit: 3, attempt: "a1", epoch: "e1", events: [{ t: "09:41:20", text: "提交成功，已落队列（操作 ID op-9f22）" }, { t: "09:41:21", text: "领取执行槽 3/3" }], note: "" },
+    { id: "T-2011", seq: 1, kind: "整理", role: "事项整理", input: "接入评审纪要 · 2,140 字", revision: "cfg-17", state: "running", exit: "active", slot: 2, slotLimit: 3, attempt: "a3", epoch: "e1", events: [{ t: "09:41:02", text: "提交成功，已落队列（操作 ID op-9f21）" }, { t: "09:41:05", text: "领取执行槽 2/3，attempt a3 启动" }], note: "" },
+    { id: "T-2012", seq: 2, kind: "三角色试跑", role: "进展跟踪", input: "样例：方案已发待验收", revision: "cfg-17", state: "running", exit: "active", slot: 3, slotLimit: 3, attempt: "a1", epoch: "e1", events: [{ t: "09:41:20", text: "提交成功，已落队列（操作 ID op-9f22）" }, { t: "09:41:21", text: "领取执行槽 3/3" }], note: "" },
     { id: "T-2013", seq: 3, kind: "今日建议", role: "工作参谋", input: "今日事实快照 · 14 条事项", revision: "cfg-16", state: "queued", events: [{ t: "09:40:58", text: "提交成功，已落队列（操作 ID op-9f20）" }], note: "满槽仍入队列：当前 3 个执行槽都被占用（2 运行中 + 1 取消中），前面退出后自动开始。" },
     { id: "T-2014", seq: 4, kind: "整理", role: "事项整理", input: "周会纪要 · 3,870 字", revision: "cfg-17", state: "queued", events: [{ t: "09:41:33", text: "提交成功，已落队列（操作 ID op-9f23）" }], note: "" },
     { id: "T-2015", seq: 5, kind: "修改预览", role: "事项整理", input: "候选 C-88 · 「第三条改到周五」", revision: "cfg-17", state: "queued", events: [{ t: "09:41:44", text: "提交成功，已落队列（操作 ID op-9f24）" }], note: "" },
-    { id: "T-2009", seq: 6, kind: "模型测试", role: "全局默认", input: "示例网关连通性测试", revision: "cfg-16", state: "cancelling", slot: 1, slotLimit: 3, attempt: "a1", epoch: "e1", events: [{ t: "09:38:10", text: "提交成功，已落队列" }, { t: "09:39:02", text: "领取执行槽 1/3" }, { t: "09:39:40", text: "用户取消：先记录取消意图，再停止 worker" }], note: "取消中仍占执行槽 1/3：未确认退出前不释放，也不显示已取消。" },
-    { id: "T-2007", seq: 7, kind: "整理", role: "事项整理", input: "试用反馈汇总 · 1,660 字", revision: "cfg-15", state: "failed", attempt: "a2", epoch: "e1", events: [{ t: "09:20:11", text: "提交成功，已落队列" }, { t: "09:20:13", text: "领取执行槽" }, { t: "09:21:02", text: "执行时无法解析凭据引用「MODEL_KEY」，已停止重试" }], note: "认证类失败，不再自动重试。输入已保留，可在设置核对引用后重新提交。" },
-    { id: "T-2005", seq: 8, kind: "整理", role: "事项整理", input: "旧版评审纪要 · 4,020 字", revision: "cfg-14", state: "interrupted", attempt: "a1", epoch: "e1", events: [{ t: "09:02:44", text: "提交成功，已落队列" }, { t: "09:02:46", text: "领取执行槽" }, { t: "09:07:20", text: "后端重启，上次运行记为中断，输入已保留" }], note: "有外部副作用结果不明的可能，重新提交前先核对外部结果。" },
-    { id: "T-2003", seq: 9, kind: "飞书主动收集", role: "事项整理", input: "周期任务 · 每 30 分钟", revision: "cfg-14", state: "needs_review", attempt: "a1", epoch: "e1", events: [{ t: "08:58:00", text: "周期触发（幂等键 coll-0930-1）" }, { t: "08:58:02", text: "领取执行槽" }, { t: "09:06:50", text: "实例 epoch 变化，无法确认是否已发送飞书读取请求" }], note: "外部副作用未知。核对前不会重新执行，也不会自动重发。" },
+    { id: "T-2009", seq: 6, kind: "模型测试", role: "全局默认", input: "示例网关连通性测试", revision: "cfg-16", state: "cancelling", exit: "exiting", slot: 1, slotLimit: 3, attempt: "a1", epoch: "e1", events: [{ t: "09:38:10", text: "提交成功，已落队列" }, { t: "09:39:02", text: "领取执行槽 1/3" }, { t: "09:39:40", text: "用户取消：先记录取消意图，再停止 worker" }], note: "取消中仍占执行槽 1/3：未确认退出前不释放，也不显示已取消。" },
+    { id: "T-2007", seq: 7, kind: "整理", role: "事项整理", input: "试用反馈汇总 · 1,660 字", revision: "cfg-15", state: "failed", exit: "exited_confirmed", attempt: "a2", epoch: "e1", events: [{ t: "09:20:11", text: "提交成功，已落队列" }, { t: "09:20:13", text: "领取执行槽" }, { t: "09:21:02", text: "执行时无法解析凭据引用「MODEL_KEY」，已停止重试" }], note: "认证类失败，不再自动重试。输入已保留，可在设置核对引用后重新提交。" },
+    { id: "T-2005", seq: 8, kind: "整理", role: "事项整理", input: "旧版评审纪要 · 4,020 字", revision: "cfg-14", state: "interrupted", exit: "exited_confirmed", attempt: "a1", epoch: "e1", events: [{ t: "09:02:44", text: "提交成功，已落队列" }, { t: "09:02:46", text: "领取执行槽" }, { t: "09:07:20", text: "后端重启，上次运行记为中断，输入已保留" }], note: "有外部副作用结果不明的可能，重新提交前先核对外部结果。" },
+    { id: "T-2003", seq: 9, kind: "飞书主动收集", role: "事项整理", input: "周期任务 · 每 30 分钟", revision: "cfg-14", state: "needs_review", exit: "exited_confirmed", attempt: "a1", epoch: "e1", events: [{ t: "08:58:00", text: "周期触发（幂等键 coll-0930-1）" }, { t: "08:58:02", text: "领取执行槽" }, { t: "09:06:50", text: "恢复扫描已核实旧 worker 停止；实例 epoch 变化，无法确认是否已发送飞书读取请求" }], note: "进程退出已核实（不占槽）。外部副作用未知。核对前不会重新执行，也不会自动重发。" },
     { id: "T-2001", seq: 10, kind: "整理", role: "事项整理", input: "会议纪要 A · 2,880 字", revision: "cfg-13", state: "succeeded", attempt: "a1", epoch: "e1", events: [{ t: "08:31:12", text: "提交成功，已落队列" }, { t: "08:31:14", text: "领取执行槽" }, { t: "08:32:40", text: "完成，3 条候选进入待确认（未签收）" }], note: "任务成功不等于事项已签收。" },
     { id: "T-1998", seq: 11, kind: "整理", role: "事项整理", input: "会议纪要 B · 1,210 字", revision: "cfg-13", state: "cancelled", attempt: "a1", epoch: "e1", events: [{ t: "08:12:03", text: "提交成功，已落队列" }, { t: "08:12:05", text: "排队中取消：事务置 cancelled，调度器不会启动" }], note: "" },
   ],
@@ -56,19 +56,42 @@ function queuePosition(task) {
   const queued = state.tasks.filter((t) => t.state === "queued").sort((a, b) => a.seq - b.seq);
   return queued.indexOf(task) + 1;
 }
-function counts() {
-  // 未确认退出前不释放执行槽：占槽集合 = running + cancelling（web-backend-design §5）。
-  const occupied = state.tasks.filter((t) => t.state === "running" || t.state === "cancelling");
-  const running = occupied.filter((t) => t.state === "running").length;
-  const cancelling = occupied.filter((t) => t.state === "cancelling").length;
-  const queued = state.tasks.filter((t) => t.state === "queued").length;
-  return { running, cancelling, occupied: occupied.length, queued, review: state.tasks.filter((t) => t.state === "needs_review").length };
+function occupiesSlot(task) {
+  // 槽位跟随 attempt 的进程退出确认，不跟随业务状态（契约 §3.2）：
+  // active／exiting／exited_unknown 各占一个执行槽；exited_confirmed 与 not_started 释放。
+  // needs_review 是业务状态：退出未核实的待核对仍占槽，用户决议也不等于进程退出确认。
+  return task.exit === "active" || task.exit === "exiting" || task.exit === "exited_unknown";
 }
-// 槽号取 1..并发中第一个未被 running+cancelling 占用的空闲槽，避免中间槽释放后把新任务分到已占槽。
+function counts() {
+  const occupied = state.tasks.filter(occupiesSlot);
+  const running = occupied.filter((t) => t.exit === "active").length;
+  const cancelling = occupied.filter((t) => t.exit === "exiting").length;
+  const exitUnknown = occupied.filter((t) => t.exit === "exited_unknown").length;
+  const queued = state.tasks.filter((t) => t.state === "queued").length;
+  return { running, cancelling, exitUnknown, occupied: occupied.length, queued, review: state.tasks.filter((t) => t.state === "needs_review").length };
+}
+// 槽号取 1..并发中第一个未被占槽 attempt（运行中／取消中／退出未核实）占用的空闲槽，避免中间槽释放后把新任务分到已占槽。
 function nextFreeSlot() {
-  const taken = new Set(state.tasks.filter((t) => t.state === "running" || t.state === "cancelling").map((t) => t.slot).filter((s) => typeof s === "number"));
+  const taken = new Set(state.tasks.filter(occupiesSlot).map((t) => t.slot).filter((s) => typeof s === "number"));
   for (let n = 1; n <= state.concurrency; n += 1) if (!taken.has(n)) return n;
   return null;
+}
+// 调度器语义：有自由槽且普通调度未被恢复闸门暂停时，按持久提交顺序领取下一个就绪任务（契约 §3.2；设计 §5 FIFO）。
+function dispatchQueued() {
+  for (let guard = 0; guard < state.concurrency + 1; guard += 1) {
+    if (state.recovery.active || counts().occupied >= state.concurrency) return;
+    const next = state.tasks.filter((t) => t.state === "queued").sort((a, b) => a.seq - b.seq)[0];
+    if (!next) return;
+    const slotNo = nextFreeSlot();
+    next.state = "running";
+    next.exit = "active";
+    next.attempt = next.attempt ?? "a1";
+    next.epoch = "e1";
+    next.slot = slotNo;
+    next.slotLimit = state.concurrency;
+    next.note = "";
+    log(next, `领取执行槽 ${slotNo}/${state.concurrency}，attempt ${next.attempt} 启动`);
+  }
 }
 // 剩余项数实时由 reviewItems 现算：未选择 + 保留待核对。改选、新增核对项（取消转待核对）与渲染都走这里，不缓存过期数字。
 function syncRecoveryPending() {
@@ -78,6 +101,15 @@ function syncRecoveryPending() {
   return state.recovery.pending;
 }
 
+// 占槽构成的说明片段：只列非零类别，用于满槽文案（运行中／取消中／退出未核实都占槽）。
+function occupiedMix() {
+  const c = counts();
+  return [
+    c.running ? `运行中 ${c.running}` : "",
+    c.cancelling ? `取消中 ${c.cancelling}` : "",
+    c.exitUnknown ? `退出未核实 ${c.exitUnknown}` : "",
+  ].filter(Boolean).join("、");
+}
 function toast(message) {
   const el = $("#toast"); el.textContent = message; el.hidden = false;
   clearTimeout(toast.timer); toast.timer = setTimeout(() => { el.hidden = true; }, 3600);
@@ -93,7 +125,7 @@ function stateIcon(task) {
 }
 function stateLabel(task) {
   const meta = STATE_META[task.state];
-  const slot = (task.state === "running" || task.state === "cancelling") && task.slot ? ` · 槽 ${task.slot}/${task.slotLimit ?? state.concurrency}` : "";
+  const slot = occupiesSlot(task) && task.slot ? ` · 槽 ${task.slot}/${task.slotLimit ?? state.concurrency}` : "";
   return `<span class="pill ${meta.pill}">${icon(meta.icon)} ${meta.label}${slot}</span>`;
 }
 function taskNote(task) {
@@ -110,9 +142,10 @@ function taskRow(task) {
   if (task.state === "running") actions += `<button class="button small danger" data-action="cancel" data-id="${task.id}">${icon("close")} 取消</button>`;
   if (task.state === "failed" || task.state === "interrupted") actions += `<button class="button small ghost" data-action="resubmit" data-id="${task.id}">${icon("refresh")} 重新提交</button>`;
   if (task.state === "needs_review") actions += `<button class="button small ghost" data-action="open-review" data-id="${task.id}">${icon("warn")} 逐项核对</button>`;
+  if (task.state === "needs_review" && task.exit === "exited_unknown") actions += `<button class="text-button" data-action="scan-confirm" data-id="${task.id}" title="演示动作：模拟新实例恢复扫描核实旧进程树已退出">演示：扫描核实退出</button>`;
   if (task.state === "cancelled" || task.state === "succeeded") actions += `<button class="button small ghost" data-action="resubmit" data-id="${task.id}">${icon("refresh")} 重新提交</button>`;
   if (task.state === "cancelling") actions += `<span class="small-note">只读</span>`;
-  return `<li class="task-row" tabindex="0" role="group" aria-label="任务 ${escapeHtml(task.id)} ${STATE_META[task.state].label}${task.state === "cancelling" ? "，仍占执行槽" : ""}" data-id="${task.id}">
+  return `<li class="task-row" tabindex="0" role="group" aria-label="任务 ${escapeHtml(task.id)} ${STATE_META[task.state].label}${occupiesSlot(task) ? "，仍占执行槽" : ""}${task.state === "cancelling" ? "，未确认退出" : ""}" data-id="${task.id}">
    ${stateIcon(task)}
    <div class="task-main">
     <button class="task-title" data-action="detail" data-id="${task.id}">${escapeHtml(task.kind)} · ${escapeHtml(task.input)}</button>
@@ -140,8 +173,9 @@ function renderQueue() {
   <div class="slot-strip">
    <div class="figure">${c.running}<small>运行中</small></div>
    <div class="figure">${c.cancelling}<small>取消中（占槽）</small></div>
+   <div class="figure">${c.exitUnknown}<small>退出未核实（占槽）</small></div>
    <div class="figure">${c.queued}<small>排队中</small></div>
-   <div class="slot-bars" role="img" aria-label="执行槽占用 ${c.occupied}/${state.concurrency}：运行中 ${c.running}，取消中 ${c.cancelling}（未确认退出不释放）">${bars}</div>
+   <div class="slot-bars" role="img" aria-label="执行槽占用 ${c.occupied}/${state.concurrency}：运行中 ${c.running}，取消中 ${c.cancelling}，退出未核实 ${c.exitUnknown}（槽位跟随 attempt 退出确认，未核实不释放）">${bars}</div>
    <div class="slot-meta">
     <span class="pill amber">${icon("run")} 并发上限 ${state.concurrency}（设置页可调，此处只读）</span>
     <button class="button small ghost" data-action="settings-link">${icon("source")} 并发设置入口（设置页）</button>
@@ -259,6 +293,7 @@ function renderDetail(id) {
    <div class="review-choice">
     ${task.state === "queued" || task.state === "running" ? `<button class="button small danger" data-action="cancel" data-id="${task.id}">取消</button>` : ""}
     ${task.state === "failed" || task.state === "interrupted" || task.state === "cancelled" || task.state === "succeeded" ? `<button class="button small ghost" data-action="resubmit" data-id="${task.id}">重新提交</button>` : ""}
+    ${task.state === "needs_review" && task.exit === "exited_unknown" ? `<button class="button small ghost" data-action="scan-confirm" data-id="${task.id}" title="演示动作：模拟新实例恢复扫描核实旧进程树已退出">演示：扫描核实退出</button>` : ""}
     ${task.state === "needs_review" ? `<button class="button small ghost" data-action="open-review" data-id="${task.id}">逐项核对</button>` : ""}
     <button class="button small ghost" data-action="close">关闭</button>
    </div>
@@ -287,13 +322,13 @@ function submitTask() {
   const id = `T-${2020 + state.nextTask++}`;
   const seq = state.tasks.length + 1;
   const c = counts();
-  // 占槽集合含取消中：取消中未确认退出前不释放槽，新任务不得占用它的位置。
+  // 占槽含退出未核实的待核对：进程退出确认前槽不释放，新任务不得领取该槽（契约 §3.2）。
   const canStart = c.occupied < state.concurrency;
   const slotNo = canStart ? nextFreeSlot() : null;
-  const task = { id, seq, kind: "整理", role: "事项整理", input: "演示任务 · 合成原文 900 字", revision: "cfg-17", state: canStart ? "running" : "queued", slot: slotNo ?? undefined, slotLimit: canStart ? state.concurrency : undefined, attempt: "a1", epoch: "e1", events: [], note: "" };
+  const task = { id, seq, kind: "整理", role: "事项整理", input: "演示任务 · 合成原文 900 字", revision: "cfg-17", state: canStart ? "running" : "queued", exit: canStart ? "active" : "not_started", slot: slotNo ?? undefined, slotLimit: canStart ? state.concurrency : undefined, attempt: "a1", epoch: "e1", events: [], note: "" };
   log(task, `提交成功，已落队列（操作 ID op-9f3${seq}）`);
   if (canStart) log(task, `领取执行槽 ${slotNo}/${state.concurrency}，attempt a1 启动`);
-  else task.note = `满槽仍入队列：当前 ${c.occupied} 个执行槽都被占用（运行中 ${c.running}、取消中 ${c.cancelling}），前面退出后自动开始。`;
+  else task.note = `满槽仍入队列：当前 ${c.occupied} 个执行槽都被占用（${occupiedMix()}），前面退出确认后自动开始。`;
   state.tasks.push(task);
   render();
   toast(task.state === "running" ? `已加入队列并立即开始：${id}。` : `已加入队列，${id} 排在第 ${queuePosition(task)} 位。关闭页面也会继续。`);
@@ -306,24 +341,45 @@ function cancelTask(id) {
     task.state = "cancelled"; log(task, "排队中取消：事务置 cancelled，调度器不会启动");
     toast(`${task.id} 已取消，这个任务不会执行。`);
   } else if (task.state === "running") {
-    task.state = "cancelling"; task.note = `已记录取消意图，正在停止。取消中仍占执行槽 ${task.slot}/${task.slotLimit ?? state.concurrency}：未确认退出前不释放，也不显示已取消。`;
+    task.state = "cancelling"; task.exit = "exiting"; task.note = `已记录取消意图，正在停止。取消中仍占执行槽 ${task.slot}/${task.slotLimit ?? state.concurrency}：未确认退出前不释放，也不显示已取消。`;
     log(task, "用户取消：先记录取消意图，再停止 worker/工具树");
     toast(`${task.id} 已记录取消意图，正在停止。`);
     setTimeout(() => {
       if (task.state !== "cancelling") return;
-      task.state = "needs_review"; task.slot = undefined; task.note = "无法确认进程树是否已停止、工具是否已产生外部结果。核对前不会重新执行，也不会自动重发。";
-      log(task, "无法确认进程树退出与副作用，保留取消意图并转待核对");
-      // 转 needs_review 同步生成核对项：取消中占槽到此释放，但外部副作用风险必须由用户逐项决议（契约 §6 第 4 行）。
+      // 退出无法确认：转 needs_review 且 exited_unknown 仍占槽——调度不向该槽补发，
+      // 用户核对决议也不受理，直到新实例恢复扫描核实旧进程树退出后释放（契约 §3.2 场景 19）。
+      task.state = "needs_review"; task.exit = "exited_unknown";
+      task.note = `无法确认进程树是否已退出：执行槽 ${task.slot}/${task.slotLimit ?? state.concurrency} 保持占用，不向该槽补发新任务；进程退出核实解除前，核对决议暂不受理。`;
+      log(task, "无法确认进程树退出与副作用：保留取消意图并转待核对，槽位保持占用，等待新实例恢复扫描核实");
+      // 转 needs_review 同步生成核对项：槽位保持占用（退出未核实），外部副作用风险由用户逐项决议（契约 §6）。
       if (!state.reviewItems.some((entry) => entry.taskId === task.id)) {
-        state.reviewItems.push({ taskId: task.id, question: `取消 ${task.id} 后，进程树是否已停止、工具是否已产生外部结果？`, options: ["已确认完成", "用户明确取消", "标记失败", "保留待核对"], choice: null, evidence: "取消中未能确认进程树退出；无 attempt 结果提交记录", fromCancel: true });
+        state.reviewItems.push({ taskId: task.id, question: `取消 ${task.id} 后，进程树是否已停止、工具是否已产生外部结果？`, options: ["已确认完成", "用户明确取消", "标记失败", "保留待核对"], choice: null, evidence: "取消中未能确认进程树退出；执行槽保持占用；无 attempt 结果提交记录", fromCancel: true });
         // 新增核对项只刷新剩余计数：恢复暂停由用户决议驱动（见 reviewChoice），
         // 已放行的恢复不因一个新任务转待核对而自动重新暂停。
         syncRecoveryPending();
       }
-      render(); toast(`${task.id} 无法确认外部结果，已转待核对，请逐项核对。`);
+      render(); toast(`${task.id} 退出未核实，已转待核对：执行槽保持占用，核对决议待核实后受理。`);
     }, 2200);
   }
   render();
+}
+
+// 演示动作：模拟「新实例恢复扫描」核实旧进程树已退出（契约 §3.2 场景 19／§3.4）。
+// 核实通过才释放执行槽；副作用未知时保持待核对并补决议入口，不代签真实 worker 行为。
+function scanConfirmExit(id) {
+  const task = findTask(id);
+  if (!task || task.exit !== "exited_unknown") return;
+  const freedSlot = task.slot;
+  task.exit = "exited_confirmed";
+  task.slot = undefined;
+  task.slotLimit = undefined;
+  task.note = "新实例恢复扫描已核实旧进程树退出：执行槽已释放。外部副作用仍未知，请逐项决议；不自动重发。";
+  log(task, `恢复扫描核实旧进程树已退出：释放执行槽${freedSlot ? ` ${freedSlot}/${state.concurrency}` : ""}；副作用仍未知，待逐项决议`);
+  const item = state.reviewItems.find((entry) => entry.taskId === task.id);
+  if (item) item.evidence = "恢复扫描已核实进程树退出（执行槽已释放）；无 attempt 结果提交记录，副作用未知";
+  dispatchQueued();
+  render();
+  toast(`${task.id} 进程退出已核实，执行槽已释放${freedSlot ? `（槽 ${freedSlot}）` : ""}。外部副作用仍需你逐项决议。`);
 }
 
 function resubmit(id) {
@@ -335,10 +391,10 @@ function resubmit(id) {
   const c = counts();
   const canStart = c.occupied < state.concurrency;
   const slotNo = canStart ? nextFreeSlot() : null;
-  const next = { id: id2, seq, kind: task.kind, role: task.role, input: task.input, revision: task.revision, state: canStart ? "running" : "queued", slot: slotNo ?? undefined, slotLimit: canStart ? state.concurrency : undefined, attempt: "a1", epoch: "e1", events: [], note: "" };
+  const next = { id: id2, seq, kind: task.kind, role: task.role, input: task.input, revision: task.revision, state: canStart ? "running" : "queued", exit: canStart ? "active" : "not_started", slot: slotNo ?? undefined, slotLimit: canStart ? state.concurrency : undefined, attempt: "a1", epoch: "e1", events: [], note: "" };
   log(next, `由 ${task.id} 重新提交，新任务新 ID，不继承旧 attempt`);
   if (canStart) log(next, `领取执行槽 ${slotNo}/${state.concurrency}`);
-  else next.note = `满槽仍入队列：当前 ${c.occupied} 个执行槽都被占用（运行中 ${c.running}、取消中 ${c.cancelling}）。`;
+  else next.note = `满槽仍入队列：当前 ${c.occupied} 个执行槽都被占用（${occupiedMix()}）。`;
   state.tasks.push(next);
   render();
   toast(`已重新提交为 ${id2}，不继承 ${task.id} 的 attempt。`);
@@ -347,6 +403,13 @@ function resubmit(id) {
 function reviewChoice(index, option) {
   const item = state.reviewItems[index]; if (!item) return;
   if (item.choice === option) { toast(`${item.taskId}：${option}，已是当前选择。`); return; }
+  // 进程退出未核实：决议一律不受理（契约 resolve → 409 exit_unconfirmed）。
+  // 用户核对不等于进程退出确认——闸门只能由新实例恢复扫描解除（见「扫描核实退出」演示动作）。
+  const gatedTask = state.tasks.find((t) => t.id === item.taskId);
+  if (gatedTask && gatedTask.exit === "exited_unknown") {
+    toast(`${item.taskId}：进程退出未核实，这项仍占执行槽，核对决议暂不受理。请先执行「演示：扫描核实退出」，核实后决议才生效。`);
+    return;
+  }
   const previous = item.choice;
   item.choice = option;
   const task = state.tasks.find((t) => t.id === item.taskId);
@@ -376,6 +439,8 @@ function reviewChoice(index, option) {
   const remaining = syncRecoveryPending();
   if (remaining === 0) {
     state.recovery.active = false;
+    // 恢复放行即恢复普通调度：队列按权威顺序领取空闲槽（契约 §3.2；设计 §5 FIFO）。
+    dispatchQueued();
     toast("核对已全部完成，恢复放行：定时收集与提醒投递恢复，普通调度继续。");
   } else {
     state.recovery.active = true;
@@ -403,6 +468,7 @@ document.addEventListener("click", (event) => {
   if (action === "close") { closeDetail(); return; }
   if (action === "detail") openDetail(id);
   else if (action === "cancel") cancelTask(id);
+  else if (action === "scan-confirm") scanConfirmExit(id);
   else if (action === "resubmit") resubmit(id);
   else if (action === "submit") submitTask();
   else if (action === "settings-link") { toast("并发是实例级设置：生产入口在设置页，面板只读当前值并链接过去；本演示没有设置页，此处只作说明（契约 §3.1）。"); }
