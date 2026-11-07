@@ -23,5 +23,7 @@
     "cause": "result_exit_unconfirmed",
     "attemptExitState": "exited_confirmed"
   },
-  "note": "GET /api/tasks/{taskId}/result is allowed for this guarded recovery state; the client reads the staged outcome before resolve(resume)/resolve(cancel)"
+  "note": "GET /api/tasks/{taskId}/result is allowed for this guarded recovery state; the client reads the staged outcome before resolve(resume)/resolve(cancel)",
+  "outcome": "succeeded",
+  "failure": null
 }

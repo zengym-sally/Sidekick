@@ -28,5 +28,7 @@
   "totalBytes": 1024,
   "maxInlineBytes": 65536,
   "maxSegmentBytes": 65536,
-  "inline": true
+  "inline": true,
+  "outcome": "succeeded",
+  "failure": null
 }

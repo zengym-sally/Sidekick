@@ -57,9 +57,9 @@
 | `originalConfigRevision` | string | 首次入队时的配置修订，审计用，不随 `retry` 改变 |
 | `inputRef` | object | 不可变输入引用（inline 或来源引用）；不含秘密 |
 | `progress` | object \| null | 运行中进度（阶段、可读描述）；仅展示，不作为业务事实 |
-| `result` | object \| null | 终态结果信封：`{kind, payloadRef, acceptedByAttempt, completedAt}`；**仅在终态提交后可见**，唯一定例外：`cause=result_exit_unconfirmed` 且 `attemptExitState=exited_confirmed` 时暂存结果对用户可见、并允许经 `GET /api/tasks/{taskId}/result` 读取（§3.5、§4.3、场景 29/32）；`payloadRef` 使用后端解析的 `result://` scheme，读取协议见 §4.3；业务 payload 结构由各业务切片另行定义 |
+| `result` | object \| null | 终态结果信封：`{kind, payloadRef, acceptedByAttempt, completedAt}`；**仅在终态提交后可见**，唯一定例外：`cause=result_exit_unconfirmed` 且 `attemptExitState=exited_confirmed` 时**暂存的成功结局**对用户可见、并允许经 `GET /api/tasks/{taskId}/result` 读取（§3.5、§4.3、场景 29/32/33）；`payloadRef` 使用后端解析的 `result://` scheme，读取协议见 §4.3；业务 payload 结构由各业务切片另行定义 |
 | `resultPendingExit` | bool | 结局已暂存但所属进程树退出尚未确认；此时 `state` 仍为 `running`、`result` 与 `failure` 均为 null、槽位不释放。**结果上报不构成进程退出确认**；暂存判别（成功/失败）不因退出时序改变（§3.2、场景 24/31） |
-| `failure` | object \| null | 终态失败信封：`{code, message, retryable, sideEffectSafety, nextAttemptAt?}`；`retryable` 只区分重试发起方（`auto_backoff`／`manual`／`none`）；`sideEffectSafety ∈ proven_safe \| unknown \| proven_unsafe` 决定自动重入队是否放行（§4.6）。任务级失败码注册表见 §4.6 |
+| `failure` | object \| null | 失败信封：`{code, message, retryable, sideEffectSafety, nextAttemptAt?}`；`retryable` 只区分重试发起方（`auto_backoff`／`manual`／`none`）；`sideEffectSafety ∈ proven_safe \| unknown \| proven_unsafe` 决定自动重入队是否放行（§4.6）。**终态可见**；唯一非终态例外：`cause=result_exit_unconfirmed` 且 `attemptExitState=exited_confirmed` 时**暂存的失败结局**可见，供用户核对（§3.5、§4.3、场景 33）。任务级失败码注册表见 §4.6 |
 | `recovery` | object \| null | 仅 `interrupted`/`needs_review` 存在；按 `cause` 的 discriminated union，见 §3.5 |
 
 ### 3.2 状态集合与迁移
@@ -163,12 +163,14 @@
 
 - `GET /api/tasks/{taskId}/result`：读取任务结果。授权与任务查询相同（同一会话、同一来源）；GET 不要求 CSRF。
 - `result://<attemptId>/<name>` 是**后端解析的引用 scheme**，不是客户端可直接请求的 URL；客户端只调用本端点，不得自行拼接路径。结果 payload 视为不透明字节串，接口以 JSON 信封暴露。
-- **内联路径**：`totalBytes <= maxInlineBytes`（实例配置，默认 64 KiB）时 200 返回 `{contractVersion, taskId, kind, totalBytes, maxInlineBytes, maxSegmentBytes, inline: true, payload, acceptedByAttempt, completedAt}`。
-- **分段路径**：超限时同一端点返回**索引响应**（200）：`{contractVersion, taskId, kind, totalBytes, maxInlineBytes, maxSegmentBytes, inline: false, payload: null, payloadRef, nextOffset: 0, done: false, acceptedByAttempt, completedAt}`。
+- **结局判别**：读取响应一律带 `outcome: "succeeded" | "failed"`。`outcome=succeeded` 时给出 `kind`/`payload`（或 `payloadRef`）与 `failure: null`；`outcome=failed` 时给出 `failure` 信封、`kind: null`、`payload: null`，**不分段**（无 payload）。
+- **成功结局·内联路径**：`totalBytes <= maxInlineBytes`（实例配置，默认 64 KiB）时 200 返回 `{contractVersion, taskId, outcome: "succeeded", kind, totalBytes, maxInlineBytes, maxSegmentBytes, inline: true, payload, failure: null, acceptedByAttempt, completedAt}`。
+- **成功结局·分段路径**：超限时同一端点返回**索引响应**（200）：`{contractVersion, taskId, outcome: "succeeded", kind, totalBytes, maxInlineBytes, maxSegmentBytes, inline: false, payload: null, payloadRef, failure: null, nextOffset: 0, done: false, acceptedByAttempt, completedAt}`。
 - **分段请求**：`GET /api/tasks/{taskId}/result?offset=<n>&limit=<b>`。`offset` 为字节偏移（默认 0）；`limit` 为本次请求的字节数（默认 `maxSegmentBytes`，最大 `maxSegmentBytes`）。
 - **分段响应**（200）：`{contractVersion, taskId, offset, limit, bytesReturned, totalBytes, nextOffset, done, payloadBase64}`；`payloadBase64` 为该字节段的 base64（二进制安全）。`done = (offset + bytesReturned >= totalBytes)`；未结束时 `nextOffset = offset + bytesReturned`，结束时 `nextOffset = null`。
 - **完成条件**：收到 `done=true`，或客户端累计收到 `totalBytes` 字节。
-- **读取白名单**：仅 `state=succeeded`，或 `state=needs_review` 且 `recovery.cause=result_exit_unconfirmed` 且 `attemptExitState=exited_confirmed` 时可读取（待核对结局沿用同一内联/分段协议）；其余状态一律 409 `state_conflict`。
+- **失败结局读取**：`outcome=failed` 时响应为 `{contractVersion, taskId, outcome: "failed", kind: null, payload: null, failure: {code, message, retryable, sideEffectSafety, nextAttemptAt?}, acceptedByAttempt, completedAt}`；不分段、不支持 `offset`/`limit`（携带即 400 `result_range_invalid`）。
+- **读取白名单**：仅 `state=succeeded`（成功结局），或 `state=needs_review` 且 `recovery.cause=result_exit_unconfirmed` 且 `attemptExitState=exited_confirmed`（按暂存判别给出成功或失败结局）时可读取；其余状态一律 409 `state_conflict`。
 - **错误**：不在读取白名单 → 409 `state_conflict`；结果已过期/被清理 → 404 `result_not_found`；任务不存在 → 404 `task_not_found`；`offset<0`、`limit<=0` 或 `limit>maxSegmentBytes` → 400 `result_range_invalid`；`offset>=totalBytes` → 416 `result_range_unsatisfiable`。
 - 业务 payload 的字段结构由各业务切片（W1+）定义，本契约只定义信封、分段协议与错误。
 - 场景 1 必须用**同一 `taskId`** 串起 提交 → `running` → `succeeded` → 结果读取，不得用不同任务拼凑完整链路；超限结果的完整交互见场景 25。
@@ -368,7 +370,8 @@ HTTP 错误包络：`{"contractVersion":"web-api/1","status":<int>,"error":{"cod
 | 29 | 结果暂存后回收（非取消） | 正常任务结果已暂存、退出无法确认，随后被恢复扫描回收 | 无未知副作用 → **提交原暂存结果**转 `succeeded`；副作用未知 → 保持 `needs_review`（`cause=result_exit_unconfirmed`、`cancelIntent=false`、`result` 可见、补 `decisionOptions`） | [task-succeeded-result.json](../../tests/fixtures/web-contract/task-succeeded-result.json)、[task-result-reclaimed-needs-review.json](../../tests/fixtures/web-contract/task-result-reclaimed-needs-review.json) |
 | 30 | 无暂存结果退出未知 | 运行中任务退出无法确认且无暂存结果，随后被回收 | 台账证明无副作用且可安全重跑 → 有界重入队；否则保持 `needs_review`（`cause=exit_unconfirmed`、`cancelIntent=false`） | [task-exit-unconfirmed-noncancel.json](../../tests/fixtures/web-contract/task-exit-unconfirmed-noncancel.json) |
 | 31 | 暂存失败被回收 | 正常路径暂存的是**失败**结局，随后退出无法确认并被回收 | 回收与 `resolve(resume)` 均提交**原失败结局**（`failed`，原 `failure` 字段），不因退出时序改为成功 | [task-failed-result-pending-exit.json](../../tests/fixtures/web-contract/task-failed-result-pending-exit.json)、[task-failed-result-reclaimed.json](../../tests/fixtures/web-contract/task-failed-result-reclaimed.json) |
-| 32 | 待核对结果先读取后处置 | `needs_review` + `cause=result_exit_unconfirmed` + `exited_confirmed` | 结果端点在读取白名单内返回暂存结局；用户读取并核对后再 `resolve(resume)`/`resolve(cancel)` | [task-result-read-needs-review-200.json](../../tests/fixtures/web-contract/task-result-read-needs-review-200.json) |
+| 32 | 待核对的**成功**结局先读取后处置 | `needs_review` + `cause=result_exit_unconfirmed` + `exited_confirmed`，暂存为成功 | 结果端点在读取白名单内返回 `outcome=succeeded` 与 payload；用户读取并核对后再 `resolve(resume)`/`resolve(cancel)` | [task-result-read-needs-review-200.json](../../tests/fixtures/web-contract/task-result-read-needs-review-200.json) |
+| 33 | 待核对的**失败**结局先读取后处置 | 同上，暂存为失败 | 结果端点返回 `outcome=failed` 与 `failure` 信封（不分段）；用户核对失败原因后再 `resolve(resume)`/`resolve(cancel)` | [task-failed-result-reclaimed-needs-review.json](../../tests/fixtures/web-contract/task-failed-result-reclaimed-needs-review.json)、[task-failed-result-read-needs-review-200.json](../../tests/fixtures/web-contract/task-failed-result-read-needs-review-200.json) |
 
 ## 12. 数据结构提案（逻辑字段；非 DDL，表名与类型由实施切片定案）
 
