@@ -1,5 +1,7 @@
 # MAYNE-20 后端基础探针：评审修订与作者侧验证记录（2026-11-07）
 
+> **已被第二轮修订记录取代**：本记录对应的修订候选 `55684a2`（tree `cdd47fa`）被 Codex 复审出具 BLOCK/needs_revision（调度入口绕过根安全校验、进程探测失败被当作退出、关库前提前释放根锁）。第二轮修订后的交付与实际验证证据见 [backend-foundation-20261107-r2.md](backend-foundation-20261107-r2.md)；本记录保留作历史，不再代表当前候选。
+>
 > 本记录是 MAYNE-20 候选 `355d1a0` 被独立评审（ZCode）出具 BLOCK/needs_revision 后的**修订侧证据**，结论只到“可再送独立评审”。实现者不给自己签 pass；修订后的独立复审由未参与者执行，工作流收口由 Codex 负责。第一轮记录见 [backend-foundation-20261106.md](backend-foundation-20261106.md)（已被本记录取代）。
 
 ## 1. 版本可复核性（回应 P3：补实际 commit/tree、改动清单与源码哈希）
