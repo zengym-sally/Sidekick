@@ -28,5 +28,6 @@
   "failure": null,
   "recovery": null,
   "attemptExitState": "exiting",
-  "originalConfigRevision": "cfgrev_0d81fe22"
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "resultPendingExit": false
 }

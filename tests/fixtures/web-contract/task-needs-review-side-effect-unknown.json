@@ -42,6 +42,8 @@
     "decisionOptions": [
       "resume",
       "cancel"
-    ]
-  }
+    ],
+    "itemVersion": 1
+  },
+  "resultPendingExit": false
 }

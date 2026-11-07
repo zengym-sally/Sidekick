@@ -51,7 +51,8 @@
       "failure": null,
       "recovery": null,
       "attemptExitState": "exiting",
-      "originalConfigRevision": "cfgrev_0d81fe22"
+      "originalConfigRevision": "cfgrev_0d81fe22",
+      "resultPendingExit": false
     },
     {
       "contractVersion": "web-api/1",
@@ -80,7 +81,8 @@
       "failure": null,
       "recovery": null,
       "attemptExitState": "not_started",
-      "originalConfigRevision": "cfgrev_0d81fe22"
+      "originalConfigRevision": "cfgrev_0d81fe22",
+      "resultPendingExit": false
     }
   ],
   "note": "snapshot includes the authoritative state of all events up to and including highWatermark (cursor 1042 moved tsk_1a2b… to cancelling/v3, and this snapshot already reflects it); task entries share the full §3.1 task-resource shape; clients resubscribe with lastEventId"

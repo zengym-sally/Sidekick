@@ -47,7 +47,8 @@
       "decisionOptions": [
         "resume",
         "cancel"
-      ]
+      ],
+      "version": 1
     },
     {
       "itemId": "rci_12",
@@ -61,7 +62,8 @@
       "decisionOptions": [
         "resume",
         "cancel"
-      ]
+      ],
+      "version": 1
     },
     {
       "itemId": "rci_13",
@@ -75,7 +77,8 @@
       "decisionOptions": [
         "resume",
         "cancel"
-      ]
+      ],
+      "version": 1
     }
   ],
   "summaryNote": "needsDecision counts every item with a pending decision (verificationState=pending); pendingCancelIntent counts items with cancelIntent=true that are still pending and is reported separately, never subtracted from needsDecision."

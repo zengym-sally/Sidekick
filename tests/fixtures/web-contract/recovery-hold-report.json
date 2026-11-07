@@ -33,7 +33,8 @@
       "verificationState": "auto_safe",
       "autoSafeEvidence": "task type proven read-only model pass; no external tool calls recorded in attempt ledger",
       "receipts": [],
-      "decisionOptions": []
+      "decisionOptions": [],
+      "version": 1
     },
     {
       "itemId": "rci_02",
@@ -55,7 +56,8 @@
       "decisionOptions": [
         "resume",
         "cancel"
-      ]
+      ],
+      "version": 1
     },
     {
       "itemId": "rci_03",
@@ -69,7 +71,8 @@
       "decisionOptions": [
         "resume",
         "cancel"
-      ]
+      ],
+      "version": 1
     },
     {
       "itemId": "rci_04",
@@ -83,7 +86,8 @@
       "decisionOptions": [
         "resume",
         "cancel"
-      ]
+      ],
+      "version": 1
     }
   ],
   "summaryNote": "needsDecision counts every item with a pending decision (verificationState=pending); pendingCancelIntent counts items with cancelIntent=true that are still pending and is reported separately, never subtracted from needsDecision; autoSafe items need no decision."

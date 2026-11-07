@@ -2,7 +2,7 @@
   "contractVersion": "web-api/1",
   "taskId": "tsk_0a4e8c2f6b9d1573e0a8c4f2b6d0e9a3",
   "operationId": "op_5f8b2d4a7c1e3069fb3d5a7c9e1b4d62",
-  "type": "organize_text",
+  "type": "reminder_send",
   "role": "organizer",
   "state": "needs_review",
   "version": 6,
@@ -45,6 +45,8 @@
     "decisionOptions": [
       "resume",
       "cancel"
-    ]
-  }
+    ],
+    "itemVersion": 1
+  },
+  "resultPendingExit": false
 }

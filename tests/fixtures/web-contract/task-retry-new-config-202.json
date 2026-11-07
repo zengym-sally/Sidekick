@@ -28,7 +28,8 @@
     "progress": null,
     "result": null,
     "failure": null,
-    "recovery": null
+    "recovery": null,
+    "resultPendingExit": false
   },
   "note": "retry with a different configRevision is allowed only for auth_or_config_invalid / config_revision_unknown; configRevision is updated while originalConfigRevision keeps the first-enqueue value and the change is recorded in the event history"
 }
