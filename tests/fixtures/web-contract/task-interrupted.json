@@ -8,6 +8,7 @@
   "version": 4,
   "createdAt": "2026-11-06T11:58:10.000Z",
   "updatedAt": "2026-11-06T12:33:00.000Z",
+  "terminalAt": null,
   "submitSeq": 1036,
   "queuePosition": null,
   "attemptCount": 1,

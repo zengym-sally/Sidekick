@@ -8,6 +8,7 @@
   "version": 2,
   "createdAt": "2026-11-06T12:30:00.000Z",
   "updatedAt": "2026-11-06T12:30:41.000Z",
+  "terminalAt": null,
   "submitSeq": 1041,
   "queuePosition": null,
   "attemptCount": 1,
@@ -19,7 +20,10 @@
     "byteSize": 842,
     "contentHash": "sha256:1f3a9c07e5b2d84c0a6f1e93b7d5c2a8094e6f1bd3c7a5029e8b1d4f6a0c3e52"
   },
-  "progress": { "stage": "extracting", "detail": "organizer pass 1/2 (synthetic sample)" },
+  "progress": {
+    "stage": "extracting",
+    "detail": "organizer pass 1/2 (synthetic sample)"
+  },
   "result": null,
   "failure": null,
   "recovery": null

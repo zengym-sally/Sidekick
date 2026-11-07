@@ -8,6 +8,7 @@
   "version": 6,
   "createdAt": "2026-11-06T11:52:44.000Z",
   "updatedAt": "2026-11-06T12:33:00.000Z",
+  "terminalAt": null,
   "submitSeq": 1031,
   "queuePosition": null,
   "attemptCount": 1,
@@ -37,6 +38,9 @@
         "verifiable": true
       }
     ],
-    "decisionOptions": ["resume", "cancel"]
+    "decisionOptions": [
+      "resume",
+      "cancel"
+    ]
   }
 }

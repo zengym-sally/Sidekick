@@ -1,0 +1,32 @@
+{
+  "contractVersion": "web-api/1",
+  "taskId": "tsk_6d3a9f1e4c7b2580a9e3f6c1d0b4e8a2",
+  "operationId": "op_7b1e4d9f2a6c0385b8e1d4f7a0c3e6b9",
+  "type": "organize_text",
+  "role": "organizer",
+  "state": "succeeded",
+  "version": 3,
+  "createdAt": "2026-11-06T12:20:00.000Z",
+  "updatedAt": "2026-11-06T12:24:12.000Z",
+  "terminalAt": "2026-11-06T12:24:12.000Z",
+  "submitSeq": 1038,
+  "queuePosition": null,
+  "attemptCount": 1,
+  "attemptId": "att_5c9d2b7e1a4f0863d2e9c5b8a1f4e7d0",
+  "cancelIntent": false,
+  "configRevision": "cfgrev_0d81fe22",
+  "inputRef": {
+    "kind": "inline_text",
+    "byteSize": 1180,
+    "contentHash": "sha256:4e8b2c6f0a9d1e5b7c3a8f2d6b0e4a9c1f5d8b2e6a0c4f8b3d7e1a5c9f2b6d0a"
+  },
+  "progress": null,
+  "result": {
+    "kind": "organize_text_result",
+    "payloadRef": "result://att_5c9d2b7e1a4f0863d2e9c5b8a1f4e7d0/payload",
+    "acceptedByAttempt": "att_5c9d2b7e1a4f0863d2e9c5b8a1f4e7d0",
+    "completedAt": "2026-11-06T12:24:12.000Z"
+  },
+  "failure": null,
+  "recovery": null
+}

@@ -13,7 +13,7 @@
   "queuePosition": null,
   "attemptCount": 0,
   "attemptId": null,
-  "cancelIntent": true,
+  "cancelIntent": false,
   "configRevision": "cfgrev_0d81fe22",
   "inputRef": {
     "kind": "inline_text",
