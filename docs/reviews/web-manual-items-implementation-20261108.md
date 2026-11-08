@@ -18,7 +18,7 @@
 |---|---|
 | `server/entries/web-backend-entry.mjs` | `bff28c8749e9268e58a078c04104d2197a8f2760c37f4737a849da87fc2cca91` |
 | `server/lib/http-server.mjs` | `ae4287bee7649e870793b6ca2f0d20b8e743aaa5ea4ff8c068c5dcbaf308779e` |
-| `server/lib/manual-items-service.mjs` | `9c33d5523fbe1988887fe6dba3edc150bb7d2d17b207c80b783f825678e095a6` |
+| `server/lib/manual-items-service.mjs` | `c4e4da19f431884053d8fedc2d50fec3583fae57374d4288631ad7189cd2735d` |
 | `server/lib/session-store.mjs` | `9823db95128835c84f77a35eea68f9fbd63173f9f18156fc8c8f94059609fc1e` |
 | `server/lib/sse-hub.mjs` | `f49951aa6fbcc9f6e3ba67b5f70fff8ce2ebbebd47036909c54379fdf189ceea` |
 | `server/lib/static-files.mjs` | `3c07b73eb6be8af6ee903b257d49178735c3f59a6dffb2437a84ee63975251ac` |
@@ -27,7 +27,7 @@
 | `src-tauri/src/store/web_backend_store.rs` | `863d85cc9bbb483d74e97a3356b62e94a0118eb14767a34265a1fcb1210a5430` |
 | `src-tauri/src/bin/web-backend-storage.rs` | `71b83d7a240f50c294db3cbdbc312eaa50af8d8cb2e12a3fa7dd268994f40d0a` |
 | `src/lib/web-api-client.ts` | `eb1f36210cee342e8fba8e74834d0eaa02dc06b06c372650b14e5d1ec6f4f676` |
-| `src/stores/pairing.ts` | `dfb824a9916e4cc8d7a2f89865d0e85e93a11569e96a34dc76d40844354cbddc` |
+| `src/stores/pairing.ts` | `ade3e1e64aad193d25e0d025e420756c17aea08880549ed6afb55cb58746399f` |
 | `src/components/PairingGate.vue` | `405ddcda24ea817021c2e0c406a29fd16067bd0d0130b0623ab99979abfaddb4` |
 
 ### 修改文件
@@ -93,7 +93,7 @@
 - **标准线格式核对**：`POST /api/pair` 仅接受请求体 `pairingCode`（移除 `code`/`pairing_code` 别名兜底）；配对与 `GET /api/session` 响应顶层 `csrfToken`；写请求读取 `X-CSRF-Token`（HTTP 头名大小写不敏感）。浏览器客户端 `web-api-client.ts` 已使用同一字面名，无需改动。
 
 **本增量文件 SHA-256**
-- `server/lib/manual-items-service.mjs`：`9c33d5523fbe1988887fe6dba3edc150bb7d2d17b207c80b783f825678e095a6`
+- `server/lib/manual-items-service.mjs`：`c4e4da19f431884053d8fedc2d50fec3583fae57374d4288631ad7189cd2735d`（§12 MINOR-1 回转校验后更新）
 - `server/lib/http-server.mjs`：`ae4287bee7649e870793b6ca2f0d20b8e743aaa5ea4ff8c068c5dcbaf308779e`
 - `tests/unit/web-manual-items.test.mjs`：`fea342140177aedc13ff68ea37c676c13b5acf0cf3ed52747c4da277775eb419`
 
@@ -112,7 +112,7 @@
 - **CLI MINOR-1**：`parseArgs` 改为逐旗标解析，`--init` 作为布尔开关不再吞相邻旗标或末位失效；`isDirectRun` 两侧用 `realpathSync` 解析符号链接，经 `/tmp` 符号链接调用也能正常执行。
 
 **本增量文件 SHA-256**
-- `server/lib/manual-items-service.mjs`：`9c33d5523fbe1988887fe6dba3edc150bb7d2d17b207c80b783f825678e095a6`
+- `server/lib/manual-items-service.mjs`：`c4e4da19f431884053d8fedc2d50fec3583fae57374d4288631ad7189cd2735d`（§12 MINOR-1 回转校验后更新）
 - `server/entries/web-backend-entry.mjs`：`bff28c8749e9268e58a078c04104d2197a8f2760c37f4737a849da87fc2cca91`
 - `tests/unit/web-manual-items.test.mjs`：`fea342140177aedc13ff68ea37c676c13b5acf0cf3ed52747c4da277775eb419`
 
@@ -184,7 +184,7 @@
 - **F-4（SSE epoch 语义）**：`sse-hub.mjs` 读取 `Last-Event-ID`；令牌 epoch ≠ 当前实例、格式非法或游标超窗口时，先发 `stream.reset`（`{contractVersion, epoch, reason}`，无 id），再发 `stream.ready`。事项帧仍无 id、不占任务 cursor。客户端 `pairing.ts` 已监听 `stream.reset`／`stream.ready`／`item.changed` 触发读回补偿。
 
 **本增量文件 SHA-256**
-- `server/lib/manual-items-service.mjs`：`9c33d5523fbe1988887fe6dba3edc150bb7d2d17b207c80b783f825678e095a6`
+- `server/lib/manual-items-service.mjs`：`c4e4da19f431884053d8fedc2d50fec3583fae57374d4288631ad7189cd2735d`（§12 MINOR-1 回转校验后更新）
 - `server/lib/sse-hub.mjs`：`f49951aa6fbcc9f6e3ba67b5f70fff8ce2ebbebd47036909c54379fdf189ceea`
 - `tests/unit/web-manual-items.test.mjs`：`fea342140177aedc13ff68ea37c676c13b5acf0cf3ed52747c4da277775eb419`
 
