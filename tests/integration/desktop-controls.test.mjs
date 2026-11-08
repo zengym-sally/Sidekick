@@ -17,7 +17,7 @@ let work,server;
 before(async()=>{
  if(!available)return;
  work=mkdtempSync(join(tmpdir(),'sidekick-controls-'));mkdirSync(evidence,{recursive:true,mode:0o700});
- const aliases=[{find:/^@tauri-apps\/api\/(core|event|app)$|^@tauri-apps\/plugin-dialog$/,replacement:join(fixture,'api.ts')},{find:/web-api-client/,replacement:join(fixture,'api.ts')}];
+ const aliases=[{find:/^@tauri-apps\/api\/(core|event|app)$|^@tauri-apps\/plugin-dialog$/,replacement:join(fixture,'api.ts')},{find:/^\.\.\/lib\/web-api-client\.ts$/,replacement:join(fixture,'api.ts')}];
  const instrumentation={name:'synthetic-controls-probe',enforce:'pre',transform(code,id){if(id!==join(fixture,'main.ts'))return;return code+`\nimport * as fixtureApi from ${JSON.stringify(join(fixture,'api.ts'))};\nvoid(async()=>{const report=new URLSearchParams(location.search).get('surface')==='workbench'?await ${uiProbe}:await ${probe.replace("await import('/src-api-placeholder')","fixtureApi")};document.querySelector('#result').textContent=JSON.stringify(report);})();`;}};
  await build({configFile:false,envDir:false,root:fixture,plugins:[instrumentation,vue(),tailwindcss()],resolve:{alias:aliases},logLevel:'error',build:{outDir:join(work,'dist'),emptyOutDir:true}});
  server=await preview({configFile:false,envDir:false,root:fixture,build:{outDir:join(work,'dist')},preview:{host:'127.0.0.1',port:0,strictPort:true,open:false},logLevel:'error'});
