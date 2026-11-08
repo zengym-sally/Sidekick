@@ -86,6 +86,14 @@ test('A-8: after SIGKILL of the backend, a fresh instance on the same root reope
     body: { operationId: operationId(), expectedVersion: 1 }, cookie: first.cookie, csrf: first.csrf,
   });
   assert.equal(completed.status, 200, completed.text);
+  // The completion response is the authoritative state at completion time, so the restart
+  // expectations bind to it. Binding them to the create response instead compared the
+  // restored timestamp against a permanently null completedAt and failed on a correct
+  // implementation (F-3).
+  const completedAction = completed.json.item;
+  assert.ok(completedAction?.completedAt, 'complete must stamp completedAt on the returned item');
+  assert.match(completedAction.completedAt, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
+    'completedAt must be an ISO-8601 UTC-millisecond timestamp');
   const updated = await first.request('PUT', `/api/manual-items/${followup.itemId}`, {
     body: { operationId: operationId(), expectedVersion: 1, input: followupInput({ title: '重启恢复跟进 改' }) },
     cookie: first.cookie, csrf: first.csrf,
@@ -97,6 +105,8 @@ test('A-8: after SIGKILL of the backend, a fresh instance on the same root reope
   const preKillAction = itemRow(root, action.itemId);
   assert.equal(preKillAction.version, 2);
   assert.equal(preKillAction.status, 'completed');
+  assert.equal(preKillAction.completed_at_ms, Date.parse(completedAction.completedAt),
+    'the database must record the same completion timestamp the complete response stamped');
 
   const stream = await openEventStream(first.origin, { cookie: first.cookie });
   const ready = await stream.waitFor((frame) => frame.event === 'stream.ready');
@@ -136,7 +146,10 @@ test('A-8: after SIGKILL of the backend, a fresh instance on the same root reope
   assert.equal(restoredAction.status, 'completed', 'the completed state must survive the restart');
   assert.equal(restoredAction.version, 2);
   assert.equal(restoredAction.title, action.title);
-  assert.equal(restoredAction.completedAt, action.completedAt, 'the completion timestamp must be preserved');
+  assert.equal(restoredAction.completedAt, completedAction.completedAt,
+    'the completion timestamp from the complete response must be preserved across the restart');
+  assert.equal(Date.parse(restoredAction.completedAt), itemRow(root, action.itemId).completed_at_ms,
+    'the restored completedAt must agree with the database row');
   assert.equal(restoredFollowup.version, 2);
   assert.equal(restoredFollowup.title, '重启恢复跟进 改');
   assert.equal(restoredFollowup.kind, 'followup');
