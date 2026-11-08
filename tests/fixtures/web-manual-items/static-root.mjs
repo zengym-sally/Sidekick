@@ -4,11 +4,16 @@
 // /api non-fallback) and the browser same-origin cold-start chain are exercised against a
 // real static root served by the real backend. It is not the product UI and never signs
 // business behavior; when a real dist is present the same tests run against it and the
-// evidence records which root was used.
+// evidence records which root was used. The page carries the same reference classes the
+// real product dist shows (same-origin http(s) assets plus one inline data: image), so the
+// F-5/F-6 classification is exercised in this mode too.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const HASH = '9f8e7d6c5b4a';
+// A minimal inline SVG data URI — the same reference class as the product's vite-inlined
+// sidekick-mark.svg. Inline data: resources never touch the network.
+const INLINE_MARK = 'data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2716%27%20height=%2716%27%3E%3C/svg%3E';
 
 export function buildSyntheticStaticRoot(dir) {
   mkdirSync(join(dir, 'assets'), { recursive: true });
@@ -23,6 +28,7 @@ export function buildSyntheticStaticRoot(dir) {
 </head>
 <body>
 <div id="app">booting</div>
+<img id="mark" src="${INLINE_MARK}" alt="synthetic inline mark">
 <pre id="probe" hidden></pre>
 <script src="/assets/app-${HASH}.js" defer></script>
 </body>
@@ -31,16 +37,31 @@ export function buildSyntheticStaticRoot(dir) {
   writeFileSync(join(dir, 'assets', `app-${HASH}.js`), `// synthetic same-origin probe app (not the product UI; only exercises the supply chain)
 const app = document.getElementById('app');
 app.textContent = 'synthetic-root-ready';
-const sameOrigin = (value) => {
-  try { return new URL(value, location.href).origin === location.origin; } catch { return false; }
+// Reference classification mirrors tests/fixtures/web-manual-items/browser-probe.mjs (F-5/F-6):
+// inline data: resources and real http(s) network references are verified separately and no
+// scheme passes through an opaque (null) origin unexamined.
+const classify = (value) => {
+  let url;
+  try { url = new URL(value, location.href); } catch { return { value, kind: 'unparseable' }; }
+  if (url.protocol === 'data:') {
+    const comma = value.indexOf(',');
+    return { value, kind: 'inline-data', payloadLength: comma < 0 ? 0 : value.length - comma - 1 };
+  }
+  if (url.protocol === 'http:' || url.protocol === 'https:') return { value, kind: 'network', origin: url.origin };
+  return { value, kind: 'unexpected-scheme', protocol: url.protocol };
 };
 const refs = [...document.querySelectorAll('script[src],link[href],img[src]')]
-  .map((element) => element.getAttribute('src') || element.getAttribute('href'));
+  .map((element) => element.getAttribute('src') || element.getAttribute('href'))
+  .filter((value) => value && value.length > 0);
+const classified = refs.map((value) => classify(value));
 const report = {
   mounted: app.textContent === 'synthetic-root-ready',
   origin: location.origin,
   refs,
-  crossOriginRefs: refs.filter((value) => !sameOrigin(value)),
+  classified,
+  crossOriginRefs: classified.filter((entry) => entry.kind === 'network' && entry.origin !== location.origin).map((entry) => entry.value),
+  inlineDataRefs: classified.filter((entry) => entry.kind === 'inline-data'),
+  unexpectedRefs: classified.filter((entry) => entry.kind !== 'network' && entry.kind !== 'inline-data').map((entry) => entry.value),
   overflow: document.documentElement.scrollWidth <= window.innerWidth,
   scrollWidth: document.documentElement.scrollWidth,
   innerWidth: window.innerWidth,

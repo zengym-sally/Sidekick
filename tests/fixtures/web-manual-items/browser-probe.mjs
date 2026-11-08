@@ -1,11 +1,14 @@
-// Browser probe for the same-origin acceptance suites (MAYNE-23 slice II, revision r2).
+// Browser probe for the same-origin acceptance suites (MAYNE-23 slice II, revision r3).
 // Drives headless Chrome through the DevTools Protocol and evaluates an in-page probe, so
 // the assertions observe what the browser actually rendered and reached — not the static
 // index.html on disk. The retired --dump-dom check could be satisfied by the empty
 // <div id="app"></div> of an unmounted Vite page; this probe distinguishes a mounted
 // application from an empty mount point, measures horizontal overflow, and lets the page
-// itself reach /api/session and /api/events same-origin. Zero dependencies: the DevTools
-// WebSocket uses the built-in client.
+// itself reach /api/session and /api/events same-origin. Static references are verified by
+// class (F-5/F-6 revision): same-origin http(s) network references, inline data: resources
+// and unexpected schemes are separated, and the requests the browser actually issued are
+// observed through the DevTools Network domain, so no reference passes silently through an
+// opaque (null) origin. Zero dependencies: the DevTools WebSocket uses the built-in client.
 import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { createServer } from 'node:net';
@@ -30,8 +33,8 @@ const freePort = () => new Promise((resolvePromise, reject) => {
 
 // In-page probe evaluated through the Chrome DevTools Protocol. It runs inside the served
 // page, so it observes the rendered DOM and the requests the page itself made: whether the
-// application mounted into #app, whether every static reference stays same-origin, the
-// same-origin /api/session and /api/events answers, and the horizontal overflow measurement.
+// application mounted into #app, how every static reference classifies, the same-origin
+// /api/session and /api/events answers, and the horizontal overflow measurement.
 export const PAGE_PROBE = `(async () => {
   const waitFor = async (predicate, deadlineMs) => {
     const deadline = Date.now() + deadlineMs;
@@ -49,9 +52,31 @@ export const PAGE_PROBE = `(async () => {
   const refs = [...document.querySelectorAll('script[src],link[href],img[src]')]
     .map((node) => node.getAttribute('src') || node.getAttribute('href') || '')
     .filter((value) => value.length > 0);
-  const sameOrigin = (value) => {
-    try { return new URL(value, location.href).origin === location.origin; } catch { return false; }
+  // Classify every static reference by what it actually is (F-5/F-6 revision). An inline
+  // data: resource and a real network reference are verified separately, and nothing is
+  // exempted merely for having an opaque (null) origin:
+  //   - data: URIs are inline resources that never touch the network; they are verified as
+  //     inline payloads (non-empty after the scheme) and recorded separately.
+  //   - http/https references are real network references and must be same-origin.
+  //   - every other scheme (file:, blob:, about:, ...) is rejected explicitly.
+  const classify = (value) => {
+    let url;
+    try { url = new URL(value, location.href); } catch { return { value, kind: 'unparseable' }; }
+    if (url.protocol === 'data:') {
+      const comma = value.indexOf(',');
+      return {
+        value,
+        kind: 'inline-data',
+        mediaType: comma < 0 ? '' : value.slice('data:'.length, comma),
+        payloadLength: comma < 0 ? 0 : value.length - comma - 1,
+      };
+    }
+    if (url.protocol === 'http:' || url.protocol === 'https:') {
+      return { value, kind: 'network', origin: url.origin };
+    }
+    return { value, kind: 'unexpected-scheme', protocol: url.protocol };
   };
+  const classified = refs.map((value) => classify(value));
   const settle = async (path) => {
     try {
       const controller = new AbortController();
@@ -77,7 +102,14 @@ export const PAGE_PROBE = `(async () => {
       dataProbe: element ? element.getAttribute('data-probe') : null,
     },
     refs,
-    crossOriginRefs: refs.filter((value) => !sameOrigin(value)),
+    classified,
+    crossOriginRefs: classified
+      .filter((entry) => entry.kind === 'network' && entry.origin !== location.origin)
+      .map((entry) => entry.value),
+    inlineDataRefs: classified.filter((entry) => entry.kind === 'inline-data'),
+    unexpectedRefs: classified
+      .filter((entry) => entry.kind !== 'network' && entry.kind !== 'inline-data')
+      .map((entry) => entry.value),
     scrollWidth: document.documentElement.scrollWidth,
     clientWidth: document.documentElement.clientWidth,
     innerWidth: window.innerWidth,
@@ -87,11 +119,12 @@ export const PAGE_PROBE = `(async () => {
   };
 })()`;
 
-// Shared cold-start assertions for the served page, used by the static suite and by the F-3
-// counter-example probe so both check exactly the same properties. mode 'synthetic' signs
-// fixture mechanics only; a real-dist mode ('packaged' / 'explicit') requires the product UI
-// itself to have mounted into #app in the live DOM — an empty <div id="app"></div> inside
-// index.html is not evidence, which is exactly what the retired dump-dom check accepted.
+// Shared cold-start assertions for the served page, used by the static suite and by the
+// F-5/F-6 counter-example probe so both check exactly the same properties. mode 'synthetic'
+// signs fixture mechanics only; a real-dist mode ('packaged' / 'explicit') requires the
+// product UI itself to have mounted into #app in the live DOM — an empty <div id="app"></div>
+// inside index.html is not evidence, which is exactly what the retired dump-dom check
+// accepted.
 export function assertColdStartReport(report, options = {}) {
   const { origin, mode = 'packaged', width } = options;
   assert.equal(report.origin, origin, 'the page must be served from the backend origin');
@@ -106,7 +139,39 @@ export function assertColdStartReport(report, options = {}) {
     assert.ok(report.app.childElementCount > 0, 'the mounted application must render elements into #app');
     assert.ok(report.app.textLength > 0, 'the mounted application must render text into #app');
   }
-  assert.deepEqual(report.crossOriginRefs, [], `all static references must be same-origin: ${JSON.stringify(report.crossOriginRefs)}`);
+  // Static references are verified by class (F-5/F-6 revision): real http(s) network
+  // references must be same-origin; inline data: resources are verified as inline payloads
+  // and never counted as network references; every other scheme is rejected explicitly, so
+  // no reference passes silently through an opaque (null) origin. A blanket exemption for
+  // null origins would also wave through file:/blob: references and is therefore not used.
+  assert.deepEqual(report.crossOriginRefs, [],
+    `every http(s) static reference must be same-origin: ${JSON.stringify(report.crossOriginRefs)}`);
+  assert.deepEqual(report.unexpectedRefs, [],
+    `no static reference may use an unexpected scheme (only same-origin http(s) and inline data: are accepted): `
+    + JSON.stringify(report.unexpectedRefs));
+  for (const entry of report.inlineDataRefs ?? []) {
+    assert.ok(entry.payloadLength > 0,
+      `an inline data: reference must carry a payload: ${String(entry.value).slice(0, 80)}`);
+  }
+  // The requests the browser actually issued, observed through the DevTools Network domain —
+  // not only the declared attributes. Inline data: requests are inline resources (Chrome
+  // reports them through the Network domain with an opaque origin; they are verified as
+  // inline, like the DOM-side inline data: references, and never as network references).
+  // Every other request the page issued must be same-origin.
+  assert.ok(Array.isArray(report.networkRequests),
+    'the probe must report the network requests the browser observed');
+  const inlineDataRequests = (report.networkRequests ?? []).filter((entry) => /^data:/i.test(entry.url));
+  for (const entry of inlineDataRequests) {
+    const comma = entry.url.indexOf(',');
+    assert.ok(comma >= 0 && entry.url.length > comma + 1,
+      `an inline data: request must carry a payload: ${entry.url.slice(0, 80)}`);
+  }
+  const realNetworkRequests = (report.networkRequests ?? []).filter((entry) => !/^data:/i.test(entry.url));
+  const foreignRequests = realNetworkRequests
+    .filter((entry) => entry.origin !== report.origin)
+    .map((entry) => entry.url);
+  assert.deepEqual(foreignRequests, [],
+    `every real network request the page issued must be same-origin: ${JSON.stringify(foreignRequests)}`);
   assert.ok(!report.session.fetchError, `the page must reach /api/session same-origin: ${report.session.fetchError ?? ''}`);
   assert.equal(report.session.status, 401, 'the unpaired page must reach /api/session same-origin and be told to pair');
   assert.match(report.session.contentType, /^application\/json/, '/api/session must answer JSON, not HTML');
@@ -163,11 +228,22 @@ export async function probeWithChrome(url, width, options = {}) {
     });
     let nextId = 0;
     const pending = new Map();
+    // Real network traffic observed by the browser itself: every request the page issues
+    // (the document, subresources, in-page fetches) is recorded from navigate until the
+    // probe evaluation returns, so the assertions can verify what was actually fetched and
+    // not only what the DOM attributes declare (F-5/F-6 revision).
+    const observedRequests = [];
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
       if (message.id !== undefined && pending.has(message.id)) {
         pending.get(message.id)(message);
         pending.delete(message.id);
+      }
+      if (message.method === 'Network.requestWillBeSent' && message.params?.request?.url) {
+        const url = message.params.request.url;
+        let origin = 'unparseable';
+        try { origin = new URL(url).origin; } catch { /* keep the unparseable marker */ }
+        observedRequests.push({ url, origin, resourceType: message.params.type ?? null });
       }
     };
     const send = (method, params = {}) => new Promise((resolvePromise, reject) => {
@@ -181,6 +257,7 @@ export async function probeWithChrome(url, width, options = {}) {
     });
     await send('Page.enable');
     await send('Runtime.enable');
+    await send('Network.enable');
     await send('Page.navigate', { url });
     await new Promise((r) => setTimeout(r, 1500));
     const evaluated = await send('Runtime.evaluate', { expression: PAGE_PROBE, awaitPromise: true, returnByValue: true });
@@ -189,6 +266,7 @@ export async function probeWithChrome(url, width, options = {}) {
     }
     const report = evaluated.result?.result?.value;
     if (!report) throw new Error(`the in-page probe returned no value: ${JSON.stringify(evaluated.result)}`);
+    report.networkRequests = observedRequests;
     const dom = await send('Runtime.evaluate', { expression: 'document.documentElement.outerHTML', returnByValue: true });
     const screenshot = await send('Page.captureScreenshot', { format: 'png' });
     socket.close();
