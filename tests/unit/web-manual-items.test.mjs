@@ -10,6 +10,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
 import { ManualItemsService, ServiceError, canonicalize } from '../../server/lib/manual-items-service.mjs';
 import { parseArgs } from '../../server/entries/web-backend-entry.mjs';
+import { fromWireItem, toDomainPoint, toWireInput, toWirePoint } from '../../src/lib/web-api-client.ts';
 
 class StorageError extends Error {
   constructor(code, message) {
@@ -379,6 +380,57 @@ test('CLI parseArgs keeps the boolean --init flag and value flags', () => {
   assert.throws(() => parseArgs(['--root']), /缺少值/);
   assert.throws(() => parseArgs(['--root', '/tmp/x', '--init', '--port']), /缺少值/);
   assert.throws(() => parseArgs(['root']), /无法识别/);
+});
+
+test('wire↔domain time mapping keeps minute default and day precision', () => {
+  const minuteWire = toWirePoint({ atMs: 1794564000000, timeZone: 'Asia/Shanghai', localText: '2026-11-13 18:00' });
+  assert.equal(minuteWire.precision, 'minute');
+  assert.equal(minuteWire.at, '2026-11-13T10:00:00.000Z');
+  assert.equal(toDomainPoint(minuteWire).precision, undefined);
+  assert.equal(toDomainPoint(minuteWire).atMs, 1794564000000);
+
+  const dayWire = toWirePoint({ atMs: 1794620800000, timeZone: 'Asia/Shanghai', localText: '2026-11-14', precision: 'day' });
+  assert.equal(dayWire.precision, 'day');
+  assert.equal(toDomainPoint(dayWire).precision, 'day');
+  assert.equal(toDomainPoint(dayWire).atMs, 1794620800000);
+
+  assert.equal(toWirePoint(null), null);
+});
+
+test('fromWireItem maps due/followup and source per the manual wire format', () => {
+  const wire = {
+    contractVersion: 'web-api/1',
+    itemId: 'mi_x',
+    title: 't',
+    kind: 'action',
+    owner: 'o',
+    priority: 'high',
+    status: 'open',
+    due: { at: '2026-11-13T10:00:00.000Z', timeZone: 'Asia/Shanghai', localText: '2026-11-13 18:00', precision: 'minute' },
+    followup: { at: '2026-11-14T02:00:00.000Z', timeZone: 'Asia/Shanghai', localText: '2026-11-14', precision: 'day' },
+    tags: [],
+    createdAt: '2026-11-08T02:00:00.000Z',
+    updatedAt: '2026-11-08T02:00:00.000Z',
+    completedAt: null,
+    deletedAt: null,
+    version: 1,
+    source: 'manual',
+  };
+  const item = fromWireItem(wire);
+  assert.equal(item.data.due.precision, undefined);
+  assert.equal(item.data.due.atMs, 1794564000000);
+  assert.equal(item.data.followup.precision, 'day');
+  assert.equal(item.data.followup.atMs, 1794621600000);
+  assert.equal(item.source, 'manual');
+
+  // Round trip: minute default and day precision both survive.
+  const back = toWireInput(item.data);
+  assert.equal(back.due.precision, 'minute');
+  assert.equal(back.followup.precision, 'day');
+
+  const empty = fromWireItem({ ...wire, due: null, followup: null });
+  assert.equal(empty.data.due, null);
+  assert.equal(empty.data.followup, null);
 });
 
 test('canonicalize is key-order independent', () => {

@@ -26,7 +26,7 @@
 | `src-tauri/migrations/web-backend/002_manual_items.sql` | `b6cb8e61609f83454164bff6c5628b2c893122b8dbb9bb3ced41bcd3d9e2f97e` |
 | `src-tauri/src/store/web_backend_store.rs` | `5041d337285f6365de5893741aa36662b56c8188cea310f8c991b89898382542` |
 | `src-tauri/src/bin/web-backend-storage.rs` | `71b83d7a240f50c294db3cbdbc312eaa50af8d8cb2e12a3fa7dd268994f40d0a` |
-| `src/lib/web-api-client.ts` | `678b118e71dd7bcce6efd359cb903b2e733e1f1fb6d71e11e5033884836175f5` |
+| `src/lib/web-api-client.ts` | `b4bec8820eefe7e3e74a5daf5716c69cdd32cdfc11c8adda64f224792123fc16` |
 | `src/stores/pairing.ts` | `dfb824a9916e4cc8d7a2f89865d0e85e93a11569e96a34dc76d40844354cbddc` |
 | `src/components/PairingGate.vue` | `405ddcda24ea817021c2e0c406a29fd16067bd0d0130b0623ab99979abfaddb4` |
 
@@ -48,7 +48,7 @@
 | 文件 | SHA-256 |
 |---|---|
 | `src-tauri/src/store/web_backend_store_tests.rs` | `5b371d0826dd2ba3946353619da4682e90b00bdf32139c95d3eaaf3936a745be` |
-| `tests/unit/web-manual-items.test.mjs` | `5e00fe45c3748207585cacc800ace639ea9e96b6167292aa17b6121f218bc1f9` |
+| `tests/unit/web-manual-items.test.mjs` | `d0b7ebfe44a27d88352d7cff4be6733946da27efd977c968474d5f329a901d7a` |
 
 ## 3. 实现要点
 
@@ -95,7 +95,7 @@
 **本增量文件 SHA-256**
 - `server/lib/manual-items-service.mjs`：`fa679affa9804d97e9316d37740513659eda6b48bc75375507fae598c86d433f`
 - `server/lib/http-server.mjs`：`f4d80e628e863a752848b65e503a14b66e4318a649b088324d5f42cf84ac9ab8`
-- `tests/unit/web-manual-items.test.mjs`：`5e00fe45c3748207585cacc800ace639ea9e96b6167292aa17b6121f218bc1f9`
+- `tests/unit/web-manual-items.test.mjs`：`d0b7ebfe44a27d88352d7cff4be6733946da27efd977c968474d5f329a901d7a`
 
 **本增量聚焦验证（实跑）**
 - `node --test tests/unit/web-manual-items.test.mjs`：11/11 pass（新增「list rejects unknown status and invalid limit」）。
@@ -114,10 +114,28 @@
 **本增量文件 SHA-256**
 - `server/lib/manual-items-service.mjs`：`fa679affa9804d97e9316d37740513659eda6b48bc75375507fae598c86d433f`
 - `server/entries/web-backend-entry.mjs`：`c7234a7542c3f21401455f397bbfd739c20c8ded76ec0017df516780727e29aa`
-- `tests/unit/web-manual-items.test.mjs`：`5e00fe45c3748207585cacc800ace639ea9e96b6167292aa17b6121f218bc1f9`
+- `tests/unit/web-manual-items.test.mjs`：`d0b7ebfe44a27d88352d7cff4be6733946da27efd977c968474d5f329a901d7a`
 
 **本增量聚焦验证（实跑）**
 - `node --test tests/unit/web-manual-items.test.mjs`：14/14 pass。新增「failed concurrent writes leave no event and keep the operationId free」对 update/complete/reopen/delete 四条写路径做确定性竞争（败者事务内先注入胜者提交，再执行败者事务）：败者 409 `version_conflict`、无事件行、以原 operationId＋新版本重试成功。新增「idempotency key binds action and item across reuse」验证跨事项/跨动作复用 409、同意图重放 `replayed:true`。新增 `parseArgs` 用例。
 - 真实 HTTP（`build/web-manual-items-implementation/smoke-major1-http.mjs`）：create 200→update 200→stale update 409（历史无该操作）→同 operationId 新版本重试 200→complete 200；跨事项复用 409 `idempotency_conflict`；历史仅含成功事件。
 - CLI（`build/web-manual-items-implementation/smoke-cli.mjs`）：无 `--init` 打开不存在根 exit 1「工作目录不存在」；经符号链接无参调用 exit 1「--root 必须显式给定」；`--init` 居中/末位均正常启动并建库；缺值 exit 1「参数 --root 缺少值」。
 - Rust 侧未改动：store 11/11、schema 18/18、clippy `-D warnings`、`cargo fmt --check` 全绿；冻结 `001`/`002`/`web-api/1` 哈希逐字节不变。
+
+
+## 8. 2026-11-08 类型映射退修增量（最终门禁 typecheck 拦截）
+
+依据集成门禁 `a02bfef` 的 typecheck 失败回执（三处 TS 错误均在候选 I `src/lib/web-api-client.ts`），仅在该文件与必要单测范围内修订：
+
+- **精度映射**：新增 `toDomainPoint`，把线格式 `'minute'` 映回域缺省（`precision: undefined`），`'day'` 保留为 `'day'`；`fromWireItem` 的 `due`/`followup` 改用它。域 `TimePoint.precision?: 'day'` 不变。
+- **source 映射**：W1 为 manual-only（冻结 002 DDL `CHECK (source IN ('manual'))`），`fromWireItem` 直接映到域 `'manual'`，不再与 `'signed_ai'` 做无重叠比较；线类型 `WireItem.source: 'manual'` 不变，未拓宽域/协议，未用 `any` 或强制断言。
+- **CLI MINOR-1**：见 §7（本增量未再改 CLI）。
+
+**本增量文件 SHA-256**
+- `src/lib/web-api-client.ts`：`b4bec8820eefe7e3e74a5daf5716c69cdd32cdfc11c8adda64f224792123fc16`
+- `tests/unit/web-manual-items.test.mjs`：`d0b7ebfe44a27d88352d7cff4be6733946da27efd977c968474d5f329a901d7a`
+
+**本增量聚焦验证（实跑）**
+- `npm run typecheck`（`vue-tsc --noEmit`）：exit 0（门禁失败的三个 TS 错误已消除）。
+- `node --test tests/unit/web-manual-items.test.mjs`：16/16 pass。新增「wire↔domain time mapping keeps minute default and day precision」（分钟→undefined、日→day、null→null、往返稳定）与「fromWireItem maps due/followup and source per the manual wire format」（due 分钟缺省、followup 日精度、source=manual、空时点保持 null）。
+- Rust 侧本增量未改动：store 11/11、schema 18/18、clippy `-D warnings` exit 0、`cargo fmt --check` exit 0；冻结 `001`/`002`/`web-api/1` 哈希逐字节不变。
