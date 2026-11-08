@@ -157,3 +157,63 @@
 
 - 第三轮冻结提交＝本节随 alias 修复接入一起提交的那个提交；其 SHA/tree 于 §10 回执登记（gate 在该冻结提交上执行）。
 - 前置与门禁计划同 §4：冻结后从头真实准备构建前置（`npm ci --ignore-scripts`、`probe:prepare-cli`、`probe:prepare-pi`，不以空目录/桩产物替代），再在冻结提交上串行执行一次完整 `npm run check`——保留全部脚本、预算与默认产品 dist，不孤立预跑同版整套 Web 组；逐组结果、exit、警告分类与未验项记入 §10。若仍失败，沿 §4.3/§8.3 同一路径归因回报，不擅改 I/II。
+
+## 10. 第三轮完整门禁回执（2026-11-08，冻结提交上串行执行）：**不通过（gate exit 1，第 47 组 `check:s33-p2-package`）**
+
+### 10.1 冻结与前置（全部实测）
+
+- 第三轮冻结提交 `2e349ec36ebc25764d17919836925598e57fb23c`，tree `d9d536c91a3464cb7d5c1911a76bfdd542825250`（§9 随 alias 修复接入提交）。
+- 前置阶段 2026-11-08T01:18:28Z–01:18:52Z：`npm ci --ignore-scripts` exit 0；`probe:prepare-cli` exit 0；`probe:prepare-pi` exit 0（vendor/pi 按 `pi-source.json` 来源校验后真实构建，82 文件 9.0 MiB，commit `ad702637…`）。前置后聚焦 `check:structure` exit 0（236 文件／499 引用，vendor 构建产物就位后零 `ref.missing`）、`check:docs` exit 0（21 文件／496 链接）。
+- 正式 gate（冻结提交上的完整 `npm run check`）：`GATE_START=2026-11-08T01:20:25Z`、`GATE_END=01:32:03Z`，**exit 1**（11.6 分钟，含本 worktree 首次全新 Rust 全套编译）。
+
+### 10.2 逐组结果（51 组链）
+
+| # | 组 | 结果 |
+|---|---|---|
+| 1 | `check:structure`（self-test＋全库） | exit 0（236 文件／499 引用） |
+| 2 | `check:docs` | exit 0（21 文件／496 链接） |
+| 3 | `test:executable-copy` | exit 0 |
+| 4 | `probe:bundle` | exit 0 |
+| 5 | `typecheck`（vue-tsc --noEmit） | **exit 0——首轮失败面保持闭合（`ff5d6c2`）** |
+| 6–10 | `test:s1/s2/s31/today/layout-domain` | exit 0（逐组） |
+| 11 | `test:desktop-controls` | **exit 0：9 tests／9 pass／0 fail——第二轮失败面由 `91b78ed` alias 修复闭合** |
+| 12–21 | `test:pet-*` 五组＋`check:pet-ui`＋ui-entries＋pet-native＋check:pet-native | exit 0（逐组） |
+| 22–31 | `test:s32/s33-*-domain` 五组＋`test:mcp-contract/http/recovery`＋model-budget/output-diagnostics＋mcp-native-fetch | exit 0（逐组） |
+| 32 | `check:rust`（fmt --check＋clippy -D warnings） | exit 0 |
+| 33–37 | `check:s33-p2-runtime`、`test:s33-lifecycle`、`probe:runtime/card/contracts` | exit 0（逐组） |
+| 38 | `probe:native`（cargo test --lib -- --test-threads=1） | exit 0（**323 passed／0 failed／3 ignored**，307.8s） |
+| 39–42 | `test:mcp-budgeted`、`probe:toolchain`、`test:s2-runtime`、`test:today-runtime` | exit 0（逐组） |
+| 43–45 | inline `node --test`：s31-runtime／layout-runtime／s32-runtime | exit 0（链条继续，为 `&&` 语义下的通过证明） |
+| 46 | `probe:bundle-smoke` | exit 0 |
+| 47 | `check:s33-p2-package` | **exit 1——`build:s33-ui-verify` 内 `tauri build` 主二进制解析失败（见 §10.3）** |
+| 48–51 | `test:pet-ui-artifacts`、`test:mcp-native-launcher`、`build:backend`、`test:web-manual-items` | **未执行**（第 47 组失败 `&&` 短路；非跳过、非豁免） |
+
+已执行 46 组无新增警告类别：唯一命中为 vite「Some chunks are larger than 500 kB」提示（第 47 组 beforeBuildCommand 的 `npm run build` 内，W0 既有已知提示类别）；警告扫描中的其余 `warn`/`warning` 命中均为既有测试名文本。
+
+### 10.3 失败定位与三向归因（证据确凿，属候选 I 已批字节与既有打包路径的交互；前两轮短路致其首次暴露）
+
+失败点：`check:s33-p2-package` → `build:s33-ui-verify` → `node scripts/build/build-app.mjs tests/fixtures/s33-ui-verify.config.json` → `tauri build --bundles app`。beforeBuildCommand `npm run build` 全绿（typecheck exit 0、vite 483ms 构建成功）后，tauri CLI 报：
+
+```
+failed to find main binary, make sure you have a `package > default-run` in the Cargo.toml file
+```
+
+机制：候选 I 已批变更 C 向 `src-tauri/Cargo.toml` 追加 `[[bin]] web-backend-storage`。基线 `6546990` 的 Cargo.toml 无任何 `[[bin]]` 段（唯一二进制来自 `src/main.rs` 的隐式 `sidekick`），tauri CLI 单二进制无需消歧；现为两个 bin 且无 `default-run`，主二进制解析失败。打包链自 W0 未改：`build-app.mjs` 对基线 diff 为空（`tauri build --bundles app`，无 bin 选择参数）。
+
+**三向对照**（`git archive` 导出至沙箱临时树＋共享 node_modules，到达判定标记即收尾进程树；日志 `31/32/33-ab*-p2package.log`）：
+
+| 实验 | 树 | 结果 |
+|---|---|---|
+| AB1 | 候选 `91b78ed`（I 交付字节原样，typecheck 绿） | **RESOLUTION_FAILED**：错误与门禁逐字同构 |
+| AB2 | 基线 `6546990`（W0，Cargo.toml 零 `[[bin]]`） | **RESOLUTION_PASSED**：7.7s 越过解析进入 cargo 编译（到达标记即杀） |
+| AB3 | 候选 `91b78ed`＋仅在丢弃型导出内插入 `default-run = "sidekick"` | **RESOLUTION_PASSED**：同上越过解析（到达标记即杀） |
+
+结论：缺陷内在于候选 I 已批字节（变更 C）与 W0 既有打包消费方（`build:s33-ui-verify`／`probe:app`／`test:mcp-native-launcher` 同走 `tauri build`）的交互；本轮接入的 alias 增量与本失败无关——第 5、11 两组此前失败面本轮双双转绿。第 1–2 轮 gate 分别于第 5/11 组短路，第 47 组从未执行，本轮为首次暴露。
+
+按登记处置：**不修改 I/II、不豁免守卫、不动冻结树**（AB3 的 `default-run` 仅存在于丢弃型导出，作机制证据回报）。`Cargo.toml` 属候选 I 唯一写入范围，补 `default-run = "sidekick"`（或队长裁定的等效方案）须由队长派 I 原作者修订＋独审后，另冻结新版本从头重跑完整门禁。
+
+### 10.4 未验项与收尾
+
+- 未验项：第 48–51 组（pet-ui-artifacts、mcp-native-launcher、`build:backend` 真实打包、`test:web-manual-items` 新 Web 三套件含 HTTP/重启/同源浏览器）在本冻结版零证据；完整浏览器业务旅程独立验收仍待明确集成版另派；Linux/代理、真实凭据/真实用户工作根/真实模型在授权边界外。
+- 收尾：`pgrep` 复核无 `cargo`/`rustc`/`build-app`/`web-backend-storage`/`web-backend-entry` 残留（`40-cleanup-pgrep-r3.log`）；A/B 判定驱动的进程树按标记即杀，无孤儿编译。
+- 证据包：`web-manual-items-integration-r3-evidence.tar.gz`（哈希见 `SHA256SUMS-r3.txt` 与随附清单）含前置、逐组 gate、A/B 三向与收尾全部编号日志；不含配对码/cookie/token（已扫描）。
