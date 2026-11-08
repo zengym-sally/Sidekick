@@ -89,6 +89,49 @@
 
 ### 7.2 第二轮冻结与完整门禁（原预算串行，冻结 SHA 上执行）
 
-- 第二轮冻结提交：本节随修复接入与公共记录一起提交后登记于 §8（gate 回执补记）。
+- 第二轮冻结提交 `c26f40d11b6c5a4f3d7e9b1418b32d01dba12a38`，tree `b106679c2dd31725126873820b011bd8d9397d2b`（本节与 §7.1 随修复接入一起提交；gate 逐组结果与归因见 §8 回执）。
 - 前置与门禁计划同 §4：冻结后从头真实准备构建前置（`npm ci --ignore-scripts`、`probe:prepare-cli`、`probe:prepare-pi`，不以桩产物替代），再在冻结提交上串行执行一次完整 `npm run check`——保留全部脚本、预算与默认产品 dist，不孤立预跑同版整套 Web 组；逐组结果、exit、警告分类与未验项记入 §8。若仍失败，沿 §4.3 同一路径归因回报，不擅改 I/II。
+
+## 8. 第二轮完整门禁回执（2026-11-08，冻结 `c26f40d` 上串行执行）：**不通过（gate exit 1，`test:desktop-controls` 组）**
+
+### 8.1 前置与正式 gate 起点（本轮即区分登记）
+
+- 前置阶段于 00:54:43Z 启动：`npm ci --ignore-scripts` exit 0（00:54:43–46Z）；`probe:prepare-cli` exit 0（lark-cli v1.0.98，00:54:49–51Z）；`probe:prepare-pi` exit 0（vendor/pi 按 `pi-source.json` 来源校验后真实构建，82 文件 9.0 MiB，00:54:55Z–00:55:10Z）。前置后聚焦 `check:structure` exit 0（236 文件／499 引用）、`check:docs` exit 0（21 文件／495 链接）。
+- 正式 gate（冻结提交 `c26f40d` 上的完整 `npm run check`）`GATE_START=2026-11-08T00:55:26Z`、`GATE_END=00:55:38Z`，exit 1。
+
+### 8.2 逐组结果（51 组链）
+
+| # | 组 | 结果 |
+|---|---|---|
+| 1 | `check:structure`（self-test＋全库） | exit 0 |
+| 2 | `check:docs` | exit 0（21 文件／495 链接） |
+| 3 | `test:executable-copy` | exit 0（4/4） |
+| 4 | `probe:bundle` | exit 0 |
+| 5 | `typecheck`（vue-tsc --noEmit） | **exit 0——首轮 3 处 TS 错误已由 `ff5d6c2` 修复闭合** |
+| 6 | `test:s1-domain` | exit 0（51/51） |
+| 7 | `test:s2-domain` | exit 0（47/47） |
+| 8 | `test:s31-domain` | exit 0（183/183） |
+| 9 | `test:today-domain` | exit 0（26/26） |
+| 10 | `test:layout-domain` | exit 0（14/14） |
+| 11 | `test:desktop-controls` | **exit 1（9 tests，0 pass，9 fail；全部挂于 `before` 钩子的 vite build，见 §8.3）** |
+| 12–51 | `test:pet-domain` … `test:web-manual-items`（含 `check:rust`、两包构建、`build:backend` 真实打包、新 Web 三套件等约 40 组） | **未执行**（第 11 组失败 `&&` 短路；非跳过、非豁免） |
+
+已执行 10 个绿色组均无警告输出（扫描 `warn`／`deprecat` 仅命中既有测试名文本）；首轮失败回执（§4）原样保留。
+
+### 8.3 失败定位与三向归因（证据确凿，属候选 I 交付缺陷；首轮短路致其首次暴露）
+
+9 个用例全部失败于同一构建错误：`[UNLOADABLE_DEPENDENCY] Could not load ../lib/<绝对路径>/tests/fixtures/desktop-controls/api.ts.ts`（`tests/integration/desktop-controls.test.mjs:22` 的 `before` 钩子 vite build）。机制：
+
+- 候选 I 适配（`da79aed`，在 I 授权的最小 desktop-controls 适配内）为 `src/stores/todos.ts`／`src/stores/pairing.ts` 引入带扩展名导入 `from '../lib/web-api-client.ts'`，并在该测试的 fixture alias 追加 `{find:/web-api-client/, replacement:join(fixture,'api.ts')}`——**无锚点子串正则**。vite/rollup alias 对正则 `find` 按「匹配子串」替换：说明符中 `web-api-client` 被替换为 fixture 绝对路径，残留前缀 `../lib/` 与后缀 `.ts`，拼出 `../lib/<abs>api.ts.ts` 解析失败。对照基线既有第一 alias（`^…$` 锚定整串替换）无此问题。
+- 基线 `6546990` 的 `src/` 无任何 `web-api-client` 导入（todos.ts 走 Tauri `invoke`），alias 不触发——该组在基线绿（W0 全门禁 968/968 含本组）。
+- **三向对照（共享同一 node_modules）**：基线导出树 `test:desktop-controls` **9/9 pass、exit 0**（`13-ab-baseline-desktop-controls.log`）；候选 I 树（`4ca93440`）导出 **9 tests／0 pass／9 fail，错误与集成树逐字节同构**（`12-ab-candidate-i-desktop-controls.log`）；集成冻结树 gate 复现（`11-check-full.log`）。缺陷内在于候选 I 交付字节，非集成组装产物。
+- **为何历轮未暴露**：I 聚焦验证清单未含 `test:desktop-controls`；`typecheck`／单测／HTTP smoke 均不经过该 fixture alias 构建（真实布局下 `.ts` 导入可解析）；II 不触该组；首轮 gate 在第 5 组 `typecheck` 短路，第 11 组从未执行；ZCode R1–R3、OhMyPi R1/R2、Kimi 公共审查范围均不含该组。完整门禁首次跑到第 11 组即拦下——与其设计目的相符。
+
+按登记处置：**不修改 I/II、不豁免守卫、不弱化断言**；本回执即归因回报。修复面（alias 锚定方式或导入写法）在候选 I 原有写入授权内，由队长派 I 原作者修订并另派独立复审，之后在新的冻结版本从头重跑完整门禁。
+
+### 8.4 未验项与收尾
+
+- 未验项：第 12–51 组（Rust 全套、两包构建、`build:backend` 真实打包、`test:web-manual-items` 新 Web 三套件、浏览器路径等约 40 组）在本冻结版零证据；完整浏览器业务旅程独立验收仍待明确新集成版另派；Linux/代理、真实凭据/真实用户工作根/真实模型在授权边界外。
+- 收尾：本 run 无常驻服务；gate 与聚焦进程随退出结束，`pgrep` 复核无 `web-backend-storage`／vite preview／调试浏览器残留（`15-cleanup-pgrep.log`）。A/B 三向对照的临时导出树（`ab-baseline-r2`、`ab-candidate-i-r2`）留在 gitignored `build/`（沙箱拒绝 `rm -rf`，不入库不交付）。
+- 证据包：`web-manual-items-integration-r2-evidence.tar.gz`（SHA-256 `f73e4c49a5b0cb02676cd9fe6293d896282fb4e6c4cd39f204de49e7aa2c3a25`）含前置、逐组 gate、A/B 对照与收尾全部编号日志及 `SHA256SUMS.txt` 清单；不含配对码／cookie／token（已扫描）。
 
