@@ -238,3 +238,62 @@ failed to find main binary, make sure you have a `package > default-run` in the 
 
 - 第四轮冻结提交＝本节随接入一起提交的公共记录提交；其 SHA/tree 于 §12 回执登记（gate 在该冻结提交上执行）。
 - 前置与门禁计划同 §4/§9.3：冻结后从头真实准备构建前置（`npm ci --ignore-scripts` 已 exit 0、`probe:prepare-cli`、`probe:prepare-pi`，不以空目录/桩产物替代），核实 check 链尾含 `build:backend` 与 `test:web-manual-items`（第 50/51 组）后，在冻结提交上串行执行一次完整 `npm run check`——保留全部脚本、51 组、预算与默认产品 dist，不孤立预跑同版整套 Web 组，不以聚焦/打包绿证替代全门禁；逐组结果、exit、警告分类与未验项记入 §12。若仍失败，沿 §4.3/§8.3/§10.3 同一路径归因回报，不擅改 I/II。
+
+## 12. 第四轮完整门禁回执（2026-11-08，冻结提交上串行执行）：**不通过（gate exit 1，第 51 组 `test:web-manual-items`）**——第三轮失败面第 47 组已转绿（`default-run` 修复闭合），第 48–51 组首次执行；第 51 组 42 用例 36 pass／5 fail＋1 cancelled，六项失败经源码级精确归因：3 项属候选 I 实现缺口、3 项属候选 II 测试缺陷（2 缺陷）
+
+### 12.1 冻结与前置（全部实测）
+
+- 冻结提交 `6bf69a3edcf9aa4be44013948c825f683f4eada4`，tree `60ba4a30b1e780c632142cbfb1c4ce73c64d3998`。gate 2026-11-08T02:05:31Z 启动、02:20:01Z 结束（日志 `61-check-full-r4.log`，`GATE_START`／`GATE_EXIT=1`／`GATE_END` 标记）。
+- 前置（`60-prereq-r4.log`）：`npm ci --ignore-scripts` exit 0；`probe:prepare-cli` exit 0（lark-cli v1.0.98）；`probe:prepare-pi` exit 0（vendor/pi 按 `pi-source.json` 校验后真实构建，commit `ad702637`／tree `e89822b0`）。check 链尾核实含第 50 组 `build:backend`、第 51 组 `test:web-manual-items`（本轮未改 package.json）。
+
+### 12.2 逐组结果与警告分类
+
+| # | 组 | 结果 |
+|---|---|---|
+| 1–4 | `check:structure`、`check:docs`、`test:executable-copy`、`probe:bundle` | exit 0（逐组） |
+| 5 | `typecheck` | exit 0（第一轮失败面保持绿） |
+| 6–10 | s1/s2/s31/today/layout domain | exit 0（逐组） |
+| 11 | `test:desktop-controls` | exit 0（第二轮失败面保持绿，9 用例） |
+| 12–31 | pet 五组＋`check:pet-ui`＋ui-entries＋pet-native＋`check:pet-native`＋s32/s33 domain 五组＋mcp contract/http/recovery＋model-budget/output-diagnostics＋mcp-native-fetch | exit 0（逐组） |
+| 32 | `check:rust`（fmt --check＋clippy -D warnings） | exit 0 |
+| 33–37 | `check:s33-p2-runtime`、`test:s33-lifecycle`、`probe:runtime/card/contracts` | exit 0（逐组） |
+| 38 | `probe:native`（cargo test --lib -- --test-threads=1） | exit 0（323 passed／0 failed／3 ignored） |
+| 39–45 | `test:mcp-budgeted`、`probe:toolchain`、`test:s2-runtime`、`test:today-runtime`、inline s31/layout/s32-runtime | exit 0（逐组） |
+| 46 | `probe:bundle-smoke` | exit 0 |
+| 47 | `check:s33-p2-package` | **exit 0**——`build:s33-ui-verify` 真实 `tauri build` 产出 `Sidekick MCP Verify.app`（ad-hoc 签名替换成功）→ `probe:app` → `test:s33-ui-artifacts`；**第三轮 `failed to find main binary (package > default-run)` 失败面被本轮 `default-run = "sidekick"` 修复闭合** |
+| 48 | `test:pet-ui-artifacts` | exit 0（第三轮未达，首次执行通过） |
+| 49 | `test:mcp-native-launcher` | exit 0（同上） |
+| 50 | `build:backend` | exit 0（真实产出 `build/web-backend/`：`bin/web-backend-storage` 存储二进制＋`static/` 前端 dist，第 51 组默认真实产物即来源于此） |
+| 51 | `test:web-manual-items` | **exit 1——42 tests／36 pass／5 fail／1 cancelled（超时）**（第三轮未达，首次执行；失败归因见 §12.3） |
+
+警告分类：全链仅两类既有类别，无新增——① vite「Some chunks are larger than 500 kB」（×3：`probe:bundle` 组、第 47 组 beforeBuildCommand、第 50 组 build:backend，W0 已知）；② tauri「Warn skipping app notarization」（×2：无 APPLE 凭据环境下的预期跳过，与历轮打包一致）。其余 `warn`/`-D warnings` 命中均为命令行文本或 clippy 参数。
+
+### 12.3 第 51 组六项失败的精确归因（源码＋实测证据；按登记不代修，交队长归派原作者修订）
+
+| # | 失败用例（文件:断言行） | 期望／实得 | 归因 | 机制证据 |
+|---|---|---|---|---|
+| F-1 | A-1/A-2 非法输入（`web-manual-items-http.test.mjs:234`，失败于 ：254 循环内『non-ISO instant』用例） | 400 `validation_failed`／200 成创建 | **候选 I 实现缺陷** | `server/lib/manual-items-service.mjs` `normalizePoint`（:69–71）以裸 `Date.parse` 解析 `at`；V8 对非 ISO `'2026-11-13 18:00'` 按服务器本地时区解析成功（本机 Asia/Shanghai → `2026-11-13T10:00:00.000Z`，与响应体逐字一致，机制独立复现）。契约 §4.2 TimePoint `at`＝「ISO 8601 UTC 毫秒」，非 ISO 输入应 400 |
+| F-2 | A-2 不存在本机时刻（同文件 ：263，失败于 ：284） | 400／200 | **候选 I 实现缺陷** | `normalizePoint` 从不交叉校验 `(at, timeZone, localText)` 存在性/一致性。P2 矩阵 A-2（`docs/reviews/web-manual-items-readiness-20261108.md` §A-2）判据明示「夏令时空缺本地时刻被拒并明示『不存在』」、反例即「把 02:30 静默吸附到邻近时刻」；契约 §7 时间语义「沿用 `shared/dates.mjs`」——`zonedCandidates`（空集＝不存在／双解＝歧义）服务端未调用 |
+| F-3 | A-8 重启恢复（`web-manual-items-restart.test.mjs:79`，失败于 ：139） | 完成时间戳保留／实得时间戳 vs 期望 null | **候选 II 测试缺陷（假阴性）** | 断言 `restoredAction.completedAt === action.completedAt`，而 `action` 是 **create 响应**（`completedAt` 恒 null，:83–84），complete 响应（:85–88）未捕获更新引用；正确实现下该断言恒假。实测 `2026-11-08T02:19:41.108Z` 恰为完成时刻——实现把 completedAt 正确持久化并在重启后保留，恰是断言声称要验证的性质 |
+| F-4 | A-8/M2 重连重置（同文件 ：176，20s 超时） | 旧 epoch `Last-Event-ID` 重连收到 `stream.reset`／帧从未到达 | **候选 I 实现缺口** | `server/lib/sse-hub.mjs` `addClient` 只发 `stream.ready`；`server/` 全目录 0 处读取 `last-event-id`、0 处出现 `stream.reset`（grep 实测）。冻结 web-api/1 §6（`web-api-contract.md:249`）：「epoch 变化：令牌 epoch ≠ 当前实例 epoch…服务端先发一帧 `stream.reset`」；W1 契约 §5（:182）「`stream.ready`/`stream.reset` 的 cursor/epoch 语义完全不变」 |
+| F-5 | 浏览器冷启动 1440px（`web-manual-items-static.test.mjs:147`） | crossOriginRefs=[]／[1 条 `data:image/svg+xml`] | **候选 II 测试缺陷（假阳性）** | `browser-probe.mjs` PAGE_PROBE 以 `new URL(value, location.href).origin === location.origin` 判同源；`data:` URI 的 origin 为字面量 `'null'` 被误判跨源（独立复现）。该 URI 来自 `src/components/PairingGate.vue` `<img :src="mark">`（`src/assets/brand/sidekick-mark.svg` 经 vite 内联）——W0 既有产品资产，内联内容不发网络请求，非跨源引用 |
+| F-6 | 浏览器冷启动 640px（同文件 ：147） | 同上 | 同 F-5 | 同一探针逻辑同一资产，宽窄两档双 false-positive |
+
+归因汇总：**候选 I 3 项**（F-1 时间格式校验、F-2 存在性校验、F-4 epoch 重置帧）→ 须 I 作者 Claude 在原 I 范围修订＋独审；**候选 II 2 项缺陷致 3 项失败**（F-3 过期引用断言、F-5/F-6 data: URI 误判）→ 须 II 作者 Kimi 在原 II 测试范围修订＋独审。集成组装零偏离：本轮回执 `6bf69a3` 相对第 4 轮接入前目标文件 blob 与 `e750302` 逐一相同（§11.2），失败均不源于组装。
+
+### 12.4 浏览器相关源码/配置一致性（相对第 4 轮基点回执 `404a2bc`，冻结树 `2e349ec3`）
+
+`git diff 2e349ec3 6bf69a3 --name-only` 实测恰 5 文件：`src-tauri/Cargo.toml`（manifest 消歧行，非浏览器路径）、`docs/reviews/web-manual-items-implementation-20261108.md`（I 证据）、`docs/reviews/web-manual-items-implementation-20261108-opencode-default-run-review.md`（审查记录）、`docs/reviews/README.md`（索引）、`docs/reviews/web-manual-items-integration-20261108.md`（回执）。`src/`、`server/`、`tests/`、`src-tauri/tauri.conf.json`、`package.json`、`vite.config.ts` 与静态产物清单零改动。按任务描述登记（「后继集成只有 manifest 主入口/公共记录改动且浏览器相关源码及配置保持一致时，可按精确差异核对沿用此旅程结果」），**本增量符合 OhMyPi 浏览器旅程结果沿用的精确差异条件**；沿用与否及其签署权在 OhMyPi（其验收并行进行中，本集成不代签）。
+
+### 12.5 未验项与准出判定
+
+- **W1 仍不准出**：第 51 组 6 项失败未闭合，任何旧 SHA 绿证不得沿用；I/II 修订各自独审通过后，由唯一集成者再冻结新版本从头重跑完整 `npm run check`（第 51 组届时按修订范围复验）。
+- 本轮已真实验证面（供后续轮引用）：第 47 组真实打包在含 `default-run` 的 manifest 上 exit 0；第 48–50 组（pet-ui-artifacts、mcp-native-launcher、build:backend 真实打包）首次执行全部通过；`probe:native` 323/0/3。
+- 完整浏览器业务旅程独立验收：OhMyPi 对 `404a2bc` 快照进行中，结果由其自行签署（并行，未签）。
+- Linux/代理、真实凭据/真实用户工作根/真实模型：授权边界外，未涉及。
+
+### 12.6 收尾
+
+- 自建进程：gate 进程随第 51 组失败退出；`pgrep` 复核本树（`mayne-23-ad9709fb52de`）无 `cargo`/`rustc`/`build-app`/`web-backend-storage`/`web-backend-entry`/headless Chrome 残留（`70-cleanup-pgrep-r4.log`）。
+- 并行说明：pgrep 中可见的 `web-backend-storage`×4 与 headless Chrome×多 例属于并行 OhMyPi 浏览器验收 run（其树 `mayne-23-d94e04dd568b` 与其任务临时目录），以及其它 agent 的运行时进程；均非本 run 自建，本集成未触碰、由其各自收尾。
+- 证据包：`web-manual-items-integration-r4-evidence.tar.gz`（哈希见 `SHA256SUMS-r4.txt` 与随附清单）含前置、逐组 gate、失败详情与收尾编号日志；不含配对码/cookie/token（已扫描）。
