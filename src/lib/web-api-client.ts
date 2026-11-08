@@ -5,7 +5,7 @@
 //! carried through to the manual-item endpoints. The domain logic in
 //! `src/domain/todos.ts` stays untouched.
 
-import type { Todo, TodoInput, TodoEvent, WorkspaceInfo } from '../domain/todos.ts';
+import type { Todo, TodoInput, TodoEvent, TimePoint, WorkspaceInfo } from '../domain/todos.ts';
 
 export interface WirePoint {
   at: string;
@@ -68,6 +68,18 @@ export function toWirePoint(point: { atMs: number; timeZone: string; localText: 
   };
 }
 
+/// The domain `TimePoint.precision` is optional and only ever `'day'`; the wire
+/// always carries an explicit `'minute'`/`'day'`. Map `'minute'` back to the
+/// domain default (`undefined`) and keep an explicit `'day'`.
+export function toDomainPoint(point: WirePoint): TimePoint {
+  return {
+    atMs: Date.parse(point.at),
+    timeZone: point.timeZone,
+    localText: point.localText,
+    precision: point.precision === 'day' ? 'day' : undefined,
+  };
+}
+
 export function toWireInput(input: TodoInput) {
   return {
     title: input.title,
@@ -88,8 +100,8 @@ export function fromWireItem(item: WireItem): Todo {
       kind: item.kind,
       owner: item.owner,
       priority: item.priority,
-      due: item.due ? { atMs: Date.parse(item.due.at), timeZone: item.due.timeZone, localText: item.due.localText, precision: item.due.precision } : null,
-      followup: item.followup ? { atMs: Date.parse(item.followup.at), timeZone: item.followup.timeZone, localText: item.followup.localText, precision: item.followup.precision } : null,
+      due: item.due ? toDomainPoint(item.due) : null,
+      followup: item.followup ? toDomainPoint(item.followup) : null,
       tags: item.tags,
     },
     status: item.status,
@@ -98,7 +110,10 @@ export function fromWireItem(item: WireItem): Todo {
     completedAtMs: item.completedAt ? Date.parse(item.completedAt) : null,
     deletedAtMs: item.deletedAt ? Date.parse(item.deletedAt) : null,
     version: item.version,
-    source: item.source === 'signed_ai' ? 'signed_ai' : 'manual',
+    // This slice is manual-only: the frozen 002 DDL CHECK pins source to
+    // 'manual', so the wire value maps straight onto the domain's manual kind.
+    // Later slices extend the union without widening this wire type.
+    source: 'manual',
   };
 }
 
