@@ -40,7 +40,7 @@
 | `src-tauri/Cargo.toml` | `99ac5709c7eb86cf0d5eda4c522e28969cf0d0339b95d70fac81c02f0f4e3093` | 新增 `[[bin]] web-backend-storage`，依赖不动 |
 | `src/stores/todos.ts` | `8b48f47db2326ac3872cec10b02518a4927a7e293ec61251dacc7f55b4dd034b` | 由 Tauri `invoke` 切换到 `WebApiClient` |
 | `src/App.vue` | `8c2a04f18c1e6c1bf900a38000217104720e2c3e8793625e927be802bb1165f5` | 默认 surface 经 `PairingGate` 渲染 `Workbench` |
-| `tests/integration/desktop-controls.test.mjs` | `74b240d60a7f0a984ac9ca6798e3580ab21a58d8b0ffe8970ebc8c03a34fc27f` | 增加 `web-api-client` 别名，保留既有断言意图 |
+| `tests/integration/desktop-controls.test.mjs` | `2ee8c910c0565ffe7eea2bef0b0da0aebe2e601fc998e05811daa25b0b214632` | 增加 `web-api-client` 别名，保留既有断言意图 |
 | `tests/fixtures/desktop-controls/api.ts` | `5872b710f951ce3b6baa2239a5f178672d71896842f3d0f83b5d91d042b72810` | 提供合成 `WebApiClient`，保持浏览器 seam |
 
 ### 测试与证据
@@ -139,3 +139,20 @@
 - `npm run typecheck`（`vue-tsc --noEmit`）：exit 0（门禁失败的三个 TS 错误已消除）。
 - `node --test tests/unit/web-manual-items.test.mjs`：16/16 pass。新增「wire↔domain time mapping keeps minute default and day precision」（分钟→undefined、日→day、null→null、往返稳定）与「fromWireItem maps due/followup and source per the manual wire format」（due 分钟缺省、followup 日精度、source=manual、空时点保持 null）。
 - Rust 侧本增量未改动：store 11/11、schema 18/18、clippy `-D warnings` exit 0、`cargo fmt --check` exit 0；冻结 `001`/`002`/`web-api/1` 哈希逐字节不变。
+
+
+## 9. 2026-11-08 desktop-controls alias 精确匹配退修增量
+
+依据集成第二轮门禁第 11 组 `test:desktop-controls` 的失败回执，仅改 `tests/integration/desktop-controls.test.mjs` 的 alias：
+
+- **原问题**：`{find:/web-api-client/, replacement:<fixture>/api.ts}` 为无锚点子串正则。Vite 的 alias 按子串替换，`'../lib/web-api-client.ts'` 被替换为 `'../lib/<fixture>/api.ts.ts'`，残留 `../lib/` 前缀与 `.ts` 后缀，构建期报 `[UNLOADABLE_DEPENDENCY] Could not load ../lib/.../api.ts.ts`，9/9 用例挂于 `before`。
+- **修复**：改为对实际完整模块标识的精确匹配 `{find:/^\.\.\/lib\/web-api-client\.ts$/, replacement:<fixture>/api.ts}`，只匹配 `src/stores/todos.ts`／`src/stores/pairing.ts` 实际使用的 `'../lib/web-api-client.ts'`，不扩大到无关模块。生产导入无需改写；fixture seam `api.ts` 未提供 `WebApiClient` 的既有导出已满足该标识。
+
+**本增量文件 SHA-256**
+- `tests/integration/desktop-controls.test.mjs`：`2ee8c910c0565ffe7eea2bef0b0da0aebe2e601fc998e05811daa25b0b214632`
+
+**本增量聚焦验证（实跑）**
+- `npm run test:desktop-controls`：**exit 0，9/9 pass**（1440/640 controls＋workbench today/inbox/all，断言意图与 30000ms 预算未动）。
+- **旧/新映射真实 fixture 构建对照**：同一测试文件仅替换 alias，旧 `/web-api-client/` → **exit 1，9 tests／0 pass／9 fail**，错误与集成回执逐字同构（`Could not load ../lib/.../api.ts.ts`）；新锚定 alias → **exit 0，9/9 pass**。
+- `npm run typecheck`：exit 0；`node --test tests/unit/web-manual-items.test.mjs`：16/16 pass；`git diff --check`：exit 0。
+- Rust／服务端／II／III 文件零改动；冻结 `001`/`002`/`web-api/1` 哈希逐字节不变。
