@@ -232,7 +232,9 @@ export function createRawRequester(origin) {
 // In-process backend on an explicit synthetic root. Every failure path after the backend
 // handle exists (interface mismatch, pairing timeout, pair or session rejection) closes the
 // handle and removes a root this helper created, so a failed start never leaks an HTTP
-// server, a storage child or a temporary directory.
+// server, a storage child or a temporary directory. A successful close() follows the same
+// ownership rule: the handle is closed and awaited first, then a self-created root is
+// removed while a caller-supplied root and its contents are preserved.
 export async function startBackend(options = {}) {
   const {
     initialize = true,
@@ -291,7 +293,11 @@ export async function startBackend(options = {}) {
       },
       async close() {
         await handle.close();
-        rmSync(root, { recursive: true, force: true });
+        // Root ownership is the same on the success path as on the failure path below: a
+        // caller-supplied root and everything in it survive (the caller owns it), and only
+        // a root this helper created is removed. Unconditionally removing the root here
+        // deleted a caller's data on a successful close (OBS-1).
+        if (ownsRoot) rmSync(root, { recursive: true, force: true });
       },
     };
     if (shouldPair) await backend.pairWithStartupCode();
