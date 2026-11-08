@@ -21,7 +21,7 @@ import { useOrganizer } from '../stores/organizer';
 import {useAgents} from '../stores/agents';
 import {useTodayAdvice} from '../stores/today';
 import {isLocalCaptureShortcut,observeWorkspaceChanges} from '../domain/desktop';
-import {nativeBridgeAvailable} from '../domain/capabilities.ts';
+import {nativeBridgeAvailable} from '../lib/host-capabilities.ts';
 import TodayAdvice from './TodayAdvice.vue';
 import {useSkills} from '../stores/skills';
 import { timeDraft,draftPoint } from '../domain/time';

@@ -209,10 +209,10 @@
 - `src/stores/settings.ts`：`cf39a03a19411acbde8302ac549b43a864aed5b0c273475067ca04aba1b95c5f`
 - `src/stores/pairing.ts`：`ade3e1e64aad193d25e0d025e420756c17aea08880549ed6afb55cb58746399f`
 - `src/stores/todos.ts`：`d5e63732e4760a6547f1d3c64f0812206a0014c2e0315648f84e60f30e0c65a0`
-- `src/domain/capabilities.ts`：`ba482b81ec5078b9d369f55781e7bc6e82604030021ffdc912fd038613433738`
-- `src/components/Workbench.vue`：`1f645d3f052614ccb6421c9195989300f0c9d2fb05959223955e47d20143a74b`
-- `src/components/SettingsPanel.vue`：`63d03ecf6a8b973c77dc43b911383b27cb6f96e1b0cb6a4b17fce8915a4de4c4`
-- `src/components/TodayAdvice.vue`：`0dab1246612b4cd2322946ada6ad55a9a17a76e8fc9d372db943e3a48743b5f6`
+- `src/lib/host-capabilities.ts`：`ba482b81ec5078b9d369f55781e7bc6e82604030021ffdc912fd038613433738`
+- `src/components/Workbench.vue`：`0d4e81a7d141a337f1a1930683d8386d94ac3a99851fadbf70d2d7c39491ce53`
+- `src/components/SettingsPanel.vue`：`0b8a013ab4ee97322d7d2b6b18850e1d1a411d0fef48f533c938b23429d3b70d`
+- `src/components/TodayAdvice.vue`：`78ee7a2f4588a8d929b7b49caf311286932e12b4afea081159c670a2741cf825`
 - `server/lib/application-settings-service.mjs`：`b9add2f41b39c46bee32f53837e1b2de659148d48cb7a60b668358a2a4c2ccbf`
 - `server/lib/http-server.mjs`：`ae4287bee7649e870793b6ca2f0d20b8e743aaa5ea4ff8c068c5dcbaf308779e`
 - `server/entries/web-backend-entry.mjs`：`bff28c8749e9268e58a078c04104d2197a8f2760c37f4737a849da87fc2cca91`
@@ -227,3 +227,14 @@
 - `cargo test --lib web_backend_store` 12/12（含 settings 写范围正负例）、`web_backend_schema` 18/18；`cargo clippy -D warnings`、`cargo fmt --check` exit 0。
 - `npm run typecheck` exit 0；`npm run test:desktop-controls` 9/9 pass（fixture 仅补 desktop bridge seam，断言/预算未动）。
 - 冻结 `001`/`002`/`web-api/1` 哈希逐字节不变；未改依赖/锁/标识。
+
+
+## 13. 2026-11-08 归位修正（capabilities 路径）
+
+按任务描述新增的归位登记，仅做路径/证据修正：
+
+- `src/domain/capabilities.ts` 原样移到 `src/lib/host-capabilities.ts`（内容逐字节不变，SHA-256 `ba482b81ec5078b9d369f55781e7bc6e82604030021ffdc912fd038613433738`）；删除未获批的 `src/domain/` 新文件。
+- 更新三处必要引用：`Workbench.vue`／`SettingsPanel.vue`／`TodayAdvice.vue` 的导入改为 `../lib/host-capabilities.ts`。
+- 后端字节未动（`server/`、`src-tauri/`、001/002、web-api/1 逐字节不变）。
+
+**聚焦验证（实跑）**：`npm run typecheck` exit 0；`node --test tests/unit/web-manual-items.test.mjs` 25/25 pass；`npm run test:desktop-controls` 9/9 pass；`git diff --check` exit 0。

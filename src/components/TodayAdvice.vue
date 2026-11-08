@@ -2,7 +2,7 @@
 import {computed,ref} from 'vue';
 import type {TodayFacts,TodayRawTodo} from '../../shared/today-facts.mjs';
 import {useTodayAdvice,type TodayReason} from '../stores/today';
-import {nativeBridgeAvailable} from '../domain/capabilities.ts';
+import {nativeBridgeAvailable} from '../lib/host-capabilities.ts';
 import SkButton from './ui/SkButton.vue';
 import SkCheckbox from './ui/SkCheckbox.vue';
 const today=useTodayAdvice(),dialog=ref<HTMLDialogElement>(),consent=ref(false);let lastFocus:HTMLElement|null=null;

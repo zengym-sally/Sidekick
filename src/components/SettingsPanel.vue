@@ -3,7 +3,7 @@ import {computed,onMounted,ref} from 'vue';
 import ToolsSettingsPanel from './ToolsSettingsPanel.vue';
 import DesktopSettingsPanel from './DesktopSettingsPanel.vue';
 import {getVersion} from '@tauri-apps/api/app';
-import {nativeBridgeAvailable} from '../domain/capabilities.ts';
+import {nativeBridgeAvailable} from '../lib/host-capabilities.ts';
 import {useProfile} from '../stores/profile';import {useApplicationSettings} from '../stores/settings';
 import Icon from './Icon.vue';import ModelSettingsPanel from './ModelSettingsPanel.vue';import AgentSettingsPanel from './AgentSettingsPanel.vue';
 import SkField from './ui/SkField.vue';import SkInput from './ui/SkInput.vue';import SkSelect from './ui/SkSelect.vue';import SkFieldset from './ui/SkFieldset.vue';import SkPathField from './ui/SkPathField.vue';import SkButton from './ui/SkButton.vue';import SkSaveBar from './ui/SkSaveBar.vue';
