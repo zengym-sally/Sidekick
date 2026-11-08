@@ -6,9 +6,9 @@
 
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import { WebApiClient } from '../lib/web-api-client.ts';
+import { WebApiClient, getWebApiClient } from '../lib/web-api-client.ts';
 
-export function createPairing(client: WebApiClient = new WebApiClient()) {
+export function createPairing(client: WebApiClient = getWebApiClient()) {
   const ready = ref(false);
   const paired = ref(false);
   const busy = ref(false);

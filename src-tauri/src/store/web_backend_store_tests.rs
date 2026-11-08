@@ -289,6 +289,47 @@ fn root_lock_blocks_a_second_open_until_close() {
 }
 
 #[test]
+fn settings_write_scope_is_limited_to_the_application_key() {
+    let (dir, _root, mut store) = init_store("settings-scope");
+    // Allowed shapes: insert at version 1, then advance by parameterized CAS.
+    store
+        .transact(&json!({"ops": [{
+            "sql": "INSERT INTO settings(key,value,version) VALUES('application.timeZone',?,1)",
+            "params": ["Asia/Shanghai"]
+        }]}))
+        .unwrap();
+    store
+        .transact(&json!({"ops": [{
+            "sql": "UPDATE settings SET value=?, version=version+1 WHERE key='application.timeZone' AND version=?",
+            "params": ["UTC", 1]
+        }]}))
+        .unwrap();
+    let value = store
+        .query(&json!({"sql": "SELECT value FROM settings WHERE key='application.timeZone'", "params": []}))
+        .unwrap()["rows"][0][0]
+        .as_str()
+        .unwrap()
+        .to_string();
+    assert_eq!(value, "UTC");
+
+    // Rejected: another key, a non-CAS update, or an out-of-scope statement.
+    for sql in [
+        "INSERT INTO settings(key,value,version) VALUES('other.key',?,1)",
+        "UPDATE settings SET value=?, version=version+1 WHERE key='application.timeZone'",
+        "DELETE FROM settings WHERE key='application.timeZone'",
+        "DROP TABLE settings",
+    ] {
+        let outcome = store.transact(&json!({"ops": [{"sql": sql, "params": []}]}));
+        assert!(
+            outcome.is_err(),
+            "accepted out-of-scope settings SQL: {sql}"
+        );
+        assert_eq!(outcome.unwrap_err().code, "WEB_BACKEND_SQL_DENIED");
+    }
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
 fn dispatch_maps_requests_to_responses() {
     let (dir, _root, mut store) = init_store("dispatch");
     let request = Request {

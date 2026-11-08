@@ -12,7 +12,9 @@ import { ManualItemsService, ServiceError, canonicalize } from '../../server/lib
 import { parseArgs } from '../../server/entries/web-backend-entry.mjs';
 import { fromWireItem, toDomainPoint, toWireInput, toWirePoint } from '../../src/lib/web-api-client.ts';
 import { SseHub } from '../../server/lib/sse-hub.mjs';
+import { ApplicationSettingsService } from '../../server/lib/application-settings-service.mjs';
 import { createPairing } from '../../src/stores/pairing.ts';
+import { getWebApiClient } from '../../src/lib/web-api-client.ts';
 
 class StorageError extends Error {
   constructor(code, message) {
@@ -25,6 +27,8 @@ function memoryStorage() {
   const db = new DatabaseSync(':memory:');
   db.exec('CREATE TABLE schema_meta (id INTEGER PRIMARY KEY, schema_version INTEGER NOT NULL);');
   db.exec("INSERT INTO schema_meta (id, schema_version) VALUES (1, 1);");
+  // The frozen 001 table the application-settings service reuses.
+  db.exec('CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT NOT NULL, version INTEGER NOT NULL);');
   const ddl = readFileSync(new URL('../../src-tauri/migrations/web-backend/002_manual_items.sql', import.meta.url), 'utf8');
   db.exec(ddl);
   return {
@@ -555,6 +559,96 @@ test('pairing re-reads on stream.ready/stream.reset/item.changed', async () => {
     pairing.dispose();
   } finally {
     delete globalThis.EventSource;
+  }
+});
+
+test('rejects UTC instants that roll over the calendar (MINOR-1)', async () => {
+  const { service, storage } = makeService();
+  for (const at of ['2026-02-30T00:00:00.000Z', '2026-11-13T24:00:00.000Z', '2026-13-01T00:00:00.000Z', '2026-11-13T10:60:00.000Z']) {
+    await assert.rejects(() => service.createItem(`op_roll_${at}`, {
+      ...SAMPLE,
+      due: { at, timeZone: 'Asia/Shanghai', localText: '2026-11-13 18:00', precision: 'minute' },
+    }), (error) => {
+      assert.equal(error.code, 'validation_failed');
+      return true;
+    });
+  }
+  const rows = await storage.command('query', { sql: 'SELECT count(*) FROM manual_items', params: [] });
+  assert.equal(rows.rows[0][0], 0);
+  // A real leap day and an ordinary date still work, and free-form text is untouched.
+  const leap = await service.createItem('op_leap', {
+    ...SAMPLE,
+    due: { at: '2024-02-29T00:00:00.000Z', timeZone: 'Asia/Shanghai', localText: '2024-02-29 08:00', precision: 'minute' },
+  });
+  assert.equal(leap.item.due.at, '2024-02-29T00:00:00.000Z');
+  const day = await service.createItem('op_day', {
+    ...SAMPLE,
+    due: { at: '2026-11-13T10:00:00.000Z', timeZone: 'Asia/Shanghai', localText: '2026-11-13 18:00', precision: 'day' },
+  });
+  assert.equal(day.item.due.precision, 'day');
+});
+
+test('application settings reads the OS default at version 0 without writing', async () => {
+  const { storage } = makeService();
+  const service = new ApplicationSettingsService(storage, { osTimeZone: () => 'Asia/Shanghai' });
+  const snapshot = await service.read();
+  assert.equal(snapshot.contractVersion, 'web-api/1');
+  assert.equal(snapshot.settings.timeZone, 'Asia/Shanghai');
+  assert.equal(snapshot.version, 0);
+  const rows = await storage.command('query', { sql: 'SELECT count(*) FROM settings', params: [] });
+  assert.equal(rows.rows[0][0], 0);
+});
+
+test('application settings write is an atomic compare-and-set', async () => {
+  const { storage } = makeService();
+  const service = new ApplicationSettingsService(storage, { osTimeZone: () => 'Asia/Shanghai' });
+  const first = await service.write('America/New_York', 0);
+  assert.equal(first.version, 1);
+  await assert.rejects(() => service.write('UTC', 0), (error) => {
+    assert.equal(error.code, 'version_conflict');
+    return true;
+  });
+  const second = await service.write('UTC', 1);
+  assert.equal(second.version, 2);
+  const read = await service.read();
+  assert.equal(read.settings.timeZone, 'UTC');
+  assert.equal(read.version, 2);
+});
+
+test('application settings rejects invalid timezone and version', async () => {
+  const { storage } = makeService();
+  const service = new ApplicationSettingsService(storage);
+  await assert.rejects(() => service.write('Nowhere/Nope', 0), (error) => {
+    assert.equal(error.code, 'validation_failed');
+    return true;
+  });
+  await assert.rejects(() => service.write('UTC', 1.5), (error) => {
+    assert.equal(error.code, 'validation_failed');
+    return true;
+  });
+});
+
+test('the shared web api client is a singleton and carries CSRF into settings writes', async () => {
+  const seen = [];
+  globalThis.window = { location: { host: 'h', origin: 'http://h' } };
+  globalThis.fetch = async (url, options) => {
+    seen.push({ url, headers: options.headers });
+    const body = url.includes('/api/pair')
+      ? { session: { capabilities: [] }, csrfToken: 'csrf-1' }
+      : { settings: { timeZone: 'UTC' }, version: 1 };
+    return { ok: true, text: async () => JSON.stringify(body) };
+  };
+  try {
+    const first = getWebApiClient();
+    const second = getWebApiClient();
+    assert.equal(first, second);
+    await first.pair('code');
+    await first.writeApplicationSettings('UTC', 0);
+    const write = seen.find((call) => call.url.includes('/api/settings/application'));
+    assert.equal(write.headers['X-CSRF-Token'], 'csrf-1');
+  } finally {
+    delete globalThis.window;
+    delete globalThis.fetch;
   }
 });
 

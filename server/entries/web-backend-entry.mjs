@@ -9,6 +9,7 @@ import { realpathSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { StorageClient } from '../lib/storage-client.mjs';
 import { ManualItemsService } from '../lib/manual-items-service.mjs';
+import { ApplicationSettingsService } from '../lib/application-settings-service.mjs';
 import { SessionStore } from '../lib/session-store.mjs';
 import { SseHub } from '../lib/sse-hub.mjs';
 import { HttpServer } from '../lib/http-server.mjs';
@@ -35,6 +36,7 @@ export async function startWebBackend(config = {}) {
   await storage.start();
 
   const service = new ManualItemsService(storage);
+  const applicationSettings = new ApplicationSettingsService(storage);
   const sessions = new SessionStore();
   const sse = new SseHub();
   sse.start();
@@ -46,6 +48,7 @@ export async function startWebBackend(config = {}) {
     staticRoot,
     root,
     expectedHost: '',
+    applicationSettings,
   });
   const actualPort = await httpServer.listen(port);
   const expectedHost = `127.0.0.1:${actualPort}`;

@@ -82,6 +82,12 @@ function normalizePoint(value, label) {
   }
   const atMs = Date.parse(raw);
   if (!Number.isFinite(atMs)) throw validation(`${label}时间无效。`);
+  // Calendar rollover check: `Date.parse` silently normalises impossible
+  // instants (`2026-02-30…`, `24:00…`, month 13) to a later valid instant.
+  // A real UTC millisecond instant must round-trip to the exact input.
+  if (new Date(atMs).toISOString() !== raw) {
+    throw validation(`${label}时间不存在或格式非法。`);
+  }
   const timeZone = typeof value.timeZone === 'string' ? value.timeZone : '';
   if (!timeZone) throw validation(`${label}缺少时区。`);
   try {

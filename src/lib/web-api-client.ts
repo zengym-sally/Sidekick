@@ -138,6 +138,13 @@ export interface SessionInfo {
   csrfToken: string;
 }
 
+export interface ApplicationSettingsSnapshot {
+  contractVersion: 'web-api/1';
+  settings: { timeZone: string };
+  version: number;
+  warning: string | null;
+}
+
 export class WebApiClient {
   private baseUrl: string;
   private csrfToken = '';
@@ -246,6 +253,38 @@ export class WebApiClient {
     }));
   }
 
+  /// Read the application settings snapshot. The backend supplies the OS
+  /// default timezone at version 0 when nothing has been saved, so a fresh
+  /// install still has a consistent value.
+  async readApplicationSettings(): Promise<ApplicationSettingsSnapshot> {
+    const payload = await this.request('GET', '/api/settings/application') as {
+      settings?: { timeZone?: string };
+      version?: number;
+    };
+    return {
+      contractVersion: CONTRACT_VERSION,
+      settings: { timeZone: payload.settings?.timeZone ?? '' },
+      version: payload.version ?? 0,
+      warning: null,
+    };
+  }
+
+  /// Write the application timezone with an atomic compare-and-set on the
+  /// version from the last successful read.
+  async writeApplicationSettings(timeZone: string, expectedVersion: number): Promise<ApplicationSettingsSnapshot> {
+    const payload = await this.request('PUT', '/api/settings/application', { timeZone, expectedVersion }) as {
+      settings?: { timeZone?: string };
+      version?: number;
+      warning?: string | null;
+    };
+    return {
+      contractVersion: CONTRACT_VERSION,
+      settings: { timeZone: payload.settings?.timeZone ?? timeZone },
+      version: payload.version ?? expectedVersion + 1,
+      warning: payload.warning ?? null,
+    };
+  }
+
   async workspace(): Promise<WorkspaceInfo> {
     const payload = await this.request('GET', '/api/workspace') as Partial<WireWorkspace>;
     return {
@@ -284,4 +323,14 @@ export class WebApiClient {
       }
     };
   }
+}
+
+let sharedClient: WebApiClient | null = null;
+
+/// The one production client: pairing/session establish the CSRF token, and the
+/// manual-item and application-settings writes reuse it. Tests and fixtures may
+/// still construct or inject their own client.
+export function getWebApiClient(): WebApiClient {
+  if (!sharedClient) sharedClient = new WebApiClient();
+  return sharedClient;
 }

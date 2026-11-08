@@ -503,14 +503,56 @@ fn validate_write(sql: &str) -> PResult<()> {
             ));
         }
     }
-    if !BUSINESS_TABLES
+    if BUSINESS_TABLES
         .iter()
         .any(|table| contains_keyword(&upper, &table.to_uppercase()))
     {
+        return Ok(());
+    }
+    if contains_keyword(&upper, "SETTINGS") {
+        return validate_settings_write(sql, &upper);
+    }
+    Err(p(
+        "WEB_BACKEND_SQL_DENIED",
+        "transact 语句必须针对 manual_items、manual_item_events 或 settings。",
+    ))
+}
+
+/// The only settings write this slice allows: the `application.timeZone` key,
+/// inserted at version 1 or advanced by a parameterized compare-and-set. The
+/// key must appear as a literal so an arbitrary key cannot be written.
+fn validate_settings_write(raw: &str, upper: &str) -> PResult<()> {
+    if !raw.contains("'application.timeZone'") {
         return Err(p(
             "WEB_BACKEND_SQL_DENIED",
-            "transact 语句必须针对 manual_items 或 manual_item_events。",
+            "settings 写入仅限 application.timeZone。",
         ));
+    }
+    let first = first_keyword(upper).ok_or_else(|| p("WEB_BACKEND_SQL_DENIED", "空语句。"))?;
+    match first.as_str() {
+        "INSERT" => {
+            if !upper.contains("INTO SETTINGS")
+                || !upper.contains("KEY")
+                || !upper.contains("VALUE")
+                || !upper.contains("VERSION")
+            {
+                return Err(p("WEB_BACKEND_SQL_DENIED", "settings INSERT 形状非法。"));
+            }
+        }
+        "UPDATE" => {
+            if !upper.contains("SET VALUE")
+                || !upper.contains("WHERE")
+                || !upper.contains("AND VERSION")
+            {
+                return Err(p("WEB_BACKEND_SQL_DENIED", "settings UPDATE 形状非法。"));
+            }
+        }
+        _ => {
+            return Err(p(
+                "WEB_BACKEND_SQL_DENIED",
+                "settings 写入仅允许 INSERT/UPDATE。",
+            ))
+        }
     }
     Ok(())
 }
