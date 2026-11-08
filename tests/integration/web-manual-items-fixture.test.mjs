@@ -8,8 +8,11 @@
 // {origin, close}); these cases stub that interface with a synthetic entry, so the fixture's
 // own ownership and cleanup logic runs without build artifacts. Production behavior stays
 // covered by the real HTTP/restart/static suites; nothing here signs a business result.
+// Leak attribution (OBS-1' from the OhMyPi r4 review): a temporary root is only this
+// process's business when this process created it, so every temporary root this file
+// creates is confined to a private per-run base and the leak check reads exactly that set.
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import test, { after } from 'node:test';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, readdirSync, rmSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -65,11 +68,30 @@ function assertCallerRootIntact(root) {
   assert.equal(readFileSync(join(root, 'nested', 'deep.txt'), 'utf8'), 'deep caller content');
 }
 
-// mkdtempSync('web-manual-items-') names; the stub/caller prefixes carry extra segments and
-// are excluded, so the leak check sees exactly the roots the fixture itself created.
+// Leak attribution (OBS-1'): the previous criterion compared the whole shared temp
+// directory's same-prefix set before and after, so a concurrent process creating or
+// removing a web-manual-items-* root — the three business suites run in their own
+// processes and mkdtemp the same prefix — could flip the equality without this process
+// leaking anything. Every temporary root this process creates (the fixture's mkdtemp
+// roots, the stub workspaces and the caller roots) is therefore confined to a private
+// per-run base, and the leak check reads exactly that set: a root this process leaks
+// still lands there and is still rejected, while foreign churn in the shared directory
+// cannot be seen.
+const privateTmpBase = mkdtempSync(join(tmpdir(), 'web-manual-items-fixture-run-'));
+const previousTmpdir = process.env.TMPDIR;
+process.env.TMPDIR = privateTmpBase;
+after(() => {
+  if (previousTmpdir === undefined) delete process.env.TMPDIR;
+  else process.env.TMPDIR = previousTmpdir;
+  rmSync(privateTmpBase, { recursive: true, force: true });
+});
+
+// Roots the fixture itself created, by the exact mkdtempSync('web-manual-items-') name;
+// the stub and caller prefixes carry extra segments and are excluded, and the scan reads
+// the private per-run base, so the set is exactly the roots this process created.
 const selfCreatedRootName = /^web-manual-items-[A-Za-z0-9]{6}$/;
 function selfCreatedRoots() {
-  return readdirSync(tmpdir()).filter((name) => selfCreatedRootName.test(name)).sort();
+  return readdirSync(privateTmpBase).filter((name) => selfCreatedRootName.test(name)).sort();
 }
 
 function childPid(workspace) {
