@@ -484,6 +484,36 @@ fn reject_multiple_statements(masked: &str) -> PResult<()> {
     Ok(())
 }
 
+/// The table a DML statement actually writes, taken from its leading clause.
+/// Quoted or schema-qualified targets are unsupported and yield `None`; a name
+/// mentioned only inside a subquery/EXISTS never reaches here, so it cannot
+/// grant write permission.
+fn write_target(upper: &str) -> Option<String> {
+    let words: Vec<&str> = upper.split_whitespace().collect();
+    let first = words.first().copied()?;
+    let target = match first {
+        "INSERT" | "REPLACE" => {
+            let into = words.iter().position(|word| *word == "INTO")?;
+            words.get(into + 1).copied()?
+        }
+        "UPDATE" => words.get(1).copied()?,
+        "DELETE" => {
+            let from = words.iter().position(|word| *word == "FROM")?;
+            words.get(from + 1).copied()?
+        }
+        _ => return None,
+    };
+    let target = target.split('(').next().unwrap_or(target);
+    if target.starts_with('"')
+        || target.starts_with('`')
+        || target.starts_with('[')
+        || target.contains('.')
+    {
+        return None;
+    }
+    Some(target.to_lowercase())
+}
+
 fn validate_write(sql: &str) -> PResult<()> {
     let masked = mask_sql(sql);
     reject_multiple_statements(&masked)?;
@@ -503,14 +533,15 @@ fn validate_write(sql: &str) -> PResult<()> {
             ));
         }
     }
-    if BUSINESS_TABLES
-        .iter()
-        .any(|table| contains_keyword(&upper, &table.to_uppercase()))
-    {
-        return Ok(());
-    }
-    if contains_keyword(&upper, "SETTINGS") {
+    // Dispatch on the real write target, never on a name that merely appears
+    // somewhere in the statement (subqueries/EXISTS included).
+    let target =
+        write_target(&upper).ok_or_else(|| p("WEB_BACKEND_SQL_DENIED", "无法识别写目标。"))?;
+    if target == "settings" {
         return validate_settings_write(sql);
+    }
+    if BUSINESS_TABLES.contains(&target.as_str()) {
+        return Ok(());
     }
     Err(p(
         "WEB_BACKEND_SQL_DENIED",
