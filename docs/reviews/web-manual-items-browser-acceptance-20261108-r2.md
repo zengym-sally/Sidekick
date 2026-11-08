@@ -144,3 +144,26 @@ bff28c8749e9268e58a078c04104d2197a8f2760c37f4737a849da87fc2cca91  build/web-back
 ## 8. 处置
 
 **通过**（限冻结版 `eca807b6`）。原样真实产品 UI 完整业务旅程 34/34 通过：1440/640 同源挂载不溢出、配对进工作台（BLOCKER-1 关闭）、无模型、两类事项与独立 `due`/`followup` 及 `minute`/`day` 精度、CRUD/完成/重开/软删/历史、编辑版本递增、删除后变更 409、版本冲突、设置时区持久与 CAS、会话内 401 回门、SSE 首订阅/提示/读回补偿、同根重启恢复与重启后重配对保存；页面动作、真实 HTTP 与只读合成 SQLite 三方互证。本结果**只绑定本版**（冻结 `eca807b`／tree `9371002b`／存储二进制 `b7dd9339…`／dist `index-CAsbIzss.js`）；后续任何源码/静态产物/配置变更须对受影响路径重验。MAYNE-23 保持 `in_progress`；main 合入/清分支由队长按 owner 既有授权确认精确版本后安排。
+
+---
+
+## 3. 证据重交付（2026-11-08，原件不可恢复后按同一冻结协议重跑）
+
+平台回收了原 run 所属的 gitignored 证据目录，原 34/34 的原始截图/DOM/日志不可恢复。已登记 admission 并确认原件不可恢复；随后**按同一冻结版与同一产物协议**重跑，产出可复核的新证据。
+
+**重跑绑定**（与上文 §1/§2 逐字节一致，未重新取用其他版本）：
+
+| 绑定项 | 值 | 核对 |
+|---|---|---|
+| 冻结 commit / tree | `eca807b6d1911c115abffbb45a9371f38be4b801` / `9371002bd327e4ce0deee0488d097321dd9982bf` | `git ls-tree` 中 `server/entries/web-backend-entry.mjs` blob `be0094088979af118247f636828bd1316eeec9af` 与重跑所用装配源**相等** |
+| 存储二进制 | SHA-256 `b7dd9339598418a18858ed5b7d2dd8ffbf568aff6ef324fd152273421af36422` | 与 §2 登记值一致 |
+| 前端 dist | `index-CAsbIzss.js` SHA-256 `2706d6277641eada5cddb9a4923112818f6c9d7587ad801ce2c1320157bfc4f2` | 与 §2 登记值一致 |
+| 装配后端入口 | `web-backend-entry.mjs` SHA-256 `bff28c8749e9268e58a078c04104d2197a8f2760c37f4737a849da87fc2cca91` | 与 §2 登记值一致 |
+
+**重跑结果**：40/40 唯一项通过，0 失败、0 阻断（较原 34/34 多了 `DELETE-REFUSES-CHANGE` 等边界项与拆分后的重启/设置项；原 34 项全部覆盖且结论不变）。三个前台驱动分阶段执行（每阶段需新起后端 + 新浏览器，运行窗口有界）：`phaseA.mjs`（17 项）、`lifecycle.mjs`（14 项）、`tailrest.mjs` + `restui.mjs` + `editprobe.mjs`（9 项）。
+
+**新证据清单与哈希**：见 `build/web-manual-items-browser-acceptance-r2/SHA256SUMS` 与 `build/web-manual-items-browser-acceptance-r2/combined-matrix.json`。
+
+**结论不变**：本验收结果**只绑定本冻结版**（`eca807b`／tree `9371002b`／存储二进制 `b7dd9339…`／dist `index-CAsbIzss.js`）。后续任何源码或产物变更都需重新验收，本结论不向后传递。
+
+**可携带证据包**：`web-manual-items-acceptance-evidence-r2.tar.gz`（SHA-256 `5f1e537f7fb8ec66044a612e00d19447edf5ed3462c236d794be34f214e80171`，29 条目），内含 `SHA256SUMS`（25 条全部复算 OK）、`combined-matrix.json`、三份驱动日志、五个驱动源码、`admission.json` 与 `snapshot/evidence/`（5 张脱敏截图 + 8 份 JSON 原始记录 + 3 份矩阵）。
