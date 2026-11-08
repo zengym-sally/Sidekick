@@ -398,3 +398,24 @@ src/stores/todos.ts          # 修改：由 Tauri invoke 切换到 HTTP 客户�
 - 可在规范请求中编码动作/目标，或以已存事件 `action`/`itemId` 显式绑定；不扩大域内命名空间、不改 001/002/schema 或 legacy。
 
 本附录与集成一起独立复核；追加后本文件 SHA-256 见 `docs/reviews/web-manual-items-integration-20261108.md` 登记。
+
+## 附录B：启动/会话与 settings 写范围实施期补充（2026-11-08，第五轮集成登记）
+
+本附录仅登记任务描述「最小启动契约」「启动增量审查分面与宿主 helper 归位」两节及 MAYNE-23 派发线程评论 `01a1b961-1495-7708-b4dd-04382c60a71c` 的队长裁定；正文 §1–§14、附录A 与冻结 DDL（001 `8511907c…`、002 `b6cb8e61…`、web-api/1 `61863271…`）逐字节保持原审内容不变。裁定原文以任务描述与 MAYNE-23 评论为准，本附录为集成接收转录。
+
+### B.1 最小启动契约（浏览器无 Tauri 可用）
+
+1. `src/lib/web-api-client.ts` 导出 `getWebApiClient(): WebApiClient`，懒加载同一默认实例；生产 pairing/todos/application settings 共用它，保留构造器/工厂显式注入便于测试。配对/会话读回设置的 CSRF 必须供真实事项/设置写入共享；logout/401 失效清理共享令牌与配对/SSE 状态并回到配对门；秘密不落本地存储、不注入虚假 Tauri bridge。
+2. 复用冻结 001 已有 `settings(key,value,version)` 表；新增 key 仅 `application.timeZone`，value 为合法 timeZone 字符串。`GET /api/settings/application` 要求会话，返回 `{contractVersion:"web-api/1",settings:{timeZone},version}`；无保存值时由后端当前实例 OS 默认时区提供一致默认，version=0 且 GET 不写库。`PUT` 同路径要求会话/CSRF/精确 Origin，体 `{timeZone,expectedVersion}`；首次以 version 0 创建 version 1，随后原子 CAS 递增；冲突 409 `version_conflict`，非法参数 400 `validation_failed`；成功返回上述信封及 `warning:null`。保存不得盲用与表单基准脱节的最新缓存版本，版本随读取快照传递。
+3. 应用时区值和版本随后端 SQLite 保存并跨重启可读；HTTP 仅读写此 key。Rust 适配独占连接/根锁，写权限精确限此 key 与两条固定参数化 INSERT/CAS 语句，不放宽任意 settings 写入或 task 表写入；七命令 stdio、001/002、依赖/锁/标识及旧库不变，无新增迁移或生产依赖。本项是已授权手工事项路径所需设置接线，非整个设置/模型系统迁移，不引入 legacy 兼容桥。
+4. settings store 走真实 HTTP 时区读写，只有成功读回才能 ready；Workbench 在浏览器不自动调用尚未实现的 native models/agents/skills/profile/organizer 等加载/监听/轮询，无相应能力的入口明确显示未接通/禁用，不伪造配置成功；保留原 `create*(api)` 领域工厂与手工录入/详情/历史能力。
+
+### B.2 宿主能力 helper 归位
+
+- 宿主检测 `nativeBridgeAvailable` 原样位于 `src/lib/host-capabilities.ts`；未获批的 `src/domain/capabilities.ts` 已删除。不扩大 domain 边界，不改既有 domain/shared 文件、业务行为或后端字节。
+
+### B.3 settings 写守卫与 DML 写目标分派（2026-11-08 队长裁定，R2 MAJOR-1 收口）
+
+- `transact` 权限按真实 DML 写目标分派：settings 目标语句一律先过两条生产模板（规范化空白/注释后逐字比对，key 字面量大小写/空白敏感）；业务放行仅适用于真正以 `manual_items`/`manual_item_events` 为目标的语句；子查询/EXISTS/注释中的表名提名不能授予写权限。
+- 目标识别不可靠的形态（引号 `"…"`／`` `…` ``／`[…]`、schema 限定名含 `.`、无法定位写目标）直接返回 `WEB_BACKEND_SQL_DENIED`，不新增解析依赖。
+- 合法条件历史 `INSERT INTO manual_item_events … SELECT … WHERE (SELECT changes())=1`、settings 首写/CAS 模板及空白/注释变体保持放行；A11/A12 及业务提名组合变体被拒且零落库（OpenCode R3 限定独审记录 `docs/reviews/web-manual-items-implementation-20261108-opencode-settings-sql-r3-review.md` 通过）。

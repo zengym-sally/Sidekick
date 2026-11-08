@@ -4,7 +4,7 @@
 > 适用范围：所有新增、移动、重命名的源码与脚本。改动本文中的边界、顶层目录或打包入口时，必须同时改守卫规则，否则 `npm run check:structure` 失败。
 > 最近一次结构调整：2026-11-08 W1 手工事项实施准入（owner 批准 A–D 后新增 `server/` 与 `src-tauri/src/bin/`，守卫同步，见 §2）；2026-10-31 结构治理（前端跨层依赖修复、`runtime/` 与 `src-tauri/` 归组、`tests/` 分层、`scripts/` 归组）。历史记录保留当时路径，见 [实施计划](../product/05-第一阶段实施计划.md) 的路径说明。
 
-> **当前代码与下一目标分开**：本文的结构/守卫规则描述当前实现与已批准的落地布局。owner 已确认 Web/后端优先目标，详见[Web/后端设计](web-backend-design.md)；产品边界与执行次序以 product/01–05 为准。2026-11-08 owner 批准 W1 A–D 后，`server/`、`src-tauri/src/bin/` 的布局与依赖边界已写入守卫并生效；对应生产代码（后端入口/库、存储适配二进制、浏览器接线）属 W1 候选 I，正在隔离树实现、尚未集成，本文不假称生产代码已迁移。手工事项纵向接口见[手工事项契约](web-manual-items-contract.md)。
+> **当前代码与下一目标分开**：本文的结构/守卫规则描述当前实现与已批准的落地布局。owner 已确认 Web/后端优先目标，详见[Web/后端设计](web-backend-design.md)；产品边界与执行次序以 product/01–05 为准。2026-11-08 owner 批准 W1 A–D 后，`server/`、`src-tauri/src/bin/` 的布局与依赖边界已写入守卫并生效；对应生产代码（后端入口/库、存储适配二进制、浏览器接线，含启动/会话共享客户端与应用时区接线）已按候选 I 随 MAYNE-23 任务分支第五轮集成原样接入（含 OpenCode R3 写目标分派收口独审通过），**未合入 main，完整门禁与浏览器旅程验收未签**，本文不假称已交付。手工事项纵向接口见[手工事项契约](web-manual-items-contract.md)。
 
 ## 1. 当前代码结构
 
@@ -97,10 +97,10 @@ build/  dist/  src-tauri/target/   # 本地产物与原始证据，不入库
 
 跨进程纯逻辑，当前为日期与时间锚点（`dates.mjs`／`dates.d.mts`）。不含框架与平台依赖；前端、server 与 Runtime 的相对引用都必须落回本目录。
 
-**独立后端 `server/`（W1 起步，候选 I 实现中）**
+**独立后端 `server/`（W1 起步，候选 I 已随 MAYNE-23 任务分支集成，未合入 main）**
 
 - `entries/web-backend-entry.mjs`：后端进程唯一入口；显式配置（root/port/staticRoot/storageBin 等）启动，模块导入本身不监听，成功返回 `{origin, close}`。
-- `lib/`：`node:http` 路由与会话/CSRF、事项业务事务、Rust 存储适配 stdio 客户端、SSE 广播与同源静态供给；只引用 `server/`、`shared/` 与 Node 内置模块（零 npm 依赖，守卫与打包脚本双重强制）。
+- `lib/`：`node:http` 路由与会话/CSRF、事项业务事务、应用时区设置（单 key HTTP 读/CAS 写）、Rust 存储适配 stdio 客户端、SSE 广播与同源静态供给；只引用 `server/`、`shared/` 与 Node 内置模块（零 npm 依赖，守卫与打包脚本双重强制）。
 
 **Node Runtime `runtime/`**
 

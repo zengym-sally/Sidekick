@@ -107,7 +107,7 @@
     "test:desktop-host": "cargo test --manifest-path src-tauri/Cargo.toml --lib app::desktop -- --test-threads=1",
     "test:desktop-preferences-store": "cargo test --manifest-path src-tauri/Cargo.toml --lib desktop_preferences -- --test-threads=1",
     "test:desktop-controls": "node --test --test-timeout=30000 tests/integration/desktop-controls.test.mjs",
-    "test:web-manual-items": "node --test --test-timeout=20000 tests/unit/web-manual-items.test.mjs tests/integration/web-manual-items-http.test.mjs tests/integration/web-manual-items-restart.test.mjs tests/integration/web-manual-items-static.test.mjs",
+    "test:web-manual-items": "node --test --test-timeout=20000 tests/unit/web-manual-items.test.mjs tests/integration/web-manual-items-http.test.mjs tests/integration/web-manual-items-restart.test.mjs tests/integration/web-manual-items-static.test.mjs tests/integration/web-manual-items-fixture.test.mjs",
     "test:executable-copy": "node --test tests/unit/executable-copy.test.mjs",
     "test:pet-state": "cargo test --manifest-path src-tauri/Cargo.toml --lib app::pet_ -- --test-threads=1",
     "test:pet-ui-root": "cargo test --manifest-path src-tauri/Cargo.toml --features pet-ui-verification --lib pet_ -- --test-threads=1",

@@ -297,3 +297,29 @@ failed to find main binary, make sure you have a `package > default-run` in the 
 - 自建进程：gate 进程随第 51 组失败退出；`pgrep` 复核本树（`mayne-23-ad9709fb52de`）无 `cargo`/`rustc`/`build-app`/`web-backend-storage`/`web-backend-entry`/headless Chrome 残留（`70-cleanup-pgrep-r4.log`）。
 - 并行说明：pgrep 中可见的 `web-backend-storage`×4 与 headless Chrome×多 例属于并行 OhMyPi 浏览器验收 run（其树 `mayne-23-d94e04dd568b` 与其任务临时目录），以及其它 agent 的运行时进程；均非本 run 自建，本集成未触碰、由其各自收尾。
 - 证据包：`web-manual-items-integration-r4-evidence.tar.gz`（哈希见 `SHA256SUMS-r4.txt` 与随附清单）含前置、逐组 gate、失败详情与收尾编号日志；不含配对码/cookie/token（已扫描）。
+
+## 13. 第五轮：R3 写目标分派修复随完整 I/II 接入（2026-11-08）
+
+按队长条件准入派发（评论 `01a1b96c-4ae4-77b6-b087-5bacd5295b9f`）：OpenCode 先对 `325f5b4..d3cc896` 限定独审守卫入口（不通过即止步回报、不代修），仅独审通过后以已交集成基座 `a27d9ab` 为基点在同一 run 接入完整 I 与完整 II、各自独审记录及已裁定契约/公共记录，把 fixture 回归并入原 Web 脚本，冻结新 SHA/tree 后从头串行完整门禁。§1–§12 五轮记录原样保留。
+
+### 13.1 先决条件：R3 限定独审（已满足）
+
+- 审查者 OpenCode 未参与该修复任何字节；判定**通过**（0 阻断，2 观察登记），记录 `docs/reviews/web-manual-items-implementation-20261108-opencode-settings-sql-r3-review.md`（本树提交 `fd4d6cc`），评审索引随本轮一并登记。
+- 要点：`325f5b43..2479587` 补丁 `17576cd0…3216`、`325f5b43..d3cc896` 全增量 `359bdf17…9fa7`、对 `bc4b1c3` 累计 `263263dd…294d`、导出树 `write-tree`＝`e26270ec…fb76` 逐字节复算相符；守卫按真实 DML 写目标分派，引号/限定/别名目标拒绝、子查询/EXISTS/注释提名不可达分派；真实 release 二进制 stdio 21 拒＋1 fail-closed＋6 合法零落库（A11/A12 及业务提名组合、条件历史、settings 模板首写/CAS），真实 HTTP 8/8，聚焦 Rust fmt/clippy/test 31/31。
+
+### 13.2 接收与身份（全部实测逐字节相符）
+
+- 基座 `a27d9ab1ebcbdafe8512ddd53011c62ed0d3f71e` 为本分支既有 HEAD（第四轮回执 `0434017` 及本审查者 R2 记录的后代；`6546990` 实测为其祖先）。admission：`build/web-manual-items-integration/admission-r5.json`（修改前登记实际 pwd/branch/HEAD、祖先核对、接收版本哈希、写入清单与门禁计划）。
+- **完整 I**：merge `d3cc8966649dbfb482ae4e2f801b84007f57122a`（tree `e26270ecfde141e7b86372c53c48d3faf923fb76`，merge-base 恰 `e750302`，合并零冲突）；合并后 I 范围（server/、src/、src-tauri/、`tests/unit/web-manual-items.test.mjs`、`tests/fixtures/desktop-controls/api.ts`）与候选 tree diff 为空——19 文件 +953/−60 逐字节落在申报范围，不只取末次守卫修复。前端通过面按零差异沿用 ZCode R2（`36afeed`）绑定 `325f5b4` 的结论；本轮新结论绑定 R3。
+- **完整 II**：merge `8b2962d4dd1eac08d902fddaa6b0df3d98ac088c`（tree `f56a9c3882f0b663d7cf2468554dc7be2d8e37b7`，merge-base 恰 `19418ef`，合并零冲突）；合并后 II 范围（四套 integration 测试＋`tests/fixtures/web-manual-items/`＋tests 记录 r2–r5）与候选 tree diff 为空——含 19418ef 之后 r3/r4/r5 全部修订；最后增量 diff `a9b640dc…615a43b`、format-patch `d166ac79…65959c` 与申报一致，各级独审 `4856d4e`/`5cdaa3c`/`98fb349` 通过结论随原样记录接收。
+- **七份独审/验收记录按原路径 blob 级接收**（逐文件 `hash-object` 与来源提交比对一致）：`54badb5`（ZCode 时间/SSE）、`51c8579`（ZCode 启动首轮，不通过→后继闭合）、`36afeed`（ZCode 前端段 R2）、`79774c9`（OhMyPi 浏览器旅程 `404a2bc` 不通过记录）、`4856d4e`/`5cdaa3c`/`98fb349`（OhMyPi II R3/R4/R5）；本审查者既有记录 `6bb7ff9`/`a27d9ab` 已在分支保留。
+- **契约附录B（纯追加）**：`docs/engineering/web-manual-items-contract.md` 追加 3,828 字节（最小启动契约、宿主 helper 归位、settings 单 key 写范围与 DML 写目标分派裁定），实测前缀与既有版本（SHA-256 `32910de7…1eb4`）逐字节相同，新 SHA-256 `08afea02c5185b76a1b921cc11deaf2669c78b9ce584a93c4824312bb529ad3c`；正文 §1–§14、附录A 与冻结 DDL 未动。
+- **package.json 唯一增量**：`test:web-manual-items` 在既有四文件后追加 `tests/integration/web-manual-items-fixture.test.mjs`（同一 `node --test --test-timeout=20000` 执行），保留既有脚本名/预算；锁文件与依赖零改动；`check` 链尾第 51 组仍经该脚本纳入全部新 Web 组。
+- **公共记录**：评审索引 105→116（11 行新记录＋集成行第五轮指针）；architecture/web-backend-design/product05 按实际阶段更新（明确未合 main、门禁与浏览器旅程未签，不提前准出）。
+- **浏览器旅程沿用条件不满足**：本增量改变 `src/`（启动/会话/设置接线）与前端产物，超出 §12.4 的「仅 manifest＋公共记录」沿用条件；新集成版完整原样 UI 旅程须另派未参与者独立验收，本集成不代签。
+
+### 13.3 第五轮冻结与完整门禁（原预算串行，冻结 SHA 上执行）
+
+- 第五轮冻结提交＝本节随接入一起提交的公共记录提交；其 SHA/tree 于 §14 回执登记（gate 在该冻结提交上执行）。
+- 真实前置已按仓库命令准备：`npm ci --ignore-scripts` exit 0、`probe:prepare-cli` exit 0（lark-cli v1.0.98）、`probe:prepare-pi` exit 0（provenance tree `e89822b0…c68` 核验通过，dist 实建）；不以空目录/桩产物替代。
+- 冻结后从头串行执行一次完整 `npm run check`——保留全部脚本、51 组、预算与默认打包产品 dist，核实第 50/51 组（`build:backend` 真实打包、`test:web-manual-items` 五文件）仍居链尾；不孤立预跑同版整套 Web 组，不以聚焦/打包绿证替代全门禁；逐组 exit、数量、警告分类与未验项记入 §14。若失败，沿既有路径归因回报，不擅改 I/II、不豁免守卫。
