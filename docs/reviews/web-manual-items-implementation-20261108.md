@@ -24,7 +24,7 @@
 | `server/lib/static-files.mjs` | `3c07b73eb6be8af6ee903b257d49178735c3f59a6dffb2437a84ee63975251ac` |
 | `server/lib/storage-client.mjs` | `c721fc110b1fc96269dea96b1065ada098383fa07d43ce5ac916a3120410bcbe` |
 | `src-tauri/migrations/web-backend/002_manual_items.sql` | `b6cb8e61609f83454164bff6c5628b2c893122b8dbb9bb3ced41bcd3d9e2f97e` |
-| `src-tauri/src/store/web_backend_store.rs` | `5421cbcd8078aba742815d3cc19ca0c3e3d7a9d5dba52f7b11de0275ba0ac757` |
+| `src-tauri/src/store/web_backend_store.rs` | `c1a3a15781e378af10ebe402999ee2f23aacfc27954c39ff456a8d0df42686f0` |
 | `src-tauri/src/bin/web-backend-storage.rs` | `71b83d7a240f50c294db3cbdbc312eaa50af8d8cb2e12a3fa7dd268994f40d0a` |
 | `src/lib/web-api-client.ts` | `12015d6d921269caadff0ea2573c6f30cc91bffda981712f1ec6ef761d5c0563` |
 | `src/stores/pairing.ts` | `9a49150cbca2056aa14373b6c10e51a126cf09f77319e6aebb3a3936ce31b8fa` |
@@ -47,7 +47,7 @@
 
 | 文件 | SHA-256 |
 |---|---|
-| `src-tauri/src/store/web_backend_store_tests.rs` | `84c30fc531459f25ab0e873c1109c4917dc44829b118f78b9611172d5c1a8d29` |
+| `src-tauri/src/store/web_backend_store_tests.rs` | `632c7c6ee655dfe53250052ceefce7be127d391feb300f07c6fb0c0d1fe1b0bc` |
 | `tests/unit/web-manual-items.test.mjs` | `d730e933f3b3088eb1618f98a998c3eb598ad4bdd2aa3e01f7de0618779d4963` |
 
 ## 3. 实现要点
@@ -216,8 +216,8 @@
 - `server/lib/application-settings-service.mjs`：`b9add2f41b39c46bee32f53837e1b2de659148d48cb7a60b668358a2a4c2ccbf`
 - `server/lib/http-server.mjs`：`ae4287bee7649e870793b6ca2f0d20b8e743aaa5ea4ff8c068c5dcbaf308779e`
 - `server/entries/web-backend-entry.mjs`：`bff28c8749e9268e58a078c04104d2197a8f2760c37f4737a849da87fc2cca91`
-- `src-tauri/src/store/web_backend_store.rs`：`5421cbcd8078aba742815d3cc19ca0c3e3d7a9d5dba52f7b11de0275ba0ac757`
-- `src-tauri/src/store/web_backend_store_tests.rs`：`84c30fc531459f25ab0e873c1109c4917dc44829b118f78b9611172d5c1a8d29`
+- `src-tauri/src/store/web_backend_store.rs`：`c1a3a15781e378af10ebe402999ee2f23aacfc27954c39ff456a8d0df42686f0`
+- `src-tauri/src/store/web_backend_store_tests.rs`：`632c7c6ee655dfe53250052ceefce7be127d391feb300f07c6fb0c0d1fe1b0bc`
 - `tests/unit/web-manual-items.test.mjs`：`d730e933f3b3088eb1618f98a998c3eb598ad4bdd2aa3e01f7de0618779d4963`
 - `tests/fixtures/desktop-controls/api.ts`：`7e3a65806d10bed4a8e91b3d0cd04772f6e4a53c04b5cfba947e45689377a393`
 
@@ -250,8 +250,8 @@
 - **会话失效**：共享客户端在会话内 401/登出时清 CSRF、置配对态为未配对、关闭 SSE 并回到配对门，不只在 fresh-load 生效。
 
 **本增量文件 SHA-256**
-- `src-tauri/src/store/web_backend_store.rs`：`5421cbcd8078aba742815d3cc19ca0c3e3d7a9d5dba52f7b11de0275ba0ac757`
-- `src-tauri/src/store/web_backend_store_tests.rs`：`84c30fc531459f25ab0e873c1109c4917dc44829b118f78b9611172d5c1a8d29`
+- `src-tauri/src/store/web_backend_store.rs`：`c1a3a15781e378af10ebe402999ee2f23aacfc27954c39ff456a8d0df42686f0`
+- `src-tauri/src/store/web_backend_store_tests.rs`：`632c7c6ee655dfe53250052ceefce7be127d391feb300f07c6fb0c0d1fe1b0bc`
 - `src/lib/web-api-client.ts`：`12015d6d921269caadff0ea2573c6f30cc91bffda981712f1ec6ef761d5c0563`
 - `src/stores/settings.ts`：`a61a844c6a8e219a25988d33e397e7da6edc2e8c414f2da2d57b0afaefd19f01`
 - `src/stores/pairing.ts`：`9a49150cbca2056aa14373b6c10e51a126cf09f77319e6aebb3a3936ce31b8fa`
@@ -265,3 +265,22 @@
 - 真实 HTTP：生产首次写 v1、CAS v2 均 200（收紧后生产 SQL 仍被接受）。
 - 前端：`node --test tests/unit/web-manual-items.test.mjs` 27/27（含会话内 401 清共享 CSRF、配对态回门）；`npm run test:layout-domain` 14/14；`npm run test:desktop-controls` 9/9；`npm run typecheck` exit 0。
 - 冻结 `001`/`002`/`web-api/1` 哈希逐字节不变；未改依赖/锁/标识。
+
+
+## 15. 2026-11-08 MAJOR-1（A/R2）写目标分派收口
+
+依据 A/R2 独审的 MAJOR-1，仅改 Rust store 与测试：
+
+- `validate_write` 改为**按真实 DML 写目标分派权限**：新增 `write_target()`，从 `INSERT/REPLACE INTO`、`UPDATE`、`DELETE FROM` 的引导子句取目标表（忽略子查询/EXISTS 中的提名）；`settings` 一律过精确模板；`manual_items`/`manual_item_events` 放行；其他目标拒绝。引号/反引号/`[`/schema 限定目标不支持，直接拒绝。
+- 关闭 A11（`INSERT INTO settings ... SELECT ... FROM manual_items` 越 key 写入）与 A12（`... AND version=? OR EXISTS(SELECT 1 FROM manual_items)` 击穿 CAS）；其余变体：引号目标＋业务子查询、其他目标＋业务表提名，均拒绝。
+- 保留合法条件历史 `INSERT INTO manual_item_events ... SELECT ... WHERE (SELECT changes())=1`、settings 首写/CAS 与事项写入。
+
+**本增量文件 SHA-256**
+- `src-tauri/src/store/web_backend_store.rs`：`c1a3a15781e378af10ebe402999ee2f23aacfc27954c39ff456a8d0df42686f0`
+- `src-tauri/src/store/web_backend_store_tests.rs`：`632c7c6ee655dfe53250052ceefce7be127d391feb300f07c6fb0c0d1fe1b0bc`
+
+**聚焦验证（实跑）**
+- `cargo test --lib web_backend_store` **13/13**（A11/A12、引号/限定目标、其他目标＋业务提名、条件历史 INSERT…SELECT、合法 settings/事项写）、`web_backend_schema` 18/18、`cargo clippy -D warnings`、`cargo fmt --check` exit 0。
+- 真实 stdio（真实二进制）：A11/A12、引号目标、`main.settings` 限定、`DELETE/UPDATE tasks ... IN (SELECT ... FROM manual_items)` 全部 `WEB_BACKEND_SQL_DENIED`；终态 `settings` 0 行。
+- 真实 HTTP：生产首次写 v1、CAS v2 与事项创建 200（目标分派后生产 SQL 仍被接受）。
+- 未改前端/II/III；冻结 `001`/`002`/`web-api/1` 哈希逐字节不变。
