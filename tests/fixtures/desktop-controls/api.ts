@@ -1,12 +1,24 @@
 import {invoke as profileInvoke} from '../profile-ui/api';
 export {open,getVersion} from '../profile-ui/api';
+// This fixture emulates the desktop bridge (the @tauri-apps/* aliases below):
+// expose the same internals object so capability detection sees a desktop
+// environment, exactly as the aliased modules do for the stores.
+if (typeof (globalThis as {__TAURI_INTERNALS__?: unknown}).__TAURI_INTERNALS__ !== 'object') {
+  (globalThis as {__TAURI_INTERNALS__?: unknown}).__TAURI_INTERNALS__ = {
+    invoke: (command: string, args?: Record<string, unknown>) => invoke(command, args),
+    convertFileSrc: (path: string) => path,
+  };
+}
 // The todo store now talks HTTP through `src/lib/web-api-client.ts`. This
 // synthetic fixture keeps the browser seam: the aliased module returns the
 // same `invoke` backend the rest of the fixture already provides.
 export class WebApiClient {
   async readSession(){return null;}
+  async readApplicationSettings(){return {contractVersion:'web-api/1',settings:{timeZone:'Asia/Shanghai'},version:1,warning:null};}
+  async writeApplicationSettings(timeZone:string,expectedVersion:number){return {contractVersion:'web-api/1',settings:{timeZone},version:expectedVersion+1,warning:null};}
   asBackend(){return invoke;}
 }
+export function getWebApiClient(){return new WebApiClient();}
 let saved={version:1,workMode:false,petOnStartup:false};
 export const calls:{command:string;input?:unknown}[]=[];
 export const disabledUpdates:{label:string;value:boolean}[]=[];

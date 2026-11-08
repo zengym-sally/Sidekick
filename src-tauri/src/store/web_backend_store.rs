@@ -484,6 +484,36 @@ fn reject_multiple_statements(masked: &str) -> PResult<()> {
     Ok(())
 }
 
+/// The table a DML statement actually writes, taken from its leading clause.
+/// Quoted or schema-qualified targets are unsupported and yield `None`; a name
+/// mentioned only inside a subquery/EXISTS never reaches here, so it cannot
+/// grant write permission.
+fn write_target(upper: &str) -> Option<String> {
+    let words: Vec<&str> = upper.split_whitespace().collect();
+    let first = words.first().copied()?;
+    let target = match first {
+        "INSERT" | "REPLACE" => {
+            let into = words.iter().position(|word| *word == "INTO")?;
+            words.get(into + 1).copied()?
+        }
+        "UPDATE" => words.get(1).copied()?,
+        "DELETE" => {
+            let from = words.iter().position(|word| *word == "FROM")?;
+            words.get(from + 1).copied()?
+        }
+        _ => return None,
+    };
+    let target = target.split('(').next().unwrap_or(target);
+    if target.starts_with('"')
+        || target.starts_with('`')
+        || target.starts_with('[')
+        || target.contains('.')
+    {
+        return None;
+    }
+    Some(target.to_lowercase())
+}
+
 fn validate_write(sql: &str) -> PResult<()> {
     let masked = mask_sql(sql);
     reject_multiple_statements(&masked)?;
@@ -503,16 +533,108 @@ fn validate_write(sql: &str) -> PResult<()> {
             ));
         }
     }
-    if !BUSINESS_TABLES
-        .iter()
-        .any(|table| contains_keyword(&upper, &table.to_uppercase()))
-    {
-        return Err(p(
-            "WEB_BACKEND_SQL_DENIED",
-            "transact 语句必须针对 manual_items 或 manual_item_events。",
-        ));
+    // Dispatch on the real write target, never on a name that merely appears
+    // somewhere in the statement (subqueries/EXISTS included).
+    let target =
+        write_target(&upper).ok_or_else(|| p("WEB_BACKEND_SQL_DENIED", "无法识别写目标。"))?;
+    if target == "settings" {
+        return validate_settings_write(sql);
     }
-    Ok(())
+    if BUSINESS_TABLES.contains(&target.as_str()) {
+        return Ok(());
+    }
+    Err(p(
+        "WEB_BACKEND_SQL_DENIED",
+        "transact 语句必须针对 manual_items、manual_item_events 或 settings。",
+    ))
+}
+
+/// The exact production settings statements. `application-settings-service.mjs`
+/// only ever sends these two parameterized shapes.
+const SETTINGS_INSERT: &str =
+    "INSERT INTO settings(key,value,version)VALUES('application.timeZone',?,1)";
+const SETTINGS_UPDATE: &str =
+    "UPDATE settings SET value=?,version=version+1 WHERE key='application.timeZone' AND version=?";
+
+fn settings_drops_space(out: &str) -> bool {
+    out.ends_with('(') || out.ends_with(')') || out.ends_with(',') || out.ends_with('=')
+}
+
+/// Canonical form for exact-template comparison: strip comments, keep string
+/// literals verbatim (the key's case/whitespace is significant), collapse
+/// whitespace, and drop spaces around `(`, `)`, `,`, `=`.
+fn normalize_settings_sql(raw: &str) -> String {
+    let mut out = String::new();
+    let mut chars = raw.chars().peekable();
+    let mut pending_space = false;
+    while let Some(character) = chars.next() {
+        match character {
+            '-' if chars.peek() == Some(&'-') => {
+                for character in chars.by_ref() {
+                    if character == '\n' {
+                        break;
+                    }
+                }
+                pending_space = true;
+            }
+            '/' if chars.peek() == Some(&'*') => {
+                chars.next();
+                let mut previous = ' ';
+                for character in chars.by_ref() {
+                    if previous == '*' && character == '/' {
+                        break;
+                    }
+                    previous = character;
+                }
+                pending_space = true;
+            }
+            '\'' => {
+                if pending_space && !out.is_empty() && !settings_drops_space(&out) {
+                    out.push(' ');
+                }
+                pending_space = false;
+                out.push('\'');
+                while let Some(character) = chars.next() {
+                    out.push(character);
+                    if character == '\'' {
+                        if chars.peek() == Some(&'\'') {
+                            out.push(chars.next().unwrap());
+                            continue;
+                        }
+                        break;
+                    }
+                }
+            }
+            character if character.is_whitespace() => pending_space = true,
+            '(' | ')' | ',' | '=' => {
+                if out.ends_with(' ') {
+                    out.pop();
+                }
+                out.push(character);
+                pending_space = false;
+            }
+            _ => {
+                if pending_space && !out.is_empty() && !settings_drops_space(&out) {
+                    out.push(' ');
+                }
+                pending_space = false;
+                out.push(character);
+            }
+        }
+    }
+    out
+}
+
+/// The only settings writes this slice allows: the two exact production
+/// templates, byte-for-byte after whitespace/comment normalization. This closes
+/// the MINOR-2 gaps (INSERT…SELECT, multi-row VALUES, OR-widened predicates,
+/// a rewritten key, or the literal appearing anywhere but the key position).
+fn validate_settings_write(raw: &str) -> PResult<()> {
+    let normalized = normalize_settings_sql(raw);
+    if normalized == SETTINGS_INSERT || normalized == SETTINGS_UPDATE {
+        return Ok(());
+    }
+    Err(p("WEB_BACKEND_SQL_DENIED", "settings 写入形状非法。"))
 }
 
 fn validate_read(sql: &str) -> PResult<()> {

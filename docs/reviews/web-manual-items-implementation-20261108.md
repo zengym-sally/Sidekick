@@ -16,18 +16,18 @@
 
 | 文件 | SHA-256 |
 |---|---|
-| `server/entries/web-backend-entry.mjs` | `c7234a7542c3f21401455f397bbfd739c20c8ded76ec0017df516780727e29aa` |
-| `server/lib/http-server.mjs` | `f4d80e628e863a752848b65e503a14b66e4318a649b088324d5f42cf84ac9ab8` |
-| `server/lib/manual-items-service.mjs` | `fa679affa9804d97e9316d37740513659eda6b48bc75375507fae598c86d433f` |
+| `server/entries/web-backend-entry.mjs` | `bff28c8749e9268e58a078c04104d2197a8f2760c37f4737a849da87fc2cca91` |
+| `server/lib/http-server.mjs` | `ae4287bee7649e870793b6ca2f0d20b8e743aaa5ea4ff8c068c5dcbaf308779e` |
+| `server/lib/manual-items-service.mjs` | `c4e4da19f431884053d8fedc2d50fec3583fae57374d4288631ad7189cd2735d` |
 | `server/lib/session-store.mjs` | `9823db95128835c84f77a35eea68f9fbd63173f9f18156fc8c8f94059609fc1e` |
-| `server/lib/sse-hub.mjs` | `174507c6ce2e36016013546473cdc19b6678799ca38e33bb06f2092840006ade` |
+| `server/lib/sse-hub.mjs` | `f49951aa6fbcc9f6e3ba67b5f70fff8ce2ebbebd47036909c54379fdf189ceea` |
 | `server/lib/static-files.mjs` | `3c07b73eb6be8af6ee903b257d49178735c3f59a6dffb2437a84ee63975251ac` |
 | `server/lib/storage-client.mjs` | `c721fc110b1fc96269dea96b1065ada098383fa07d43ce5ac916a3120410bcbe` |
 | `src-tauri/migrations/web-backend/002_manual_items.sql` | `b6cb8e61609f83454164bff6c5628b2c893122b8dbb9bb3ced41bcd3d9e2f97e` |
-| `src-tauri/src/store/web_backend_store.rs` | `5041d337285f6365de5893741aa36662b56c8188cea310f8c991b89898382542` |
+| `src-tauri/src/store/web_backend_store.rs` | `c1a3a15781e378af10ebe402999ee2f23aacfc27954c39ff456a8d0df42686f0` |
 | `src-tauri/src/bin/web-backend-storage.rs` | `71b83d7a240f50c294db3cbdbc312eaa50af8d8cb2e12a3fa7dd268994f40d0a` |
-| `src/lib/web-api-client.ts` | `b4bec8820eefe7e3e74a5daf5716c69cdd32cdfc11c8adda64f224792123fc16` |
-| `src/stores/pairing.ts` | `dfb824a9916e4cc8d7a2f89865d0e85e93a11569e96a34dc76d40844354cbddc` |
+| `src/lib/web-api-client.ts` | `12015d6d921269caadff0ea2573c6f30cc91bffda981712f1ec6ef761d5c0563` |
+| `src/stores/pairing.ts` | `9a49150cbca2056aa14373b6c10e51a126cf09f77319e6aebb3a3936ce31b8fa` |
 | `src/components/PairingGate.vue` | `405ddcda24ea817021c2e0c406a29fd16067bd0d0130b0623ab99979abfaddb4` |
 
 ### 修改文件
@@ -38,17 +38,17 @@
 | `src-tauri/src/store/web_backend_schema.rs` | `73892eb80b8f8625fce5ee06962458c892eef579589c904b72e96b29f78f9259` | `SCHEMA_VERSION` 1→2、追加 `SQL_002`、双迁移故障注入、`conn_mut` |
 | `src-tauri/src/store/web_backend_schema_tests.rs` | `560528de8b6ed7db98e2e628b57c0d2c6d55409e62094e1b17d12578ad63b43d` | 13 表、v1 前向迁移回滚用例 |
 | `src-tauri/Cargo.toml` | `922938c7d58d86b70b72317d6be7f51b20e358cdd6d292a919c9e1f50dba194a` | 新增 `[[bin]] web-backend-storage`，依赖不动 |
-| `src/stores/todos.ts` | `8b48f47db2326ac3872cec10b02518a4927a7e293ec61251dacc7f55b4dd034b` | 由 Tauri `invoke` 切换到 `WebApiClient` |
-| `src/App.vue` | `8c2a04f18c1e6c1bf900a38000217104720e2c3e8793625e927be802bb1165f5` | 默认 surface 经 `PairingGate` 渲染 `Workbench` |
+| `src/stores/todos.ts` | `d5e63732e4760a6547f1d3c64f0812206a0014c2e0315648f84e60f30e0c65a0` | 由 Tauri `invoke` 切换到 `WebApiClient` |
+| `src/App.vue` | `0a5e760765256a8355d338e17bbffec2ba5fad9115925f948c2b2ee7f820370d` | 默认 surface 经 `PairingGate` 渲染 `Workbench` |
 | `tests/integration/desktop-controls.test.mjs` | `2ee8c910c0565ffe7eea2bef0b0da0aebe2e601fc998e05811daa25b0b214632` | 增加 `web-api-client` 别名，保留既有断言意图 |
-| `tests/fixtures/desktop-controls/api.ts` | `5872b710f951ce3b6baa2239a5f178672d71896842f3d0f83b5d91d042b72810` | 提供合成 `WebApiClient`，保持浏览器 seam |
+| `tests/fixtures/desktop-controls/api.ts` | `7e3a65806d10bed4a8e91b3d0cd04772f6e4a53c04b5cfba947e45689377a393` | 提供合成 `WebApiClient`，保持浏览器 seam |
 
 ### 测试与证据
 
 | 文件 | SHA-256 |
 |---|---|
-| `src-tauri/src/store/web_backend_store_tests.rs` | `5b371d0826dd2ba3946353619da4682e90b00bdf32139c95d3eaaf3936a745be` |
-| `tests/unit/web-manual-items.test.mjs` | `d0b7ebfe44a27d88352d7cff4be6733946da27efd977c968474d5f329a901d7a` |
+| `src-tauri/src/store/web_backend_store_tests.rs` | `632c7c6ee655dfe53250052ceefce7be127d391feb300f07c6fb0c0d1fe1b0bc` |
+| `tests/unit/web-manual-items.test.mjs` | `d730e933f3b3088eb1618f98a998c3eb598ad4bdd2aa3e01f7de0618779d4963` |
 
 ## 3. 实现要点
 
@@ -93,9 +93,9 @@
 - **标准线格式核对**：`POST /api/pair` 仅接受请求体 `pairingCode`（移除 `code`/`pairing_code` 别名兜底）；配对与 `GET /api/session` 响应顶层 `csrfToken`；写请求读取 `X-CSRF-Token`（HTTP 头名大小写不敏感）。浏览器客户端 `web-api-client.ts` 已使用同一字面名，无需改动。
 
 **本增量文件 SHA-256**
-- `server/lib/manual-items-service.mjs`：`fa679affa9804d97e9316d37740513659eda6b48bc75375507fae598c86d433f`
-- `server/lib/http-server.mjs`：`f4d80e628e863a752848b65e503a14b66e4318a649b088324d5f42cf84ac9ab8`
-- `tests/unit/web-manual-items.test.mjs`：`d0b7ebfe44a27d88352d7cff4be6733946da27efd977c968474d5f329a901d7a`
+- `server/lib/manual-items-service.mjs`：`c4e4da19f431884053d8fedc2d50fec3583fae57374d4288631ad7189cd2735d`（§12 MINOR-1 回转校验后更新）
+- `server/lib/http-server.mjs`：`ae4287bee7649e870793b6ca2f0d20b8e743aaa5ea4ff8c068c5dcbaf308779e`
+- `tests/unit/web-manual-items.test.mjs`：`d730e933f3b3088eb1618f98a998c3eb598ad4bdd2aa3e01f7de0618779d4963`
 
 **本增量聚焦验证（实跑）**
 - `node --test tests/unit/web-manual-items.test.mjs`：11/11 pass（新增「list rejects unknown status and invalid limit」）。
@@ -112,9 +112,9 @@
 - **CLI MINOR-1**：`parseArgs` 改为逐旗标解析，`--init` 作为布尔开关不再吞相邻旗标或末位失效；`isDirectRun` 两侧用 `realpathSync` 解析符号链接，经 `/tmp` 符号链接调用也能正常执行。
 
 **本增量文件 SHA-256**
-- `server/lib/manual-items-service.mjs`：`fa679affa9804d97e9316d37740513659eda6b48bc75375507fae598c86d433f`
-- `server/entries/web-backend-entry.mjs`：`c7234a7542c3f21401455f397bbfd739c20c8ded76ec0017df516780727e29aa`
-- `tests/unit/web-manual-items.test.mjs`：`d0b7ebfe44a27d88352d7cff4be6733946da27efd977c968474d5f329a901d7a`
+- `server/lib/manual-items-service.mjs`：`c4e4da19f431884053d8fedc2d50fec3583fae57374d4288631ad7189cd2735d`（§12 MINOR-1 回转校验后更新）
+- `server/entries/web-backend-entry.mjs`：`bff28c8749e9268e58a078c04104d2197a8f2760c37f4737a849da87fc2cca91`
+- `tests/unit/web-manual-items.test.mjs`：`d730e933f3b3088eb1618f98a998c3eb598ad4bdd2aa3e01f7de0618779d4963`
 
 **本增量聚焦验证（实跑）**
 - `node --test tests/unit/web-manual-items.test.mjs`：14/14 pass。新增「failed concurrent writes leave no event and keep the operationId free」对 update/complete/reopen/delete 四条写路径做确定性竞争（败者事务内先注入胜者提交，再执行败者事务）：败者 409 `version_conflict`、无事件行、以原 operationId＋新版本重试成功。新增「idempotency key binds action and item across reuse」验证跨事项/跨动作复用 409、同意图重放 `replayed:true`。新增 `parseArgs` 用例。
@@ -132,8 +132,8 @@
 - **CLI MINOR-1**：见 §7（本增量未再改 CLI）。
 
 **本增量文件 SHA-256**
-- `src/lib/web-api-client.ts`：`b4bec8820eefe7e3e74a5daf5716c69cdd32cdfc11c8adda64f224792123fc16`
-- `tests/unit/web-manual-items.test.mjs`：`d0b7ebfe44a27d88352d7cff4be6733946da27efd977c968474d5f329a901d7a`
+- `src/lib/web-api-client.ts`：`12015d6d921269caadff0ea2573c6f30cc91bffda981712f1ec6ef761d5c0563`
+- `tests/unit/web-manual-items.test.mjs`：`d730e933f3b3088eb1618f98a998c3eb598ad4bdd2aa3e01f7de0618779d4963`
 
 **本增量聚焦验证（实跑）**
 - `npm run typecheck`（`vue-tsc --noEmit`）：exit 0（门禁失败的三个 TS 错误已消除）。
@@ -173,3 +173,114 @@
 - **显式存储二进制仍可构建**：`cargo build --bin web-backend-storage` exit 0。
 - **旧/新对照**：仅移除 `default-run`（及注释）后 `node scripts/build/build-app.mjs tests/fixtures/s33-ui-verify.config.json` → **exit 1**，报 `failed to find main binary, make sure you have a 'package > default-run' in the Cargo.toml file`；恢复后 `check:s33-p2-package` exit 0。
 - `git diff --check` exit 0；`npm run typecheck` exit 0；冻结 `001`/`002`/`web-api/1` 哈希逐字节不变。
+
+
+## 11. 2026-11-08 时间线格式与 SSE epoch 退修增量（F-1/F-2/F-4）
+
+依据集成第四轮门禁第 51 组的三项候选 I 失败（F-1/F-2/F-4），沿原 I 服务/SSE/单测范围修订：
+
+- **F-1（严格 ISO）**：`normalizePoint` 不再用裸 `Date.parse` 接受非 ISO 字符串；`at` 必须匹配 `^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$`（契约 §4.2 ISO 8601 UTC 毫秒），否则 400 `validation_failed`。
+- **F-2（结构化本地时刻存在性/显式 instant）**：复用 `shared/dates.mjs::zonedCandidates`——当 `precision=minute` 且 `localText` 为 `YYYY-MM-DD[T ]HH:mm` 结构时，本地时刻无候选（夏令时空缺）即拒，`at` 不在候选集内（含回落歧义未选显式 instant）即拒。自由表达（如「周五下午」）保留原文、不在服务端解析。
+- **F-4（SSE epoch 语义）**：`sse-hub.mjs` 读取 `Last-Event-ID`；令牌 epoch ≠ 当前实例、格式非法或游标超窗口时，先发 `stream.reset`（`{contractVersion, epoch, reason}`，无 id），再发 `stream.ready`。事项帧仍无 id、不占任务 cursor。客户端 `pairing.ts` 已监听 `stream.reset`／`stream.ready`／`item.changed` 触发读回补偿。
+
+**本增量文件 SHA-256**
+- `server/lib/manual-items-service.mjs`：`c4e4da19f431884053d8fedc2d50fec3583fae57374d4288631ad7189cd2735d`（§12 MINOR-1 回转校验后更新）
+- `server/lib/sse-hub.mjs`：`f49951aa6fbcc9f6e3ba67b5f70fff8ce2ebbebd47036909c54379fdf189ceea`
+- `tests/unit/web-manual-items.test.mjs`：`d730e933f3b3088eb1618f98a998c3eb598ad4bdd2aa3e01f7de0618779d4963`
+
+**本增量聚焦验证（实跑，日志在 `build/`）**
+- `node --test tests/unit/web-manual-items.test.mjs`：**20/20 pass**。新增：非 ISO `at` 拒绝；纽约夏令时空缺（2026-03-08 02:30）拒绝、回落歧义未选显式 instant 拒绝、歧义显式选 05:30Z 接受、自由表达保留原文；SSE 旧 epoch → `stream.reset`+`stream.ready`，同 epoch 无 token → 仅 `stream.ready`，游标超窗口/格式非法 → reset；`item.changed` 无 `id` 行；`pairing.ts` 在 `stream.ready`/`stream.reset`/`item.changed` 均触发读回刷新。
+- 真实 HTTP（`smoke-time-sse.mjs`）：非 ISO → 400；夏令空缺 → 400；时刻不一致 → 400；歧义显式 → 200；自由表达 → 200 且 `localText='周五下午'`；旧 epoch 订阅 → `stream.reset`+`stream.ready`；`item.changed` 帧无 `id`。
+- `npm run typecheck` exit 0；`cargo clippy -D warnings`、`cargo fmt --check` exit 0；`git diff --check` exit 0；冻结 `001`/`002`/`web-api/1` 哈希逐字节不变。
+
+
+## 12. 2026-11-08 最小启动契约增量（BLOCKER-1/2 + MINOR-1）
+
+依据浏览器原样验收的两处阻断与任务描述新增的「最小启动契约」，沿原 I 前端/服务/单测范围修订：
+
+- **共享客户端（BLOCKER-2）**：`web-api-client.ts` 新增 `getWebApiClient()` 懒加载单例；`pairing.ts`／`todos.ts` 生产默认使用它，配对/会话读回的 CSRF 供事项与设置写入复用。构造器/工厂仍保留显式注入。
+- **设置接线（BLOCKER-1）**：`settings.ts` 改走真实 HTTP（`GET/PUT /api/settings/application`），版本随读取快照传递，保存用该快照版本做 CAS；只有成功读回才 ready。新增 `server/lib/application-settings-service.mjs`：复用冻结 001 的 `settings(key,value,version)` 表，仅 `application.timeZone` 一个 key；无保存值时以实例 OS 默认时区返回 `version=0` 且 GET 不写库；首次写创建 v1，随后参数化 CAS 递增，冲突 409 `version_conflict`，非法参数 400 `validation_failed`。
+- **Rust 写权限**：`web_backend_store.rs` 的 `transact` 新增 `settings` 写范围，**仅限** `application.timeZone` 字面量的 INSERT/UPDATE CAS 形状；其他 key、DELETE、DROP 等一律拒绝。未放宽任意 settings 或 task 表写入；七命令 stdio、001/002、依赖/锁/标识、旧库均不变。
+- **浏览器能力守卫（BLOCKER-1）**：新增 `src/domain/capabilities.ts::nativeBridgeAvailable()`；`Workbench.vue` 仅在原生桥可用时加载 models/agents/skills/profile/organizer 与轮询/监听，浏览器下禁用「待确认」导航与「文本智能整理」入口；`SettingsPanel.vue` 的模型/智能体/工具面板与 `TodayAdvice.vue` 的生成按钮显示准确「未接通」状态。未扩迁模型系统，未伪造配置成功。
+- **MINOR-1（UTC instant 日历回转）**：`normalizePoint` 在 ISO 解析后校验 `new Date(atMs).toISOString() === raw`，拒绝 `2026-02-30…`、`24:00…`、月份 13 等自动滚动值；有效闰日/普通日期与自由表达、day 语义不变。
+
+**本增量文件 SHA-256**
+- `src/lib/web-api-client.ts`：`12015d6d921269caadff0ea2573c6f30cc91bffda981712f1ec6ef761d5c0563`
+- `src/stores/settings.ts`：`cf39a03a19411acbde8302ac549b43a864aed5b0c273475067ca04aba1b95c5f`
+- `src/stores/pairing.ts`：`9a49150cbca2056aa14373b6c10e51a126cf09f77319e6aebb3a3936ce31b8fa`
+- `src/stores/todos.ts`：`d5e63732e4760a6547f1d3c64f0812206a0014c2e0315648f84e60f30e0c65a0`
+- `src/lib/host-capabilities.ts`：`ba482b81ec5078b9d369f55781e7bc6e82604030021ffdc912fd038613433738`
+- `src/components/Workbench.vue`：`0d4e81a7d141a337f1a1930683d8386d94ac3a99851fadbf70d2d7c39491ce53`
+- `src/components/SettingsPanel.vue`：`0b8a013ab4ee97322d7d2b6b18850e1d1a411d0fef48f533c938b23429d3b70d`
+- `src/components/TodayAdvice.vue`：`78ee7a2f4588a8d929b7b49caf311286932e12b4afea081159c670a2741cf825`
+- `server/lib/application-settings-service.mjs`：`b9add2f41b39c46bee32f53837e1b2de659148d48cb7a60b668358a2a4c2ccbf`
+- `server/lib/http-server.mjs`：`ae4287bee7649e870793b6ca2f0d20b8e743aaa5ea4ff8c068c5dcbaf308779e`
+- `server/entries/web-backend-entry.mjs`：`bff28c8749e9268e58a078c04104d2197a8f2760c37f4737a849da87fc2cca91`
+- `src-tauri/src/store/web_backend_store.rs`：`c1a3a15781e378af10ebe402999ee2f23aacfc27954c39ff456a8d0df42686f0`
+- `src-tauri/src/store/web_backend_store_tests.rs`：`632c7c6ee655dfe53250052ceefce7be127d391feb300f07c6fb0c0d1fe1b0bc`
+- `tests/unit/web-manual-items.test.mjs`：`d730e933f3b3088eb1618f98a998c3eb598ad4bdd2aa3e01f7de0618779d4963`
+- `tests/fixtures/desktop-controls/api.ts`：`7e3a65806d10bed4a8e91b3d0cd04772f6e4a53c04b5cfba947e45689377a393`
+
+**本增量聚焦验证（实跑，日志在 `build/`）**
+- `node --test tests/unit/web-manual-items.test.mjs`：**25/25 pass**（含设置服务默认/CAS/校验、共享客户端单例与 CSRF 传递、MINOR-1 回转拒绝）。
+- 真实 HTTP（`smoke-settings-csrf.mjs`）：GET 缺省 v0 不写库；PUT 首次 v1；陈旧版本 409；CAS 成功 v2；错 CSRF 403；非法时区 400；共享 CSRF 创建事项 200；同根重启后时区/版本持久。
+- `cargo test --lib web_backend_store` 12/12（含 settings 写范围正负例）、`web_backend_schema` 18/18；`cargo clippy -D warnings`、`cargo fmt --check` exit 0。
+- `npm run typecheck` exit 0；`npm run test:desktop-controls` 9/9 pass（fixture 仅补 desktop bridge seam，断言/预算未动）。
+- 冻结 `001`/`002`/`web-api/1` 哈希逐字节不变；未改依赖/锁/标识。
+
+
+## 13. 2026-11-08 归位修正（capabilities 路径）
+
+按任务描述新增的归位登记，仅做路径/证据修正：
+
+- `src/domain/capabilities.ts` 原样移到 `src/lib/host-capabilities.ts`（内容逐字节不变，SHA-256 `ba482b81ec5078b9d369f55781e7bc6e82604030021ffdc912fd038613433738`）；删除未获批的 `src/domain/` 新文件。
+- 更新三处必要引用：`Workbench.vue`／`SettingsPanel.vue`／`TodayAdvice.vue` 的导入改为 `../lib/host-capabilities.ts`。
+- 后端字节未动（`server/`、`src-tauri/`、001/002、web-api/1 逐字节不变）。
+
+**聚焦验证（实跑）**：`npm run typecheck` exit 0；`node --test tests/unit/web-manual-items.test.mjs` 25/25 pass；`npm run test:desktop-controls` 9/9 pass；`git diff --check` exit 0。
+
+
+## 14. 2026-11-08 MINOR-2 收口与启动契约补全（两段独立提交）
+
+**提交 A（`62033e3`）Rust settings 写守卫收紧**：`validate_settings_write` 改为对两条**精确生产模板**（`INSERT INTO settings(key,value,version)VALUES('application.timeZone',?,1)` 与 `UPDATE settings SET value=?,version=version+1 WHERE key='application.timeZone' AND version=?`）做规范化逐字比对（去注释、折叠空白、保留 key 字面量大小写/空白）。关闭 MINOR-2：`INSERT…SELECT`、多行 VALUES、`OR` 放大谓词、重写 key、把字面量塞进无关列一律拒绝；错版本不改动任何行；生产首次写/CAS 与手工事项写仍通。
+
+**提交 B（`7fce144`）前端启动契约补全**：
+- **MAJOR-1**：恢复 `createApplicationSettings(api: Backend)` 命令式注入边界（`read_application_settings`／`save_application_settings`），生产默认接共享客户端 `asBackend()`；版本仍随读取快照传递并用于 CAS。原 layout-domain 十四用例/注入及 CAS、未知结果、重读断言保留。
+- **能力守卫**：`watch(page→today)`、`readWindowFacts()` 与 `App.vue` 的 `desktopPreferences.start()` 均尊重 `nativeBridgeAvailable()`；设置面板对未接通原生面板的守卫准确。
+- **会话失效**：共享客户端在会话内 401/登出时清 CSRF、置配对态为未配对、关闭 SSE 并回到配对门，不只在 fresh-load 生效。
+
+**本增量文件 SHA-256**
+- `src-tauri/src/store/web_backend_store.rs`：`c1a3a15781e378af10ebe402999ee2f23aacfc27954c39ff456a8d0df42686f0`
+- `src-tauri/src/store/web_backend_store_tests.rs`：`632c7c6ee655dfe53250052ceefce7be127d391feb300f07c6fb0c0d1fe1b0bc`
+- `src/lib/web-api-client.ts`：`12015d6d921269caadff0ea2573c6f30cc91bffda981712f1ec6ef761d5c0563`
+- `src/stores/settings.ts`：`a61a844c6a8e219a25988d33e397e7da6edc2e8c414f2da2d57b0afaefd19f01`
+- `src/stores/pairing.ts`：`9a49150cbca2056aa14373b6c10e51a126cf09f77319e6aebb3a3936ce31b8fa`
+- `src/components/Workbench.vue`：`1ab0858dec5afa864a018a8eaec5d2c45d529ab2dfd34d7bf7dd6d0ff3d50c4a`
+- `src/App.vue`：`0a5e760765256a8355d338e17bbffec2ba5fad9115925f948c2b2ee7f820370d`
+- `tests/unit/web-manual-items.test.mjs`：`d730e933f3b3088eb1618f98a998c3eb598ad4bdd2aa3e01f7de0618779d4963`
+
+**聚焦验证（实跑，日志在 `build/`）**
+- Rust：`cargo test --lib web_backend_store` 12/12（含 MINOR-2 六类对抗 + 错版本零改动 + 空白变体放行）、`web_backend_schema` 18/18、`cargo clippy -D warnings`、`cargo fmt --check` exit 0。
+- 真实 stdio 对抗（真实二进制）：生产 INSERT 模板放行；`INSERT…SELECT`／多行 VALUES／`OR 1=1`／重写 key（大小写）／字面量错列／他 key／DELETE／DROP／多语句全部 `WEB_BACKEND_SQL_DENIED`；终态恰一行 `application.timeZone`。
+- 真实 HTTP：生产首次写 v1、CAS v2 均 200（收紧后生产 SQL 仍被接受）。
+- 前端：`node --test tests/unit/web-manual-items.test.mjs` 27/27（含会话内 401 清共享 CSRF、配对态回门）；`npm run test:layout-domain` 14/14；`npm run test:desktop-controls` 9/9；`npm run typecheck` exit 0。
+- 冻结 `001`/`002`/`web-api/1` 哈希逐字节不变；未改依赖/锁/标识。
+
+
+## 15. 2026-11-08 MAJOR-1（A/R2）写目标分派收口
+
+依据 A/R2 独审的 MAJOR-1，仅改 Rust store 与测试：
+
+- `validate_write` 改为**按真实 DML 写目标分派权限**：新增 `write_target()`，从 `INSERT/REPLACE INTO`、`UPDATE`、`DELETE FROM` 的引导子句取目标表（忽略子查询/EXISTS 中的提名）；`settings` 一律过精确模板；`manual_items`/`manual_item_events` 放行；其他目标拒绝。引号/反引号/`[`/schema 限定目标不支持，直接拒绝。
+- 关闭 A11（`INSERT INTO settings ... SELECT ... FROM manual_items` 越 key 写入）与 A12（`... AND version=? OR EXISTS(SELECT 1 FROM manual_items)` 击穿 CAS）；其余变体：引号目标＋业务子查询、其他目标＋业务表提名，均拒绝。
+- 保留合法条件历史 `INSERT INTO manual_item_events ... SELECT ... WHERE (SELECT changes())=1`、settings 首写/CAS 与事项写入。
+
+**本增量文件 SHA-256**
+- `src-tauri/src/store/web_backend_store.rs`：`c1a3a15781e378af10ebe402999ee2f23aacfc27954c39ff456a8d0df42686f0`
+- `src-tauri/src/store/web_backend_store_tests.rs`：`632c7c6ee655dfe53250052ceefce7be127d391feb300f07c6fb0c0d1fe1b0bc`
+
+**聚焦验证（实跑）**
+- `cargo test --lib web_backend_store` **13/13**（A11/A12、引号/限定目标、其他目标＋业务提名、条件历史 INSERT…SELECT、合法 settings/事项写）、`web_backend_schema` 18/18、`cargo clippy -D warnings`、`cargo fmt --check` exit 0。
+- 真实 stdio（真实二进制）：A11/A12、引号目标、`main.settings` 限定、`DELETE/UPDATE tasks ... IN (SELECT ... FROM manual_items)` 全部 `WEB_BACKEND_SQL_DENIED`；终态 `settings` 0 行。
+- 真实 HTTP：生产首次写 v1、CAS v2 与事项创建 200（目标分派后生产 SQL 仍被接受）。
+- 未改前端/II/III；冻结 `001`/`002`/`web-api/1` 哈希逐字节不变。

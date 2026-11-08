@@ -21,6 +21,7 @@ import { useOrganizer } from '../stores/organizer';
 import {useAgents} from '../stores/agents';
 import {useTodayAdvice} from '../stores/today';
 import {isLocalCaptureShortcut,observeWorkspaceChanges} from '../domain/desktop';
+import {nativeBridgeAvailable} from '../lib/host-capabilities.ts';
 import TodayAdvice from './TodayAdvice.vue';
 import {useSkills} from '../stores/skills';
 import { timeDraft,draftPoint } from '../domain/time';
@@ -32,6 +33,8 @@ import pet from '../assets/brand/banban-idle.svg';
 const settings=useApplicationSettings(),modelSettings=useModelSettings();
 const store=useTodos(),profile=useProfile(),organizer=useOrganizer(),agents=useAgents(),skills=useSkills();
 const todayAdvice=useTodayAdvice();
+const nativeAvailable=nativeBridgeAvailable();
+function loadNative(){void modelSettings.load().catch(()=>{});void agents.load('organizer').catch(()=>{});void agents.load('advisor').catch(()=>{});void todayAdvice.load().catch(()=>{});void skills.scan().catch(()=>{});void profile.load();void organizer.refresh().catch(()=>{});}
 const captureMode=ref<'manual'|'text'>('manual');
 const settingsTab=ref<'profile'|'general'|'desktop'|'models'|'agents'|'tools'|'about'>('profile');
 const address=computed(()=>profile.ready?profile.saved.address:'BOSS');
@@ -44,7 +47,7 @@ function captureText(){if(!timeReady())return;captureMode.value='text';editing.v
 async function sourceSubmitted(id:string){formDialog.value?.close();page.value='inbox';try{await organizer.select(id);}catch{}}
 function signed(){page.value='today';notify('事项已签收，班班开始盯着了。');}
 const page=ref<'today'|'inbox'|'all'|'settings'>('today'),booting=ref(true),startupError=ref(''),initializing=ref(false),setupError=ref('');
-watch(page,value=>{if(value==='today'&&!store.workspace?.needsSetup&&!booting.value)void todayAdvice.load().catch(()=>{});});
+watch(page,value=>{if(value==='today'&&nativeAvailable&&!store.workspace?.needsSetup&&!booting.value)void todayAdvice.load().catch(()=>{});});
 const now=ref(Date.now()),toast=ref(''),formDialog=ref<HTMLDialogElement>(),detailDialog=ref<HTMLDialogElement>(),deleteDialog=ref<HTMLDialogElement>();
 const filters=reactive({kind:'all',status:'all',date:'all',owner:'',tag:'',query:''});
 const hasFilters=computed(()=>filters.kind!=='all'||filters.status!=='all'||filters.date!=='all'||!!(filters.owner||filters.tag||filters.query.trim()));
@@ -66,7 +69,7 @@ let organizerUnlisten:UnlistenFn|undefined,poller:ReturnType<typeof setInterval>
 let factsTimer:ReturnType<typeof setTimeout>|undefined,factsTimerGeneration=0,workbenchAlive=true;
 function scheduleFactsRead(){now.value=Date.now();clearTimeout(factsTimer);factsTimer=undefined;const generation=++factsTimerGeneration,basis=todayAdvice.data;if(!workbenchAlive||!basis||todayAdvice.loading||!todayAdvice.currentVerified)return;if(!todayAdvice.checkCurrentness())return;const until=basis.factsValidUntilMs;if(until===null)return;factsTimer=setTimeout(()=>{if(!workbenchAlive||generation!==factsTimerGeneration||todayAdvice.data!==basis)return;factsTimer=undefined;if(!todayAdvice.checkCurrentness()){todayAdvice.invalidateCurrentness();if(!todayAdvice.loading)void todayAdvice.load().catch(()=>{});}else scheduleFactsRead();},Math.max(0,until-Date.now()));}
 function checkVisibleFacts(){if(document.visibilityState==='visible'&&workbenchAlive&&!booting.value&&!!store.workspace&&!store.workspace.needsSetup){todayAdvice.checkCurrentness();void workspaceObservation?.refresh().catch(()=>{});}}
-async function readWindowFacts(){if(workbenchAlive&&store.workspace&&!store.workspace.needsSetup){await store.refresh();if(workbenchAlive&&!todayAdvice.loading)await todayAdvice.load();}}
+async function readWindowFacts(){if(workbenchAlive&&store.workspace&&!store.workspace.needsSetup){await store.refresh();if(workbenchAlive&&nativeAvailable&&!todayAdvice.loading)await todayAdvice.load();}}
 function windowFocused(){if(workbenchAlive)void workspaceObservation?.refresh().catch(()=>{});}
 function checkRestoredFacts(event:PageTransitionEvent){if(event.persisted)checkVisibleFacts();}
 watch(()=>[todayAdvice.data,todayAdvice.currentVerified,todayAdvice.loading,todayAdvice.starting],scheduleFactsRead);
@@ -74,8 +77,8 @@ let workspaceObservation:ReturnType<typeof observeWorkspaceChanges>|undefined;
 let operationId='',signature='',deleteOperation='',historyRequest=0,lastFocus:HTMLElement|null=null,clock:ReturnType<typeof setInterval>|undefined,toastTimer:ReturnType<typeof setTimeout>|undefined;
 const actionNames:Record<string,string>={create:'手工录入',update:'修改事项',complete:'标记完成',reopen:'重新打开',delete:'删除事项',link:'关联来源'};
 
-async function boot(){booting.value=true;startupError.value='';try{await store.boot();if(!workbenchAlive)return;if(!store.workspace?.needsSetup){await settings.load();if(!workbenchAlive)return;void modelSettings.load().catch(()=>{});void agents.load('organizer').catch(()=>{});void agents.load('advisor').catch(()=>{});void todayAdvice.load().catch(()=>{});void skills.scan().catch(()=>{});void profile.load();void organizer.refresh().catch(()=>{});}}catch(e){startupError.value=errorMessage(e);}finally{booting.value=false;}}
-async function initialize(path:string|null){initializing.value=true;setupError.value='';try{await store.initialize(path);await settings.load();void modelSettings.load().catch(()=>{});void agents.load('organizer').catch(()=>{});void agents.load('advisor').catch(()=>{});void todayAdvice.load().catch(()=>{});void skills.scan().catch(()=>{});void profile.load();void organizer.refresh().catch(()=>{});}catch(e){setupError.value=errorMessage(e);}finally{initializing.value=false;}}
+async function boot(){booting.value=true;startupError.value='';try{await store.boot();if(!workbenchAlive)return;if(!store.workspace?.needsSetup){await settings.load();if(!workbenchAlive)return;if(nativeAvailable)loadNative();}}catch(e){startupError.value=errorMessage(e);}finally{booting.value=false;}}
+async function initialize(path:string|null){initializing.value=true;setupError.value='';try{await store.initialize(path);await settings.load();if(nativeAvailable)loadNative();}catch(e){setupError.value=errorMessage(e);}finally{initializing.value=false;}}
 async function chooseDirectory(){
   setupError.value='';initializing.value=true;
   try{const path=await open({directory:true,multiple:false,title:'选择跟班工作目录'});if(typeof path==='string')await initialize(path);}
@@ -113,8 +116,8 @@ function keyboard(event:KeyboardEvent){if(isLocalCaptureShortcut(event)&&!store.
 function showUndated(){page.value='all';Object.assign(filters,{date:'undated',status:'open',kind:'all',owner:'',tag:'',query:''});}
 onMounted(async()=>{
  document.addEventListener('keydown',keyboard);document.addEventListener('visibilitychange',checkVisibleFacts);window.addEventListener('pageshow',checkRestoredFacts);window.addEventListener('focus',windowFocused);
- poller=setInterval(()=>{if(organizer.running&&!organizer.loading)void organizer.refresh().catch(()=>{});if(agents.running&&!agents.polling)void agents.refreshTrial();if(todayAdvice.running&&!todayAdvice.loading)void todayAdvice.load().catch(()=>{});},1000);
- clock=setInterval(()=>{now.value=Date.now();todayAdvice.checkCurrentness();if(!booting.value&&store.workspace&&!store.workspace.needsSetup&&!todayAdvice.loading)void todayAdvice.load().catch(()=>{});},60000);
+ poller=setInterval(()=>{if(!nativeAvailable)return;if(organizer.running&&!organizer.loading)void organizer.refresh().catch(()=>{});if(agents.running&&!agents.polling)void agents.refreshTrial();if(todayAdvice.running&&!todayAdvice.loading)void todayAdvice.load().catch(()=>{});},1000);
+ clock=setInterval(()=>{now.value=Date.now();if(!nativeAvailable)return;todayAdvice.checkCurrentness();if(!booting.value&&store.workspace&&!store.workspace.needsSetup&&!todayAdvice.loading)void todayAdvice.load().catch(()=>{});},60000);
  workspaceObservation=observeWorkspaceChanges(handler=>listen('todos-changed',handler),boot,readWindowFacts);
  await workspaceObservation.ready;
  if(!workbenchAlive)return;
@@ -135,7 +138,7 @@ onUnmounted(()=>{workbenchAlive=false;factsTimerGeneration++;clearTimeout(factsT
   </main>
   <div v-else class="workbench">
     <aside class="sidebar" aria-label="主导航"><button class="identity" aria-label="跟班 Sidekick，打开今日工作台" @click="page='today'"><img :src="mark" alt=""><span>sidekick<small>盯着呢，老板。</small></span></button>
-      <nav><button class="nav-item" :class="{active:page==='today'}" :aria-current="page==='today'?'page':undefined" title="今日工作台" @click="page='today'"><Icon name="today"/><span>今日工作台</span><small class="nav-short">今日</small></button><button class="nav-item" :class="{active:page==='inbox'}" :aria-current="page==='inbox'?'page':undefined" title="待确认" @click="page='inbox'"><Icon name="inbox"/><span>待确认</span><small class="nav-short">确认</small><b v-if="organizer.pending">{{ organizer.pending }}</b></button><button class="nav-item" :class="{active:page==='all'}" :aria-current="page==='all'?'page':undefined" title="全部事项" @click="page='all'"><Icon name="list"/><span>全部事项</span><small class="nav-short">事项</small><b>{{ active.length }}</b></button></nav>
+      <nav><button class="nav-item" :class="{active:page==='today'}" :aria-current="page==='today'?'page':undefined" title="今日工作台" @click="page='today'"><Icon name="today"/><span>今日工作台</span><small class="nav-short">今日</small></button><button class="nav-item" :class="{active:page==='inbox'}" :aria-current="page==='inbox'?'page':undefined" :title="nativeAvailable?'待确认':'未接通：浏览器模式不加载智能体收件箱'" :disabled="!nativeAvailable" @click="page='inbox'"><Icon name="inbox"/><span>待确认</span><small class="nav-short">确认</small><b v-if="organizer.pending">{{ organizer.pending }}</b></button><button class="nav-item" :class="{active:page==='all'}" :aria-current="page==='all'?'page':undefined" title="全部事项" @click="page='all'"><Icon name="list"/><span>全部事项</span><small class="nav-short">事项</small><b>{{ active.length }}</b></button></nav>
       <div class="sidebar-bottom"><button class="nav-item profile" :class="{active:page==='settings'}" :aria-label="`个人信息与设置，${profileName}`" :aria-current="page==='settings'?'page':undefined" title="个人信息与设置" @click="openSettings"><span class="avatar" aria-hidden="true">{{ Array.from(profileName)[0] }}</span><span class="profile-copy"><strong>{{ profileName }}</strong><small>个人信息与设置</small></span></button></div>
     </aside>
     <section class="workspace">
@@ -165,7 +168,7 @@ onUnmounted(()=>{workbenchAlive=false;factsTimerGeneration++;clearTimeout(factsT
     </section>
   </div>
   <dialog ref="formDialog" class="dialog capture-dialog" aria-labelledby="capture-heading" @cancel.prevent="close(formDialog)"><header class="dialog-header"><h2 id="capture-heading">{{ editing?'把这件事改清楚。':captureMode==='text'?'让班班先整理一遍。':'交给班班，先记下来。' }}</h2><button class="icon-button" aria-label="关闭录入" :disabled="store.saving||organizer.starting" @click="close(formDialog)"><Icon name="close"/></button></header>
-    <div v-if="!editing" class="capture-tabs" role="tablist" aria-label="录入方式"><button role="tab" :aria-selected="captureMode==='manual'" :disabled="store.saving||organizer.starting" @click="captureMode='manual'">手工录入</button><button role="tab" :aria-selected="captureMode==='text'" :disabled="store.saving||organizer.starting" @click="captureMode='text'">文本智能整理</button></div>
+    <div v-if="!editing" class="capture-tabs" role="tablist" aria-label="录入方式"><button role="tab" :aria-selected="captureMode==='manual'" :disabled="store.saving||organizer.starting" @click="captureMode='manual'">手工录入</button><button role="tab" :aria-selected="captureMode==='text'" :disabled="store.saving||organizer.starting||!nativeAvailable" :title="nativeAvailable?undefined:'未接通：浏览器模式不提供文本智能整理'" @click="captureMode='text'">文本智能整理</button></div>
     <TextIntake v-if="captureMode==='text'&&!editing" @submitted="sourceSubmitted" @models="openModels"/>
     <form v-else @submit.prevent="save"><SkFieldset :disabled="store.saving||!settings.ready||settings.loading||settings.saving"><div class="dialog-body"><div class="form-grid"><SkField class="full" label="事项标题" required><SkInput v-model="form.title" required maxlength="200" autofocus placeholder="要做什么，或需要盯住什么？"/></SkField><SkField label="事项类型"><SkSelect v-model="form.kind" :options="[{value:'action',label:'待我处理'},{value:'followup',label:'待我跟进'}]" @change="kindChanged"/></SkField><SkField :label="form.kind==='followup'?'对方负责人':'实际负责人'" required><SkInput v-model="form.owner" required maxlength="100" :placeholder="form.kind==='followup'?'由谁实际交付？':'我'"/></SkField><TimeField :state="form.due" label="交付截止"/><TimeField v-if="form.kind==='followup'" :state="form.followup" label="下次跟进"/><SkField label="优先级"><SkSelect v-model="form.priority" :options="[{value:'low',label:'低'},{value:'medium',label:'中'},{value:'high',label:'高'}]"/></SkField><SkField label="标签"><SkInput v-model="form.tags" placeholder="用逗号分隔"/></SkField>
 

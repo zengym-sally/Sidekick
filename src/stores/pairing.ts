@@ -6,9 +6,9 @@
 
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import { WebApiClient } from '../lib/web-api-client.ts';
+import { WebApiClient, getWebApiClient } from '../lib/web-api-client.ts';
 
-export function createPairing(client: WebApiClient = new WebApiClient()) {
+export function createPairing(client: WebApiClient = getWebApiClient()) {
   const ready = ref(false);
   const paired = ref(false);
   const busy = ref(false);
@@ -33,6 +33,7 @@ export function createPairing(client: WebApiClient = new WebApiClient()) {
   async function start() {
     if (started) return;
     started = true;
+    client.onSessionLost?.(handleSessionLost);
     try {
       const session = await client.readSession();
       if (session) {
@@ -68,7 +69,16 @@ export function createPairing(client: WebApiClient = new WebApiClient()) {
     source = null;
   }
 
-  return { ready, paired, busy, code, error, start, pair, dispose, setOnItemChanged };
+  /// The shared client cleared its CSRF token: drop the pairing state, close
+  /// the hint stream and show the gate again.
+  function handleSessionLost() {
+    paired.value = false;
+    ready.value = true;
+    error.value = '';
+    dispose();
+  }
+
+  return { ready, paired, busy, code, error, start, pair, dispose, setOnItemChanged, handleSessionLost };
 }
 
 export const usePairing = defineStore('pairing', () => createPairing());

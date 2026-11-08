@@ -4,6 +4,7 @@
 
 import http from 'node:http';
 import { ManualItemsService, ServiceError, CONTRACT_VERSION } from './manual-items-service.mjs';
+import { ApplicationSettingsService } from './application-settings-service.mjs';
 import { SessionStore, SessionError } from './session-store.mjs';
 import { SseHub } from './sse-hub.mjs';
 import { serveStatic } from './static-files.mjs';
@@ -68,6 +69,8 @@ function matchRoute(method, pathname) {
   if (pathname === '/api/session' && method === 'DELETE') return { name: 'session-delete' };
   if (pathname === '/api/events' && method === 'GET') return { name: 'events' };
   if (pathname === '/api/workspace' && method === 'GET') return { name: 'workspace' };
+  if (pathname === '/api/settings/application' && method === 'GET') return { name: 'settings-read' };
+  if (pathname === '/api/settings/application' && method === 'PUT') return { name: 'settings-write' };
   if (pathname === '/api/manual-items') {
     if (method === 'GET') return { name: 'items-list' };
     if (method === 'POST') return { name: 'items-create' };
@@ -87,13 +90,14 @@ function matchRoute(method, pathname) {
 }
 
 export class HttpServer {
-  constructor({ service, sessions, sse, staticRoot, root, expectedHost }) {
+  constructor({ service, sessions, sse, staticRoot, root, expectedHost, applicationSettings }) {
     this.service = service;
     this.sessions = sessions;
     this.sse = sse;
     this.staticRoot = staticRoot;
     this.root = root;
     this.expectedHost = expectedHost;
+    this.applicationSettings = applicationSettings;
     this.server = null;
   }
 
@@ -184,6 +188,10 @@ export class HttpServer {
         return this.events(req, res);
       case 'workspace':
         return this.workspace(req, res, url);
+      case 'settings-read':
+        return this.settingsRead(req, res);
+      case 'settings-write':
+        return this.settingsWrite(req, res);
       case 'items-list':
         return this.itemsList(req, res, url);
       case 'items-create':
@@ -259,6 +267,25 @@ export class HttpServer {
       capabilities: session.capabilities,
       targets: [],
     });
+  }
+
+  async settingsRead(req, res) {
+    this.requireSession(req);
+    const snapshot = await this.applicationSettings.read();
+    this.sendJson(res, 200, snapshot);
+  }
+
+  async settingsWrite(req, res) {
+    this.requireWrite(req);
+    const body = await jsonBody(req);
+    if (typeof body.timeZone !== 'string') {
+      throw new ServiceError('validation_failed', 'timeZone 无效。');
+    }
+    if (typeof body.expectedVersion !== 'number') {
+      throw new ServiceError('validation_failed', 'expectedVersion 无效。');
+    }
+    const snapshot = await this.applicationSettings.write(body.timeZone, body.expectedVersion);
+    this.sendJson(res, 200, snapshot);
   }
 
   async itemsList(req, res, url) {

@@ -138,9 +138,17 @@ export interface SessionInfo {
   csrfToken: string;
 }
 
+export interface ApplicationSettingsSnapshot {
+  contractVersion: 'web-api/1';
+  settings: { timeZone: string };
+  version: number;
+  warning: string | null;
+}
+
 export class WebApiClient {
   private baseUrl: string;
   private csrfToken = '';
+  private sessionLostHandler: (() => void) | null = null;
 
   constructor(baseUrl = '') {
     this.baseUrl = baseUrl.replace(/\/$/, '');
@@ -148,6 +156,17 @@ export class WebApiClient {
 
   getCsrfToken() {
     return this.csrfToken;
+  }
+
+  /// Register for an in-session authentication loss (401 or logout): the
+  /// shared CSRF token is cleared and the pairing gate is shown again.
+  onSessionLost(handler: () => void) {
+    this.sessionLostHandler = handler;
+  }
+
+  private handleSessionLost() {
+    this.csrfToken = '';
+    this.sessionLostHandler?.();
   }
 
   private async request(method: string, path: string, body?: unknown): Promise<unknown> {
@@ -173,6 +192,12 @@ export class WebApiClient {
       }
     }
     if (!response.ok) {
+      // An in-session 401 means the session expired: clear the shared token and
+      // let the pairing store return to the gate. The fresh-load probes
+      // (pair, session check) are excluded so an unpaired app still shows the
+      // gate instead of looping.
+      const isFreshProbe = path.includes('/api/pair') || (method === 'GET' && path.includes('/api/session'));
+      if (response.status === 401 && !isFreshProbe) this.handleSessionLost();
       const envelope = payload as { error?: { code?: string; message?: string; details?: unknown } } | null;
       throw new WebApiError(
         envelope?.error?.code ?? 'internal_error',
@@ -200,8 +225,12 @@ export class WebApiClient {
   }
 
   async logout(): Promise<void> {
-    await this.request('DELETE', '/api/session');
-    this.csrfToken = '';
+    try {
+      await this.request('DELETE', '/api/session');
+    } catch {
+      // The session may already be gone; clearing local state is still correct.
+    }
+    this.handleSessionLost();
   }
 
   async listItems(): Promise<Todo[]> {
@@ -246,6 +275,38 @@ export class WebApiClient {
     }));
   }
 
+  /// Read the application settings snapshot. The backend supplies the OS
+  /// default timezone at version 0 when nothing has been saved, so a fresh
+  /// install still has a consistent value.
+  async readApplicationSettings(): Promise<ApplicationSettingsSnapshot> {
+    const payload = await this.request('GET', '/api/settings/application') as {
+      settings?: { timeZone?: string };
+      version?: number;
+    };
+    return {
+      contractVersion: CONTRACT_VERSION,
+      settings: { timeZone: payload.settings?.timeZone ?? '' },
+      version: payload.version ?? 0,
+      warning: null,
+    };
+  }
+
+  /// Write the application timezone with an atomic compare-and-set on the
+  /// version from the last successful read.
+  async writeApplicationSettings(timeZone: string, expectedVersion: number): Promise<ApplicationSettingsSnapshot> {
+    const payload = await this.request('PUT', '/api/settings/application', { timeZone, expectedVersion }) as {
+      settings?: { timeZone?: string };
+      version?: number;
+      warning?: string | null;
+    };
+    return {
+      contractVersion: CONTRACT_VERSION,
+      settings: { timeZone: payload.settings?.timeZone ?? timeZone },
+      version: payload.version ?? expectedVersion + 1,
+      warning: payload.warning ?? null,
+    };
+  }
+
   async workspace(): Promise<WorkspaceInfo> {
     const payload = await this.request('GET', '/api/workspace') as Partial<WireWorkspace>;
     return {
@@ -261,6 +322,15 @@ export class WebApiClient {
       switch (command) {
         case 'workspace_info':
           return this.workspace();
+        case 'read_application_settings': {
+          const snapshot = await this.readApplicationSettings();
+          return { timeZone: snapshot.settings.timeZone, version: snapshot.version };
+        }
+        case 'save_application_settings': {
+          const input = args.input as { timeZone?: string; expectedVersion?: number };
+          const snapshot = await this.writeApplicationSettings(input.timeZone ?? '', input.expectedVersion ?? 0);
+          return { settings: snapshot.settings, version: snapshot.version, warning: snapshot.warning };
+        }
         case 'initialize_workspace':
           return this.workspace();
         case 'list_todos':
@@ -284,4 +354,14 @@ export class WebApiClient {
       }
     };
   }
+}
+
+let sharedClient: WebApiClient | null = null;
+
+/// The one production client: pairing/session establish the CSRF token, and the
+/// manual-item and application-settings writes reuse it. Tests and fixtures may
+/// still construct or inject their own client.
+export function getWebApiClient(): WebApiClient {
+  if (!sharedClient) sharedClient = new WebApiClient();
+  return sharedClient;
 }

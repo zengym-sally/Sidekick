@@ -289,6 +289,128 @@ fn root_lock_blocks_a_second_open_until_close() {
 }
 
 #[test]
+fn settings_write_scope_is_limited_to_the_application_key() {
+    let (dir, _root, mut store) = init_store("settings-scope");
+    // Allowed shapes: insert at version 1, then advance by parameterized CAS.
+    store
+        .transact(&json!({"ops": [{
+            "sql": "INSERT INTO settings(key,value,version) VALUES('application.timeZone',?,1)",
+            "params": ["Asia/Shanghai"]
+        }]}))
+        .unwrap();
+    store
+        .transact(&json!({"ops": [{
+            "sql": "UPDATE settings SET value=?, version=version+1 WHERE key='application.timeZone' AND version=?",
+            "params": ["UTC", 1]
+        }]}))
+        .unwrap();
+    let value = store
+        .query(&json!({"sql": "SELECT value FROM settings WHERE key='application.timeZone'", "params": []}))
+        .unwrap()["rows"][0][0]
+        .as_str()
+        .unwrap()
+        .to_string();
+    assert_eq!(value, "UTC");
+
+    // Rejected: another key, a non-CAS update, or an out-of-scope statement.
+    for sql in [
+        "INSERT INTO settings(key,value,version) VALUES('other.key',?,1)",
+        "UPDATE settings SET value=?, version=version+1 WHERE key='application.timeZone'",
+        "DELETE FROM settings WHERE key='application.timeZone'",
+        "DROP TABLE settings",
+    ] {
+        let outcome = store.transact(&json!({"ops": [{"sql": sql, "params": []}]}));
+        assert!(
+            outcome.is_err(),
+            "accepted out-of-scope settings SQL: {sql}"
+        );
+        assert_eq!(outcome.unwrap_err().code, "WEB_BACKEND_SQL_DENIED");
+    }
+    // MINOR-2 adversarial shapes: none may write a row.
+    for sql in [
+        "INSERT INTO settings(key,value,version) SELECT 'probe.select.key','x',1 WHERE key='application.timeZone'",
+        "INSERT INTO settings(key,value,version) VALUES('application.timeZone','x',1),('other.key','y',1)",
+        "UPDATE settings SET value=?, version=version+1 WHERE key='application.timeZone' AND version=? OR 1=1",
+        "UPDATE settings SET value=?, version=version+1 WHERE key='APPLICATION.TIMEZONE' AND version=?",
+        "INSERT INTO settings(note,value,version) VALUES('application.timeZone','x',1)",
+        "INSERT INTO settings(key,value,version) VALUES('application.timeZone',?,1); DROP TABLE settings",
+    ] {
+        let outcome = store.transact(&json!({"ops": [{"sql": sql, "params": []}]}));
+        assert!(outcome.is_err(), "accepted adversarial settings SQL: {sql}");
+        assert_eq!(outcome.unwrap_err().code, "WEB_BACKEND_SQL_DENIED");
+    }
+    // The CAS must not move a row when the version is wrong.
+    let stale = store.transact(&json!({"ops": [{
+        "sql": "UPDATE settings SET value=?, version=version+1 WHERE key='application.timeZone' AND version=?",
+        "params": ["Asia/Tokyo", 99]
+    }]}));
+    assert_eq!(stale.unwrap()["results"][0]["changes"], 0);
+    // Whitespace variations of the two production templates still pass.
+    let (dir2, _root2, mut store2) = init_store("settings-whitespace");
+    store2
+        .transact(&json!({"ops": [{
+            "sql": "INSERT  INTO  settings (key, value, version) VALUES ('application.timeZone', ?, 1)",
+            "params": ["Asia/Shanghai"]
+        }]}))
+        .unwrap();
+    store2
+        .transact(&json!({"ops": [{
+            "sql": "UPDATE settings SET value=?, version=version+1 WHERE key='application.timeZone' AND version=?",
+            "params": ["UTC", 1]
+        }]}))
+        .unwrap();
+    let _ = fs::remove_dir_all(&dir2);
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn write_target_dispatch_ignores_business_names_in_subqueries() {
+    let (dir, _root, mut store) = init_store("target-dispatch");
+    // A business name inside a subquery/EXISTS must not grant write permission
+    // to a settings-target statement (A11/A12), nor to another target.
+    for sql in [
+        "INSERT INTO settings(key,value,version) SELECT 'bypass.probe.key','x',1 FROM manual_items",
+        "UPDATE settings SET value=?,version=version+1 WHERE key='application.timeZone' AND version=? OR EXISTS(SELECT 1 FROM manual_items)",
+        "INSERT INTO settings(key,value,version) SELECT 'bypass.probe.key','x',1 WHERE EXISTS(SELECT 1 FROM manual_item_events)",
+        "INSERT INTO \"settings\"(key,value,version) VALUES('application.timeZone',?,1)",
+        "INSERT INTO main.settings(key,value,version) VALUES('application.timeZone',?,1)",
+        "DELETE FROM tasks WHERE item_id IN (SELECT item_id FROM manual_items)",
+        "UPDATE tasks SET title='x' WHERE item_id IN (SELECT item_id FROM manual_items)",
+    ] {
+        let outcome = store.transact(&json!({"ops": [{"sql": sql, "params": []}]}));
+        assert!(outcome.is_err(), "accepted cross-target SQL: {sql}");
+        assert_eq!(outcome.unwrap_err().code, "WEB_BACKEND_SQL_DENIED");
+    }
+    // The legitimate conditional history INSERT…SELECT still works: the target
+    // really is manual_item_events.
+    store
+        .transact(&json!({"ops": [{
+            "sql": "INSERT INTO manual_items (item_id,title,kind,owner,priority,status,due_at_ms,due_timezone,due_local,due_precision,followup_at_ms,followup_timezone,followup_local,followup_precision,tags_json,created_at_ms,updated_at_ms,completed_at_ms,deleted_at_ms,version,source) VALUES ('mi_1','t','action','o','high','open',NULL,NULL,NULL,'minute',NULL,NULL,NULL,'minute','[]',1,1,NULL,NULL,1,'manual')",
+            "params": []
+        }]}))
+        .unwrap();
+    store
+        .transact(&json!({"ops": [{
+            "sql": "INSERT INTO manual_item_events(operation_id,item_id,action,occurred_at_ms,request_json,before_json,after_json) SELECT ?,?,?,?,?,?,? WHERE (SELECT changes())=1",
+            "params": ["op_1", "mi_1", "create", 1, "{}", null, "{}"]
+        }]}))
+        .unwrap();
+    let count = store
+        .query(&json!({"sql": "SELECT count(*) FROM manual_item_events", "params": []}))
+        .unwrap()["rows"][0][0]
+        .as_i64()
+        .unwrap();
+    assert_eq!(count, 1);
+    let settings_count = store
+        .query(&json!({"sql": "SELECT count(*) FROM settings", "params": []}))
+        .unwrap()["rows"][0][0]
+        .as_i64()
+        .unwrap();
+    assert_eq!(settings_count, 0);
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
 fn dispatch_maps_requests_to_responses() {
     let (dir, _root, mut store) = init_store("dispatch");
     let request = Request {

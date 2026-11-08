@@ -11,6 +11,10 @@ import { readFileSync } from 'node:fs';
 import { ManualItemsService, ServiceError, canonicalize } from '../../server/lib/manual-items-service.mjs';
 import { parseArgs } from '../../server/entries/web-backend-entry.mjs';
 import { fromWireItem, toDomainPoint, toWireInput, toWirePoint } from '../../src/lib/web-api-client.ts';
+import { SseHub } from '../../server/lib/sse-hub.mjs';
+import { ApplicationSettingsService } from '../../server/lib/application-settings-service.mjs';
+import { createPairing } from '../../src/stores/pairing.ts';
+import { getWebApiClient } from '../../src/lib/web-api-client.ts';
 
 class StorageError extends Error {
   constructor(code, message) {
@@ -23,6 +27,8 @@ function memoryStorage() {
   const db = new DatabaseSync(':memory:');
   db.exec('CREATE TABLE schema_meta (id INTEGER PRIMARY KEY, schema_version INTEGER NOT NULL);');
   db.exec("INSERT INTO schema_meta (id, schema_version) VALUES (1, 1);");
+  // The frozen 001 table the application-settings service reuses.
+  db.exec('CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT NOT NULL, version INTEGER NOT NULL);');
   const ddl = readFileSync(new URL('../../src-tauri/migrations/web-backend/002_manual_items.sql', import.meta.url), 'utf8');
   db.exec(ddl);
   return {
@@ -105,7 +111,7 @@ test('validation rejects malformed input', async () => {
     [{ ...SAMPLE, priority: 'urgent' }, '优先级无效'],
     [{ ...SAMPLE, tags: Array.from({ length: 21 }, (_, i) => `t${i}`) }, '标签最多 20 个'],
     [{ ...SAMPLE, tags: ['x'.repeat(51)] }, '标签最多 50 字'],
-    [{ ...SAMPLE, due: { at: 'nope', timeZone: 'Asia/Shanghai', localText: 'x', precision: 'minute' } }, '时间无效'],
+    [{ ...SAMPLE, due: { at: 'nope', timeZone: 'Asia/Shanghai', localText: 'x', precision: 'minute' } }, 'ISO 8601'],
     [{ ...SAMPLE, due: { at: '2026-11-13T10:00:00.000Z', timeZone: 'Nowhere/Nope', localText: 'x', precision: 'minute' } }, '时区无效'],
     [{ ...SAMPLE, due: { at: '2026-11-13T10:00:00.000Z', timeZone: 'Asia/Shanghai', localText: 'x', precision: 'hour' } }, '精度无效'],
   ];
@@ -431,6 +437,260 @@ test('fromWireItem maps due/followup and source per the manual wire format', () 
   const empty = fromWireItem({ ...wire, due: null, followup: null });
   assert.equal(empty.data.due, null);
   assert.equal(empty.data.followup, null);
+});
+
+test('rejects non-ISO instants and validates structured local times (F-1/F-2)', async () => {
+  const { service } = makeService();
+  await assert.rejects(() => service.createItem('op_iso', {
+    ...SAMPLE,
+    due: { at: '2026-11-13 18:00', timeZone: 'Asia/Shanghai', localText: '2026-11-13 18:00', precision: 'minute' },
+  }), (error) => {
+    assert.equal(error.code, 'validation_failed');
+    return true;
+  });
+  await assert.rejects(() => service.createItem('op_gap', {
+    ...SAMPLE,
+    due: { at: '2026-03-08T06:30:00.000Z', timeZone: 'America/New_York', localText: '2026-03-08 02:30', precision: 'minute' },
+  }), (error) => {
+    assert.equal(error.code, 'validation_failed');
+    return true;
+  });
+  await assert.rejects(() => service.createItem('op_mismatch', {
+    ...SAMPLE,
+    due: { at: '2026-11-01T07:30:00.000Z', timeZone: 'America/New_York', localText: '2026-11-01 01:30', precision: 'minute' },
+  }), (error) => {
+    assert.equal(error.code, 'validation_failed');
+    return true;
+  });
+  const accepted = await service.createItem('op_ambiguous', {
+    ...SAMPLE,
+    due: { at: '2026-11-01T05:30:00.000Z', timeZone: 'America/New_York', localText: '2026-11-01 01:30', precision: 'minute' },
+  });
+  assert.equal(Date.parse(accepted.item.due.at), Date.parse('2026-11-01T05:30:00.000Z'));
+  const free = await service.createItem('op_free', {
+    ...SAMPLE,
+    due: { at: '2026-11-13T10:00:00.000Z', timeZone: 'Asia/Shanghai', localText: '周五下午', precision: 'minute' },
+  });
+  assert.equal(free.item.due.localText, '周五下午');
+});
+
+function mockSseRes() {
+  const frames = [];
+  return { frames, writeHead() {}, write(frame) { frames.push(frame); }, end() {} };
+}
+
+const sseEventNames = (res) => res.frames
+  .filter((frame) => frame.startsWith('event: '))
+  .map((frame) => frame.slice('event: '.length).split('\n')[0]);
+const sseData = (res, event) => {
+  const frame = res.frames.find((candidate) => candidate.startsWith(`event: ${event}\n`));
+  const line = frame.split('\n').find((candidate) => candidate.startsWith('data: '));
+  return JSON.parse(line.slice('data: '.length));
+};
+const sseFrame = (res, event) => res.frames.find((candidate) => candidate.startsWith(`event: ${event}\n`));
+
+test('SSE answers an old epoch with stream.reset then stream.ready (F-4)', () => {
+  const hub = new SseHub();
+  const old = mockSseRes();
+  hub.addClient({ headers: { 'last-event-id': 'inst_old:0' }, on() {} }, old);
+  assert.deepEqual(sseEventNames(old), ['stream.reset', 'stream.ready']);
+  assert.equal(sseData(old, 'stream.reset').epoch, hub.epoch);
+  assert.equal(sseData(old, 'stream.reset').reason, 'epoch_changed');
+  assert.ok(!/^id: /m.test(sseFrame(old, 'stream.reset')));
+
+  const same = mockSseRes();
+  hub.addClient({ headers: { 'last-event-id': `${hub.epoch}:0` }, on() {} }, same);
+  assert.deepEqual(sseEventNames(same), ['stream.ready']);
+
+  const none = mockSseRes();
+  hub.addClient({ headers: {}, on() {} }, none);
+  assert.deepEqual(sseEventNames(none), ['stream.ready']);
+
+  const outOfWindow = mockSseRes();
+  hub.addClient({ headers: { 'last-event-id': `${hub.epoch}:9` }, on() {} }, outOfWindow);
+  assert.deepEqual(sseEventNames(outOfWindow), ['stream.reset', 'stream.ready']);
+  assert.equal(sseData(outOfWindow, 'stream.reset').reason, 'cursor_out_of_window');
+
+  const malformed = mockSseRes();
+  hub.addClient({ headers: { 'last-event-id': 'garbage' }, on() {} }, malformed);
+  assert.deepEqual(sseEventNames(malformed), ['stream.reset', 'stream.ready']);
+  assert.equal(sseData(malformed, 'stream.reset').reason, 'malformed_last_event_id');
+});
+
+test('item.changed frames carry no id and do not advance the task cursor', () => {
+  const hub = new SseHub();
+  const res = mockSseRes();
+  hub.addClient({ headers: {}, on() {} }, res);
+  res.frames.length = 0;
+  hub.broadcastItemChanged({ itemId: 'mi_1', version: 2 });
+  const frame = res.frames.find((candidate) => candidate.startsWith('event: item.changed'));
+  assert.ok(frame);
+  assert.ok(!/^id: /m.test(frame));
+  assert.match(frame, /"objectType":"item"/);
+  assert.match(frame, /"itemId":"mi_1"/);
+});
+
+test('pairing re-reads on stream.ready/stream.reset/item.changed', async () => {
+  let lastSource;
+  globalThis.EventSource = class {
+    constructor() {
+      this.listeners = {};
+      lastSource = this;
+    }
+    addEventListener(event, handler) {
+      (this.listeners[event] ??= []).push(handler);
+    }
+    close() {}
+    emit(event) {
+      for (const handler of this.listeners[event] ?? []) handler();
+    }
+  };
+  try {
+    const pairing = createPairing({ readSession: async () => null, pair: async () => {} });
+    let refreshes = 0;
+    pairing.setOnItemChanged(() => { refreshes += 1; });
+    await pairing.start();
+    await pairing.pair();
+    assert.ok(lastSource);
+    lastSource.emit('stream.ready');
+    lastSource.emit('item.changed');
+    lastSource.emit('stream.reset');
+    assert.equal(refreshes, 3);
+    pairing.dispose();
+  } finally {
+    delete globalThis.EventSource;
+  }
+});
+
+test('rejects UTC instants that roll over the calendar (MINOR-1)', async () => {
+  const { service, storage } = makeService();
+  for (const at of ['2026-02-30T00:00:00.000Z', '2026-11-13T24:00:00.000Z', '2026-13-01T00:00:00.000Z', '2026-11-13T10:60:00.000Z']) {
+    await assert.rejects(() => service.createItem(`op_roll_${at}`, {
+      ...SAMPLE,
+      due: { at, timeZone: 'Asia/Shanghai', localText: '2026-11-13 18:00', precision: 'minute' },
+    }), (error) => {
+      assert.equal(error.code, 'validation_failed');
+      return true;
+    });
+  }
+  const rows = await storage.command('query', { sql: 'SELECT count(*) FROM manual_items', params: [] });
+  assert.equal(rows.rows[0][0], 0);
+  // A real leap day and an ordinary date still work, and free-form text is untouched.
+  const leap = await service.createItem('op_leap', {
+    ...SAMPLE,
+    due: { at: '2024-02-29T00:00:00.000Z', timeZone: 'Asia/Shanghai', localText: '2024-02-29 08:00', precision: 'minute' },
+  });
+  assert.equal(leap.item.due.at, '2024-02-29T00:00:00.000Z');
+  const day = await service.createItem('op_day', {
+    ...SAMPLE,
+    due: { at: '2026-11-13T10:00:00.000Z', timeZone: 'Asia/Shanghai', localText: '2026-11-13 18:00', precision: 'day' },
+  });
+  assert.equal(day.item.due.precision, 'day');
+});
+
+test('application settings reads the OS default at version 0 without writing', async () => {
+  const { storage } = makeService();
+  const service = new ApplicationSettingsService(storage, { osTimeZone: () => 'Asia/Shanghai' });
+  const snapshot = await service.read();
+  assert.equal(snapshot.contractVersion, 'web-api/1');
+  assert.equal(snapshot.settings.timeZone, 'Asia/Shanghai');
+  assert.equal(snapshot.version, 0);
+  const rows = await storage.command('query', { sql: 'SELECT count(*) FROM settings', params: [] });
+  assert.equal(rows.rows[0][0], 0);
+});
+
+test('application settings write is an atomic compare-and-set', async () => {
+  const { storage } = makeService();
+  const service = new ApplicationSettingsService(storage, { osTimeZone: () => 'Asia/Shanghai' });
+  const first = await service.write('America/New_York', 0);
+  assert.equal(first.version, 1);
+  await assert.rejects(() => service.write('UTC', 0), (error) => {
+    assert.equal(error.code, 'version_conflict');
+    return true;
+  });
+  const second = await service.write('UTC', 1);
+  assert.equal(second.version, 2);
+  const read = await service.read();
+  assert.equal(read.settings.timeZone, 'UTC');
+  assert.equal(read.version, 2);
+});
+
+test('application settings rejects invalid timezone and version', async () => {
+  const { storage } = makeService();
+  const service = new ApplicationSettingsService(storage);
+  await assert.rejects(() => service.write('Nowhere/Nope', 0), (error) => {
+    assert.equal(error.code, 'validation_failed');
+    return true;
+  });
+  await assert.rejects(() => service.write('UTC', 1.5), (error) => {
+    assert.equal(error.code, 'validation_failed');
+    return true;
+  });
+});
+
+test('the shared web api client is a singleton and carries CSRF into settings writes', async () => {
+  const seen = [];
+  globalThis.window = { location: { host: 'h', origin: 'http://h' } };
+  globalThis.fetch = async (url, options) => {
+    seen.push({ url, headers: options.headers });
+    const body = url.includes('/api/pair')
+      ? { session: { capabilities: [] }, csrfToken: 'csrf-1' }
+      : { settings: { timeZone: 'UTC' }, version: 1 };
+    return { ok: true, text: async () => JSON.stringify(body) };
+  };
+  try {
+    const first = getWebApiClient();
+    const second = getWebApiClient();
+    assert.equal(first, second);
+    await first.pair('code');
+    await first.writeApplicationSettings('UTC', 0);
+    const write = seen.find((call) => call.url.includes('/api/settings/application'));
+    assert.equal(write.headers['X-CSRF-Token'], 'csrf-1');
+  } finally {
+    delete globalThis.window;
+    delete globalThis.fetch;
+  }
+});
+
+test('an in-session 401 clears the shared CSRF token', async () => {
+  const seen = [];
+  globalThis.window = { location: { host: 'h', origin: 'http://h' } };
+  globalThis.fetch = async (url, options) => {
+    seen.push({ url, headers: options.headers });
+    if (url.includes('/api/pair')) {
+      return { ok: true, text: async () => JSON.stringify({ session: { capabilities: [] }, csrfToken: 'csrf-1' }) };
+    }
+    return {
+      ok: false,
+      status: 401,
+      text: async () => JSON.stringify({ error: { code: 'unauthenticated', message: '会话已过期' } }),
+    };
+  };
+  try {
+    const client = getWebApiClient();
+    await client.pair('code');
+    assert.equal(client.getCsrfToken(), 'csrf-1');
+    await assert.rejects(() => client.listItems(), (error) => error.status === 401);
+    assert.equal(client.getCsrfToken(), '');
+  } finally {
+    delete globalThis.window;
+    delete globalThis.fetch;
+  }
+});
+
+test('pairing store returns to the gate when the session is lost', async () => {
+  let lostHandler;
+  const fakeClient = {
+    onSessionLost(handler) { lostHandler = handler; },
+    readSession: async () => ({ capabilities: [], csrfToken: 'csrf' }),
+    pair: async () => ({}),
+  };
+  const pairing = createPairing(fakeClient);
+  await pairing.start();
+  assert.equal(pairing.paired.value, true);
+  lostHandler();
+  assert.equal(pairing.paired.value, false);
+  pairing.dispose();
 });
 
 test('canonicalize is key-order independent', () => {
