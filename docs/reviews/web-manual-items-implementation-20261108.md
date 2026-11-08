@@ -37,7 +37,7 @@
 | `src-tauri/src/store/local_store.rs` | `97b61662cbcab68a16a39933864402dc52b59db784e5423c21fa76af5055943b` | 登记 `web_backend_store`/`web_backend_store_tests`，未建 `store/mod.rs` |
 | `src-tauri/src/store/web_backend_schema.rs` | `73892eb80b8f8625fce5ee06962458c892eef579589c904b72e96b29f78f9259` | `SCHEMA_VERSION` 1→2、追加 `SQL_002`、双迁移故障注入、`conn_mut` |
 | `src-tauri/src/store/web_backend_schema_tests.rs` | `560528de8b6ed7db98e2e628b57c0d2c6d55409e62094e1b17d12578ad63b43d` | 13 表、v1 前向迁移回滚用例 |
-| `src-tauri/Cargo.toml` | `99ac5709c7eb86cf0d5eda4c522e28969cf0d0339b95d70fac81c02f0f4e3093` | 新增 `[[bin]] web-backend-storage`，依赖不动 |
+| `src-tauri/Cargo.toml` | `922938c7d58d86b70b72317d6be7f51b20e358cdd6d292a919c9e1f50dba194a` | 新增 `[[bin]] web-backend-storage`，依赖不动 |
 | `src/stores/todos.ts` | `8b48f47db2326ac3872cec10b02518a4927a7e293ec61251dacc7f55b4dd034b` | 由 Tauri `invoke` 切换到 `WebApiClient` |
 | `src/App.vue` | `8c2a04f18c1e6c1bf900a38000217104720e2c3e8793625e927be802bb1165f5` | 默认 surface 经 `PairingGate` 渲染 `Workbench` |
 | `tests/integration/desktop-controls.test.mjs` | `2ee8c910c0565ffe7eea2bef0b0da0aebe2e601fc998e05811daa25b0b214632` | 增加 `web-api-client` 别名，保留既有断言意图 |
@@ -156,3 +156,20 @@
 - **旧/新映射真实 fixture 构建对照**：同一测试文件仅替换 alias，旧 `/web-api-client/` → **exit 1，9 tests／0 pass／9 fail**，错误与集成回执逐字同构（`Could not load ../lib/.../api.ts.ts`）；新锚定 alias → **exit 0，9/9 pass**。
 - `npm run typecheck`：exit 0；`node --test tests/unit/web-manual-items.test.mjs`：16/16 pass；`git diff --check`：exit 0。
 - Rust／服务端／II／III 文件零改动；冻结 `001`/`002`/`web-api/1` 哈希逐字节不变。
+
+
+## 10. 2026-11-08 manifest default-run 消歧增量
+
+依据集成第三轮门禁第 47 组 `check:s33-p2-package` 的失败回执，仅改 `src-tauri/Cargo.toml`：
+
+- **原问题**：候选 I 已批变更 C 追加 `[[bin]] web-backend-storage` 后，包内有两个 bin 且无 `package.default-run`；`tauri build` 报 `failed to find main binary, make sure you have a 'package > default-run' in the Cargo.toml file`。
+- **修复**：在 `[package]` 追加 `default-run = "sidekick"`，明确主二进制仍为 `src/main.rs` 隐式 `sidekick`；`web-backend-storage` 仍显式构建。未改其余 manifest/锁/标识。
+
+**本增量文件 SHA-256**
+- `src-tauri/Cargo.toml`：`922938c7d58d86b70b72317d6be7f51b20e358cdd6d292a919c9e1f50dba194a`
+
+**本增量聚焦验证（实跑，日志在 `build/`）**
+- **真实完整 `npm run check:s33-p2-package`**：**exit 0**（`build:s33-ui-verify`→`probe:app`→`test:s33-ui-artifacts` 2/2；Tauri 真实打包产出 `Sidekick.app`，ad-hoc 签名成功）。
+- **显式存储二进制仍可构建**：`cargo build --bin web-backend-storage` exit 0。
+- **旧/新对照**：仅移除 `default-run`（及注释）后 `node scripts/build/build-app.mjs tests/fixtures/s33-ui-verify.config.json` → **exit 1**，报 `failed to find main binary, make sure you have a 'package > default-run' in the Cargo.toml file`；恢复后 `check:s33-p2-package` exit 0。
+- `git diff --check` exit 0；`npm run typecheck` exit 0；冻结 `001`/`002`/`web-api/1` 哈希逐字节不变。

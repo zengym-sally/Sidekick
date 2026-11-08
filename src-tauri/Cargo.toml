@@ -3,6 +3,12 @@ name = "sidekick"
 version = "0.3.0"
 edition = "2021"
 rust-version = "1.89"
+# The package carries the implicit `sidekick` binary (src/main.rs) plus the
+# approved `web-backend-storage` bin. Without this, `tauri build` cannot pick a
+# main binary ("failed to find main binary, make sure you have a
+# 'package > default-run'"). It stays the app binary; the storage adapter is
+# built explicitly.
+default-run = "sidekick"
 
 [lib]
 name = "sidekick_lib"
