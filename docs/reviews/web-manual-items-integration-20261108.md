@@ -135,3 +135,25 @@
 - 收尾：本 run 无常驻服务；gate 与聚焦进程随退出结束，`pgrep` 复核无 `web-backend-storage`／vite preview／调试浏览器残留（`15-cleanup-pgrep.log`）。A/B 三向对照的临时导出树（`ab-baseline-r2`、`ab-candidate-i-r2`）留在 gitignored `build/`（沙箱拒绝 `rm -rf`，不入库不交付）。
 - 证据包：`web-manual-items-integration-r2-evidence.tar.gz`（SHA-256 `f73e4c49a5b0cb02676cd9fe6293d896282fb4e6c4cd39f204de49e7aa2c3a25`）含前置、逐组 gate、A/B 对照与收尾全部编号日志及 `SHA256SUMS.txt` 清单；不含配对码／cookie／token（已扫描）。
 
+
+## 9. 第三轮：desktop-controls alias 修复接入（2026-11-08）
+
+按队长派发（评论 `01a1b8b2-5714-72ea-98eb-50045bb6a60a`）：OpenCode 先对 `ff5d6c2..91b78ed` 独立审查（不通过即止步），仅审查通过后以集成回执 `ecb7804` 为基点在同一 run 接入该两文件精确增量，按原集成边界更新 admission/索引/公共回执，冻结新 SHA/tree 后从头串行完整门禁。§4/§8 两轮失败回执原样保留，不以聚焦绿证替代全门禁。
+
+### 9.1 独立审查（先决条件，已满足）
+
+- 审查者 OpenCode 未参与 alias 修改（增量由 I 作者 Claude 提交于 `91b78ed`）；判定**通过**，记录 `docs/reviews/web-manual-items-implementation-20261108-opencode-alias-review.md`（本树 `1802a05`）。
+- 要点：增量恰 2 文件 +19/−2、补丁 SHA-256 `5a339edc…365ea0`、累计 `bc4b1c3..91b78ed` `8634afb4…36bae2` 逐字节复算相符；仅 alias 一行改锚定精确匹配＋I 自有记录刷新；九用例断言/30000ms 预算未动；共享 node_modules 动态复跑候选 9/9 pass exit 0、旧 alias A/B 逐字复现第二轮回执失败（9/0/9 `[UNLOADABLE_DEPENDENCY]`）；typecheck exit 0。
+
+### 9.2 接收与身份（全部实测逐字节相符）
+
+- 修复提交 `91b78ede9f072598b7879aa461cdc03625ac1ccf`（tree `da4061a74e2578b9a28154c534fefa885bfef547`，父即 `ff5d6c2`）：增量恰 2 文件 +19/−2——`tests/integration/desktop-controls.test.mjs`（blob `2ee8c910…4632`）与 I 自有交付记录（blob `de9ef735…57fd`，哈希表刷新＋纯追加 §9）。
+- 接入方式：merge（父 `ff5d6c2` 已在集成树祖先，合并零冲突，合并 diff 恰为该 2 文件 +19/−2）。合并前实测两个目标文件与 `ff5d6c2` blob 同一（diff 空）；合并后与 `91b78ed` blob 同一（diff 空）——增量逐字节落在申报范围。
+- 相对第二轮回执 `ecb7804`（含其冻结树 `c26f40d`）的偏差恰为：alias 修复 2 文件＋本审查记录＋评审索引行＋本记录 §9——I/II 交付字节除经审增量外零偏离（`git diff c26f40d HEAD --name-only` 实测恰 5 文件，其中 2 文件与候选 blob 同一）。
+- 审查记录接收：本审查由集成者本人执笔、随本树 `1802a05` 提交（评审索引 103→104），无跨树接收。
+- admission：`build/web-manual-items-integration/admission.json`（修改前登记：实际 pwd/branch/HEAD `1802a05`、基点祖先核对、接收增量与审查身份、写入清单、门禁计划）。
+
+### 9.3 第三轮冻结与完整门禁（原预算串行，冻结 SHA 上执行）
+
+- 第三轮冻结提交＝本节随 alias 修复接入一起提交的那个提交；其 SHA/tree 于 §10 回执登记（gate 在该冻结提交上执行）。
+- 前置与门禁计划同 §4：冻结后从头真实准备构建前置（`npm ci --ignore-scripts`、`probe:prepare-cli`、`probe:prepare-pi`，不以空目录/桩产物替代），再在冻结提交上串行执行一次完整 `npm run check`——保留全部脚本、预算与默认产品 dist，不孤立预跑同版整套 Web 组；逐组结果、exit、警告分类与未验项记入 §10。若仍失败，沿 §4.3/§8.3 同一路径归因回报，不擅改 I/II。
