@@ -39,7 +39,7 @@
 | `src-tauri/src/store/web_backend_schema_tests.rs` | `560528de8b6ed7db98e2e628b57c0d2c6d55409e62094e1b17d12578ad63b43d` | 13 表、v1 前向迁移回滚用例 |
 | `src-tauri/Cargo.toml` | `922938c7d58d86b70b72317d6be7f51b20e358cdd6d292a919c9e1f50dba194a` | 新增 `[[bin]] web-backend-storage`，依赖不动 |
 | `src/stores/todos.ts` | `d5e63732e4760a6547f1d3c64f0812206a0014c2e0315648f84e60f30e0c65a0` | 由 Tauri `invoke` 切换到 `WebApiClient` |
-| `src/App.vue` | `8c2a04f18c1e6c1bf900a38000217104720e2c3e8793625e927be802bb1165f5` | 默认 surface 经 `PairingGate` 渲染 `Workbench` |
+| `src/App.vue` | `0a5e760765256a8355d338e17bbffec2ba5fad9115925f948c2b2ee7f820370d` | 默认 surface 经 `PairingGate` 渲染 `Workbench` |
 | `tests/integration/desktop-controls.test.mjs` | `2ee8c910c0565ffe7eea2bef0b0da0aebe2e601fc998e05811daa25b0b214632` | 增加 `web-api-client` 别名，保留既有断言意图 |
 | `tests/fixtures/desktop-controls/api.ts` | `7e3a65806d10bed4a8e91b3d0cd04772f6e4a53c04b5cfba947e45689377a393` | 提供合成 `WebApiClient`，保持浏览器 seam |
 
