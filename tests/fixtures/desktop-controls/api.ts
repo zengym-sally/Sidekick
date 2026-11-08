@@ -1,5 +1,12 @@
 import {invoke as profileInvoke} from '../profile-ui/api';
 export {open,getVersion} from '../profile-ui/api';
+// The todo store now talks HTTP through `src/lib/web-api-client.ts`. This
+// synthetic fixture keeps the browser seam: the aliased module returns the
+// same `invoke` backend the rest of the fixture already provides.
+export class WebApiClient {
+  async readSession(){return null;}
+  asBackend(){return invoke;}
+}
 let saved={version:1,workMode:false,petOnStartup:false};
 export const calls:{command:string;input?:unknown}[]=[];
 export const disabledUpdates:{label:string;value:boolean}[]=[];

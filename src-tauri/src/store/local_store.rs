@@ -1478,5 +1478,11 @@ pub use web_backend_schema::{
     WEB_BACKEND_APPLICATION_ID,
 };
 
+#[path = "web_backend_store.rs"]
+pub mod web_backend_store;
+#[cfg(test)]
+#[path = "web_backend_store_tests.rs"]
+mod web_backend_store_tests;
+
 #[cfg(test)]
 thread_local! { static TODAY_OPEN_FAULT:std::cell::Cell<today_schema::TodayMigrationFault>=const {std::cell::Cell::new(today_schema::TodayMigrationFault::None)}; }

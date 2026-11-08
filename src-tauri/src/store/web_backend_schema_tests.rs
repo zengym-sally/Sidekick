@@ -7,6 +7,7 @@ use rusqlite::Connection;
 use std::path::{Path, PathBuf};
 
 const TASK_COLUMNS: &str = "task_id,operation_id,type,role,state,version,submit_seq,attempt_exit_state,result_pending_exit,pending_outcome,config_revision,original_config_revision,input_ref,cancel_intent,next_attempt_at,attempt_budget,result_ref,failure,created_at,updated_at,terminal_at";
+const SQL_V1: &str = include_str!("../../migrations/web-backend/001_web_backend.sql");
 
 fn temp_db(label: &str) -> (PathBuf, PathBuf) {
     let dir = std::env::temp_dir().join(format!(
@@ -53,7 +54,7 @@ fn index_names(conn: &Connection) -> Vec<String> {
 fn init_creates_exact_schema_and_is_idempotent() {
     let (dir, path) = temp_db("init");
     let schema = WebBackendSchema::init(&path).unwrap();
-    assert_eq!(table_count(schema.conn()), 11);
+    assert_eq!(table_count(schema.conn()), 13);
     assert_eq!(
         schema
             .conn()
@@ -64,6 +65,17 @@ fn init_creates_exact_schema_and_is_idempotent() {
             )
             .unwrap(),
         SCHEMA_LINEAGE
+    );
+    assert_eq!(
+        schema
+            .conn()
+            .query_row(
+                "SELECT schema_version FROM schema_meta WHERE id=1",
+                [],
+                |r| r.get::<_, i64>(0)
+            )
+            .unwrap(),
+        SCHEMA_VERSION
     );
     assert_eq!(
         schema
@@ -80,11 +92,26 @@ fn init_creates_exact_schema_and_is_idempotent() {
         SCHEMA_VERSION
     );
     assert!(index_names(schema.conn()).contains(&"task_attempts_current".to_string()));
+    // The 002 migration adds the manual-item tables and their indexes.
+    for table in ["manual_items", "manual_item_events"] {
+        assert!(
+            schema
+                .conn()
+                .query_row(
+                    "SELECT count(*) FROM sqlite_master WHERE type='table' AND name=?1",
+                    [table],
+                    |r| r.get::<_, i64>(0)
+                )
+                .unwrap()
+                == 1
+        );
+    }
+    assert!(index_names(schema.conn()).contains(&"manual_items_list_order".to_string()));
     drop(schema);
 
     // Idempotent: a second init validates and returns without duplicating.
     let again = WebBackendSchema::init(&path).unwrap();
-    assert_eq!(table_count(again.conn()), 11);
+    assert_eq!(table_count(again.conn()), 13);
     drop(again);
     let _ = fs::remove_dir_all(&dir);
 }
@@ -124,7 +151,7 @@ fn open_rejects_version_mirror_mismatch() {
     let schema = WebBackendSchema::init(&path).unwrap();
     schema
         .conn()
-        .execute_batch("UPDATE schema_meta SET schema_version = 2 WHERE id = 1;")
+        .execute_batch("UPDATE schema_meta SET schema_version = 3 WHERE id = 1;")
         .unwrap();
     drop(schema);
     assert_eq!(
@@ -141,7 +168,7 @@ fn open_rejects_too_new() {
     schema
         .conn()
         .execute_batch(
-            "UPDATE schema_meta SET schema_version = 2 WHERE id = 1; PRAGMA user_version = 2;",
+            "UPDATE schema_meta SET schema_version = 3 WHERE id = 1; PRAGMA user_version = 3;",
         )
         .unwrap();
     drop(schema);
@@ -201,7 +228,7 @@ fn consistency_backup_is_verified() {
     let destination = dir.join("backup-destination.sqlite");
     schema.consistency_backup(&destination).unwrap();
     let target = Connection::open(&destination).unwrap();
-    assert_eq!(table_count(&target), 11);
+    assert_eq!(table_count(&target), 13);
     assert_eq!(
         target
             .pragma_query_value(None, "application_id", |r| r.get::<_, i64>(0))
@@ -235,6 +262,9 @@ fn migration_failure_rolls_back_and_retry_succeeds() {
     let failed = init_with_fault(&path, WebBackendMigrationFault::Ddl);
     assert_eq!(failed.unwrap_err().code, "WEB_BACKEND_MIGRATION_FAILED");
     let probe = Connection::open(&path).unwrap();
+    // The fault is injected after the second migration. rusqlite_migration
+    // applies every pending migration in one transaction, so a fresh init
+    // rolls all the way back to a blank database.
     assert_eq!(table_count(&probe), 0);
     assert_eq!(
         probe
@@ -243,9 +273,89 @@ fn migration_failure_rolls_back_and_retry_succeeds() {
         0
     );
     drop(probe);
-    // The blank file is still initializable: the retry succeeds.
+    // The blank file is still initializable: the retry applies 001 + 002.
     let schema = WebBackendSchema::init(&path).unwrap();
-    assert_eq!(table_count(schema.conn()), 11);
+    assert_eq!(table_count(schema.conn()), 13);
+    assert_eq!(
+        schema
+            .conn()
+            .pragma_query_value(None, "user_version", |r| r.get::<_, i64>(0))
+            .unwrap(),
+        SCHEMA_VERSION
+    );
+    drop(schema);
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn forward_migration_failure_on_existing_v1_rolls_back_to_v1() {
+    // Build a v1-only database first (001 applied, user_version 1, mirror 1).
+    let (dir, path) = temp_db("forward-rollback");
+    {
+        let mut conn = Connection::open(&path).unwrap();
+        conn.execute_batch("PRAGMA application_id = 0x57424b31;")
+            .unwrap();
+        rusqlite_migration::Migrations::new(vec![rusqlite_migration::M::up(SQL_V1)])
+            .to_latest(&mut conn)
+            .unwrap();
+    }
+    let probe = Connection::open(&path).unwrap();
+    assert_eq!(table_count(&probe), 11);
+    assert_eq!(
+        probe
+            .pragma_query_value(None, "user_version", |r| r.get::<_, i64>(0))
+            .unwrap(),
+        1
+    );
+    drop(probe);
+
+    // Opening with the fault fails on 002 and leaves the database at v1.
+    assert_eq!(
+        open_with_fault(&path, WebBackendMigrationFault::Ddl)
+            .unwrap_err()
+            .code,
+        "WEB_BACKEND_MIGRATION_FAILED"
+    );
+    let probe = Connection::open(&path).unwrap();
+    assert_eq!(table_count(&probe), 11);
+    assert_eq!(
+        probe
+            .pragma_query_value(None, "user_version", |r| r.get::<_, i64>(0))
+            .unwrap(),
+        1
+    );
+    assert_eq!(
+        probe
+            .query_row(
+                "SELECT schema_version FROM schema_meta WHERE id=1",
+                [],
+                |r| r.get::<_, i64>(0)
+            )
+            .unwrap(),
+        1
+    );
+    assert_eq!(
+        probe
+            .query_row(
+                "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='manual_items'",
+                [],
+                |r| r.get::<_, i64>(0)
+            )
+            .unwrap(),
+        0
+    );
+    drop(probe);
+
+    // A normal open completes 002 without another fault.
+    let schema = WebBackendSchema::open(&path).unwrap();
+    assert_eq!(table_count(schema.conn()), 13);
+    assert_eq!(
+        schema
+            .conn()
+            .pragma_query_value(None, "user_version", |r| r.get::<_, i64>(0))
+            .unwrap(),
+        SCHEMA_VERSION
+    );
     drop(schema);
     let _ = fs::remove_dir_all(&dir);
 }
@@ -458,7 +568,7 @@ fn version_rejection_leaves_database_untouched() {
     let schema = WebBackendSchema::init(&path).unwrap();
     schema
         .conn()
-        .execute_batch("UPDATE schema_meta SET schema_version = 2 WHERE id = 1;")
+        .execute_batch("UPDATE schema_meta SET schema_version = 3 WHERE id = 1;")
         .unwrap();
     drop(schema);
     let (before, _) = snapshot(&dir);

@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import { invoke } from '@tauri-apps/api/core';
+import { WebApiClient } from '../lib/web-api-client.ts';
 import type { Todo, TodoInput, TodoEvent, WorkspaceInfo } from '../domain/todos.ts';
 
 type Backend=(command:string,args?:Record<string,unknown>)=>Promise<unknown>;
@@ -40,4 +40,4 @@ export function createTodoModel(api:Backend) {
     openDirectory:()=>api('open_workspace_directory'),
   };
 }
-export const useTodos=defineStore('todos',()=>createTodoModel(invoke));
+export const useTodos=defineStore('todos',()=>createTodoModel(new WebApiClient().asBackend()));
