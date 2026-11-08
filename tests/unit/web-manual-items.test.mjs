@@ -652,6 +652,47 @@ test('the shared web api client is a singleton and carries CSRF into settings wr
   }
 });
 
+test('an in-session 401 clears the shared CSRF token', async () => {
+  const seen = [];
+  globalThis.window = { location: { host: 'h', origin: 'http://h' } };
+  globalThis.fetch = async (url, options) => {
+    seen.push({ url, headers: options.headers });
+    if (url.includes('/api/pair')) {
+      return { ok: true, text: async () => JSON.stringify({ session: { capabilities: [] }, csrfToken: 'csrf-1' }) };
+    }
+    return {
+      ok: false,
+      status: 401,
+      text: async () => JSON.stringify({ error: { code: 'unauthenticated', message: '会话已过期' } }),
+    };
+  };
+  try {
+    const client = getWebApiClient();
+    await client.pair('code');
+    assert.equal(client.getCsrfToken(), 'csrf-1');
+    await assert.rejects(() => client.listItems(), (error) => error.status === 401);
+    assert.equal(client.getCsrfToken(), '');
+  } finally {
+    delete globalThis.window;
+    delete globalThis.fetch;
+  }
+});
+
+test('pairing store returns to the gate when the session is lost', async () => {
+  let lostHandler;
+  const fakeClient = {
+    onSessionLost(handler) { lostHandler = handler; },
+    readSession: async () => ({ capabilities: [], csrfToken: 'csrf' }),
+    pair: async () => ({}),
+  };
+  const pairing = createPairing(fakeClient);
+  await pairing.start();
+  assert.equal(pairing.paired.value, true);
+  lostHandler();
+  assert.equal(pairing.paired.value, false);
+  pairing.dispose();
+});
+
 test('canonicalize is key-order independent', () => {
   assert.equal(canonicalize({ a: 1, b: [2, 3] }), canonicalize({ b: [2, 3], a: 1 }));
   assert.notEqual(canonicalize({ a: 1 }), canonicalize({ a: 2 }));

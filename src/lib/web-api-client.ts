@@ -148,6 +148,7 @@ export interface ApplicationSettingsSnapshot {
 export class WebApiClient {
   private baseUrl: string;
   private csrfToken = '';
+  private sessionLostHandler: (() => void) | null = null;
 
   constructor(baseUrl = '') {
     this.baseUrl = baseUrl.replace(/\/$/, '');
@@ -155,6 +156,17 @@ export class WebApiClient {
 
   getCsrfToken() {
     return this.csrfToken;
+  }
+
+  /// Register for an in-session authentication loss (401 or logout): the
+  /// shared CSRF token is cleared and the pairing gate is shown again.
+  onSessionLost(handler: () => void) {
+    this.sessionLostHandler = handler;
+  }
+
+  private handleSessionLost() {
+    this.csrfToken = '';
+    this.sessionLostHandler?.();
   }
 
   private async request(method: string, path: string, body?: unknown): Promise<unknown> {
@@ -180,6 +192,12 @@ export class WebApiClient {
       }
     }
     if (!response.ok) {
+      // An in-session 401 means the session expired: clear the shared token and
+      // let the pairing store return to the gate. The fresh-load probes
+      // (pair, session check) are excluded so an unpaired app still shows the
+      // gate instead of looping.
+      const isFreshProbe = path.includes('/api/pair') || (method === 'GET' && path.includes('/api/session'));
+      if (response.status === 401 && !isFreshProbe) this.handleSessionLost();
       const envelope = payload as { error?: { code?: string; message?: string; details?: unknown } } | null;
       throw new WebApiError(
         envelope?.error?.code ?? 'internal_error',
@@ -207,8 +225,12 @@ export class WebApiClient {
   }
 
   async logout(): Promise<void> {
-    await this.request('DELETE', '/api/session');
-    this.csrfToken = '';
+    try {
+      await this.request('DELETE', '/api/session');
+    } catch {
+      // The session may already be gone; clearing local state is still correct.
+    }
+    this.handleSessionLost();
   }
 
   async listItems(): Promise<Todo[]> {
@@ -300,6 +322,15 @@ export class WebApiClient {
       switch (command) {
         case 'workspace_info':
           return this.workspace();
+        case 'read_application_settings': {
+          const snapshot = await this.readApplicationSettings();
+          return { timeZone: snapshot.settings.timeZone, version: snapshot.version };
+        }
+        case 'save_application_settings': {
+          const input = args.input as { timeZone?: string; expectedVersion?: number };
+          const snapshot = await this.writeApplicationSettings(input.timeZone ?? '', input.expectedVersion ?? 0);
+          return { settings: snapshot.settings, version: snapshot.version, warning: snapshot.warning };
+        }
         case 'initialize_workspace':
           return this.workspace();
         case 'list_todos':

@@ -47,7 +47,7 @@ function captureText(){if(!timeReady())return;captureMode.value='text';editing.v
 async function sourceSubmitted(id:string){formDialog.value?.close();page.value='inbox';try{await organizer.select(id);}catch{}}
 function signed(){page.value='today';notify('事项已签收，班班开始盯着了。');}
 const page=ref<'today'|'inbox'|'all'|'settings'>('today'),booting=ref(true),startupError=ref(''),initializing=ref(false),setupError=ref('');
-watch(page,value=>{if(value==='today'&&!store.workspace?.needsSetup&&!booting.value)void todayAdvice.load().catch(()=>{});});
+watch(page,value=>{if(value==='today'&&nativeAvailable&&!store.workspace?.needsSetup&&!booting.value)void todayAdvice.load().catch(()=>{});});
 const now=ref(Date.now()),toast=ref(''),formDialog=ref<HTMLDialogElement>(),detailDialog=ref<HTMLDialogElement>(),deleteDialog=ref<HTMLDialogElement>();
 const filters=reactive({kind:'all',status:'all',date:'all',owner:'',tag:'',query:''});
 const hasFilters=computed(()=>filters.kind!=='all'||filters.status!=='all'||filters.date!=='all'||!!(filters.owner||filters.tag||filters.query.trim()));
@@ -69,7 +69,7 @@ let organizerUnlisten:UnlistenFn|undefined,poller:ReturnType<typeof setInterval>
 let factsTimer:ReturnType<typeof setTimeout>|undefined,factsTimerGeneration=0,workbenchAlive=true;
 function scheduleFactsRead(){now.value=Date.now();clearTimeout(factsTimer);factsTimer=undefined;const generation=++factsTimerGeneration,basis=todayAdvice.data;if(!workbenchAlive||!basis||todayAdvice.loading||!todayAdvice.currentVerified)return;if(!todayAdvice.checkCurrentness())return;const until=basis.factsValidUntilMs;if(until===null)return;factsTimer=setTimeout(()=>{if(!workbenchAlive||generation!==factsTimerGeneration||todayAdvice.data!==basis)return;factsTimer=undefined;if(!todayAdvice.checkCurrentness()){todayAdvice.invalidateCurrentness();if(!todayAdvice.loading)void todayAdvice.load().catch(()=>{});}else scheduleFactsRead();},Math.max(0,until-Date.now()));}
 function checkVisibleFacts(){if(document.visibilityState==='visible'&&workbenchAlive&&!booting.value&&!!store.workspace&&!store.workspace.needsSetup){todayAdvice.checkCurrentness();void workspaceObservation?.refresh().catch(()=>{});}}
-async function readWindowFacts(){if(workbenchAlive&&store.workspace&&!store.workspace.needsSetup){await store.refresh();if(workbenchAlive&&!todayAdvice.loading)await todayAdvice.load();}}
+async function readWindowFacts(){if(workbenchAlive&&store.workspace&&!store.workspace.needsSetup){await store.refresh();if(workbenchAlive&&nativeAvailable&&!todayAdvice.loading)await todayAdvice.load();}}
 function windowFocused(){if(workbenchAlive)void workspaceObservation?.refresh().catch(()=>{});}
 function checkRestoredFacts(event:PageTransitionEvent){if(event.persisted)checkVisibleFacts();}
 watch(()=>[todayAdvice.data,todayAdvice.currentVerified,todayAdvice.loading,todayAdvice.starting],scheduleFactsRead);

@@ -33,6 +33,7 @@ export function createPairing(client: WebApiClient = getWebApiClient()) {
   async function start() {
     if (started) return;
     started = true;
+    client.onSessionLost?.(handleSessionLost);
     try {
       const session = await client.readSession();
       if (session) {
@@ -68,7 +69,16 @@ export function createPairing(client: WebApiClient = getWebApiClient()) {
     source = null;
   }
 
-  return { ready, paired, busy, code, error, start, pair, dispose, setOnItemChanged };
+  /// The shared client cleared its CSRF token: drop the pairing state, close
+  /// the hint stream and show the gate again.
+  function handleSessionLost() {
+    paired.value = false;
+    ready.value = true;
+    error.value = '';
+    dispose();
+  }
+
+  return { ready, paired, busy, code, error, start, pair, dispose, setOnItemChanged, handleSessionLost };
 }
 
 export const usePairing = defineStore('pairing', () => createPairing());
