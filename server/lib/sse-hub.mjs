@@ -47,6 +47,18 @@ export class SseHub {
       'X-Accel-Buffering': 'no',
     });
     res.write(': connected\n\n');
+    // Frozen web-api/1 §6: a reconnect token whose epoch differs from this
+    // instance's (or is malformed / outside the retention window) must be
+    // answered with `stream.reset` before the handshake, so the client
+    // re-synchronises through the item read-back endpoints.
+    const reason = this.resetReasonFor(req.headers['last-event-id']);
+    if (reason) {
+      this.send(res, 'stream.reset', {
+        contractVersion: CONTRACT_VERSION,
+        epoch: this.epoch,
+        reason,
+      });
+    }
     this.send(res, 'stream.ready', {
       contractVersion: CONTRACT_VERSION,
       epoch: this.epoch,
@@ -54,6 +66,17 @@ export class SseHub {
     });
     this.clients.add(res);
     req.on('close', () => this.clients.delete(res));
+  }
+
+  /// Why a reconnect token cannot be resumed, or null when it can.
+  resetReasonFor(token) {
+    if (token === undefined || token === null || token === '') return null;
+    const match = /^([^:]+):(\d+)$/.exec(String(token));
+    if (!match) return 'malformed_last_event_id';
+    const [, epoch, cursor] = match;
+    if (epoch !== this.epoch) return 'epoch_changed';
+    if (Number(cursor) > 0) return 'cursor_out_of_window';
+    return null;
   }
 
   send(res, event, data, id = null) {

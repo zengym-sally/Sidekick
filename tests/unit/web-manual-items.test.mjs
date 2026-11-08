@@ -11,6 +11,8 @@ import { readFileSync } from 'node:fs';
 import { ManualItemsService, ServiceError, canonicalize } from '../../server/lib/manual-items-service.mjs';
 import { parseArgs } from '../../server/entries/web-backend-entry.mjs';
 import { fromWireItem, toDomainPoint, toWireInput, toWirePoint } from '../../src/lib/web-api-client.ts';
+import { SseHub } from '../../server/lib/sse-hub.mjs';
+import { createPairing } from '../../src/stores/pairing.ts';
 
 class StorageError extends Error {
   constructor(code, message) {
@@ -105,7 +107,7 @@ test('validation rejects malformed input', async () => {
     [{ ...SAMPLE, priority: 'urgent' }, '优先级无效'],
     [{ ...SAMPLE, tags: Array.from({ length: 21 }, (_, i) => `t${i}`) }, '标签最多 20 个'],
     [{ ...SAMPLE, tags: ['x'.repeat(51)] }, '标签最多 50 字'],
-    [{ ...SAMPLE, due: { at: 'nope', timeZone: 'Asia/Shanghai', localText: 'x', precision: 'minute' } }, '时间无效'],
+    [{ ...SAMPLE, due: { at: 'nope', timeZone: 'Asia/Shanghai', localText: 'x', precision: 'minute' } }, 'ISO 8601'],
     [{ ...SAMPLE, due: { at: '2026-11-13T10:00:00.000Z', timeZone: 'Nowhere/Nope', localText: 'x', precision: 'minute' } }, '时区无效'],
     [{ ...SAMPLE, due: { at: '2026-11-13T10:00:00.000Z', timeZone: 'Asia/Shanghai', localText: 'x', precision: 'hour' } }, '精度无效'],
   ];
@@ -431,6 +433,129 @@ test('fromWireItem maps due/followup and source per the manual wire format', () 
   const empty = fromWireItem({ ...wire, due: null, followup: null });
   assert.equal(empty.data.due, null);
   assert.equal(empty.data.followup, null);
+});
+
+test('rejects non-ISO instants and validates structured local times (F-1/F-2)', async () => {
+  const { service } = makeService();
+  await assert.rejects(() => service.createItem('op_iso', {
+    ...SAMPLE,
+    due: { at: '2026-11-13 18:00', timeZone: 'Asia/Shanghai', localText: '2026-11-13 18:00', precision: 'minute' },
+  }), (error) => {
+    assert.equal(error.code, 'validation_failed');
+    return true;
+  });
+  await assert.rejects(() => service.createItem('op_gap', {
+    ...SAMPLE,
+    due: { at: '2026-03-08T06:30:00.000Z', timeZone: 'America/New_York', localText: '2026-03-08 02:30', precision: 'minute' },
+  }), (error) => {
+    assert.equal(error.code, 'validation_failed');
+    return true;
+  });
+  await assert.rejects(() => service.createItem('op_mismatch', {
+    ...SAMPLE,
+    due: { at: '2026-11-01T07:30:00.000Z', timeZone: 'America/New_York', localText: '2026-11-01 01:30', precision: 'minute' },
+  }), (error) => {
+    assert.equal(error.code, 'validation_failed');
+    return true;
+  });
+  const accepted = await service.createItem('op_ambiguous', {
+    ...SAMPLE,
+    due: { at: '2026-11-01T05:30:00.000Z', timeZone: 'America/New_York', localText: '2026-11-01 01:30', precision: 'minute' },
+  });
+  assert.equal(Date.parse(accepted.item.due.at), Date.parse('2026-11-01T05:30:00.000Z'));
+  const free = await service.createItem('op_free', {
+    ...SAMPLE,
+    due: { at: '2026-11-13T10:00:00.000Z', timeZone: 'Asia/Shanghai', localText: '周五下午', precision: 'minute' },
+  });
+  assert.equal(free.item.due.localText, '周五下午');
+});
+
+function mockSseRes() {
+  const frames = [];
+  return { frames, writeHead() {}, write(frame) { frames.push(frame); }, end() {} };
+}
+
+const sseEventNames = (res) => res.frames
+  .filter((frame) => frame.startsWith('event: '))
+  .map((frame) => frame.slice('event: '.length).split('\n')[0]);
+const sseData = (res, event) => {
+  const frame = res.frames.find((candidate) => candidate.startsWith(`event: ${event}\n`));
+  const line = frame.split('\n').find((candidate) => candidate.startsWith('data: '));
+  return JSON.parse(line.slice('data: '.length));
+};
+const sseFrame = (res, event) => res.frames.find((candidate) => candidate.startsWith(`event: ${event}\n`));
+
+test('SSE answers an old epoch with stream.reset then stream.ready (F-4)', () => {
+  const hub = new SseHub();
+  const old = mockSseRes();
+  hub.addClient({ headers: { 'last-event-id': 'inst_old:0' }, on() {} }, old);
+  assert.deepEqual(sseEventNames(old), ['stream.reset', 'stream.ready']);
+  assert.equal(sseData(old, 'stream.reset').epoch, hub.epoch);
+  assert.equal(sseData(old, 'stream.reset').reason, 'epoch_changed');
+  assert.ok(!/^id: /m.test(sseFrame(old, 'stream.reset')));
+
+  const same = mockSseRes();
+  hub.addClient({ headers: { 'last-event-id': `${hub.epoch}:0` }, on() {} }, same);
+  assert.deepEqual(sseEventNames(same), ['stream.ready']);
+
+  const none = mockSseRes();
+  hub.addClient({ headers: {}, on() {} }, none);
+  assert.deepEqual(sseEventNames(none), ['stream.ready']);
+
+  const outOfWindow = mockSseRes();
+  hub.addClient({ headers: { 'last-event-id': `${hub.epoch}:9` }, on() {} }, outOfWindow);
+  assert.deepEqual(sseEventNames(outOfWindow), ['stream.reset', 'stream.ready']);
+  assert.equal(sseData(outOfWindow, 'stream.reset').reason, 'cursor_out_of_window');
+
+  const malformed = mockSseRes();
+  hub.addClient({ headers: { 'last-event-id': 'garbage' }, on() {} }, malformed);
+  assert.deepEqual(sseEventNames(malformed), ['stream.reset', 'stream.ready']);
+  assert.equal(sseData(malformed, 'stream.reset').reason, 'malformed_last_event_id');
+});
+
+test('item.changed frames carry no id and do not advance the task cursor', () => {
+  const hub = new SseHub();
+  const res = mockSseRes();
+  hub.addClient({ headers: {}, on() {} }, res);
+  res.frames.length = 0;
+  hub.broadcastItemChanged({ itemId: 'mi_1', version: 2 });
+  const frame = res.frames.find((candidate) => candidate.startsWith('event: item.changed'));
+  assert.ok(frame);
+  assert.ok(!/^id: /m.test(frame));
+  assert.match(frame, /"objectType":"item"/);
+  assert.match(frame, /"itemId":"mi_1"/);
+});
+
+test('pairing re-reads on stream.ready/stream.reset/item.changed', async () => {
+  let lastSource;
+  globalThis.EventSource = class {
+    constructor() {
+      this.listeners = {};
+      lastSource = this;
+    }
+    addEventListener(event, handler) {
+      (this.listeners[event] ??= []).push(handler);
+    }
+    close() {}
+    emit(event) {
+      for (const handler of this.listeners[event] ?? []) handler();
+    }
+  };
+  try {
+    const pairing = createPairing({ readSession: async () => null, pair: async () => {} });
+    let refreshes = 0;
+    pairing.setOnItemChanged(() => { refreshes += 1; });
+    await pairing.start();
+    await pairing.pair();
+    assert.ok(lastSource);
+    lastSource.emit('stream.ready');
+    lastSource.emit('item.changed');
+    lastSource.emit('stream.reset');
+    assert.equal(refreshes, 3);
+    pairing.dispose();
+  } finally {
+    delete globalThis.EventSource;
+  }
 });
 
 test('canonicalize is key-order independent', () => {

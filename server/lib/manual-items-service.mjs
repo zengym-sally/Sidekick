@@ -9,8 +9,16 @@
 //! shape required by `web-api/1` (ISO strings) is produced at the boundary.
 
 import { randomBytes } from 'node:crypto';
+import { zonedCandidates } from '../../shared/dates.mjs';
 
 export const CONTRACT_VERSION = 'web-api/1';
+
+/// Reviewed wire format for `TimePoint.at`: ISO 8601 UTC with millisecond
+/// precision (contract §4.2). Anything else is rejected rather than parsed in
+/// the server's local zone.
+const ISO_UTC_MS = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+/// The structured local expression `zonedCandidates` can resolve.
+const STRUCTURED_LOCAL = /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}$/;
 
 const SELECT_ITEM = `SELECT item_id,title,kind,owner,priority,status,
   due_at_ms,due_timezone,due_local,due_precision,
@@ -68,8 +76,11 @@ export function canonicalize(value) {
 function normalizePoint(value, label) {
   if (value === null || value === undefined) return null;
   if (typeof value !== 'object') throw validation(`${label}格式无效。`);
-  const raw = value.at ?? value.atMs;
-  const atMs = typeof raw === 'string' ? Date.parse(raw) : typeof raw === 'number' ? raw : NaN;
+  const raw = value.at;
+  if (typeof raw !== 'string' || !ISO_UTC_MS.test(raw)) {
+    throw validation(`${label}时间必须是 ISO 8601 UTC 毫秒（YYYY-MM-DDTHH:mm:ss.sssZ）。`);
+  }
+  const atMs = Date.parse(raw);
   if (!Number.isFinite(atMs)) throw validation(`${label}时间无效。`);
   const timeZone = typeof value.timeZone === 'string' ? value.timeZone : '';
   if (!timeZone) throw validation(`${label}缺少时区。`);
@@ -82,7 +93,16 @@ function normalizePoint(value, label) {
   if (!localText) throw validation(`${label}缺少原始表达。`);
   const precision = value.precision ?? 'minute';
   if (precision !== 'minute' && precision !== 'day') throw validation(`${label}精度无效。`);
-  return { atMs, at: new Date(atMs).toISOString(), timeZone, localText, precision };
+  // Cross-check a structured local expression against the instant: a DST-gap
+  // local time has no candidate, and an instant that is not one of the
+  // expressed local time's candidates is rejected. Free-form expressions keep
+  // their original text and are not resolved server-side.
+  if (precision === 'minute' && STRUCTURED_LOCAL.test(localText)) {
+    const candidates = zonedCandidates(localText, timeZone);
+    if (!candidates.length) throw validation(`${label}本地时刻在 ${timeZone} 不存在。`);
+    if (!candidates.includes(atMs)) throw validation(`${label}时刻与本地表达不一致。`);
+  }
+  return { atMs, at: raw, timeZone, localText, precision };
 }
 
 function normalizeTags(value) {

@@ -18,9 +18,9 @@
 |---|---|
 | `server/entries/web-backend-entry.mjs` | `c7234a7542c3f21401455f397bbfd739c20c8ded76ec0017df516780727e29aa` |
 | `server/lib/http-server.mjs` | `f4d80e628e863a752848b65e503a14b66e4318a649b088324d5f42cf84ac9ab8` |
-| `server/lib/manual-items-service.mjs` | `fa679affa9804d97e9316d37740513659eda6b48bc75375507fae598c86d433f` |
+| `server/lib/manual-items-service.mjs` | `9c33d5523fbe1988887fe6dba3edc150bb7d2d17b207c80b783f825678e095a6` |
 | `server/lib/session-store.mjs` | `9823db95128835c84f77a35eea68f9fbd63173f9f18156fc8c8f94059609fc1e` |
-| `server/lib/sse-hub.mjs` | `174507c6ce2e36016013546473cdc19b6678799ca38e33bb06f2092840006ade` |
+| `server/lib/sse-hub.mjs` | `f49951aa6fbcc9f6e3ba67b5f70fff8ce2ebbebd47036909c54379fdf189ceea` |
 | `server/lib/static-files.mjs` | `3c07b73eb6be8af6ee903b257d49178735c3f59a6dffb2437a84ee63975251ac` |
 | `server/lib/storage-client.mjs` | `c721fc110b1fc96269dea96b1065ada098383fa07d43ce5ac916a3120410bcbe` |
 | `src-tauri/migrations/web-backend/002_manual_items.sql` | `b6cb8e61609f83454164bff6c5628b2c893122b8dbb9bb3ced41bcd3d9e2f97e` |
@@ -48,7 +48,7 @@
 | 文件 | SHA-256 |
 |---|---|
 | `src-tauri/src/store/web_backend_store_tests.rs` | `5b371d0826dd2ba3946353619da4682e90b00bdf32139c95d3eaaf3936a745be` |
-| `tests/unit/web-manual-items.test.mjs` | `d0b7ebfe44a27d88352d7cff4be6733946da27efd977c968474d5f329a901d7a` |
+| `tests/unit/web-manual-items.test.mjs` | `35cd623dc587a99af13808bf6af331c053ea065a223818ee80a6d9c0ab3e99e7` |
 
 ## 3. 实现要点
 
@@ -93,9 +93,9 @@
 - **标准线格式核对**：`POST /api/pair` 仅接受请求体 `pairingCode`（移除 `code`/`pairing_code` 别名兜底）；配对与 `GET /api/session` 响应顶层 `csrfToken`；写请求读取 `X-CSRF-Token`（HTTP 头名大小写不敏感）。浏览器客户端 `web-api-client.ts` 已使用同一字面名，无需改动。
 
 **本增量文件 SHA-256**
-- `server/lib/manual-items-service.mjs`：`fa679affa9804d97e9316d37740513659eda6b48bc75375507fae598c86d433f`
+- `server/lib/manual-items-service.mjs`：`9c33d5523fbe1988887fe6dba3edc150bb7d2d17b207c80b783f825678e095a6`
 - `server/lib/http-server.mjs`：`f4d80e628e863a752848b65e503a14b66e4318a649b088324d5f42cf84ac9ab8`
-- `tests/unit/web-manual-items.test.mjs`：`d0b7ebfe44a27d88352d7cff4be6733946da27efd977c968474d5f329a901d7a`
+- `tests/unit/web-manual-items.test.mjs`：`35cd623dc587a99af13808bf6af331c053ea065a223818ee80a6d9c0ab3e99e7`
 
 **本增量聚焦验证（实跑）**
 - `node --test tests/unit/web-manual-items.test.mjs`：11/11 pass（新增「list rejects unknown status and invalid limit」）。
@@ -112,9 +112,9 @@
 - **CLI MINOR-1**：`parseArgs` 改为逐旗标解析，`--init` 作为布尔开关不再吞相邻旗标或末位失效；`isDirectRun` 两侧用 `realpathSync` 解析符号链接，经 `/tmp` 符号链接调用也能正常执行。
 
 **本增量文件 SHA-256**
-- `server/lib/manual-items-service.mjs`：`fa679affa9804d97e9316d37740513659eda6b48bc75375507fae598c86d433f`
+- `server/lib/manual-items-service.mjs`：`9c33d5523fbe1988887fe6dba3edc150bb7d2d17b207c80b783f825678e095a6`
 - `server/entries/web-backend-entry.mjs`：`c7234a7542c3f21401455f397bbfd739c20c8ded76ec0017df516780727e29aa`
-- `tests/unit/web-manual-items.test.mjs`：`d0b7ebfe44a27d88352d7cff4be6733946da27efd977c968474d5f329a901d7a`
+- `tests/unit/web-manual-items.test.mjs`：`35cd623dc587a99af13808bf6af331c053ea065a223818ee80a6d9c0ab3e99e7`
 
 **本增量聚焦验证（实跑）**
 - `node --test tests/unit/web-manual-items.test.mjs`：14/14 pass。新增「failed concurrent writes leave no event and keep the operationId free」对 update/complete/reopen/delete 四条写路径做确定性竞争（败者事务内先注入胜者提交，再执行败者事务）：败者 409 `version_conflict`、无事件行、以原 operationId＋新版本重试成功。新增「idempotency key binds action and item across reuse」验证跨事项/跨动作复用 409、同意图重放 `replayed:true`。新增 `parseArgs` 用例。
@@ -133,7 +133,7 @@
 
 **本增量文件 SHA-256**
 - `src/lib/web-api-client.ts`：`b4bec8820eefe7e3e74a5daf5716c69cdd32cdfc11c8adda64f224792123fc16`
-- `tests/unit/web-manual-items.test.mjs`：`d0b7ebfe44a27d88352d7cff4be6733946da27efd977c968474d5f329a901d7a`
+- `tests/unit/web-manual-items.test.mjs`：`35cd623dc587a99af13808bf6af331c053ea065a223818ee80a6d9c0ab3e99e7`
 
 **本增量聚焦验证（实跑）**
 - `npm run typecheck`（`vue-tsc --noEmit`）：exit 0（门禁失败的三个 TS 错误已消除）。
@@ -173,3 +173,22 @@
 - **显式存储二进制仍可构建**：`cargo build --bin web-backend-storage` exit 0。
 - **旧/新对照**：仅移除 `default-run`（及注释）后 `node scripts/build/build-app.mjs tests/fixtures/s33-ui-verify.config.json` → **exit 1**，报 `failed to find main binary, make sure you have a 'package > default-run' in the Cargo.toml file`；恢复后 `check:s33-p2-package` exit 0。
 - `git diff --check` exit 0；`npm run typecheck` exit 0；冻结 `001`/`002`/`web-api/1` 哈希逐字节不变。
+
+
+## 11. 2026-11-08 时间线格式与 SSE epoch 退修增量（F-1/F-2/F-4）
+
+依据集成第四轮门禁第 51 组的三项候选 I 失败（F-1/F-2/F-4），沿原 I 服务/SSE/单测范围修订：
+
+- **F-1（严格 ISO）**：`normalizePoint` 不再用裸 `Date.parse` 接受非 ISO 字符串；`at` 必须匹配 `^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$`（契约 §4.2 ISO 8601 UTC 毫秒），否则 400 `validation_failed`。
+- **F-2（结构化本地时刻存在性/显式 instant）**：复用 `shared/dates.mjs::zonedCandidates`——当 `precision=minute` 且 `localText` 为 `YYYY-MM-DD[T ]HH:mm` 结构时，本地时刻无候选（夏令时空缺）即拒，`at` 不在候选集内（含回落歧义未选显式 instant）即拒。自由表达（如「周五下午」）保留原文、不在服务端解析。
+- **F-4（SSE epoch 语义）**：`sse-hub.mjs` 读取 `Last-Event-ID`；令牌 epoch ≠ 当前实例、格式非法或游标超窗口时，先发 `stream.reset`（`{contractVersion, epoch, reason}`，无 id），再发 `stream.ready`。事项帧仍无 id、不占任务 cursor。客户端 `pairing.ts` 已监听 `stream.reset`／`stream.ready`／`item.changed` 触发读回补偿。
+
+**本增量文件 SHA-256**
+- `server/lib/manual-items-service.mjs`：`9c33d5523fbe1988887fe6dba3edc150bb7d2d17b207c80b783f825678e095a6`
+- `server/lib/sse-hub.mjs`：`f49951aa6fbcc9f6e3ba67b5f70fff8ce2ebbebd47036909c54379fdf189ceea`
+- `tests/unit/web-manual-items.test.mjs`：`35cd623dc587a99af13808bf6af331c053ea065a223818ee80a6d9c0ab3e99e7`
+
+**本增量聚焦验证（实跑，日志在 `build/`）**
+- `node --test tests/unit/web-manual-items.test.mjs`：**20/20 pass**。新增：非 ISO `at` 拒绝；纽约夏令时空缺（2026-03-08 02:30）拒绝、回落歧义未选显式 instant 拒绝、歧义显式选 05:30Z 接受、自由表达保留原文；SSE 旧 epoch → `stream.reset`+`stream.ready`，同 epoch 无 token → 仅 `stream.ready`，游标超窗口/格式非法 → reset；`item.changed` 无 `id` 行；`pairing.ts` 在 `stream.ready`/`stream.reset`/`item.changed` 均触发读回刷新。
+- 真实 HTTP（`smoke-time-sse.mjs`）：非 ISO → 400；夏令空缺 → 400；时刻不一致 → 400；歧义显式 → 200；自由表达 → 200 且 `localText='周五下午'`；旧 epoch 订阅 → `stream.reset`+`stream.ready`；`item.changed` 帧无 `id`。
+- `npm run typecheck` exit 0；`cargo clippy -D warnings`、`cargo fmt --check` exit 0；`git diff --check` exit 0；冻结 `001`/`002`/`web-api/1` 哈希逐字节不变。
