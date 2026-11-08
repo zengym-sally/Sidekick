@@ -378,3 +378,23 @@ src/stores/todos.ts          # 修改：由 Tauri invoke 切换到 HTTP 客户�
 - 本切片不创建迁移文件、不安装依赖、不改 manifest/锁文件、不操作真实数据库/凭据/工作根。
 - Linux/代理部署、真实模型/凭据/工作根、push 与发布均未授权，不在本切片验收范围。
 - 既有 Tauri/Rust 实现的分层证据继续有效于其原版本，本提案不外推为新 Web/Linux 已通过。
+
+## 附录A：实施期接口补充裁定（2026-11-08，W1 最终集成登记）
+
+本附录仅登记任务描述两次协调裁定（MAYNE-23 派发线程）中对上文接口字面与幂等作用域的补充；正文 §1–§14 与冻结 DDL（001 `8511907c…`、002 `b6cb8e61…`、web-api/1 `61863271…`）逐字节保持 19045b8 原审内容不变。裁定原文以 MAYNE-23 评论记录为准，本附录为集成接收转录。
+
+### A.1 接口字面名与列表参数（2026-11-08 裁定一）
+
+- `POST /api/pair` 请求体标准字段为 `pairingCode`；不接受别名或环境变量切换。
+- 配对与 `GET /api/session` 的 CSRF token 位于响应顶层 `csrfToken`；写请求使用 `X-CSRF-Token` 头（HTTP 头名大小写不敏感）。cookie 从 `Set-Cookie` 捕获，不冻结名字。
+- 事项列表 `status` 缺省及 `open`/`completed`/`deleted`/`all` 语义沿原契约；显式未知 `status` 返回 400 `validation_failed`。
+- 列表和历史分页 `limit` 缺省 50；显式值须为 1–200 整数，否则 400 `validation_failed`，不静默截断或回退。
+- 证据只记录生效字段/头名，不写码、cookie 或 token 值。
+
+### A.2 幂等作用域（2026-11-08 裁定二，OBS-2 补充）
+
+- 事项域内同 `operationId` 仅在动作、目标事项、规范化 input 及 `expectedVersion`（各自适用时）均相同才重放；重放先于状态和版本守卫，返回同一对象当前权威状态。
+- `create` 无客户端目标 `itemId`；跨动作或跨 `itemId` 复用已成功 `operationId` 返回 409 `idempotency_conflict`，不写任何新事件。
+- 可在规范请求中编码动作/目标，或以已存事件 `action`/`itemId` 显式绑定；不扩大域内命名空间、不改 001/002/schema 或 legacy。
+
+本附录与集成一起独立复核；追加后本文件 SHA-256 见 `docs/reviews/web-manual-items-integration-20261108.md` 登记。
