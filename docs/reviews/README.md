@@ -13,11 +13,13 @@
 - **索引强制**：新增记录必须登记到本文件；未登记视为未收口。`check:docs` 只校验链接存在，语义一致性靠评审。
 - **新路径**：2026-10-31 结构治理后，新记录使用新路径（`runtime/{entries,lib,workers}/`、`src-tauri/src/{app,store,host,diagnostics}/`、`tests/{unit,integration,probes,fixtures}/`、`scripts/{build,checks,probes}/`）；旧记录保留原路径，按文件名仍可检索。
 
-## 2. 记录索引（101 份）
+## 2. 记录索引（103 份）
 
 | 记录 | 日期 | 范围与结论 | 证据 |
 |---|---|---|---|
-| [web-manual-items-integration-20261108.md](web-manual-items-integration-20261108.md) | 2026-11-08 | MAYNE-23 W1 最终集成（OpenCode，唯一集成执行者）：三候选完整经审链自基点 `6546990` 逐字节接入（I `4ca93440`、II `19418ef`、III `133a2a1`，补丁/树哈希全部复算相符，交叉 diff 证 I/II 范围零偏离），五份审查记录按原路径 blob 级接收，契约附录A 仅转录两次协调裁定（纯追加，新哈希 `32910de7…` 登记），评审索引 91→101；完整 `npm run check` 在冻结提交上串行执行，结果以回执为准；main/状态未动，浏览器旅程独立验收另派 | 原始证据 `build/web-manual-items-integration/`（gitignored，含 admission.json 与编号取证） |
+| [web-manual-items-implementation-20261108-zcode-typecheck-review.md](web-manual-items-implementation-20261108-zcode-typecheck-review.md) | 2026-11-08 | W1 I 类型映射退修限定复审（ZCode R3 `3810ee9`）：通过——增量 `4ca93440..ff5d6c2` 身份逐字节一致（3 文件 +93/−8，patch `7ef64137`、累计 `b0e03254`），相对父版零 Rust/server/domain/shared/package 差异；共享 node_modules A/B：父版逐字节复现门禁三处 TS 错误、候选 exit 0；单测 16/16；可证伪回归两向（ESM 链接拒绝旧字节、单变量变异恰两条新用例失败）；完整门禁留唯一集成者 | 见记录 |
+| [web-manual-items-integration-20261108-kimi-review.md](web-manual-items-integration-20261108-kimi-review.md) | 2026-11-08 | W1 集成公共增量只读审查（Kimi `b15eaa17`）：通过（仅公共增量；0 阻断，2 NIT＋2 观察）——候选原样接入零偏离、契约附录A 纯追加、五份审查记录 blob 级一致、失败回执自洽且缺陷归因独立确证；NIT-1 前置/gate 起点表述、NIT-2 证据包完整性由集成第二轮处置；不签候选 II 与业务通过 | 见记录 |
+| [web-manual-items-integration-20261108.md](web-manual-items-integration-20261108.md) | 2026-11-08 | MAYNE-23 W1 最终集成（OpenCode，唯一集成执行者）：三候选完整经审链自基点 `6546990` 逐字节接入（I `4ca93440`、II `19418ef`、III `133a2a1`，补丁/树哈希全部复算相符，交叉 diff 证 I/II 范围零偏离），五份审查记录按原路径 blob 级接收，契约附录A 仅转录两次协调裁定（纯追加，新哈希 `32910de7…` 登记），评审索引 91→101；完整 `npm run check` 在冻结提交上串行执行，结果以回执为准；main/状态未动，浏览器旅程独立验收另派。§7 起为第二轮（类型映射修复 `ff5d6c2` 接入、NIT 处置与重门禁） | 原始证据 `build/web-manual-items-integration/`（gitignored，含 admission.json 与编号取证） |
 | [web-manual-items-engineering-20261108-zcode-review.md](web-manual-items-engineering-20261108-zcode-review.md) | 2026-11-08 | W1 III 工程候选独立审查（ZCode `3e8d310`）：通过——patch/format-patch `4109daa9` 逐字节复核，冻结哈希全验（含授权清单 `452dc436→242ea3db` delta＝2 hunk），4/4 接收 P1/P2 记录 blob 级一致；守卫自测/正负例、builder 7 合成用例、package.json 增量恰三脚本＋check 尾接入；1 NIT＋2 观察不阻断；真实 build:backend/test:web-manual-items/完整门禁显式留集成 | 见记录 |
 | [web-manual-items-tests-20261108-ohmypi-r2-review.md](web-manual-items-tests-20261108-ohmypi-r2-review.md) | 2026-11-08 | W1 II 修订候选独立复审（OhMyPi R2 `ad90915`）：通过——F-1/F-2/F-3 以可证伪正反例关闭（真实 SQLite/静态服务器/headless Chrome+CDP），CDP 与失败清理生命周期 12/12，线格式固定为 `pairingCode`/`csrfToken`/`X-CSRF-Token` 无环境覆盖，断言计数不降、预算未放宽；4 项观察不阻断交集成轮 | 见记录 |
 | [web-manual-items-tests-20261108-ohmypi-review.md](web-manual-items-tests-20261108-ohmypi-review.md) | 2026-11-08 | W1 II 首轮独立审查（OhMyPi `fe8ac7b`）：退修——F-1 共享实例全局/逐事项事件计数永假断言、F-2 hash 资产选择器误配 MIME、F-3 真实 dist 浏览器模式缺挂载/可达性/溢出断言；五项接口假设对照冻结契约核出两项待裁定 | 见记录 |

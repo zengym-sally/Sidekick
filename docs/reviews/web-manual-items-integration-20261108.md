@@ -35,7 +35,7 @@
 
 ### 4.1 冻结与前置（全部实测）
 
-- 冻结提交 `a02bfef2945bc7c147eef14746a14f180a9c2578`，tree `5fe0b3907b83d95b7d722280c437ffde6cf467eb`；gate 于 2026-11-08T00:19Z 启动、00:26:57Z 结束。
+- 冻结提交 `a02bfef2945bc7c147eef14746a14f180a9c2578`，tree `5fe0b3907b83d95b7d722280c437ffde6cf467eb`。起点表述（按 Kimi 公共审查 NIT-1 更正，见 §7.1）：前置阶段于 2026-11-08T00:19Z 启动（`npm ci` 起）；正式 gate（冻结提交上的完整 `npm run check`）于 00:26:51Z 启动（日志 `GATE_START`）、00:26:57Z 结束。原表述「gate 于 00:19Z 启动」把前置起点误写作 gate 起点，仅措辞更正，不改变任何结果。
 - 前置：`npm ci --ignore-scripts` exit 0；`probe:prepare-cli` exit 0（lark-cli v1.0.98 实装）；`probe:prepare-pi` exit 0（vendor/pi 按 `pi-source.json` 来源校验后真实构建）。前置后 `check:structure` 全绿（236 文件／498 引用，exit 0；含 server/、bin/、新测试目录与 002 冻结自测正/负例）、`check:docs` exit 0（21 文件／493 链接）。
 - 冻结前聚焦检查亦留档：docs exit 0（同上）、structure self-test exit 0、仓库模式仅 3 处 `ref.missing`（vendor/pi 构建产物，前置后消除，0 处引用候选文件）。
 
@@ -74,4 +74,21 @@
 
 - 自建进程：本 run 未启动常驻服务；gate 进程随失败退出；A/B 取证用的临时导出树与 tar 已删除，仅留证据日志。`pgrep` 复核无 `web-backend-storage`／调试浏览器残留（见 `14-cleanup-pgrep.log`）。
 - 未分类警告：前置聚焦检查与已执行 4 组均无警告输出。
+
+## 7. 第二轮：客户端类型映射修复接入（2026-11-08）
+
+按队长派发（评论 `01a1b8a1-37cc-7915-97a8-041bcb9f9327`）：以第一轮回执提交 `868eaaf3c75f5de6f52b76533802a022a9b96ca2` 为当前集成基点，按原集成写入边界接入候选 I 客户端修复精确增量，原样接收本轮两份审查记录，更新 admission 与公共记录。第一轮失败回执（§4.2–§4.3）原样保留，不以聚焦绿证替代全门禁。
+
+### 7.1 接收与身份（全部实测逐字节相符）
+
+- 修复提交 `ff5d6c24e1a8c4ad006ad52532b64fdf47f7c064`（tree `f99af22cb00b40dc7d7d07bd2c81e501f9aeaf32`，父即 `4ca93440`）：增量恰 3 文件 +93/−8；增量补丁（`4ca93440..ff5d6c2`）SHA-256 `7ef64137ecc2253557099cbfcfa66ac6f794620e9403ff616089d1ae7d25331f`、相对基点 `bc4b1c3` 累计补丁 `b0e03254f3530d44607d24861729889b1e86dc480742a41bc98decee58aaa002` 复算一致；`src/lib/web-api-client.ts` `b4bec882…fc16`、`tests/unit/web-manual-items.test.mjs` `d0b7ebfe…1d7a` 与申报一致，第三文件为 I 自有交付记录（哈希刷新＋纯追加 §8）。
+- 接入方式：merge（父 `4ca93440` 已在集成树祖先，合并零冲突，合并 diff 恰为该 3 文件）。合并前实测三个目标文件与 `4ca93440` blob 同一、I 写入范围（`server/`、`src-tauri/`、`src/`、`tests/unit/`）相对 `4ca93440` 零差异、II 夹具目录相对 `19418ef` 零差异——增量逐字节落在申报范围。admission 见 `build/web-manual-items-integration/admission.json`（修改前登记）。
+- 独立审查覆盖：ZCode R3 `3810ee95…` 限定复审通过（共享 node_modules A/B：父版 `4ca93440` 逐字节复现门禁三处 TS 错误、候选 exit 0；单测 16/16；可证伪回归两向）。
+- 两份审查记录原样接收（blob 级，`git show <commit>:<path>`）：ZCode typecheck 审查 `docs/reviews/web-manual-items-implementation-20261108-zcode-typecheck-review.md`（自 `3810ee9`）、Kimi 集成公共增量审查 `docs/reviews/web-manual-items-integration-20261108-kimi-review.md`（自 `b15eaa17`，tree `304ce35b…`）。评审索引 101→103。Kimi 审查两项 NIT 处置：NIT-1 前置/gate 起点表述已在 §4.1 更正；NIT-2 本轮证据包连同前置、逐组与收尾日志一并打包哈希交付。
+- 冻结文件复核：001 `8511907c…143d`、002 `b6cb8e61…f97e`、web-api/1 `61863271…8f58`、契约（含附录A）`32910de72ceb20b9e4aa8226754316ee7400166c25e9d295bf0ef1811ce11eb4` 本轮逐字节未动。
+
+### 7.2 第二轮冻结与完整门禁（原预算串行，冻结 SHA 上执行）
+
+- 第二轮冻结提交：本节随修复接入与公共记录一起提交后登记于 §8（gate 回执补记）。
+- 前置与门禁计划同 §4：冻结后从头真实准备构建前置（`npm ci --ignore-scripts`、`probe:prepare-cli`、`probe:prepare-pi`，不以桩产物替代），再在冻结提交上串行执行一次完整 `npm run check`——保留全部脚本、预算与默认产品 dist，不孤立预跑同版整套 Web 组；逐组结果、exit、警告分类与未验项记入 §8。若仍失败，沿 §4.3 同一路径归因回报，不擅改 I/II。
 
