@@ -217,3 +217,24 @@ failed to find main binary, make sure you have a `package > default-run` in the 
 - 未验项：第 48–51 组（pet-ui-artifacts、mcp-native-launcher、`build:backend` 真实打包、`test:web-manual-items` 新 Web 三套件含 HTTP/重启/同源浏览器）在本冻结版零证据；完整浏览器业务旅程独立验收仍待明确集成版另派；Linux/代理、真实凭据/真实用户工作根/真实模型在授权边界外。
 - 收尾：`pgrep` 复核无 `cargo`/`rustc`/`build-app`/`web-backend-storage`/`web-backend-entry` 残留（`40-cleanup-pgrep-r3.log`）；A/B 判定驱动的进程树按标记即杀，无孤儿编译。
 - 证据包：`web-manual-items-integration-r3-evidence.tar.gz`（哈希见 `SHA256SUMS-r3.txt` 与随附清单）含前置、逐组 gate、A/B 三向与收尾全部编号日志；不含配对码/cookie/token（已扫描）。
+
+## 11. 第四轮：manifest default-run 消歧修复接入（2026-11-08）
+
+按队长派发（评论 `01a1b8dc-2640-7bd0-a4a4-0561cb8c08b4`）：OpenCode 先对 `91b78ed..e750302` 独立审查（不通过即止步回报、不代修），仅独审通过后以集成回执 `404a2bc` 为基点在同一 run 接入该两文件精确增量，按原唯一集成范围更新 admission/索引/回执并冻结新 SHA/tree，从头串行完整门禁（保留 51 组、预算与真实前置；真实应用打包由本轮第 47 组验证，不预先重复同版整组打包；新 Web 组仍用默认真实产物）。§4/§8/§10 三轮失败回执原样保留。
+
+### 11.1 独立审查（先决条件，已满足）
+
+- 审查者 OpenCode 未编写该 manifest 增量（由 I 作者 Claude 提交于 `e750302`）；判定**通过**（0 阻断、0 NIT），记录 `docs/reviews/web-manual-items-implementation-20261108-opencode-default-run-review.md`（本树 `afa0f5f`，评审索引 104→105）。
+- 要点：增量恰 2 文件 +24/−1、补丁 SHA-256 `4b300494…77f83b3`、累计 `bc4b1c3..e750302` `a2c7d8d4…40fa9a6` 逐字节复算相符；`[package]` 仅追加裁定行 `default-run = "sidekick"`＋5 行注释，I 自有证据哈希表刷新＋纯追加 §10；边界核实：`Cargo.lock`/`tauri.conf.json`/`src-tauri/src/main.rs`/`src-tauri/src/bin/web-backend-storage.rs` 两版本 blob 完全相同，001/002 冻结 blob 不变，依赖段逐字节相同；`e750302` 导出树 `cargo metadata --no-deps` exit 0，`default-run: sidekick` 被接受且 bin targets 恰为 `sidekick`＋`web-backend-storage` 两个；完整打包签署按派发由本轮第 47 组完成。
+
+### 11.2 接收与身份（全部实测逐字节相符）
+
+- 修复提交 `e750302cdb1a6718b3260929707d351163015176`（tree `48aef46ca89dbe0f740d8466b4ec4163fea623f7`，父即 `91b78ed`）：增量恰 2 文件 +24/−1——`src-tauri/Cargo.toml`（blob→`922938c7…dba194a`）与 I 自有交付记录（blob→`517777d5…260a3e`，哈希表刷新＋纯追加 §10）。
+- 接入方式：merge（merge-base 恰 `91b78ed`，已在集成树祖先，合并零冲突；合并 diff 恰为该 2 文件 +24/−1，`git diff HEAD^1 HEAD` SHA-256＝申报增量 `4b300494…`）。合并前实测两个目标文件与 `91b78ed` blob 同一；合并后与 `e750302` blob 同一（diff 空）——增量逐字节落在申报范围。
+- 浏览器相关源码/配置一致性（相对回执 `404a2bc` 冻结树 `2e349ec3`）：本增量零改动 `src/`、`server/`、II 测试、`tauri.conf.json`、`package.json`、vite/测试配置与静态产物清单——除经审 2 文件与公共记录（本审查记录、索引行、本节）外 `git diff 2e349ec3 HEAD --name-only` 无其他文件。按任务描述「后继集成只有 manifest 主入口/公共记录改动且浏览器相关源码及配置保持一致时，可按精确差异核对沿用此旅程结果」的登记，本增量符合沿用条件；最终一致性结论与逐文件核对见 §12.4。
+- admission：`build/web-manual-items-integration/admission-r4.json`（修改前登记：实际 pwd/branch/HEAD `afa0f5f`（直接立于 `404a2bc`）、基点祖先核对、接收增量与审查身份、写入清单、门禁计划；本轮 worktree 由平台重建，gitignored 历史证据不在，`npm ci --ignore-scripts` 已重跑 exit 0）。
+
+### 11.3 第四轮冻结与完整门禁（原预算串行，冻结 SHA 上执行）
+
+- 第四轮冻结提交＝本节随接入一起提交的公共记录提交；其 SHA/tree 于 §12 回执登记（gate 在该冻结提交上执行）。
+- 前置与门禁计划同 §4/§9.3：冻结后从头真实准备构建前置（`npm ci --ignore-scripts` 已 exit 0、`probe:prepare-cli`、`probe:prepare-pi`，不以空目录/桩产物替代），核实 check 链尾含 `build:backend` 与 `test:web-manual-items`（第 50/51 组）后，在冻结提交上串行执行一次完整 `npm run check`——保留全部脚本、51 组、预算与默认产品 dist，不孤立预跑同版整套 Web 组，不以聚焦/打包绿证替代全门禁；逐组结果、exit、警告分类与未验项记入 §12。若仍失败，沿 §4.3/§8.3/§10.3 同一路径归因回报，不擅改 I/II。

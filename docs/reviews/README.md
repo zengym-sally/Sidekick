@@ -13,10 +13,11 @@
 - **索引强制**：新增记录必须登记到本文件；未登记视为未收口。`check:docs` 只校验链接存在，语义一致性靠评审。
 - **新路径**：2026-10-31 结构治理后，新记录使用新路径（`runtime/{entries,lib,workers}/`、`src-tauri/src/{app,store,host,diagnostics}/`、`tests/{unit,integration,probes,fixtures}/`、`scripts/{build,checks,probes}/`）；旧记录保留原路径，按文件名仍可检索。
 
-## 2. 记录索引（104 份）
+## 2. 记录索引（105 份）
 
 | 记录 | 日期 | 范围与结论 | 证据 |
 |---|---|---|---|
+| [web-manual-items-implementation-20261108-opencode-default-run-review.md](web-manual-items-implementation-20261108-opencode-default-run-review.md) | 2026-11-08 | W1 I manifest default-run 消歧增量独立审查（OpenCode）：通过——`91b78ed..e750302` 身份逐字节复算（恰 2 文件 +24/−1，patch `4b300494…77f83b3`、累计 `a2c7d8d4…40fa9a6`），`[package]` 仅追加裁定行 `default-run = "sidekick"`＋5 行注释＋I 自有记录刷新；边界核实：Cargo.lock/tauri.conf.json/main.rs/web-backend-storage.rs blob 不变、001/002 冻结、依赖段逐字节相同，`cargo metadata --no-deps` exit 0 且 default-run=sidekick、bin targets 恰 2 个；真实打包签署留集成第 47 组 | 见记录 |
 | [web-manual-items-implementation-20261108-opencode-alias-review.md](web-manual-items-implementation-20261108-opencode-alias-review.md) | 2026-11-08 | W1 I alias 修复增量独立审查（OpenCode）：通过——`ff5d6c2..91b78ed` 身份逐字节复算（恰 2 文件 +19/−2，patch `5a339edc…365ea0`、累计 `8634afb4…36bae2`），仅锚定 alias 一行＋I 自有记录刷新，九用例断言/30000ms 预算未动；共享 node_modules 动态复跑：候选 9/9 pass exit 0，旧/新映射对照旧 alias 逐字复现门禁 `[UNLOADABLE_DEPENDENCY]` 9/0/9；typecheck exit 0；完整门禁留集成轮 | 见记录 |
 | [web-manual-items-implementation-20261108-zcode-typecheck-review.md](web-manual-items-implementation-20261108-zcode-typecheck-review.md) | 2026-11-08 | W1 I 类型映射退修限定复审（ZCode R3 `3810ee9`）：通过——增量 `4ca93440..ff5d6c2` 身份逐字节一致（3 文件 +93/−8，patch `7ef64137`、累计 `b0e03254`），相对父版零 Rust/server/domain/shared/package 差异；共享 node_modules A/B：父版逐字节复现门禁三处 TS 错误、候选 exit 0；单测 16/16；可证伪回归两向（ESM 链接拒绝旧字节、单变量变异恰两条新用例失败）；完整门禁留唯一集成者 | 见记录 |
 | [web-manual-items-integration-20261108-kimi-review.md](web-manual-items-integration-20261108-kimi-review.md) | 2026-11-08 | W1 集成公共增量只读审查（Kimi `b15eaa17`）：通过（仅公共增量；0 阻断，2 NIT＋2 观察）——候选原样接入零偏离、契约附录A 纯追加、五份审查记录 blob 级一致、失败回执自洽且缺陷归因独立确证；NIT-1 前置/gate 起点表述、NIT-2 证据包完整性由集成第二轮处置；不签候选 II 与业务通过 | 见记录 |
