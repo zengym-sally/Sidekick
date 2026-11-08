@@ -510,7 +510,7 @@ fn validate_write(sql: &str) -> PResult<()> {
         return Ok(());
     }
     if contains_keyword(&upper, "SETTINGS") {
-        return validate_settings_write(sql, &upper);
+        return validate_settings_write(sql);
     }
     Err(p(
         "WEB_BACKEND_SQL_DENIED",
@@ -518,43 +518,92 @@ fn validate_write(sql: &str) -> PResult<()> {
     ))
 }
 
-/// The only settings write this slice allows: the `application.timeZone` key,
-/// inserted at version 1 or advanced by a parameterized compare-and-set. The
-/// key must appear as a literal so an arbitrary key cannot be written.
-fn validate_settings_write(raw: &str, upper: &str) -> PResult<()> {
-    if !raw.contains("'application.timeZone'") {
-        return Err(p(
-            "WEB_BACKEND_SQL_DENIED",
-            "settings 写入仅限 application.timeZone。",
-        ));
-    }
-    let first = first_keyword(upper).ok_or_else(|| p("WEB_BACKEND_SQL_DENIED", "空语句。"))?;
-    match first.as_str() {
-        "INSERT" => {
-            if !upper.contains("INTO SETTINGS")
-                || !upper.contains("KEY")
-                || !upper.contains("VALUE")
-                || !upper.contains("VERSION")
-            {
-                return Err(p("WEB_BACKEND_SQL_DENIED", "settings INSERT 形状非法。"));
+/// The exact production settings statements. `application-settings-service.mjs`
+/// only ever sends these two parameterized shapes.
+const SETTINGS_INSERT: &str =
+    "INSERT INTO settings(key,value,version)VALUES('application.timeZone',?,1)";
+const SETTINGS_UPDATE: &str =
+    "UPDATE settings SET value=?,version=version+1 WHERE key='application.timeZone' AND version=?";
+
+fn settings_drops_space(out: &str) -> bool {
+    out.ends_with('(') || out.ends_with(')') || out.ends_with(',') || out.ends_with('=')
+}
+
+/// Canonical form for exact-template comparison: strip comments, keep string
+/// literals verbatim (the key's case/whitespace is significant), collapse
+/// whitespace, and drop spaces around `(`, `)`, `,`, `=`.
+fn normalize_settings_sql(raw: &str) -> String {
+    let mut out = String::new();
+    let mut chars = raw.chars().peekable();
+    let mut pending_space = false;
+    while let Some(character) = chars.next() {
+        match character {
+            '-' if chars.peek() == Some(&'-') => {
+                for character in chars.by_ref() {
+                    if character == '\n' {
+                        break;
+                    }
+                }
+                pending_space = true;
+            }
+            '/' if chars.peek() == Some(&'*') => {
+                chars.next();
+                let mut previous = ' ';
+                for character in chars.by_ref() {
+                    if previous == '*' && character == '/' {
+                        break;
+                    }
+                    previous = character;
+                }
+                pending_space = true;
+            }
+            '\'' => {
+                if pending_space && !out.is_empty() && !settings_drops_space(&out) {
+                    out.push(' ');
+                }
+                pending_space = false;
+                out.push('\'');
+                while let Some(character) = chars.next() {
+                    out.push(character);
+                    if character == '\'' {
+                        if chars.peek() == Some(&'\'') {
+                            out.push(chars.next().unwrap());
+                            continue;
+                        }
+                        break;
+                    }
+                }
+            }
+            character if character.is_whitespace() => pending_space = true,
+            '(' | ')' | ',' | '=' => {
+                if out.ends_with(' ') {
+                    out.pop();
+                }
+                out.push(character);
+                pending_space = false;
+            }
+            _ => {
+                if pending_space && !out.is_empty() && !settings_drops_space(&out) {
+                    out.push(' ');
+                }
+                pending_space = false;
+                out.push(character);
             }
         }
-        "UPDATE" => {
-            if !upper.contains("SET VALUE")
-                || !upper.contains("WHERE")
-                || !upper.contains("AND VERSION")
-            {
-                return Err(p("WEB_BACKEND_SQL_DENIED", "settings UPDATE 形状非法。"));
-            }
-        }
-        _ => {
-            return Err(p(
-                "WEB_BACKEND_SQL_DENIED",
-                "settings 写入仅允许 INSERT/UPDATE。",
-            ))
-        }
     }
-    Ok(())
+    out
+}
+
+/// The only settings writes this slice allows: the two exact production
+/// templates, byte-for-byte after whitespace/comment normalization. This closes
+/// the MINOR-2 gaps (INSERT…SELECT, multi-row VALUES, OR-widened predicates,
+/// a rewritten key, or the literal appearing anywhere but the key position).
+fn validate_settings_write(raw: &str) -> PResult<()> {
+    let normalized = normalize_settings_sql(raw);
+    if normalized == SETTINGS_INSERT || normalized == SETTINGS_UPDATE {
+        return Ok(());
+    }
+    Err(p("WEB_BACKEND_SQL_DENIED", "settings 写入形状非法。"))
 }
 
 fn validate_read(sql: &str) -> PResult<()> {

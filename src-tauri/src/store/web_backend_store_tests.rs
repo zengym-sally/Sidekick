@@ -326,6 +326,40 @@ fn settings_write_scope_is_limited_to_the_application_key() {
         );
         assert_eq!(outcome.unwrap_err().code, "WEB_BACKEND_SQL_DENIED");
     }
+    // MINOR-2 adversarial shapes: none may write a row.
+    for sql in [
+        "INSERT INTO settings(key,value,version) SELECT 'probe.select.key','x',1 WHERE key='application.timeZone'",
+        "INSERT INTO settings(key,value,version) VALUES('application.timeZone','x',1),('other.key','y',1)",
+        "UPDATE settings SET value=?, version=version+1 WHERE key='application.timeZone' AND version=? OR 1=1",
+        "UPDATE settings SET value=?, version=version+1 WHERE key='APPLICATION.TIMEZONE' AND version=?",
+        "INSERT INTO settings(note,value,version) VALUES('application.timeZone','x',1)",
+        "INSERT INTO settings(key,value,version) VALUES('application.timeZone',?,1); DROP TABLE settings",
+    ] {
+        let outcome = store.transact(&json!({"ops": [{"sql": sql, "params": []}]}));
+        assert!(outcome.is_err(), "accepted adversarial settings SQL: {sql}");
+        assert_eq!(outcome.unwrap_err().code, "WEB_BACKEND_SQL_DENIED");
+    }
+    // The CAS must not move a row when the version is wrong.
+    let stale = store.transact(&json!({"ops": [{
+        "sql": "UPDATE settings SET value=?, version=version+1 WHERE key='application.timeZone' AND version=?",
+        "params": ["Asia/Tokyo", 99]
+    }]}));
+    assert_eq!(stale.unwrap()["results"][0]["changes"], 0);
+    // Whitespace variations of the two production templates still pass.
+    let (dir2, _root2, mut store2) = init_store("settings-whitespace");
+    store2
+        .transact(&json!({"ops": [{
+            "sql": "INSERT  INTO  settings (key, value, version) VALUES ('application.timeZone', ?, 1)",
+            "params": ["Asia/Shanghai"]
+        }]}))
+        .unwrap();
+    store2
+        .transact(&json!({"ops": [{
+            "sql": "UPDATE settings SET value=?, version=version+1 WHERE key='application.timeZone' AND version=?",
+            "params": ["UTC", 1]
+        }]}))
+        .unwrap();
+    let _ = fs::remove_dir_all(&dir2);
     let _ = fs::remove_dir_all(&dir);
 }
 
