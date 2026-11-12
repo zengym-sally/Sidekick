@@ -2,9 +2,9 @@
 
 ## 范围与结论
 
-用户要求收束所有非 main 分支并校准后续计划；随后明确同意“有效实现入本地主线，过时/草稿只保留可恢复记录与备份，远端动作最后单独确认”。R3 批量整合，从 `1e3704432e7014f1e23b40e9aff9791662e9c6f5` 开始。**本地源码收束已完成**：验证基点 `0c4d439` 已合入本地 main，53个非main本地分支已清理，3个dirty工作区原样保全；远端尚未修改。此结论不关闭 W1 整体验收或发布出口。
+用户要求收束所有非 main 分支并校准后续计划；随后明确同意“有效实现入本地主线，过时/草稿只保留可恢复记录与备份，远端动作最后单独确认”。R3 批量整合，从 `1e3704432e7014f1e23b40e9aff9791662e9c6f5` 开始。**本地源码收束已完成**：验证基点 `0c4d439` 已合入本地 main，53个非main本地分支已清理，3个dirty工作区原样保全；Gitee与GitHub已同步，远端也均仅保留main。此结论不关闭 W1 整体验收或发布出口。
 
-53 个本地非 main 分支已逐项盘点。它们不等于 53 项独立功能：许多是共同基座、重复评审或自动快照。两个远端仅 origin 有一个非 main 分支；origin/main 为本轮起点，github/main 为 `e91bbc1`。本轮不访问真实业务凭据、用户根或外部平台任务状态。既有完整门禁允许 macOS Keychain 的随机 fixture 条目写读删，严格不读既有业务条目；它只证明合成适配路径。
+53 个本地非 main 分支已逐项盘点。它们不等于 53 项独立功能：许多是共同基座、重复评审或自动快照。盘点时两个远端仅 origin 有一个非 main 分支；origin/main 为本轮起点，github/main 为 `e91bbc1`。本轮不访问真实业务凭据、用户根或外部平台任务状态。既有完整门禁允许 macOS Keychain 的随机 fixture 条目写读删，严格不读既有业务条目；它只证明合成适配路径。
 
 ## 采用的实现与冲突取舍
 
@@ -130,8 +130,12 @@
 - Keychain真实OS调用限随机自有 `com.sidekick.s0.fixture.*` 合成条目，写读删与清理断言通过；真实业务凭据、真实模型、飞书及用户工作根未验证。Linux、完整W1产品旅程与D1原生出口继续按实施计划排队。
 - 本地回执 `build/branch-consolidation-20261112/local-closeout.json`：53分支、37备份哈希、3个dirty内容删除前均重验；当前本地仅main、工作区干净。四个旧team工作区保留数据并转detached，原有detached工作区内容保持。
 - **持久恢复备份**另存 `.git/branch-archives/20261112/`（37份原备份哈希全部匹配），不依赖构建目录留存；原始恢复演练和日志仍在 `build/branch-consolidation-20261112/`。本机绝对路径和原始平台导出只留本地备份；入库3份历史副本已显式脱敏。
-- 远端检查仍是起点：origin/main `1e37044`，github/main `e91bbc1`，origin唯一任务分支 `agent/zcode/mayne-24-recovery-authority-fix`=`b4aea55`。推送及远端删除按仓库对外状态规则留待用户最终确认。
+- 推送前远端核对：origin/main `1e37044`，github/main `e91bbc1`，origin唯一任务分支 `agent/zcode/mayne-24-recovery-authority-fix`=`b4aea55`。本地结果完成后，用户再次明确确认“推送两个远端并删除任务分支”；首次同步 `2987440` 到两端后逐一回读一致，再以精确旧OID租约删除任务分支。
 
 ### 主工作区收尾复核
 
 本地主线接收后，`npm run build:backend` **exit0**，主工作区的前端、Rust存储适配及真实Pi Runtime闭包已刷新（存储二进制2,664,496 bytes，随包Node121,911,744 bytes）。`npm run check:docs` exit0（23文件/981本地链接），`npm run check:structure` exit0（313源文件/696引用，含003/004与产物根自测），`git diff --check`通过。与已验`0c4d439`比较，生产、测试、构建、依赖与只读资源零字节差异；后续仅事实文档登记。本地分支实际仅main，当前主工作区干净，未提交工作所在三个原工作区保持原样。
+
+### 远端收尾（用户最终确认后）
+
+origin（Gitee）和github（GitHub）的main已同步，origin唯一任务分支已删除；实际`ls-remote --heads`回读两端均只剩main。本节仅登记事实并再次同步文档，生产/测试/构建源码仍与独立已验`0c4d439`逐字相同。推送命令、退出码、首次共同提交与末次头指针回读保存在本地`build/branch-consolidation-20261112/remote-closeout/`（`commands.json`、`first-push-result.json`、`final-result.json`）。所有原分支、原始工作区和本地主线仍可从持久备份恢复。
