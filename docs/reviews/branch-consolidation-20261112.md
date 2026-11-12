@@ -48,7 +48,10 @@
 | 第三轮独立完整门禁（`b610984`） | exit 101；前16组过，第17组 check:pet-ui 因3条Clippy错误失败，后39未执行 | 本机Rust1.99.1新增静态判据；删除无效u64 cast、两处等价as_chunks写法；最低Rust1.89不变；聚焦check:pet-ui exit0 |
 | 第四轮独立完整门禁（`66cd13b`） | exit101，646.095秒；第38组 probe:native 336过/1失败/3ignored，后18未执行 | 自建验证工作区的target缓存符号链接导致进程启动命令与canonical exe不符。改为物理构建目录，同源码host-crash矩阵1/1通过；未放宽归属断言 |
 | 产物根入库守卫补缺 | 新自测修前exit1，修后结构守卫exit0 | 缓存链接曾被Git按根文件收录，原规则只禁目录后代；移除链接跟踪并禁止4种产物根自身，保留target-source反控。最终整合树重新生成在原main之上，不携带含本机链接的中间提交 |
-| 最终独立完整门禁 | 待重跑 | 清洁、物理target工作区冻结后由B从头执行 |
+| 第五轮独立完整门禁（`8415872`） | exit1，842.054秒；前50组过，第51组手工事项55/59，后5未执行 | 4个API1正控未接API2：物理target修正及host-crash已验证，Rust337/0/3、两包/签名/后端均通过；更新正控版本，不变业务断言 |
+| 构建工具链新增警告 | rust-objcopy缺`@rpath/libLLVM.dylib`，7次debug stripping SIGABRT；构建仍exit0 | 已定位本机Rust1.99.1配套库缺失；不改profile绕过，不擅自更改全局工具链。符号剥离及发布验证保持开放；最小补验为修复工具链LLVM配套库后，在物理干净target重建两包（probe:app/build:backend）并核对符号、签名和包排除 |
+| 末段全部6脚本预验 | 439/439，exit0 | 手工59＋文本247＋任务23＋候选22＋API2 51＋退出37；串行使用与完整链相同脚本，不能代替完整check |
+| 最终独立完整门禁 | 待重跑 | 末段已全绿，冻结后由B从头执行 |
 
 故障矩阵的旧 `failed` 断言经独立裁决按 API1 §4.6／API2 保留规则适配：无法证明副作用安全时必须等待最终 `needs_review`，并严格检查 `failure_unknown_side_effect`、`autoResume=false`、退出已确认与权威失败码；不放过暂态 failed，不通过授予 proven_safe 求绿。
 

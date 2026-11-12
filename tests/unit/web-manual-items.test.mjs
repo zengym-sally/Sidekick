@@ -89,7 +89,7 @@ test('create returns the wire shape and records history', async () => {
   const { service } = makeService();
   const { item, replayed } = await service.createItem('op_1', SAMPLE);
   assert.equal(replayed, false);
-  assert.equal(item.contractVersion, 'web-api/1');
+  assert.equal(item.contractVersion, 'web-api/2');
   assert.match(item.itemId, /^mi_[0-9a-f]{32}$/);
   assert.equal(item.status, 'open');
   assert.equal(item.version, 1);
@@ -407,7 +407,7 @@ test('wire↔domain time mapping keeps minute default and day precision', () => 
 
 test('fromWireItem maps due/followup and source per the manual wire format', () => {
   const wire = {
-    contractVersion: 'web-api/1',
+    contractVersion: 'web-api/2',
     itemId: 'mi_x',
     title: 't',
     kind: 'action',
@@ -650,7 +650,7 @@ test('application settings reads the OS default at version 0 without writing', a
   const { storage } = makeService();
   const service = new ApplicationSettingsService(storage, { osTimeZone: () => 'Asia/Shanghai' });
   const snapshot = await service.read();
-  assert.equal(snapshot.contractVersion, 'web-api/1');
+  assert.equal(snapshot.contractVersion, 'web-api/2');
   assert.equal(snapshot.settings.timeZone, 'Asia/Shanghai');
   assert.equal(snapshot.version, 0);
   const rows = await storage.command('query', { sql: 'SELECT count(*) FROM settings', params: [] });

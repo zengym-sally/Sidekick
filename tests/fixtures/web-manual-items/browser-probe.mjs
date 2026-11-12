@@ -175,12 +175,12 @@ export function assertColdStartReport(report, options = {}) {
   assert.ok(!report.session.fetchError, `the page must reach /api/session same-origin: ${report.session.fetchError ?? ''}`);
   assert.equal(report.session.status, 401, 'the unpaired page must reach /api/session same-origin and be told to pair');
   assert.match(report.session.contentType, /^application\/json/, '/api/session must answer JSON, not HTML');
-  assert.equal(report.session.json?.contractVersion, 'web-api/1', '/api/session must answer with the frozen envelope');
+  assert.equal(report.session.json?.contractVersion, 'web-api/2', '/api/session must answer with the frozen envelope');
   assert.equal(report.session.json?.error?.code, 'unauthenticated', '/api/session must answer with the frozen envelope');
   assert.ok(!report.events.fetchError, `the page must reach /api/events same-origin: ${report.events.fetchError ?? ''}`);
   assert.equal(report.events.status, 401, 'the page must reach /api/events same-origin');
   assert.match(report.events.contentType, /^application\/json/, '/api/events must answer JSON, not HTML');
-  assert.equal(report.events.json?.contractVersion, 'web-api/1', '/api/events must answer with the frozen envelope');
+  assert.equal(report.events.json?.contractVersion, 'web-api/2', '/api/events must answer with the frozen envelope');
   assert.equal(report.events.json?.error?.code, 'unauthenticated', '/api/events must answer with the frozen envelope');
   assert.equal(report.overflow, true,
     `the page must not overflow horizontally${width ? ` at ${width}px` : ''} `

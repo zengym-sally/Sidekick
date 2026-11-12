@@ -84,7 +84,7 @@ void (async () => {
 `);
   writeFileSync(join(dir, 'assets', `app-${HASH}.css`), 'body{margin:0;font-family:sans-serif}#app{padding:16px}\n');
   writeFileSync(join(dir, 'favicon.svg'), '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"></svg>\n');
-  writeFileSync(join(dir, 'data.json'), '{"contractVersion":"web-api/1","synthetic":true}\n');
+  writeFileSync(join(dir, 'data.json'), '{"contractVersion":"web-api/2","synthetic":true}\n');
   writeFileSync(join(dir, 'assets', 'font.woff2'), Buffer.from('dG9vLXNtYWxs', 'base64'));
   return dir;
 }
