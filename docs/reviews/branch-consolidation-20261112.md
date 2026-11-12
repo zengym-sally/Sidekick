@@ -131,3 +131,7 @@
 - 本地回执 `build/branch-consolidation-20261112/local-closeout.json`：53分支、37备份哈希、3个dirty内容删除前均重验；当前本地仅main、工作区干净。四个旧team工作区保留数据并转detached，原有detached工作区内容保持。
 - **持久恢复备份**另存 `.git/branch-archives/20261112/`（37份原备份哈希全部匹配），不依赖构建目录留存；原始恢复演练和日志仍在 `build/branch-consolidation-20261112/`。本机绝对路径和原始平台导出只留本地备份；入库3份历史副本已显式脱敏。
 - 远端检查仍是起点：origin/main `1e37044`，github/main `e91bbc1`，origin唯一任务分支 `agent/zcode/mayne-24-recovery-authority-fix`=`b4aea55`。推送及远端删除按仓库对外状态规则留待用户最终确认。
+
+### 主工作区收尾复核
+
+本地主线接收后，`npm run build:backend` **exit0**，主工作区的前端、Rust存储适配及真实Pi Runtime闭包已刷新（存储二进制2,664,496 bytes，随包Node121,911,744 bytes）。`npm run check:docs` exit0（23文件/981本地链接），`npm run check:structure` exit0（313源文件/696引用，含003/004与产物根自测），`git diff --check`通过。与已验`0c4d439`比较，生产、测试、构建、依赖与只读资源零字节差异；后续仅事实文档登记。本地分支实际仅main，当前主工作区干净，未提交工作所在三个原工作区保持原样。
