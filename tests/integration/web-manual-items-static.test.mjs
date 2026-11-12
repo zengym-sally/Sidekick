@@ -136,7 +136,7 @@ test('SPA routes fall back to index.html while /api paths never do', async () =>
     assert.ok(response.status >= 400 && response.status < 500, `${path} must not fall back to index.html (got ${response.status})`);
     assert.doesNotMatch(response.headers.get('content-type') ?? '', /text\/html/, `${path} must not return HTML`);
     assert.ok(response.json, `${path} must return a JSON error envelope: ${response.text.slice(0, 200)}`);
-    assert.equal(response.json.contractVersion, 'web-api/1', `${path} error envelope must carry the contract version`);
+    assert.equal(response.json.contractVersion, 'web-api/2', `${path} error envelope must carry the contract version`);
   }
   const posted = await backend.request('POST', '/api/unknown-route', { body: { hello: 'world' } });
   assert.ok(posted.status >= 400 && posted.status < 500, 'unknown API writes must not fall back either');

@@ -1,0 +1,65 @@
+{
+  "contractVersion": "web-api/2",
+  "taskId": "tsk_1a2b3c4d5e6f708192a3b4c5d6e7f809",
+  "operationId": "op_5f2b91c7a4d63e0817bc2f0a9d4e1b53",
+  "type": "organize_text",
+  "role": "organizer",
+  "state": "succeeded",
+  "version": 4,
+  "createdAt": "2026-11-06T12:30:00.000Z",
+  "updatedAt": "2026-11-06T12:33:05.000Z",
+  "terminalAt": "2026-11-06T12:33:05.000Z",
+  "submitSeq": 1041,
+  "queuePosition": null,
+  "attemptCount": 1,
+  "attemptId": "att_77c1e4a09b3d42f58c6e01a2d9b48e77",
+  "cancelIntent": false,
+  "configRevision": "cfgrev_0d81fe22",
+  "inputRef": {
+    "kind": "inline_text",
+    "byteSize": 842,
+    "contentHash": "sha256:1f3a9c07e5b2d84c0a6f1e93b7d5c2a8094e6f1bd3c7a5029e8b1d4f6a0c3e52"
+  },
+  "progress": null,
+  "result": {
+    "kind": "organize_text_result",
+    "payloadRef": "result://att_77c1e4a09b3d42f58c6e01a2d9b48e77/payload",
+    "acceptedByAttempt": "att_77c1e4a09b3d42f58c6e01a2d9b48e77",
+    "completedAt": "2026-11-06T12:33:05.000Z"
+  },
+  "failure": null,
+  "recovery": null,
+  "attemptExitState": "exited_confirmed",
+  "attemptExitEvidence": {
+    "verdict": "registry_extinct",
+    "workerExited": true,
+    "groupAbsent": true,
+    "registry": {
+      "total": 1,
+      "confirmedExtinct": 1,
+      "unobservable": 0,
+      "survivors": []
+    },
+    "argvScan": {
+      "performed": true,
+      "hits": 0
+    },
+    "veto": {
+      "triggered": false,
+      "reason": null,
+      "detail": null
+    },
+    "residual": {
+      "treeExtinctProven": false,
+      "scope": "registry_domain",
+      "strayLedger": {
+        "found": 0,
+        "swept": 0,
+        "pending": 0
+      }
+    },
+    "confirmedAt": "2026-11-06T12:33:05.000Z"
+  },
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "resultPendingExit": false
+}

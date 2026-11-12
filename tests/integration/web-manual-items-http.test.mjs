@@ -51,7 +51,7 @@ const followupInput = (overrides = {}) => ({
 function assertEnvelope(response, status, code) {
   assert.equal(response.status, status, `expected HTTP ${status}, got ${response.status}: ${response.text}`);
   assert.ok(response.json, `expected a JSON body, got: ${response.text}`);
-  assert.equal(response.json.contractVersion, 'web-api/1', 'error envelope must carry contractVersion web-api/1');
+  assert.equal(response.json.contractVersion, 'web-api/2', 'error envelope must carry contractVersion web-api/1');
   assert.equal(response.json.status, status, 'envelope status must mirror the HTTP status');
   assert.equal(response.json.error?.code, code, `expected error code ${code}, got ${JSON.stringify(response.json.error)}`);
   assert.equal(typeof response.json.error?.message, 'string', 'error message must be a string');
@@ -78,8 +78,12 @@ after(async () => {
   await backend?.close();
 });
 
-test('A-9/schema: synthetic root initialized to web-backend schema version 2 with the manual-item tables', async () => {
-  assert.equal(schemaVersion(backend.root), 2, 'migration 002 must advance schema_meta to 2 inside the same transaction');
+test('A-9/schema: synthetic root initialized to web-backend schema version 4 with the manual-item tables', async () => {
+  // 003_text_intake.sql (owner-approved exact DDL, sha256 8e4e3159…7870) raised
+  // the mirror to 3 in the same transaction; 004_candidate_operations.sql
+  // (owner authorization D, sha256 5de175b6…c5bf) appended the ledger and
+  // raised the mirror to 4. The 002 mirror step is unchanged.
+  assert.equal(schemaVersion(backend.root), 4, 'migrations 003 and 004 must advance schema_meta to 4 inside the same transaction');
   const counts = tableCounts(backend.root);
   assert.equal(counts.manualItems, 0);
   assert.equal(counts.manualItemEvents, 0);
@@ -186,7 +190,7 @@ test('A-1: the two item kinds are created with the contract wire format and data
   assert.equal(action.response.status, 200, action.response.text);
   const item = action.response.json.item;
   assert.ok(item, 'create response must carry {item}');
-  assert.equal(item.contractVersion, 'web-api/1');
+  assert.equal(item.contractVersion, 'web-api/2');
   assert.match(item.itemId, ITEM_ID);
   assert.equal(item.kind, 'action');
   assert.equal(item.owner, '李四');
@@ -595,14 +599,14 @@ test('M2: item.changed hints arrive on the session stream without task cursor id
     assert.match(stream.contentType, /text\/event-stream/);
     const ready = await stream.waitFor((frame) => frame.event === 'stream.ready');
     assert.equal(ready.id, null, 'stream.ready must not carry an id line');
-    assert.equal(ready.data.contractVersion, 'web-api/1');
+    assert.equal(ready.data.contractVersion, 'web-api/2');
     const created = await createItem(backend, actionInput({ title: 'SSE 提示事项' }));
     itemId = created.response.json.item.itemId;
     const hint = await stream.waitFor((frame) => frame.event === 'item.changed' && frame.data?.itemId === itemId);
     assert.equal(hint.id, null, 'item.changed hints must not carry an id line and must not advance the task cursor');
     assert.equal(hint.data.objectType, 'item');
     assert.equal(hint.data.itemVersion, 1);
-    assert.equal(hint.data.contractVersion, 'web-api/1');
+    assert.equal(hint.data.contractVersion, 'web-api/2');
     assert.ok(hint.data.at, 'the hint must carry a timestamp');
     const updated = await backend.request('PUT', `/api/manual-items/${itemId}`, {
       body: { operationId: operationId(), expectedVersion: 1, input: actionInput({ title: 'SSE 提示事项 改' }) },

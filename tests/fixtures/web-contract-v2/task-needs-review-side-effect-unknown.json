@@ -1,0 +1,79 @@
+{
+  "contractVersion": "web-api/2",
+  "taskId": "tsk_9c2e5a7b1d4f6083ca5e8b0d2f4a6c91",
+  "operationId": "op_3e7b1d5a9c2f4068da1c3e5b7d9f0a24",
+  "type": "organize_text",
+  "role": "organizer",
+  "state": "needs_review",
+  "version": 5,
+  "createdAt": "2026-11-06T12:30:00.000Z",
+  "updatedAt": "2026-11-06T12:36:20.000Z",
+  "terminalAt": null,
+  "submitSeq": 1045,
+  "queuePosition": null,
+  "attemptCount": 1,
+  "attemptId": "att_5d8f1a3c7e0b2469da2c4e6b8a0d1f35",
+  "attemptExitState": "exited_confirmed",
+  "attemptExitEvidence": {
+    "verdict": "registry_extinct",
+    "workerExited": true,
+    "groupAbsent": true,
+    "registry": {
+      "total": 1,
+      "confirmedExtinct": 1,
+      "unobservable": 0,
+      "survivors": []
+    },
+    "argvScan": {
+      "performed": true,
+      "hits": 0
+    },
+    "veto": {
+      "triggered": false,
+      "reason": null,
+      "detail": null
+    },
+    "residual": {
+      "treeExtinctProven": false,
+      "scope": "registry_domain",
+      "strayLedger": {
+        "found": 0,
+        "swept": 0,
+        "pending": 0
+      }
+    },
+    "confirmedAt": "2026-11-06T12:36:20.000Z"
+  },
+  "cancelIntent": false,
+  "configRevision": "cfgrev_0d81fe22",
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "inputRef": {
+    "kind": "inline_text",
+    "byteSize": 842,
+    "contentHash": "sha256:1f3a9c07e5b2d84c0a6f1e93b7d5c2a8094e6f1bd3c7a5029e8b1d4f6a0c3e52"
+  },
+  "progress": null,
+  "result": null,
+  "failure": null,
+  "recovery": {
+    "cause": "failure_unknown_side_effect",
+    "sideEffectKnown": false,
+    "autoResume": false,
+    "reason": "a lark_message_send tool call completed before the follow-up model call failed; the failure code alone cannot prove resend safety, so the task is not auto-requeued",
+    "receipts": [
+      {
+        "receiptId": "rct_7b2e9d4a6c1f",
+        "kind": "lark_message_send",
+        "externalRef": "om_synthetic_52b8f1",
+        "recordedAt": "2026-11-06T12:35:58.000Z",
+        "verifiable": true
+      }
+    ],
+    "decisionOptions": [
+      "resume",
+      "cancel"
+    ],
+    "itemVersion": 1
+  },
+  "resultPendingExit": false
+}

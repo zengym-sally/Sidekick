@@ -1,0 +1,29 @@
+{
+  "contractVersion": "web-api/2",
+  "status": 200,
+  "taskId": "tsk_7e0b3d6a9f2c4185da4e7b1c3a6f8d25",
+  "kind": "organize_text_result",
+  "totalBytes": 1024,
+  "maxInlineBytes": 65536,
+  "maxSegmentBytes": 65536,
+  "inline": true,
+  "payload": {
+    "candidates": [
+      {
+        "title": "整理接入清单",
+        "kind": "action"
+      }
+    ]
+  },
+  "payloadRef": "result://att_9d2e5a8c1f4b3067da4c6e9b2a5d8f13/payload",
+  "acceptedByAttempt": "att_9d2e5a8c1f4b3067da4c6e9b2a5d8f13",
+  "completedAt": "2026-11-06T12:31:10.000Z",
+  "readGuard": {
+    "state": "needs_review",
+    "cause": "result_exit_unconfirmed",
+    "attemptExitState": "exited_confirmed"
+  },
+  "note": "GET /api/tasks/{taskId}/result is allowed for this guarded recovery state; the client reads the staged outcome before resolve(resume)/resolve(cancel)",
+  "outcome": "succeeded",
+  "failure": null
+}

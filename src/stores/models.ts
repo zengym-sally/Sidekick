@@ -1,4 +1,4 @@
-import {computed,reactive,ref} from 'vue';import {defineStore} from 'pinia';import {invoke} from '@tauri-apps/api/core';
+import {computed,reactive,ref} from 'vue';import {defineStore} from 'pinia';import {getWebApiClient} from '../lib/web-api-client.ts';
 import {errorMessage} from './todos.ts';
 import type {ModelConfiguration,Provider,ModelDefinition,ProviderDocument,ModelDocument} from '../domain/organizer.ts';
 import {clone,providerEditor,modelEditor,serializeProvider,serializeModel,usableModel,type ProviderEditor,type ModelEditor} from '../domain/model-catalog.ts';
@@ -32,4 +32,4 @@ export function createModelSettings(api:Backend){
  function discard(){if(saving.value)return;error.value='';notice.value='';if(selectedModel.value){const id=selectedModel.value;delete modelDrafts[id];if(!findModel(id))selectedModel.value=null;}else if(selectedProvider.value){const id=selectedProvider.value;delete keys[id];delete providerDrafts[id];if(firstModels[id])delete modelDrafts[firstModels[id]];delete firstModels[id];if(!findProvider(id)){selectedProvider.value=configuration.value?.providers.providers[0]?.id||'';}}}
  return {configuration,ready,loading,saving,error,notice,selectedProvider,selectedModel,globalDraft,providerDrafts,modelDrafts,keys,firstModels,providerDraft,modelDraft,initialModel,dirty,load,selectProvider,backToProvider,editModel,addProvider,addModel,saveProvider,saveModel,applyDefault,removeModel,removeProvider,discard,findModel,findProvider};
 }
-export const useModelSettings=defineStore('models',()=>createModelSettings(invoke));
+export const useModelSettings=defineStore('models',()=>createModelSettings(getWebApiClient().asBackend()));

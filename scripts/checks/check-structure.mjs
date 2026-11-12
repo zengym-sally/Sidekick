@@ -57,6 +57,11 @@ const IMMUTABLE_MIGRATIONS = new Map([
   // W1 manual items (owner-approved exact DDL incl. its comment lines; file lands with
   // candidate I - repo mode reports this path as a pending violation until then).
   ['src-tauri/migrations/web-backend/002_manual_items.sql','b6cb8e61609f83454164bff6c5628b2c893122b8dbb9bb3ced41bcd3d9e2f97e'],
+  // MAYNE-24 text-intake migration (owner-approved exact DDL, hash frozen in the
+  // authorization package; file lands with candidate I - repo mode reports this path
+  // as a pending violation until then).
+  ['src-tauri/migrations/web-backend/003_text_intake.sql','8e4e31597425a911a61a87bdac32d5d61683ac71d24fc2a39855282e68ea7870'],
+  ['src-tauri/migrations/web-backend/004_candidate_operations.sql','5de175b6f00ae40d8a1ed5272b6225dc5f98434815a1d089062ed34a7f39c5bf'],
 ]);
 const SCAN_TOPS = ['src/', 'shared/', 'server/', 'runtime/', 'tests/', 'scripts/', 'design/'];
 const CODE_EXT = /\.(?:mjs|cjs|js|mts|cts|ts|jsx|tsx|vue)$/;
@@ -258,7 +263,7 @@ function checkRuntimeMetadata(files, tracked, add) {
 
 function checkTrackedForbidden(tracked, add) {
   for (const file of tracked) {
-    if (FORBIDDEN_TRACKED.some((prefix) => file.startsWith(prefix))) add('tracked.forbidden', file, 1, 'generated/vendor output must never be tracked');
+    if (FORBIDDEN_TRACKED.some((prefix) => file === prefix.slice(0, -1) || file.startsWith(prefix))) add('tracked.forbidden', file, 1, 'generated/vendor output must never be tracked');
     if (ENV_FILE.test(file) && !file.endsWith('.env.example')) add('tracked.env', file, 1, 'environment files must not be tracked (except .env.example)');
   }
 }
@@ -297,7 +302,7 @@ function collect(options) {
   const add = (rule, file, line, message) => violations.push({ rule, file, line, message });
   for (const [file, expected] of IMMUTABLE_MIGRATIONS) {
     const path = absOf(root, file);
-    if (!existsSync(path) || createHash('sha256').update(readFileSync(path)).digest('hex') !== expected) add('schema.immutable-migration', file, 1, 'Frozen migrations (001-004 and web-backend/1) must retain their original bytes; append a new migration.');
+    if (!existsSync(path) || createHash('sha256').update(readFileSync(path)).digest('hex') !== expected) add('schema.immutable-migration', file, 1, 'Frozen migrations (001-004 and web-backend/1-4) must retain their original bytes; append a new migration.');
   }
   checkTopLevel(files, add);
   checkRuntimeMetadata(files, tracked, add);
@@ -371,6 +376,14 @@ function runSelfTest() {
     return path;
   };
   try {
+    const artifactRoots = ['build', 'dist', 'src-tauri/target', 'node_modules'];
+    const artifactViolations = [];
+    checkTrackedForbidden([...artifactRoots, 'src-tauri/target-source'], (rule, file) => artifactViolations.push({ rule, file }));
+    if (artifactRoots.some((file) => !artifactViolations.some((entry) => entry.rule === 'tracked.forbidden' && entry.file === file))
+      || artifactViolations.some((entry) => entry.file === 'src-tauri/target-source')) {
+      console.log('✗ structure self-test failed: tracked artifact roots must be rejected without matching similarly named source paths.');
+      return 1;
+    }
     write('package.json', `${JSON.stringify({ devDependencies: { tailwindcss: '0.0.0' }, scripts: { check: 'node tests/s1-domain.test.mjs && node scripts/probes/bundle-runtime.mjs && npm run probe:bundle' } }, null, 2)}\n`);
     write('src-tauri/migrations/001_todos.sql', 'changed historical migration');
     // The web-backend/1 lineage migration is frozen byte-exact: the synthetic tree first
@@ -551,7 +564,62 @@ function runSelfTest() {
     const itemsFreezeNote = itemsPositiveVerified
       ? 'W1 manual-items migration original bytes passed and tampered/missing bytes were flagged'
       : 'W1 manual-items migration is pending candidate I: missing and tampered bytes were flagged (positive original-bytes case activates once the file exists)';
-    console.log(`✓ structure self-test passed (${expected.length} violation classes and ${expectedReferences.length} individual reference violations detected in a synthetic tree; clean samples stayed clean; frozen new-lineage migration original bytes passed and tampered bytes were flagged; ${itemsFreezeNote}).`);
+    // MAYNE-24 text-intake migration (003, owner-approved exact DDL hash): same freeze
+    // discipline as 002 - missing and tampered bytes must both be flagged while the file
+    // is pending, and once the approved file exists its original bytes must pass.
+    const frozenIntakeMigration = 'src-tauri/migrations/web-backend/003_text_intake.sql';
+    const intakeOriginal = join(ROOT, frozenIntakeMigration);
+    const intakeAbs = join(root, ...frozenIntakeMigration.split('/'));
+    if (!violations.some((violation) => violation.rule === 'schema.immutable-migration' && violation.file === frozenIntakeMigration)) {
+      console.log('✗ structure self-test failed: missing MAYNE-24 text-intake migration was not flagged.');
+      return 1;
+    }
+    writeFileSync(intakeAbs, 'tampered text-intake migration');
+    const tamperedIntakeViolations = collect({ root, files, tracked: files.filter((file) => !untrackedPaths.has(file)), packagePath: join(root, 'package.json') }).violations;
+    if (!tamperedIntakeViolations.some((violation) => violation.rule === 'schema.immutable-migration' && violation.file === frozenIntakeMigration)) {
+      console.log('✗ structure self-test failed: tampered MAYNE-24 text-intake migration was not flagged.');
+      return 1;
+    }
+    let intakePositiveVerified = false;
+    if (existsSync(intakeOriginal)) {
+      writeFileSync(intakeAbs, readFileSync(intakeOriginal));
+      const originalIntakeViolations = collect({ root, files, tracked: files.filter((file) => !untrackedPaths.has(file)), packagePath: join(root, 'package.json') }).violations;
+      if (originalIntakeViolations.some((violation) => violation.rule === 'schema.immutable-migration' && violation.file === frozenIntakeMigration)) {
+        console.log('✗ structure self-test failed: original MAYNE-24 text-intake migration bytes were flagged.');
+        return 1;
+      }
+      intakePositiveVerified = true;
+    }
+    const intakeFreezeNote = intakePositiveVerified
+      ? 'MAYNE-24 text-intake migration original bytes passed and tampered/missing bytes were flagged'
+      : 'MAYNE-24 text-intake migration is pending candidate I: missing and tampered bytes were flagged (positive original-bytes case activates once the file exists)';
+    const frozenLedgerMigration = 'src-tauri/migrations/web-backend/004_candidate_operations.sql';
+    const ledgerOriginal = join(ROOT, frozenLedgerMigration);
+    const ledgerAbs = join(root, ...frozenLedgerMigration.split('/'));
+    if (!violations.some((violation) => violation.rule === 'schema.immutable-migration' && violation.file === frozenLedgerMigration)) {
+      console.log('✗ structure self-test failed: missing W1 candidate-operation ledger migration was not flagged.');
+      return 1;
+    }
+    writeFileSync(ledgerAbs, 'tampered candidate-operation ledger migration');
+    const tamperedLedgerViolations = collect({ root, files, tracked: files.filter((file) => !untrackedPaths.has(file)), packagePath: join(root, 'package.json') }).violations;
+    if (!tamperedLedgerViolations.some((violation) => violation.rule === 'schema.immutable-migration' && violation.file === frozenLedgerMigration)) {
+      console.log('✗ structure self-test failed: tampered W1 candidate-operation ledger migration was not flagged.');
+      return 1;
+    }
+    let ledgerPositiveVerified = false;
+    if (existsSync(ledgerOriginal)) {
+      writeFileSync(ledgerAbs, readFileSync(ledgerOriginal));
+      const originalLedgerViolations = collect({ root, files, tracked: files.filter((file) => !untrackedPaths.has(file)), packagePath: join(root, 'package.json') }).violations;
+      if (originalLedgerViolations.some((violation) => violation.rule === 'schema.immutable-migration' && violation.file === frozenLedgerMigration)) {
+        console.log('✗ structure self-test failed: original W1 candidate-operation ledger migration bytes were flagged.');
+        return 1;
+      }
+      ledgerPositiveVerified = true;
+    }
+    const ledgerFreezeNote = ledgerPositiveVerified
+      ? 'W1 candidate-operation ledger migration original bytes passed and tampered/missing bytes were flagged'
+      : 'W1 candidate-operation ledger migration is pending: missing and tampered bytes were flagged (positive original-bytes case activates once the file exists)';
+    console.log(`✓ structure self-test passed (${expected.length} violation classes and ${expectedReferences.length} individual reference violations detected in a synthetic tree; clean samples stayed clean; frozen new-lineage migration original bytes passed and tampered bytes were flagged; ${itemsFreezeNote}; ${intakeFreezeNote}; ${ledgerFreezeNote}).`);
     return 0;
   } finally {
     rmSync(root, { recursive: true, force: true });

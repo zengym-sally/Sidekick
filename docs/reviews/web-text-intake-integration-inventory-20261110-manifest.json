@@ -1,0 +1,1876 @@
+{
+ "generated": "2026-11-10",
+ "generator": "OpenCode (III) read-only reception inventory",
+ "dispatch": "MAYNE-24 comment 01a1c107-20de-7e6d-89a9-694db4f24c0b",
+ "method": "blob ids + content SHA-256 recomputed today in the shared object store; reception scope/reviews cited from the MAYNE-24 thread 01a1bb65; no review verdict re-signed",
+ "anchors": {
+  "I_production_tree": "cd08588328df27cabdb50f178159424a9534c0b9 (tree 776b252919e1a6eb355c147b542b0d3308c9abe2, record 56cf3db)",
+  "frontend_b5": "b5fdfb9b1445fc767a9c54aa160815e09fca03bb (tree 283ba6655d9f75e3c08db5b8da118ece31f5bf96)",
+  "frontend_frozenI": "d79b1f69d242081bee1657a2247ef6b2d28740e4 (tree 8324c0b2837e0bb0119f0222f01595e5b1ae232a)",
+  "III_engineering": "6fad178f0ee7c14170d6ab456da596d8c17b4656 (tree 25090a1a9911fcb48fac036a89dbf0c66069a8f6), branch head 923ef54",
+  "s2client_test": "b54877796ddf08c0c02f382d351587e82e8f86dc",
+  "recovery_corrected": "82e1bf2cee161c829dd1d2919ec272b8b681693d (tree a6b25de9bb0cf0ee234470b7bd688583458b3524)"
+ },
+ "sections": {
+  "A_i_production": [
+   {
+    "path": "server/entries/web-backend-entry.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "47a9efcd4c79977a04c413fc281b2e0d1d35229c",
+    "sha256": "5a799cdbe08661b4f3477f732b75b7338a967c89776873259645c2844f19713f",
+    "bytes": 9598,
+    "lineage": "last touched by d0c8ec2 on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "server/lib/application-settings-service.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "0e331b19892dbc9d06cc7b2f51de8b349e5de0d3",
+    "sha256": "b9add2f41b39c46bee32f53837e1b2de659148d48cb7a60b668358a2a4c2ccbf",
+    "bytes": 3031,
+    "lineage": "last touched by 8d4a20d on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "server/lib/config-store.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "f008c76e794e8fc6ce205aba90d004c1383c4f39",
+    "sha256": "27eb0eafca3aa8d2c625ce19ae0b860ce6228ae391be38f5261fae841e9d16ee",
+    "bytes": 17369,
+    "lineage": "last touched by be8be1a on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "server/lib/credential-provider.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "0f8cf42ec75582768cd3e706f9a8f7e15233f300",
+    "sha256": "3881059c8c581c12679381b704fdf4729912600c3ea21aa4dc1220196c8a4611",
+    "bytes": 2383,
+    "lineage": "last touched by 1593b43 on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "server/lib/http-server.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "e3e61be366a0398ed4d25fbd31b878ce93d66bc1",
+    "sha256": "63056f0a8be1599062792bed6825b91f9e027f20349739e871dc73fe9314b4bc",
+    "bytes": 36842,
+    "lineage": "last touched by be8be1a on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "server/lib/manual-items-service.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "c11e75956a0dbae596467916acc9339517a06ac2",
+    "sha256": "babbd298da52f97c67ab90254fb89167cd9f4ac8d1e14c9ec152cdfab5099b61",
+    "bytes": 22213,
+    "lineage": "last touched by 72f1bb8 on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "server/lib/model-snapshot.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "7d7d84dd5afab4dbe38165dce2f2c8d2246f7cb4",
+    "sha256": "511293358f7b4e9682ed73fbaeb3605a749c40c589941fa4dd1080392c1ff5f1",
+    "bytes": 1896,
+    "lineage": "last touched by 6262484 on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "server/lib/session-store.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "48f0c719350b7d0d6291ba224aba700abf5ce8be",
+    "sha256": "9823db95128835c84f77a35eea68f9fbd63173f9f18156fc8c8f94059609fc1e",
+    "bytes": 3338,
+    "lineage": "last touched by da79aed on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "server/lib/sse-hub.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "8fa8b30a60ac40e5403a0d4d21990560a8927ffe",
+    "sha256": "eced69258f268603e6f2aeff99d3f1adc9e9152bee0a58da6326299e787b7128",
+    "bytes": 8161,
+    "lineage": "last touched by a1fe030 on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "server/lib/static-files.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "ff26e71928885e2e58ebd9b0f50d557395021b74",
+    "sha256": "3c07b73eb6be8af6ee903b257d49178735c3f59a6dffb2437a84ee63975251ac",
+    "bytes": 3122,
+    "lineage": "last touched by 74c023c on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "server/lib/storage-client.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "758a2590f4d12793d3e148be3e97971be36e6552",
+    "sha256": "c721fc110b1fc96269dea96b1065ada098383fa07d43ce5ac916a3120410bcbe",
+    "bytes": 3867,
+    "lineage": "last touched by da79aed on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "server/lib/task-recovery.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "5099d4aaba98e9756f0614879021aa6757837423",
+    "sha256": "84b5c0fd7bb26640f0a951cde5b1baad2347458c6f87c279f6500e9059a58cd6",
+    "bytes": 5855,
+    "lineage": "last touched by 4dfc9e9 on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "server/lib/task-scheduler.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "8684d44fd03d92b12f9197103f6d7cf8cb08fb25",
+    "sha256": "2b111ab75678fe317e94560862cd43ef6a60a296402c13c0c1143a908f20e5ad",
+    "bytes": 23340,
+    "lineage": "last touched by cd08588 on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "server/lib/task-service.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "c3eaafea0e63ed8211f3f29a50d906b8aced092e",
+    "sha256": "d162fd34353839ec8c40c297f4bdb12c405a674e59be16df08afc309cecabf42",
+    "bytes": 55430,
+    "lineage": "last touched by ceece1f on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "server/lib/text-intake-service.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "edd53a85346e29babae0683dd348e09cbc7c2993",
+    "sha256": "19f1007d8e9ff3f45a21cb4f8a4019e08cdb1515236afcb10d4352fbb7bdd8ed",
+    "bytes": 69440,
+    "lineage": "last touched by e98b85b on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "server/lib/worker-host.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "52198fa55dca726964eff6f626eef94061f57eb3",
+    "sha256": "554c3bf51f80360d458a2b126ce4b822941c380c075e14e1e582e68abe90aadd",
+    "bytes": 30158,
+    "lineage": "last touched by cd08588 on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "src-tauri/migrations/web-backend/001_web_backend.sql",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "93b0ed00d6fccc0725676a2b7a519a17ca82d6ba",
+    "sha256": "8511907cf755567932f1526af0db20ce0af9128767c5724f2dd75e3de8ff143d",
+    "bytes": 6978,
+    "lineage": "last touched by 882e6e3 on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "src-tauri/migrations/web-backend/002_manual_items.sql",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "874c6049bda49cecc2ce19c67f9d1420d4cdcbb9",
+    "sha256": "b6cb8e61609f83454164bff6c5628b2c893122b8dbb9bb3ced41bcd3d9e2f97e",
+    "bytes": 3093,
+    "lineage": "last touched by da79aed on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "src-tauri/migrations/web-backend/003_text_intake.sql",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "e5103262a71f234903dc7d94b59233e6e13347f7",
+    "sha256": "8e4e31597425a911a61a87bdac32d5d61683ac71d24fc2a39855282e68ea7870",
+    "bytes": 9513,
+    "lineage": "last touched by 7771c25 on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "src-tauri/src/store/web_backend_schema.rs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "46fb6a868c7fda6f2571f8e5bac87dc0554dffa6",
+    "sha256": "6e0b5dbe59eff76c6960275f95ff5e9e875d5088c59572915087fc2822dede2b",
+    "bytes": 14191,
+    "lineage": "last touched by 7771c25 on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "src-tauri/src/store/web_backend_schema_tests.rs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "666fb801609d532ef11746ec524e7dbf5ff318bf",
+    "sha256": "fc65b5c28764273707f206d04236942738a83c3280efa6717d0f5c507e52fc44",
+    "bytes": 30680,
+    "lineage": "last touched by 7771c25 on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "src-tauri/src/store/web_backend_store.rs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "3220e0afb6b278e4045c05bc4229f7dd54737f89",
+    "sha256": "861a40c7ad25608f49b14d0f52fb05a330d600461b5ad0cf35d23ab3950ddd96",
+    "bytes": 27992,
+    "lineage": "last touched by 05c66fd on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   },
+   {
+    "path": "src-tauri/src/store/web_backend_store_tests.rs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "bb7786992e076286a9075f192c5203f2c17038f4",
+    "sha256": "7e493a7aee06f7c2f04dcda8d88781aca68c14e84c0cf5c8f422e58af55cd7a9",
+    "bytes": 25660,
+    "lineage": "last touched by 05c66fd on agent/kimi/mayne-24; accepted tree cd08588 (record 56cf3db)",
+    "review": "increment chain accepted per inventory doc section 2 (each increment has its own limited review; coordinator acceptances 01a1bfc8/01a1c02a/01a1c0c4 + trigger comment)",
+    "status": "receivable"
+   }
+  ],
+  "B_frontend_b5": [
+   {
+    "path": "src/components/ModelSettingsPanel.vue",
+    "sourceCommit": "60ecc75594a8c9ecbcf2397d03c843580f36c415",
+    "sourceShort": "60ecc75",
+    "blob": "e67f8d18d7d17f8dca01699c48e9b2000fcfa15a",
+    "sha256": "8ce5ca2df53814f720844a23f2b37642392155a7c35b4431700843c0b466bad0",
+    "bytes": 21245,
+    "lineage": "capability-UI revision; received byte-exact from 60ecc75 (tree 2e57f7a0da17, parent 61bd1708); supersedes 0216921e5e13fa41362a935a6c45b1a38f4bbfba (b5-selected bytes)",
+    "review": "Hermes independent review 6094a30 all-three PASS (five dispatch requirements static all hold, runtime 7/8 faces with real Chrome x real compiled components); admitted as reviewed engineering candidate input per coordinator 01a1c1b6; face-8 closed by the corrected-encoding single-success replay (comment 01a1c1b3) + narrow-closure handle-level supplement (comment 01a1c1c6); probe claim limitations registered in adjudications.capabilityPanelsAdmission",
+    "status": "receivable",
+    "coverage": "per-file review 6094a30 (five-item scope + runtime faces); admission 01a1c1b6"
+   },
+   {
+    "path": "src/components/TaskQueue.vue",
+    "sourceCommit": "b5fdfb9b1445fc767a9c54aa160815e09fca03bb",
+    "sourceShort": "b5fdfb9",
+    "blob": "1bd5d476fdd85cbdb7cd1773cfffd9f157a4230a",
+    "sha256": "f0d049198a684fa1d62f255606ee199460624599df900b448aab786102cb2556",
+    "bytes": 2750,
+    "lineage": "OhMyPi agent/ohmypi/mayne-24 b5 tree",
+    "review": "b5 tree bytes, blob identical to frozen-I d79b1f6 (reviewed 4641ef0)",
+    "status": "receivable"
+   },
+   {
+    "path": "src/components/TextIntake.vue",
+    "sourceCommit": "b5fdfb9b1445fc767a9c54aa160815e09fca03bb",
+    "sourceShort": "b5fdfb9",
+    "blob": "b6c1897da3ab871da1c496b5c3a789cb9b5cc920",
+    "sha256": "fcf2dd756d4f2c4b37fd3f8f0b3574b010de9c7a327b23ec9363bfb7b5033e06",
+    "bytes": 4498,
+    "lineage": "OhMyPi agent/ohmypi/mayne-24 b5 tree",
+    "review": "b5 tree bytes; increment faces reviewed across 4641ef0/0e32576/68ebd3f/bf81826/dae0986 (this branch) + Hermes 01a1bf2e (b29afdc models adaptation)",
+    "status": "receivable"
+   },
+   {
+    "path": "src/lib/web-api-client.ts",
+    "sourceCommit": "b5fdfb9b1445fc767a9c54aa160815e09fca03bb",
+    "sourceShort": "b5fdfb9",
+    "blob": "e730d4a344c4150d89737d08dd7c1a7a182c118d",
+    "sha256": "52a70e2b9628682bd816d71d697aed11cb58b3d9c805be1dc82f510bdfcd9348",
+    "bytes": 51534,
+    "lineage": "OhMyPi agent/ohmypi/mayne-24 b5 tree",
+    "review": "date review by Pi (record commit 531157f docs-only on agent/pi/mayne-24, comment 01a1c0bf): sourceAt ms + e54->b5 mapping + b5 positive date/apply accepted limited per coordinator 01a1c0bf; NOTE \"=531157f blob\" means reviewed-in-that-record; that commit tree holds older client bytes 34c87f8a",
+    "status": "receivable"
+   },
+   {
+    "path": "src/stores/organizer.ts",
+    "sourceCommit": "b5fdfb9b1445fc767a9c54aa160815e09fca03bb",
+    "sourceShort": "b5fdfb9",
+    "blob": "d4b824cbd6bfaba422f0188ce70abc97b1b810b2",
+    "sha256": "8a0410161fcfb721eaf9a4a8540d6b3278e8d18ba7a8e9815f1a81d6e19ffcec",
+    "bytes": 7252,
+    "lineage": "OhMyPi agent/ohmypi/mayne-24 b5 tree",
+    "review": "blob identical to frozen-I 72f1bb8/d79b1f6 (web pipe), located by 01a1c03b, reverified by ZCode ac7daa1",
+    "status": "receivable"
+   }
+  ],
+  "B_frontend_frozenI_rest": [
+   {
+    "path": "src/App.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "a4f6a495191feeae5f2d8e2de72b60518ebc4410",
+    "sha256": "0a5e760765256a8355d338e17bbffec2ba5fad9115925f948c2b2ee7f820370d",
+    "bytes": 1304,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/AgentSettingsPanel.vue",
+    "sourceCommit": "60ecc75594a8c9ecbcf2397d03c843580f36c415",
+    "sourceShort": "60ecc75",
+    "blob": "8a44fc3d279e070d4df3820bd0681bd6def4288d",
+    "sha256": "c44ca75a4780c0ab5135fd361d1c28b61fdd56b2aa0cecfc39e0c393d0ace158",
+    "bytes": 13448,
+    "lineage": "capability-UI revision; received byte-exact from 60ecc75 (tree 2e57f7a0da17, parent 61bd1708); supersedes 107b8d74f9edd6a1d8da50e3eeb0e6f9259b8188 (frozen-I d79b1f6 = cd08588 = b5)",
+    "review": "Hermes independent review 6094a30 all-three PASS (five dispatch requirements static all hold, runtime 7/8 faces with real Chrome x real compiled components); admitted as reviewed engineering candidate input per coordinator 01a1c1b6; face-8 closed by the corrected-encoding single-success replay (comment 01a1c1b3) + narrow-closure handle-level supplement (comment 01a1c1c6); probe claim limitations registered in adjudications.capabilityPanelsAdmission",
+    "status": "receivable",
+    "coverage": "per-file review 6094a30 (five-item scope + runtime faces); admission 01a1c1b6"
+   },
+   {
+    "path": "src/components/CandidateCard.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "9ba90ddd2ec862eb94d974eebb1e048fdbc91bf3",
+    "sha256": "0fa155ce3359ec16a23ca835b4ab64bb66601d31ba272634abc4352f154b32d3",
+    "bytes": 8209,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/DesktopSettingsPanel.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "0ecab3c0c79105e7dae69ea07025a0ac18de369d",
+    "sha256": "8a2afb40027e348e5d6be5ed232a7fc574f26f19934008461062c7a4839384b6",
+    "bytes": 2256,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/Icon.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "317ef55545dcfce9d7a27f5fe475694f48250c11",
+    "sha256": "489394fa4bde10d3dfe80b09424910098d5b64add642226da3e632bca93de4be",
+    "bytes": 1274,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/InboxView.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "c0f9e77f3f36c7d7417ebe65fa5ac9826d41fe4b",
+    "sha256": "e92bf3f9139fdc7878191f4fd14cdd971a30891f7a7a45121a348e25c6fb81e4",
+    "bytes": 5262,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/McpSettingsPanel.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "184ee41b123bf10fb11ac4e57f07836d282fbcdd",
+    "sha256": "21174da6c3548859fdcc9891d15c0b8a0d07987e998564276c03682005026b50",
+    "bytes": 22599,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/McpStoragePanel.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "c5b14ea405209f4f21496caa2d9094651b06c543",
+    "sha256": "e2443e77e72e7d0f651529924a6e79666811647a78cfb450a438f40d7d8b2632",
+    "bytes": 3607,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/PairingGate.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "01e4323360a50a6765ec72bff974ac2b55a953c9",
+    "sha256": "405ddcda24ea817021c2e0c406a29fd16067bd0d0130b0623ab99979abfaddb4",
+    "bytes": 1411,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/PetWindow.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "5108f736af0c2f7ddc186dc96416ef2c9332fea0",
+    "sha256": "dbd5d1981f27655658d0aa0ae808cd408bb679d1de890102ea97b61523c1eb01",
+    "bytes": 5366,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/ProbePanel.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "f9810f1906ed7ee52a7a831d7b41cee0c16d41f0",
+    "sha256": "cc4c7a8c8305507071676345fdf2e032b060da41ac9756e9a629d6451ed3fdad",
+    "bytes": 1896,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/QuickEntry.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "f79b3fdb3ab7384bf072b91bba59d8011268fdf3",
+    "sha256": "f067f0e7805f7bb5aad894e3fa506a32e4927ef83dc6d31fd811dd6f22db9ca7",
+    "bytes": 3943,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/SettingsPanel.vue",
+    "sourceCommit": "60ecc75594a8c9ecbcf2397d03c843580f36c415",
+    "sourceShort": "60ecc75",
+    "blob": "73c1f643fa15bb1335ee6b628ffe3de1ea182a8c",
+    "sha256": "73e3fea94c482958dbfafee24e0cfa88784550da7294ca6e3905300c33f26436",
+    "bytes": 9226,
+    "lineage": "capability-UI revision; received byte-exact from 60ecc75 (tree 2e57f7a0da17, parent 61bd1708); supersedes fa75f477cad4074625a665365709819e8eb6d9f2 (frozen-I d79b1f6 = cd08588); this branch's pre-reception bytes were c412cf3f",
+    "review": "Hermes independent review 6094a30 all-three PASS (five dispatch requirements static all hold, runtime 7/8 faces with real Chrome x real compiled components); admitted as reviewed engineering candidate input per coordinator 01a1c1b6; face-8 closed by the corrected-encoding single-success replay (comment 01a1c1b3) + narrow-closure handle-level supplement (comment 01a1c1c6); probe claim limitations registered in adjudications.capabilityPanelsAdmission",
+    "status": "receivable",
+    "coverage": "per-file review 6094a30 (five-item scope + runtime faces); admission 01a1c1b6"
+   },
+   {
+    "path": "src/components/SkillsSettingsPanel.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "d061714b387e1006efb3ebcc068c7188f12585cd",
+    "sha256": "580f0d06ccd8e7eb65f4cac1502802773ce5a069a731948e08813bbb86d839cf",
+    "bytes": 4979,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/TimeField.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "a337f63618b3b7e1489e17205999bf35123dfd7b",
+    "sha256": "141c9acc3c9a3f25affbc679d2316e5e27f9119d78a68813eca3602020c70bcc",
+    "bytes": 1756,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/TodayAdvice.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "ac9f47d5b87b82623ed45692691a257d73cb8da0",
+    "sha256": "78ee7a2f4588a8d929b7b49caf311286932e12b4afea081159c670a2741cf825",
+    "bytes": 9770,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/TodoRow.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "f30676c1ae3833108b894d785b19c036650545a2",
+    "sha256": "b76f9c49d39618281542c7e59c3164afd0ad67d8939c6a9cd82c7976d83685f9",
+    "bytes": 1733,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/ToolsSettingsPanel.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "dc847918b28d05515463762f83ace96f851f7d80",
+    "sha256": "0c31fe2e50d684b71bd483ffff660f907e2c422bd4449d6489eb05d9172273df",
+    "bytes": 1226,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/Workbench.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "c5af8baca6448e58d33b447387563cacda78111c",
+    "sha256": "b42cebb9ecb6b7a96224a4fbed27fad7300814b182a06f0a5a75c9154587d7fd",
+    "bytes": 30824,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "coverage-partial",
+    "coverage": "PARTIAL, integration-structure scope only; full per-file code review NOT located -> remaining aspect pending confirmation. Citations: OpenCode four-file review record 4641ef0 (comment 01a1bdd2) examined the d79 bytes structurally (TaskQueue import/mount, nativeAvailable disabled bindings, browser-mode boot/polling) and set F-4 = Workbench must be taken from d79b1f6 bytes (c5af8bac); coordinator 01a1bf7b three-tree same-blob identity (d79b1f6/29305da/0536a44) + unlocked-and-loads-before-native-check; base adoption decision 01a1beec (full I frontend base adopted, no old-Workbench rollback)"
+   },
+   {
+    "path": "src/components/ui/SkButton.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "7baf362da6854c1cdcf4ac88aa348f32ec2d58e0",
+    "sha256": "f347216433c8703cfa607109d4bf8437320064e37af72a790e88d04700ec4a92",
+    "bytes": 620,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/ui/SkCheckbox.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "5d136c8516132e289e5b692d73ad56a036f96af9",
+    "sha256": "30e877557ff8acb3275f235a46a6258248717becdc3aa377fbd10d436dc0f9fd",
+    "bytes": 773,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/ui/SkDateTimeField.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "796320416e48ef66c473b7b83e2eb737485bd841",
+    "sha256": "aab2d70b9dc637e8c91c45d68af19a272bef2ccbc7d845c1ecc8dc1048cfffaf",
+    "bytes": 6349,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/ui/SkEmptyState.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "265bdedc087e901349cc87d71754372ac700957e",
+    "sha256": "c41740d966264e26778f308c0fb432cb40bc6fb1ba8f58f51dbbc0bf87401d06",
+    "bytes": 659,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/ui/SkField.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "4c3ba9df31b355e2dd32d0a18c1a852ad0b3ac8a",
+    "sha256": "b43eecd1b45c45987e2de71b29f6476689b0eb6c402f7ff6a4082c5a802543e7",
+    "bytes": 810,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/ui/SkFieldset.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "b47aad02a540b3583ab1a71a20c8b65a7b88ac78",
+    "sha256": "6ecb0094d9cd9afed47817ef7abf184e31ae42348bfe018012194e421426c07b",
+    "bytes": 298,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/ui/SkInput.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "1da6f4680a9f4ce17d51b38e93a0f4408a7be064",
+    "sha256": "bfe4c820044e3bc46e731a3d4c7ac3d503f4f1fe3b70b073184be1f3e78dbcef",
+    "bytes": 717,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/ui/SkNumberInput.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "5537a419e6e0926b7c476ab382497e8b608ae5b2",
+    "sha256": "8a677911d50fc18cd4dfd0803e26eeab4449c1c11523b49a3bbe3ab59c6806ba",
+    "bytes": 1475,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/ui/SkPathField.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "06373e4f504abad50fb44d9608f75f0424957767",
+    "sha256": "6c9722c409998b24319cb7f8ea2c34a2ed7bb6f0d2feea908283ec26dc1210ce",
+    "bytes": 664,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/ui/SkSaveBar.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "e3dd74e5cd4d139b377da1cfc9adb0ca4161d25f",
+    "sha256": "2b75d8f7602852b7f86a8a16b6e18cdcdbcd8d72e71f473f1c2c5b17adb3d693",
+    "bytes": 892,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/ui/SkSecretInput.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "c386b4629d773ea774b1c34434a6cc73ba7a6291",
+    "sha256": "001c9f40546b33cc4e06361a3476adbb66de5df201e2216117eafae149208b64",
+    "bytes": 700,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/ui/SkSelect.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "75288125efb6f47d0dcad8454480c839c1dabd50",
+    "sha256": "d4cb8115e84c8e8bfae7761d8b16dec77d3e592ef459fb823940296b116af98d",
+    "bytes": 9341,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/ui/SkSwitch.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "53f1f564de169f8faacfc4c9e732fc44f061fb7b",
+    "sha256": "45ed3771dd5c341800039ec2ea2ebed895849b62607c56938ae05e2c1102fed4",
+    "bytes": 688,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/ui/SkTextarea.vue",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "1cc0e6abfe9157ea12c27acbef837c9b8c82974c",
+    "sha256": "c2cb170ca3b679941e63c48a816eb91a89e02cd1e2af4fb56569f9ce313b5bfb",
+    "bytes": 655,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/components/ui/control.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "f1c81ecd7e7e6f1f7054c07122c79f72d4a9d13a",
+    "sha256": "de30a6fd5b9bd556d2735586a94e44ec8bfdc6e47ccde6c59f2620989b5fa8e0",
+    "bytes": 1430,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/domain/agents.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "d6e7fbded685a5cf2f39f750f4a4d882d7b5ef80",
+    "sha256": "9e8f0ffef486f5eefc36032565ffb697668bfd74552cac6b2db99016519e670b",
+    "bytes": 2921,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/domain/candidate.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "66dac24049145f4b8da0ce4c92f8f25c17f8b50d",
+    "sha256": "1ce249674ac6c2642df4414fcb34911e68ab57477065eacfdec72209e0c46386",
+    "bytes": 2059,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/domain/civil-calendar.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "017794eb3edbc8c50731b8ac6c34931de6ee58a7",
+    "sha256": "ba5b06926b9218a8e7839c2e21940ccdd0f1a678e9fb73b26a2f31c0f777024e",
+    "bytes": 603,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/domain/desktop.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "3bab78052f511cdbad3c97c29808982f42f78dac",
+    "sha256": "0378afbc5025f8d54d40d45845fcbef8a41d077e81ada909e12b7e7b8424f54e",
+    "bytes": 1130,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/domain/mcp.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "850f926936baf0852a25d4f0db2f9862c8fc71bf",
+    "sha256": "efdb4ebabfeab07782bbd0c03c013acc4d63275617fbd18ea584a7292947b518",
+    "bytes": 3815,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/domain/mcpJson.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "0996565c42c16a64dcac917cab4f98ec1bf9d601",
+    "sha256": "cb37e3936fbe62c8f4bd82fafb15a7994e0f621b091afca13f6ce525ee58300b",
+    "bytes": 11649,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/domain/model-catalog.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "4ab01047a2ce87884c331b28590a73c752c46fda",
+    "sha256": "4862e0c358101752a11c9f1e6ced292d33829e1152d426e97b96083351b51c46",
+    "bytes": 6919,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/domain/organizer.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "d63e27b3937cf1499fe0cc565d7098cf51b94233",
+    "sha256": "b7c26455a70c6adabb21f9e0c3f418b6587c9f13419503bae845cf911bb2a535",
+    "bytes": 5836,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/domain/pet.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "a1581e3c566360eb61c3c4c38e839357fc52893d",
+    "sha256": "f44a36943bdf9913da3216fe9b184540ec7d04f26e822333bc7c586ac21472c9",
+    "bytes": 2278,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/domain/time.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "6e31e128df57b1279a9e2644432e73140fc8e79b",
+    "sha256": "c43c03c53968892cfd8d561800ef9119cf563b1dad233835bf918c983994a651",
+    "bytes": 1908,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/domain/todos.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "f5bd14778011ec8036bd966742650373da295edd",
+    "sha256": "a24a8bf5aa2d9f1df2d092311d7ef1de1710eba8a12fc573af86eef3bc2d06c7",
+    "bytes": 6483,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/lib/host-capabilities.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "bfe3f96dfba7e6cf9c72ac20f5621e0b70c2b6e0",
+    "sha256": "ba482b81ec5078b9d369f55781e7bc6e82604030021ffdc912fd038613433738",
+    "bytes": 547,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/main.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "1974c7e86da6e0482e60960b655cc1f8f99d4f23",
+    "sha256": "25529d9db45f9f89a02a9b6c8bb10afb628555ff978cf3cc66cf05c933e1271b",
+    "bytes": 232,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/stores/agents.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "da044b6e2fcf8baa58836cdff988316234fad584",
+    "sha256": "bfbdb292dd233045db2a5d961a070edebefb72b13a4a802ca6e15f35ef7c6ba1",
+    "bytes": 7614,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "coverage-pending",
+    "coverage": "IDENTITY ONLY; per-file review NOT located -> pending confirmation. Citations: coordinator 01a1bf7b same-blob across d79b1f6/29305da/0536a44 (da044b6e) + asBackend wiring stated; OhMyPi overlay disclosure 01a1bfc3 (branch held 71abbabf invoke wiring)"
+   },
+   {
+    "path": "src/stores/desktop.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "34ff0315ecd2b4cbeea767389ce2f01d7126ff00",
+    "sha256": "5b6053454c67421881f52d4b8b999c5a24bd4576da4c003cbab877601c56ab52",
+    "bytes": 1379,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/stores/desktopPreferences.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "72b037d80dd401de9adce046200122867d884c0c",
+    "sha256": "5b7c3499674214147393926c39ffaf079bfaa5f750bb52807cc740dbb5538220",
+    "bytes": 4466,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/stores/mcp.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "40df1471d5b8f1134c8c2502ff89c0926d6b461d",
+    "sha256": "b88a3a790b11a40b1fdee70c6279b79f076f6d7362d944a074842cffc8d79a34",
+    "bytes": 13084,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/stores/mcpDiagnostics.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "b49f8fbb22512101fff69f6aeabd4bb2a79398a0",
+    "sha256": "2361d67dafe909b617776335ce500059e6c4e7069f60d8c5424eda0ef1860243",
+    "bytes": 10877,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/stores/mcpUpgrade.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "b0920bee0ff560a8245c2a526e2e7bc05b19a000",
+    "sha256": "e7483d5dcf4b2a485dff18dd0445a7ed55cb708613d2c88157a7ea81077f52a0",
+    "bytes": 4338,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/stores/models.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "2be899839b7c8b2c6baf0a575e6669ebe7339f9d",
+    "sha256": "2ca89219eaaa10b797f1f39510bac8bfb424730f26e7ec937b85c7328ef0c246",
+    "bytes": 10323,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "coverage-pending",
+    "coverage": "IDENTITY ONLY; per-file review NOT located -> pending confirmation. Citations: coordinator 01a1bf7b same-blob across d79b1f6/29305da/0536a44 (2be89983) + asBackend wiring stated; OhMyPi overlay disclosure 01a1bfc3 (branch held 52634c43); OpenCode credential review 0e32576 noted models.ts :35 invoke binding in the candidate tree (attribution evidence only, not a review of these bytes)"
+   },
+   {
+    "path": "src/stores/pairing.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "d04b09a998b7178db63eeedb4e304f3404af793f",
+    "sha256": "959c5b90a5a78a5b58bf051503e478f2ed125f8818f0c3303c31d74aea8d5036",
+    "bytes": 2660,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "coverage-pending",
+    "coverage": "NONE located in the thread read-back (all pairing discussions cover the II http-suite pairing-code mechanism A5/787db84 and the MCP-pairing unit tests, not this frontend store) -> pending confirmation"
+   },
+   {
+    "path": "src/stores/pet.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "2ca225b623f228974ea358e45c2ed8acc36213ac",
+    "sha256": "658c89ec0f55a79ef3e60bd3e9e7b656cb84950cc947ca1ac5a0ab76ca9185e2",
+    "bytes": 15725,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/stores/petArtwork.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "9799a1965ea91570b4aa2017c9e9eb6436e6a3bf",
+    "sha256": "519b0329795de5cb718e084b17f53cf5fd82dc964c58a4a09518b9e3d597be4e",
+    "bytes": 1284,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/stores/profile.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "11133c04acd081886aa1cd18abd2f005bf4de8cc",
+    "sha256": "d27a0f3c94aba55d632afa3150c319e3793a00181faa69694c8d8a654c189858",
+    "bytes": 2953,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/stores/quickEntry.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "625309837fddaf8f5271d999a3531544dbe5dc0c",
+    "sha256": "73d7529094161a0e56432f3385569648e76fb964bf787a620b2bdf816c9376d5",
+    "bytes": 5013,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/stores/settings.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "a0d886f4d78fdbd214d822a845c49704badb06f5",
+    "sha256": "a61a844c6a8e219a25988d33e397e7da6edc2e8c414f2da2d57b0afaefd19f01",
+    "bytes": 2762,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/stores/skills.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "a8c1a4568b89c86814af640c3ee2d42554729765",
+    "sha256": "326ad2cbcf942f5fc25bfaa868283bff68c1382419d17556b5299a98eac09bd4",
+    "bytes": 2697,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/stores/today.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "1831b0fd6cf25ff27703edd6f99b751520f56d1c",
+    "sha256": "c23c23d02b6b75de07d292f448a11709fda2b7a0c3432e80ff421513fe7e5d21",
+    "bytes": 7522,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   },
+   {
+    "path": "src/stores/todos.ts",
+    "sourceCommit": "d79b1f69d242081bee1657a2247ef6b2d28740e4",
+    "sourceShort": "d79b1f6",
+    "blob": "cf2c15d28dd50405279bfce9d23a5a9243df3387",
+    "sha256": "d5e63732e4760a6547f1d3c64f0812206a0014c2e0315648f84e60f30e0c65a0",
+    "bytes": 3038,
+    "lineage": "frozen-I frontend bytes (Workbench must be taken from d79 per F-4/4641ef0; d79b1f6/29305da/0536a44 models/agents/Workbench same-blob per 01a1bf7b)",
+    "review": "frozen I candidate frontend, unchanged",
+    "status": "receivable",
+    "coverage": "baseline-only (blob = main 1e37044, recomputed 2026-11-10; no per-file review claimed)"
+   }
+  ],
+  "C_iii_engineering": {
+   "aggregate_command_at_6fad178": "node --test --test-timeout=20000 tests/unit/web-text-intake.test.mjs tests/unit/web-text-intake-lifecycle.test.mjs tests/unit/web-text-intake-mcp-pairing.test.mjs tests/unit/web-text-intake-recovery.test.mjs tests/unit/web-text-intake-events.test.mjs tests/integration/web-text-intake-http.test.mjs tests/integration/web-text-intake-queue.test.mjs tests/integration/web-text-intake-controlled-model.test.mjs tests/integration/web-text-intake-static.test.mjs tests/unit/web-text-intake-test-safety.test.mjs",
+   "chain": [
+    "ff287ab engineering candidate (guard 003 freeze + build-backend + aggregate 5-file + records)",
+    "589eeaa +lifecycle",
+    "9ab8ee0 r2 +mcp-pairing/recovery/events (9 files)",
+    "cce6cfb D1-batch review record",
+    "6fad178 +test-safety (10 files)",
+    "308ddc1 esrc evidence closeout",
+    "b548777 s2-client test (accepted by trigger)",
+    "923ef54 s2-client record = branch head"
+   ],
+   "build_backend_blob_34c58f51_verified_ff287ab_9ab8ee0_head": {
+    "path": "scripts/build/build-backend.mjs",
+    "sourceCommit": "923ef5495338bc5aa82ee6a3ba1617b254076717",
+    "sourceShort": "HEAD",
+    "blob": "34c58f516dc09be3ff3fa348c2f2200293e2c29f",
+    "sha256": "500f0c4a4bd3d3b33940d0e158989ca6008c41c2988f6fb123d099b6ead1ae28",
+    "bytes": 9654,
+    "lineage": "III engineering chain",
+    "review": "reviewed per ZCode d0f6b03 / engineering-20261108",
+    "status": "receivable"
+   },
+   "aggregate_command_after_receipts_restart_receive": {
+    "command": "node --test --test-timeout=20000 tests/unit/web-text-intake.test.mjs tests/unit/web-text-intake-lifecycle.test.mjs tests/unit/web-text-intake-mcp-pairing.test.mjs tests/unit/web-text-intake-recovery.test.mjs tests/unit/web-text-intake-events.test.mjs tests/integration/web-text-intake-http.test.mjs tests/integration/web-text-intake-queue.test.mjs tests/integration/web-text-intake-controlled-model.test.mjs tests/integration/web-text-intake-static.test.mjs tests/unit/web-text-intake-test-safety.test.mjs tests/unit/web-text-intake-receipts-restart.test.mjs",
+    "change": "append tests/unit/web-text-intake-receipts-restart.test.mjs once at the end (10->11) per coordinator 01a1c168; the original ten files stay byte-identical in order, --test-timeout=20000 unchanged, script name test:web-text-intake unchanged, the full check chain references the script by name and stays unchanged, dependency lock unchanged",
+    "basis": "package.json script test:web-text-intake at this manifest revision; the aggregate is never run on the engineering branch (no reruns, no rebuild)"
+   },
+   "aggregate_command_after_sse_client_wiring": {
+    "command": "node --test --test-timeout=20000 tests/unit/web-text-intake.test.mjs tests/unit/web-text-intake-lifecycle.test.mjs tests/unit/web-text-intake-mcp-pairing.test.mjs tests/unit/web-text-intake-recovery.test.mjs tests/unit/web-text-intake-events.test.mjs tests/integration/web-text-intake-http.test.mjs tests/integration/web-text-intake-queue.test.mjs tests/integration/web-text-intake-controlled-model.test.mjs tests/integration/web-text-intake-static.test.mjs tests/unit/web-text-intake-test-safety.test.mjs tests/unit/web-text-intake-receipts-restart.test.mjs tests/unit/web-text-intake-sse-stream.test.mjs tests/unit/web-text-intake-capability-ui.test.mjs tests/unit/web-text-intake-sse-client.test.mjs",
+    "change": "append tests/unit/web-text-intake-sse-stream.test.mjs, tests/unit/web-text-intake-capability-ui.test.mjs and tests/unit/web-text-intake-sse-client.test.mjs once each at the end of the original 11 files (11->14, exactly 14 unique paths) per coordinator 01a1c236; the original eleven files stay byte-identical in order, --test-timeout=20000 unchanged, script name test:web-text-intake unchanged, all 107 script names and the key set unchanged, the full check chain references the script by name and stays unchanged, dependency lock unchanged, git diff --numstat = 1 1 package.json",
+    "basis": "all three suites carry their own limited independent reviews (sse-stream parser 12/12 within the R2 review scope; capability-ui Hermes 01a1c1cd test-capability PASS; sse-client Hermes 01a1c233 test-capability PASS bound to the R2 lineage); wiring authorization is THIS dispatch only - the aggregate is still never run on the engineering branch (no rerun, no build, no full gate; execution belongs to the separately-dispatched formal integration round)"
+   }
+  },
+  "D_ii_suites": [
+   {
+    "path": "tests/integration/web-text-intake-http.test.mjs",
+    "sourceCommit": "787db8450b6fcc3c9ae4c4117951716c22cf012a",
+    "sourceShort": "787db84",
+    "blob": "40237eec97e082f9fdb6d653a5e0d5a8f7ed8cab",
+    "sha256": "57ee798385488b34413c1a8ceb87d4811cf25ee581133da6d35f686cc3769d12",
+    "bytes": 76575,
+    "lineage": "61a069b(r5) -> 7f3322b(config, accepted 01a1bec0) -> 45b1cfe(B2/C1, Pi) -> 787db84(A5 T-13)",
+    "review": "Hermes e645bae comment 01a1bfab PASS limited (A5 criteria+mechanism)",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/integration/web-text-intake-queue.test.mjs",
+    "sourceCommit": "787db8450b6fcc3c9ae4c4117951716c22cf012a",
+    "sourceShort": "787db84",
+    "blob": "ef98d1d6c662458a4cd532e647a8ce42a6fa6a15",
+    "sha256": "d006015391dd8de8f4ad32d8e48aeefde3e6fc0f92ac41efc6481ec6f28bae88",
+    "bytes": 83051,
+    "lineage": "61a069b(r5) -> 7f3322b(config, accepted 01a1bec0) -> e69ee59 candidate NOT-PASS (history preserved) -> 787db84(A5 revision: queue file + backend-process fixture 04dcd4c5 + http blob 40237eec at one revision)",
+    "review": "blob ef98d1d6 recomputed today identical at e69ee59 and 787db84; source anchored to 787db84 per adjudication 01a1c123; evidence = Hermes e645bae comment 01a1bfab PASS limited (A5 criteria+mechanism; queue two-clients 2/2 x2); e69ee59 whole-candidate NOT-PASS (subprocess consumed-code race, Hermes 8635e6f comment 01a1bf64) preserved - no whole-pass written for e69ee59",
+    "status": "receivable (anchored 787db84, limited to the A5 two-clients/facet evidence; GAP-5 and suite-aggregate boundaries unchanged)"
+   },
+   {
+    "path": "tests/integration/web-text-intake-controlled-model.test.mjs",
+    "sourceCommit": "34958bb90a20c5ab9903a29f519242a6f3aafe49",
+    "sourceShort": "34958bb",
+    "blob": "3cfb16497a548f0fdd7898353aa7d9ff50da8872",
+    "sha256": "79a6a6e08ac7d86e79a851b5687dcb6cb73942e88195a9a40d2de93d432ba3fb",
+    "bytes": 36937,
+    "lineage": "7f3322b(3fe17f58) -> 45b1cfe(4d9556b2, B1) -> 34958bb(M-11 mechanism)",
+    "review": "ZCode 153834e comment 01a1bf8a PASS limited; coordinator 01a1bfc8 retains mechanism/criteria review",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/integration/web-text-intake-static.test.mjs",
+    "sourceCommit": "7f3322b9c98d7adbb7b06e3543cd7b83bd4aab54",
+    "sourceShort": "7f3322b",
+    "blob": "837b9143172f9a00a2ff2f0b77baa125deb8281c",
+    "sha256": "2b6afa83beca625bc08b86ccfce867845775aed12aabbb072bd6df3ed894248e",
+    "bytes": 30466,
+    "lineage": "61a069b(r5) -> 7f3322b(config only); no later revision on any branch (object-store verified)",
+    "review": "config revision accepted limited per coordinator 01a1bec0",
+    "status": "receivable"
+   }
+  ],
+  "D_ii_fixtures_r5": [
+   {
+    "path": "tests/fixtures/web-text-intake/backend-child.mjs",
+    "sourceCommit": "61a069b35757187174db0e92a2b9e5fd934dc520",
+    "sourceShort": "61a069b",
+    "blob": "c50f07b4931ec4e9ec3e2907de90895fa971cf89",
+    "sha256": "10ab972c9a0e09c5ec381e8338fb8050b775856b2783492829214f431492b3f5",
+    "bytes": 4598,
+    "lineage": "II r5 61a069b (tree e0a6028b) original bytes",
+    "review": "II r5 review chain",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/browser-probe.mjs",
+    "sourceCommit": "61a069b35757187174db0e92a2b9e5fd934dc520",
+    "sourceShort": "61a069b",
+    "blob": "2aafda22869ade854873554817b5e2d87550d5f1",
+    "sha256": "cd2c64f318bf2607ab56b2f65c78fc647eb42206cdae8872a29dbd460f43c366",
+    "bytes": 19622,
+    "lineage": "II r5 61a069b (tree e0a6028b) original bytes",
+    "review": "II r5 review chain",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/controlled-model-service.mjs",
+    "sourceCommit": "61a069b35757187174db0e92a2b9e5fd934dc520",
+    "sourceShort": "61a069b",
+    "blob": "109e53c41f80dab1290288a76d2d448225f5cc24",
+    "sha256": "aa84e81afa2b7b80afa7e3771ff2bddb490649f137882f80a639cc8bb6bd9a9d",
+    "bytes": 11505,
+    "lineage": "II r5 61a069b (tree e0a6028b) original bytes",
+    "review": "II r5 review chain",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/controlled-model.mjs",
+    "sourceCommit": "61a069b35757187174db0e92a2b9e5fd934dc520",
+    "sourceShort": "61a069b",
+    "blob": "72a8d7554b111de92bbfc2b0884577a57a4d3903",
+    "sha256": "9a8b509d397e5ae71aeb66f54845fa44a9ba1e2bf6b7a5d69fde8f1d199aaec7",
+    "bytes": 8747,
+    "lineage": "II r5 61a069b (tree e0a6028b) original bytes",
+    "review": "II r5 review chain",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/db-observer.mjs",
+    "sourceCommit": "61a069b35757187174db0e92a2b9e5fd934dc520",
+    "sourceShort": "61a069b",
+    "blob": "173857dd93292ff4433d388c109041b6f77ceb45",
+    "sha256": "d13d5ec60ab21a7fe16dc641834f2ea1860cce290a4b5a97fc9f423a2a9bdb4a",
+    "bytes": 8935,
+    "lineage": "II r5 61a069b (tree e0a6028b) original bytes",
+    "review": "II r5 review chain",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/protocol-worker.mjs",
+    "sourceCommit": "61a069b35757187174db0e92a2b9e5fd934dc520",
+    "sourceShort": "61a069b",
+    "blob": "aecc190398c320ef93eace41d3d9395f245553bf",
+    "sha256": "6ada3f4dd5a72b96273502afc6b72d12e8c3c53ed11ba4f31d8632e7755a4f77",
+    "bytes": 8728,
+    "lineage": "II r5 61a069b (tree e0a6028b) original bytes",
+    "review": "II r5 review chain",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/sse-listener.mjs",
+    "sourceCommit": "61a069b35757187174db0e92a2b9e5fd934dc520",
+    "sourceShort": "61a069b",
+    "blob": "9d0fda4fa15c16176cfd639e4cb11cb8214cf5c8",
+    "sha256": "c1a293a2e7ae2922f15e4a684a6740390125c425bfb1a5f8b88fb29c87331e71",
+    "bytes": 3624,
+    "lineage": "II r5 61a069b (tree e0a6028b) original bytes",
+    "review": "II r5 review chain",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/static-root.mjs",
+    "sourceCommit": "61a069b35757187174db0e92a2b9e5fd934dc520",
+    "sourceShort": "61a069b",
+    "blob": "9b87569f2a471fc1030f94ce42b3da18945aa668",
+    "sha256": "36559c331509f19aa3954eb6c4c143915349ea60bda29c3c41f9bf7c48cc853a",
+    "bytes": 4174,
+    "lineage": "II r5 61a069b (tree e0a6028b) original bytes",
+    "review": "II r5 review chain",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/synthetic-inputs.mjs",
+    "sourceCommit": "61a069b35757187174db0e92a2b9e5fd934dc520",
+    "sourceShort": "61a069b",
+    "blob": "d5e1099128d7d4ec9833c5c1d23ba1ef93f3f4eb",
+    "sha256": "ea3211e54f92edf38e6f158ecd38606f8ffd99e59193e62dfaafd59d231d6611",
+    "bytes": 6685,
+    "lineage": "II r5 61a069b (tree e0a6028b) original bytes",
+    "review": "II r5 review chain",
+    "status": "receivable"
+   }
+  ],
+  "D_ii_fixtures_revised": [
+   {
+    "path": "tests/fixtures/web-text-intake/model-config.mjs",
+    "sourceCommit": "7f3322b9c98d7adbb7b06e3543cd7b83bd4aab54",
+    "sourceShort": "7f3322b",
+    "blob": "8596b78e360de5ed60cd44ad8eeb61e3d90022a8",
+    "sha256": "8c52f0ed25f23027b3cd9f7fb749330e1c9fde9a656267ca93627fde648ec2bf",
+    "bytes": 5004,
+    "lineage": "new at config revision 7f3322b",
+    "review": "accepted with config revision 01a1bec0",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/backend-process.mjs",
+    "sourceCommit": "787db8450b6fcc3c9ae4c4117951716c22cf012a",
+    "sourceShort": "787db84",
+    "blob": "04dcd4c592ae9c95f0a17e0ddbc31eec572b880a",
+    "sha256": "e5d3e8096ebc6d00c963b606dd697d0ec5e2ee9e1f0c272076ffe4e219fc6198",
+    "bytes": 40244,
+    "lineage": "r5 7069c665 -> A5 787db84 (pairing code cursor)",
+    "review": "Hermes e645bae PASS limited",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/protocol-worker-process.mjs",
+    "sourceCommit": "5b06f0d16e73058f27158635dc445b59ad9bb120",
+    "sourceShort": "5b06f0d",
+    "blob": "986f4cfea70aded358fa94d3949e34a78505e426",
+    "sha256": "1af86498a83a0f6bb397ab19d75d054c71c601f0eccba85a04fad8dbbcfbfac5",
+    "bytes": 10545,
+    "lineage": "r5 c9f28a8a -> canonical frame revision 5b06f0d (+17/-5)",
+    "review": "OpenCode 0fa6b52 comment 01a1bf34 PASS limited",
+    "status": "receivable"
+   }
+  ],
+  "E_unit_regressions": [
+   {
+    "path": "tests/unit/web-text-intake.test.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "0a39c86491e7a74408d9f91038fd497ae1a0d084",
+    "sha256": "9590cd0c66569ab9cad94594839abf94ee364f1528463cf417f31f196329b0de",
+    "bytes": 21760,
+    "lineage": "I unit, last touched by a1fe030 (A-items batch)",
+    "review": "Hermes f53b659 comment 01a1bf1c PASS incl. unit modifications",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/unit/web-text-intake-lifecycle.test.mjs",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "d160f0b62cfa6534d7edd6f994c348c38c3267e3",
+    "sha256": "8d5debd8e5137fdabdd86ba5315c73eabffcf5383407095bf70cc599ae8d0695",
+    "bytes": 23992,
+    "lineage": "I unit, last touched by dd60976 (staged pin)",
+    "review": "Hermes f53b659 PASS",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/unit/web-text-intake-mcp-pairing.test.mjs",
+    "sourceCommit": "a02af9e18e8b1a9417bd6de5f55fc027a1b1f4ba",
+    "sourceShort": "a02af9e",
+    "blob": "3011552fb78af2e98d560e3b758c24b7de5d78b4",
+    "sha256": "80717c435ab4112a4ac6b1b268e107a3a569a1763cacac0b3b609ff368802b3d",
+    "bytes": 27047,
+    "lineage": "Kimi narrow append a02af9e (tree 2fda915f)",
+    "review": "ZCode 01a1bdf9 PASS as falsifiable regression input; production pairKey fix 59b405f reviewed 099fc57 (11/11)",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/mcp-pairing-frames.mjs",
+    "sourceCommit": "a02af9e18e8b1a9417bd6de5f55fc027a1b1f4ba",
+    "sourceShort": "a02af9e",
+    "blob": "7a1dfac038826281ea41825f26a716759c59e979",
+    "sha256": "1b7ba12252e004933bfea88501fd2f7edaa13a2808e38897677766bbfe9ca216",
+    "bytes": 3135,
+    "lineage": "a02af9e",
+    "review": "ZCode 01a1bdf9",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/mcp-pairing-golden-frames.jsonl",
+    "sourceCommit": "a02af9e18e8b1a9417bd6de5f55fc027a1b1f4ba",
+    "sourceShort": "a02af9e",
+    "blob": "97f8bfaf2525af5b4abf6ec6f0c454f217c2e9b6",
+    "sha256": "35d7b97edc4fd8aff480a919d51e2728458f27e82812018af58f38ba730d1a18",
+    "bytes": 3719,
+    "lineage": "a02af9e; sha 35d7b97e = P-3 frozen frame pack",
+    "review": "ZCode 01a1bdf9",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/mcp-pairing-worker.mjs",
+    "sourceCommit": "a02af9e18e8b1a9417bd6de5f55fc027a1b1f4ba",
+    "sourceShort": "a02af9e",
+    "blob": "d8bf1dab6f7161a1924c683a7fa9459031633b6e",
+    "sha256": "d07c600703ec4ab1580319fa7ddee81bed8a14d1b727d6c540a3b39b889614a3",
+    "bytes": 2977,
+    "lineage": "a02af9e",
+    "review": "ZCode 01a1bdf9",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/unit/web-text-intake-recovery.test.mjs",
+    "sourceCommit": "82e1bf2cee161c829dd1d2919ec272b8b681693d",
+    "sourceShort": "82e1bf2",
+    "blob": "8c641b1178b54ccd8f0d9ae699f927d813d978bd",
+    "sha256": "3ab536c9569c77a52f545c031a262c6c36ad2bfb5c7a4dcc8146e34b20746b86",
+    "bytes": 42909,
+    "lineage": "ZCode corrected bytes per trigger (NOT the in-tree old F1/W expectations)",
+    "review": "accepted per coordinator 01a1bef5; baselines 7613843 11/11 x2 / ef50461 10/11 per cce6cfb",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/recovery-instance.mjs",
+    "sourceCommit": "82e1bf2cee161c829dd1d2919ec272b8b681693d",
+    "sourceShort": "82e1bf2",
+    "blob": "5fe68cb4651c017f30d1aaa2680f0e0ccb69b714",
+    "sha256": "256001ace61179c86cc27954b896c5e65f54832d005872e05b4ee555b1339065",
+    "bytes": 3868,
+    "lineage": "82e1bf2 (unchanged from adc31d8)",
+    "review": "coordinator 01a1bef5",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/recovery-stub-worker.mjs",
+    "sourceCommit": "82e1bf2cee161c829dd1d2919ec272b8b681693d",
+    "sourceShort": "82e1bf2",
+    "blob": "6d638db05e588bfd90df2135e866ab382106a007",
+    "sha256": "8e76c570a88bd7618e57a14c13312cc41383ef05974600731b336bcc1d58c484",
+    "bytes": 2984,
+    "lineage": "82e1bf2 (unchanged from adc31d8)",
+    "review": "coordinator 01a1bef5",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/unit/web-text-intake-events.test.mjs",
+    "sourceCommit": "727c6fb50b2f915455a981e6e2a9d53466e0d35f",
+    "sourceShort": "727c6fb",
+    "blob": "67f52618e3232af972faa355e5eb3890cba703e4",
+    "sha256": "937989b241e2d1837c867beed2c504e1e3c6df81a4ac03a766ca9b56d2d65506",
+    "bytes": 24934,
+    "lineage": "Kimi events regression",
+    "review": "cce6cfb PASS (HEAD 11/11 x2, baseline 5/11)",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/unit/web-text-intake-test-safety.test.mjs",
+    "sourceCommit": "bdf3ae479ee3452f161158c2e41571e7863879b5",
+    "sourceShort": "bdf3ae4",
+    "blob": "7c0cb4ba27e41f7baa985a1dae8f2064d95d5e28",
+    "sha256": "dec1eb9d20631912d81722fd65ac90cc93471b4dd11b0ca37a147877fe189f88",
+    "bytes": 47028,
+    "lineage": "Pi test-safety candidate with the fifth case appended (7ee7304..bdf3ae4 = exactly test +191/-1: the import line extended by readdirSync/realpathSync and one appended warm-host runtimeRoot alias re-point case; fixtures 4bea6aac/4f3c9940 byte-unchanged)",
+    "review": "94f8d85 PASS limited 4th case; 4/4 on cd08588 per 0ff27bb; fifth case ZCode c4904a9 PASS limited to the five dispatched faces (AFTER 1/1 on cd08588 / BEFORE 1/1 at GAP-TEST-SAFETY-3 on d2b2696); coordinator 01a1c168 received as engineering candidate input",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/test-safety-runtime-entry.mjs",
+    "sourceCommit": "6216a6b25e3869f262897852a19baffc150a879c",
+    "sourceShort": "6216a6b",
+    "blob": "4bea6aac91550620a690d0721a4391ff5b3afd7b",
+    "sha256": "54e1d84c54b322d844af7b01f0777ea6d08bda045230453976fc72a7864daee9",
+    "bytes": 3009,
+    "lineage": "6216a6b; sha 54e1d84c = R1 syntheticEntrySha256 cross-tie",
+    "review": "94f8d85",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/test-safety-stub-worker.mjs",
+    "sourceCommit": "6216a6b25e3869f262897852a19baffc150a879c",
+    "sourceShort": "6216a6b",
+    "blob": "4f3c994031ce961070642352403629afada3805f",
+    "sha256": "c593be6345eab505c4335156330771c114a6e99d0fc639ec615b02541662d67b",
+    "bytes": 2140,
+    "lineage": "6216a6b",
+    "review": "94f8d85",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/unit/s2-client.test.mjs",
+    "sourceCommit": "b54877796ddf08c0c02f382d351587e82e8f86dc",
+    "sourceShort": "b548777",
+    "blob": "f00199383fcd041f6bd54ae2987bb31a26f73750",
+    "sha256": "e87ecbfc09b4c31eae7e474d25e35fcea3a1521e794186a4f2e40f9912d33214",
+    "bytes": 29013,
+    "lineage": "this branch; relative to 0633388 diff confined to last case",
+    "review": "ZCode ac7daa1 PASS limited; coordinator accepted in trigger 01a1c107",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/unit/web-text-intake-receipts-restart.test.mjs",
+    "sourceCommit": "6fd86798f6cd68c8895ea5de0c5a0b5a00038bde",
+    "sourceShort": "6fd8679",
+    "blob": "13bc604a2e15f2e1e5078203795d7c22ba602bb7",
+    "sha256": "1943d6db8e636ab1673cb8c9ee3f0b229a787257cb95272e20b4f79012b29c81",
+    "bytes": 42576,
+    "lineage": "ZCode receipts-restart line (final capture-close-first micro-fix 6fd8679; pre-fix subject chain a1562c1 test b422ee08; the two passed bodies and all 58 business asserts byte-identical, fix confined to three spots in startRestartedInstance)",
+    "review": "Pi b93a048 main body PASS limited; coordinator micro-differential check (01a1c13e) + F3 carrier pass (01a1c148); received per coordinator 01a1c168",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/receipts-restart-instance.mjs",
+    "sourceCommit": "6fd86798f6cd68c8895ea5de0c5a0b5a00038bde",
+    "sourceShort": "6fd8679",
+    "blob": "a4716ffa302c35b110e0b4a80fde0ae29bec90c8",
+    "sha256": "d21a7d6455facaebb4ff1e13986b9a555f62da7596a870331178467e6775d241",
+    "bytes": 4323,
+    "lineage": "ZCode receipts-restart line (final capture-close-first micro-fix 6fd8679; pre-fix subject chain a1562c1 test b422ee08; the two passed bodies and all 58 business asserts byte-identical, fix confined to three spots in startRestartedInstance) (instance runner, unchanged by the micro-fix)",
+    "review": "Pi b93a048 main body PASS limited; coordinator micro-differential check (01a1c13e) + F3 carrier pass (01a1c148); received per coordinator 01a1c168",
+    "status": "receivable"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/receipts-restart-worker.mjs",
+    "sourceCommit": "6fd86798f6cd68c8895ea5de0c5a0b5a00038bde",
+    "sourceShort": "6fd8679",
+    "blob": "11f498d912e59cc4aa49779a6ba433829f64bbca",
+    "sha256": "ec5645b5303d5111b05e1612083c65ce3b13db39ed202450f2d827d0e1758cd5",
+    "bytes": 5218,
+    "lineage": "ZCode receipts-restart line (final capture-close-first micro-fix 6fd8679; pre-fix subject chain a1562c1 test b422ee08; the two passed bodies and all 58 business asserts byte-identical, fix confined to three spots in startRestartedInstance) (worker fixture, unchanged by the micro-fix)",
+    "review": "Pi b93a048 main body PASS limited; coordinator micro-differential check (01a1c13e) + F3 carrier pass (01a1c148); received per coordinator 01a1c168",
+    "status": "receivable"
+   }
+  ],
+  "F_not_receivable": [
+   {
+    "item": "receipts-restart regression final",
+    "commit": "a1562c1f96d9eb86191d62ce453fa2180eb9783d",
+    "short": "a1562c1",
+    "testBlob": "b422ee08bfe8a530901cc146fed3c7448926234d",
+    "fixtureBlob": "11f498d912e59cc4aa49779a6ba433829f64bbca",
+    "status": "RECEIVED per coordinator 01a1c168 (Pi-passed main body + coordinator micro-differential check + F3 carrier pass): the final micro-fix bytes from 6fd8679 - test 13bc604a + instance fixture a4716ffa + worker fixture 11f498d9 - received as engineering candidate input (three new E_unit_regressions entries; aggregate command 10->11, appended once at the end, original ten order / 20000ms / script names / check chain / dependency lock unchanged). The a1562c1/b422ee08 identity above is kept as the historical registration of the pre-fix subject chain; old bytes are not re-signed"
+   },
+   {
+    "item": "test-safety fifth case",
+    "status": "RECEIVED per coordinator 01a1c168 after ZCode c4904a9 PASS limited to the five dispatched faces: the E_unit_regressions test entry moved 6216a6b/f72ff6dd -> bdf3ae4/7c0cb4ba (fixtures 4bea6aac/4f3c9940 unchanged); the aggregate test-safety file bytes updated in place (the aggregate already counted this file, so its position/order is unchanged)",
+    "commit": "bdf3ae479ee3452f161158c2e41571e7863879b5",
+    "short": "bdf3ae4",
+    "tree": "36eb84715a8bb5640b3d306492209fe9eb0783b8 (recomputed today = coordinator lock 01a1c11e)",
+    "parent": "7ee7304",
+    "testBlob": "7c0cb4ba27e41f7baa985a1dae8f2064d95d5e28 (from f72ff6dd; +191/-1, the single deleted line is the import-line extension, original four-case assertions untouched)",
+    "fixtures": "4bea6aac / 4f3c9940 unchanged"
+   },
+   {
+    "item": "date-review closeout evidence",
+    "status": "LIMITED EVIDENCE COMPLETE per coordinator 01a1c141 receiving 779a4d1: the new driver negative-control-closeout.mjs + result JSON + raw stderr SHAs recomputed from the actual attachment bytes and matched; source confirms timing starts before the first resource acquisition and cleanup (chrome / backend / model close, root removal, residue check) completes inside the same driver finally before totals are exported; body 3212 + cleanup 4096 = total 7308ms < 20000, rootRemoved=true, residue=0, exitCode=0, pass=true. Date code/API/controls prior limited conclusions merged with this full-cleanup timing; the old 23288ms / 7129ms / 8192ms records stay per their disclosed scopes and are not retroactively rewritten as full-cleanup green; the final independent browser acceptance and the sole full-gate precondition remain outstanding"
+   },
+   {
+    "item": "GAP-5 exit-guarantee integrity gap",
+    "status": "open implementation gap (suite GAP-5 red: publish succeeded while tree members alive; R7-M-2/M-3; rulings 23eb1a1; owner package 8d87609/329cf86)"
+   },
+   {
+    "item": "E - registry-domain exit guarantee web-api/2",
+    "status": "owner application sent 01a1bfd2 (r4 329cf86), awaiting owner"
+   },
+   {
+    "item": "D - 004_candidate_operations.sql application + operation-replay acceptance families",
+    "status": "owner application pending; replay families per storage-decision record (06291e0 section 8.4.3) required after D approval"
+   },
+   {
+    "item": "ambiguity A - ZCode verdict comment for 42d3b8a/2c39d7f (record a3506af) and standalone acceptance of e69ee59",
+    "status": "RESOLVED by coordinator 01a1c123: ZCode verdict comment = 01a1c005-f37e-7bb8-8902-fbb1f2e34b87, record = 76f152396a91dc1ce9b38c075dff22bb2c12900d (identity recomputed today); accepted per the two dispatch-limited facets with GAP-5/DTO/D-replay/real-Pi reserved (see adjudications.ambiguityA); the e69ee59 standalone-acceptance sub-item is resolved via blob-identity anchoring to 787db84 (see adjudications.queueSourceAnchor)"
+   },
+   {
+    "item": "UI capability revision (three production paths: AgentSettingsPanel.vue / ModelSettingsPanel.vue / SettingsPanel.vue; optional capability-ui red/green regression)",
+    "status": "RECEIVED per coordinator 01a1c1b6: three production paths received byte-exact from 60ecc75 with blob-by-blob equality (Agent 8a44fc3d / Model e67f8d18 / Settings 73c1f643, hash-object recomputed) into the III engineering branch; review basis = Hermes 6094a30 five-item scope + runtime 7/8 + face-8 closure; the three registrations (five-item scope, model-connection single success, probe claim limitations) live in adjudications.capabilityPanelsAdmission. NOT received: author test files (7b9c0e59/ea0991d7/486493a8), fixtures, whole-branch records - the test revision stays in Hermes independent review. Historical note retained: r1 84aa934 face-3/face-5 conclusions superseded by the SSE-route record corrections (f3b9d3c)"
+   },
+   {
+    "item": "Task-SSE minimal fix implementation + new SSE client regression (four-file route R1 stores/pairing.ts / R2 web-api-client.ts readSnapshot() / R3 PairingGate.vue / R4 TaskQueue.vue; tests/unit/web-text-intake-sse-client.test.mjs)",
+    "status": "WIRED+RECEIVED per coordinator 01a1c236 (manifest revision 7): the SSE client black-box regression received byte-exact into the III engineering branch from 9f796f0 (main test 82c8c0e7 + harness fe2bd6b1 + author record a63a594c) with the Hermes solo-audit record received verbatim from comment 01a1c233 (4940 bytes, sha256 81c3f8ef52cc46245734177b77c22ed4a92a241ea1e8ac76317d7d538ebc8757, blob 35f1984c) at docs/reviews/web-text-intake-sse-client-20261110-hermes-review.md; the R2 anchor closure is byte-verified on the receiving branch (six SSE paths blob-identical to 170f611: pairing 2910c15c / organizer e47ce430 / PairingGate 2c164cad / web-api-client 1b6a6cfb / TaskQueue 1d9551a5 / sse-stream 34120cac = the registered R2 anchor blobs, todos cf2c15d2 present) so the candidate self-tree ENOENT constraint is satisfied; test:web-text-intake extended 11->14 appended at the end per dispatch (order/budget/107-script-name set/check chain/deps+lock unchanged). NOT yet: aggregate execution, builds, 19-journey and the full gate belong to the separately-dispatched formal integration round; real browser/HTTP, sample consistency, resolve/retry + concurrency UI, E/D, GAP-5 stay open (see adjudications.sseClientAdmission). HISTORICAL (revision 6) REVIEWED per coordinator 01a1c1f9: REVIEWED per coordinator 01a1c1f9 (v2 binding supplementary evidence received; the deferred reception of the R2 170f611 SYNC-DISCIPLINE SCOPE lifted; NOT full acceptance - delivery bytes remain UNreceived into any aggregate, package.json zero bytes): Hermes independent review received verbatim at docs/reviews/web-text-intake-sse-sync-20261110-hermes-review.md from e7b0977 (blob ada27a8d0f64251756818c9f7e4a3a45ac04c145, sha256 cd71fcecb1f2e2e29bbc017aca5e83172e858fff3b9fa1679631c88b49ee6084, 6233 bytes, = the v2 attachment 01a1c1f7-f29e downloaded via CLI and recomputed). R1 b8a659b needs_revision - the three coordination-flagged defects reproduced on R1 original bytes by the independent probe (smaller-cursor replay regresses the reconnect token e1:3; foreign-epoch frame flips token/epoch in place e9:9; failed read-back still advances the token e1:6; snapshot consumed unconditionally; first same-epoch snapshot wipes generations v3->v2); R1 superseded by R2, elimination conclusion retained. R2 (9cb0b70 + d3feccd, anchored 170f611) PASS limited to the sync-discipline scope - frozen probe v2 (sha256 d7da1fb8b8d0c2976b118e7e5e44f5a15d19497fa05f7d9eaf2119cce4cf7b51, two tree copies byte-identical) with per-scenario isolation, the S1b pending-read-back counter-control and S3/S6 consumption verified via real organizer store state: green 8/8 exit 0 totalMs=2151 on locked 170f611, red 7/7 defect reproductions exit 0 totalMs=4396 on b8a659b, registered per their respective modes. Scope limits registered verbatim: 2151/4396ms sign ONLY the two in-memory probe observations (the script still contains fixed waits, an end-of-run budget assertion and a catch swallowing close errors - not extended to failure-path cleanup verified or a universal hard deadline); the test adaptation 27/27 and both-tree parser 12/12 conclusions stay limited; full composition, DOM and 401/dispose dynamic faces remain per the original unverified items (see adjudications.sseSyncAdmission)"
+   },
+   {
+    "item": "capability-ui behavioral test suite r2.1 (eight-file closure: main test + browser/session fixtures + in-page entry/HTML + three capability-ui-baseline-*.vue.txt byte negative controls; plus the behavioral/cleanup records and the Hermes review record)",
+    "status": "RECEIVED per coordinator 01a1c1cf after Hermes 01a1c1cd PASS limited to the test-capability faces: eight test files received byte-exact into the III engineering branch (five from 8164dea - test 7b9c0e59 / browser ea0991d7 / session 486493a8 / entry 23b0c937 / html 897ff75b - and the three baseline .vue.txt byte negative controls from 60ecc75 - 107b8d74 / 0216921e / fa75f477, whose blob identities are the superseded PRE-FIX panel bytes and whose sha256 pins are asserted by test T1); records received verbatim at original paths from 1e679ac (behavioral 1e952f7f, cleanup 23ad196d) plus the Hermes review record downloaded from comment 01a1c1cd (sha256 a192142c; its in-file dispatch provenance mis-records 01a1c1b6 - the effective target update is 01a1c1c8, note registered, original bytes preserved per the coordinator); see adjudications.capabilityUiSuiteAdmission and sections.Z_capability_ui_suite; registered unverified items: real close-error propagation not dynamically induced (fault CC covers the verdict only), spawn-rejection ENOENT not dynamically induced, the author six-mutant matrix not rerun (old outputs preserved), recording-Backend command counts and seeded runs still not real HTTP/Pi, B3b still flag-condition only (native unsigned); the suite was NOT rerun by this reception per the dispatch (already-passed behavior not re-run) and is NOT wired into the package/aggregate - test:web-text-intake unchanged pending the SSE and black-box reviews per dispatch",
+    "commit": "8164dea",
+    "short": "8164dea",
+    "recordCommit": "1e679ac",
+    "recordShort": "1e679ac"
+   }
+  ],
+  "G_frozen_check": {
+   "001_web_backend.sql": {
+    "path": "src-tauri/migrations/web-backend/001_web_backend.sql",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "93b0ed00d6fccc0725676a2b7a519a17ca82d6ba",
+    "sha256": "8511907cf755567932f1526af0db20ce0af9128767c5724f2dd75e3de8ff143d",
+    "bytes": 6978,
+    "lineage": "",
+    "review": "frozen sha 8511907cf755567932f1526af0db20ce0af9128767c5724f2dd75e3de8ff143d MATCH",
+    "status": "receivable",
+    "purpose": "verification-only frozen-content cross-check; the single write view for this file is section A_i_production (same blob, source cd08588); this row is NOT an additional written file and must not be counted as one"
+   },
+   "002_manual_items.sql": {
+    "path": "src-tauri/migrations/web-backend/002_manual_items.sql",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "874c6049bda49cecc2ce19c67f9d1420d4cdcbb9",
+    "sha256": "b6cb8e61609f83454164bff6c5628b2c893122b8dbb9bb3ced41bcd3d9e2f97e",
+    "bytes": 3093,
+    "lineage": "",
+    "review": "frozen sha b6cb8e61609f83454164bff6c5628b2c893122b8dbb9bb3ced41bcd3d9e2f97e MATCH",
+    "status": "receivable",
+    "purpose": "verification-only frozen-content cross-check; the single write view for this file is section A_i_production (same blob, source cd08588); this row is NOT an additional written file and must not be counted as one"
+   },
+   "003_text_intake.sql": {
+    "path": "src-tauri/migrations/web-backend/003_text_intake.sql",
+    "sourceCommit": "cd08588328df27cabdb50f178159424a9534c0b9",
+    "sourceShort": "cd08588",
+    "blob": "e5103262a71f234903dc7d94b59233e6e13347f7",
+    "sha256": "8e4e31597425a911a61a87bdac32d5d61683ac71d24fc2a39855282e68ea7870",
+    "bytes": 9513,
+    "lineage": "",
+    "review": "frozen sha 8e4e31597425a911a61a87bdac32d5d61683ac71d24fc2a39855282e68ea7870 MATCH",
+    "status": "receivable",
+    "purpose": "verification-only frozen-content cross-check; the single write view for this file is section A_i_production (same blob, source cd08588); this row is NOT an additional written file and must not be counted as one"
+   }
+  },
+  "Z_capability_ui_suite": [
+   {
+    "path": "tests/unit/web-text-intake-capability-ui.test.mjs",
+    "sourceCommit": "8164dea",
+    "sourceShort": "8164dea",
+    "blob": "7b9c0e59175de8020a79e27722dccfeb5f72db48",
+    "sha256": "6b9c6f040751595ec08a6c6ed79a6b6540197eabe3b56d45c13ef739cfe754b2",
+    "bytes": 23118,
+    "lineage": "ZCode capability-ui line: r1 (in 60ecc75, with the three baselines) -> behavioral r2 62bdccd/a1e15d4 -> cleanup/budget r2.1 8164dea (dispatch 01a1c1b2: reclaim-on-startup-failure, per-step close collection+propagation, hard budget {workMs:14000,cleanupMs:6000} from the case entry); dispatch blob confirmed 7b9c0e59 by coordinator 01a1c1cf",
+    "review": "Hermes 01a1c1cd PASS limited to the test-capability faces (five-file static read; independent rerun 12/12 exit 0 wall 6.68s stderr 29B residue 0; own mutant trialWired false->true exactly B3+B3b red; startup-failure CC 117ms + close-fault CC 918ms); accepted per coordinator 01a1c1cf",
+    "status": "receivable (received into the III engineering branch; NOT in the aggregate until package wiring is separately dispatched)"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/capability-ui-browser.mjs",
+    "sourceCommit": "8164dea",
+    "sourceShort": "8164dea",
+    "blob": "ea0991d7c12918cb78e80d18a5581e32af873ace",
+    "sha256": "97b9dfbee6b597bfe53262fd5e399785dd1b0566ca80e507caa256ba0234e52a",
+    "bytes": 8612,
+    "lineage": "ZCode capability-ui line r2.1: all post-spawn startup steps in one try (any failure closes socket, SIGKILLs this test own child, confirms exit, error.chromeReclaim attached and propagated); DevTools wait fails fast on child exit/spawn error; all waits bounded by the caller work deadline",
+    "review": "Hermes 01a1c1cd static + dynamic as above; accepted per coordinator 01a1c1cf",
+    "status": "receivable (received into the III engineering branch; NOT in the aggregate until package wiring is separately dispatched)"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/capability-ui-session.mjs",
+    "sourceCommit": "8164dea",
+    "sourceShort": "8164dea",
+    "blob": "486493a87b6c069de580afb41b0990f51ec19e36",
+    "sha256": "cc388be45a0ba1aff3f4f32c24922c73c0452ef7488dae8adaa997c9c1bd21ca",
+    "bytes": 10165,
+    "lineage": "ZCode capability-ui line r2.1: one cleanup collector serves BOTH close() and the failed-start path (chrome->vite->http->profile attempted regardless of earlier failures, per-step outcomes collected, report.ok=false propagates, vite swallow removed, closeAllConnections fallback recorded, profile verified on disk, failed start attaches the same report to the ORIGINAL error); close() never throws",
+    "review": "Hermes 01a1c1cd static + dynamic as above; accepted per coordinator 01a1c1cf",
+    "status": "receivable (received into the III engineering branch; NOT in the aggregate until package wiring is separately dispatched)"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/capability-ui-page/capability-ui-entry.ts",
+    "sourceCommit": "8164dea",
+    "sourceShort": "8164dea",
+    "blob": "23b0c93757848cf9e8511688ec53a699bdb80ba8",
+    "sha256": "56f4bcfc2fa4dadfacf6b05cf2f20088c31fb76a906ca025d0cd7cf9a09fc802",
+    "bytes": 18251,
+    "lineage": "in-page harness unchanged from behavioral r2 (62bdccd blob verified identical by ls-tree and by Hermes diff-empty); statically imports the three production panels (8a44fc3d/e67f8d18/73c1f643, received in 31d7e04) and the four store factories (agents/models/organizer/settings)",
+    "review": "Hermes 01a1c1cd: page harness and HTML identical to 62bdccd (diff empty); accepted per coordinator 01a1c1cf",
+    "status": "receivable (received into the III engineering branch; NOT in the aggregate until package wiring is separately dispatched)"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/capability-ui-page/index.html",
+    "sourceCommit": "8164dea",
+    "sourceShort": "8164dea",
+    "blob": "897ff75b37fcac7b1a8aff2296765ae925aac2f7",
+    "sha256": "b638b6f14b7afc8ab4432ec5368383941676fc0827d19d92b00ad7445c374f9e",
+    "bytes": 225,
+    "lineage": "mount-harness page, unchanged from behavioral r2 (62bdccd blob identical)",
+    "review": "Hermes 01a1c1cd: identical to 62bdccd (diff empty); accepted per coordinator 01a1c1cf",
+    "status": "receivable (received into the III engineering branch; NOT in the aggregate until package wiring is separately dispatched)"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/capability-ui-baseline-AgentSettingsPanel.vue.txt",
+    "sourceCommit": "60ecc75",
+    "sourceShort": "60ecc75",
+    "blob": "107b8d74f9edd6a1d8da50e3eeb0e6f9259b8188",
+    "sha256": "e289bae48e7a09a61f208d4cf0c238fa0c8dec1f88d44c474331527e2d9d7630",
+    "bytes": 13701,
+    "lineage": "byte-pinned negative control = the registered PRE-FIX baseline blob of AgentSettingsPanel.vue (frozen-I/b5 lineage 107b8d74; superseded on this branch by 8a44fc3d received in 31d7e04); never compiled or executed - test T1 asserts its sha256",
+    "review": "negative-control face T1 held in Hermes 01a1c1cd rerun; received per coordinator 01a1c1cf (dispatch: take the three capability-ui-baseline-*.vue.txt byte negative controls from 60ecc75 to complete the eight-file closure)",
+    "status": "receivable (received into the III engineering branch; NOT in the aggregate until package wiring is separately dispatched)"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/capability-ui-baseline-ModelSettingsPanel.vue.txt",
+    "sourceCommit": "60ecc75",
+    "sourceShort": "60ecc75",
+    "blob": "0216921e5e13fa41362a935a6c45b1a38f4bbfba",
+    "sha256": "2e0253663bd083f5c5e75a9c1ef6749dd14c059d077c8797f43630955b071f7d",
+    "bytes": 20898,
+    "lineage": "byte-pinned negative control = the registered PRE-FIX baseline blob of ModelSettingsPanel.vue (b5 lineage 0216921e; superseded by e67f8d18 received in 31d7e04); never compiled or executed",
+    "review": "negative-control face T1 held in Hermes 01a1c1cd rerun; received per coordinator 01a1c1cf",
+    "status": "receivable (received into the III engineering branch; NOT in the aggregate until package wiring is separately dispatched)"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/capability-ui-baseline-SettingsPanel.vue.txt",
+    "sourceCommit": "60ecc75",
+    "sourceShort": "60ecc75",
+    "blob": "fa75f477cad4074625a665365709819e8eb6d9f2",
+    "sha256": "cdaa145c97684c102315065ec30eec08a0df4fd6dba4ef2b60e48fbbd9b1fcf1",
+    "bytes": 9103,
+    "lineage": "byte-pinned negative control = the registered PRE-FIX baseline blob of SettingsPanel.vue (frozen-I lineage fa75f477; superseded by 73c1f643 received in 31d7e04); never compiled or executed",
+    "review": "negative-control face T1 held in Hermes 01a1c1cd rerun; received per coordinator 01a1c1cf",
+    "status": "receivable (received into the III engineering branch; NOT in the aggregate until package wiring is separately dispatched)"
+   }
+  ],
+  "Z_sse_client_suite": [
+   {
+    "path": "tests/unit/web-text-intake-sse-client.test.mjs",
+    "sourceCommit": "9f796f0",
+    "sourceShort": "9f796f0",
+    "blob": "82c8c0e7fcc216f3bfa4b048f0b2479a53b4bb4b",
+    "sha256": "4975b8d1b5b08d3541931b8995c75a23275d5aa02c223d230bbf344545977d2f",
+    "bytes": 23287,
+    "lineage": "ZCode SSE client black-box regression r1 (dispatch 01a1c15f, reassignment 01a1c1e3; commit 9f796f06d42b719eb77948fd6bfb408b6d34c2f8, exactly 4 files: this test + sse-client-harness fixture + author record + own README index); green/red runs on identical test bytes across assembled trees (green R2 170f611 11/11 exit 0 wall 3.98s; red fdf89c1 + pairing d04b09a9 2-pass-9-fail exit 1, every red on its named sync assertion)",
+    "review": "Hermes 01a1c233 PASS limited to the test-capability faces, bound to the R2 lineage: blob identity re-verified (82c8c0e7 / fe2bd6b1 / author record a63a594c / README index); independent reruns on self-built trees - green on detached 170f611 + the two files 11/11 exit 0 stderr 0 bytes, red on detached fdf89c1 + pairing d04b09a9 2-pass-9-fail exit 1 with the five-path identity per blob (web-api-client e730d4a3 / PairingGate 01e43233 / TaskQueue 1bd5d476 / organizer d4b824cb) = the author's true-composition-baseline recipe; all nine reds on named sync assertions (4x organizer read-back absent, epoch adoption absent, session-loss gate absent, needs_review visibility, sync-epoch fence absent), anchors green first (A1 269ms / A2 460ms); static 11-face load-bearing checks (real compiled PairingGate = the production-registered handler, real in-slot TaskQueue, real stores over the real WebApiClient singleton, zero test-written sync callbacks, transport boundary frame emission, assertion windows 400-700ms below the 1s queue poll, unconditional openCase.finish cleanup + globals restore + settle); accepted per coordinator 01a1c236",
+    "status": "receivable -> RECEIVED per coordinator 01a1c236 (received byte-exact into the III engineering branch via git-show extraction, hash-object recomputed = 82c8c0e7; wired into the test:web-text-intake aggregate appended once at the end of the original 11 files; NOT run on this branch - aggregate execution belongs to the integration round)"
+   },
+   {
+    "path": "tests/fixtures/web-text-intake/sse-client-harness.mjs",
+    "sourceCommit": "9f796f0",
+    "sourceShort": "9f796f0",
+    "blob": "fe2bd6b15d790710c168df7e62b39e9709675d5f",
+    "sha256": "5518e905a86783d76f7347b78a2a76772458283977411b77e06f3449b2c5892a",
+    "bytes": 19992,
+    "lineage": "ZCode SSE client black-box harness r1 (same commit 9f796f0; reuses the leftover harness 2e8b5d5 blob 95fa6115 compile/mount mechanics, controlled doubles, legal-response table and labeled-waitFor skeleton per-file; its EventSource-only transport superseded - frozen web-api/1 section 6 literal compensation needs the Last-Event-ID request header; the prior run's Vue-unmount fixture error root-caused to the minimal renderer and fixed, registered in the author record section 5)",
+    "review": "Hermes 01a1c233 PASS within the same test-capability scope (harness compiles PairingGate.vue from source - the component that registers the production event routing, mounts the real TaskQueue.vue in the gate slot, shallow-skips SkButton/SkInput/Icon, and drives the tree's REAL transport per tree: R2 same-origin fetch stream through the production parser via a legal text/event-stream Response body, legacy tree through a faithful native EventSource double)",
+    "status": "receivable -> RECEIVED per coordinator 01a1c236 (received byte-exact, hash-object recomputed = fe2bd6b1; closure on the receiving branch verified - the harness imports src/stores/pairing.ts 2910c15c / todos.ts cf2c15d2 / organizer.ts e47ce430 / src/lib/web-api-client.ts 1b6a6cfb and compiles src/components/PairingGate.vue 2c164cad + src/components/TaskQueue.vue 1d9551a5, all present and blob-identical to the R2 anchor 170f611; the candidate self-tree ENOENT constraint is satisfied on this branch without any production byte change)"
+   }
+  ]
+ },
+ "revision": 7,
+ "updated": "2026-11-10",
+ "updateDispatch": "MAYNE-24 comment 01a1c236-9ffb-7221-ac06-6de91c928d5c (coordinator receives the ZCode black-box test-capability PASS bound to the R2 lineage per Hermes 01a1c233, keeps the candidate self-tree ENOENT as a reception constraint - extract the audited files only, no whole-branch graft - supplements finding 2 with the source fact that full I cd08588 server/lib/http-server.mjs:161 registers /api/snapshot and :853-879 returns the top-level agentConcurrency matching the 170f611 client readSnapshot() and this harness, and orders the III sole engineering acceptance from 85c7b84: receive the two files + author record verbatim from 9f796f0, receive the Hermes solo-audit record verbatim from this post, register sources / R2 dependency / source corrections / unverified items in README + manifest + the reception record, and wire the three individually-reviewed suites into the existing test:web-text-intake aggregate appended once each at the end of the original 11 files; independently executable - formal integration still separately dispatched)",
+ "adjudications": {
+  "ambiguityA": {
+   "resolvedBy": "coordinator comment 01a1c123-dcfb-7e7b-90b2-0543e5872df8 (2026-11-09T16:28:35Z)",
+   "verdictComment": "01a1c005-f37e-7bb8-8902-fbb1f2e34b87 (ZCode, 2026-11-09T11:16:17Z, per dispatch 01a1bfcb): increment 42d3b8a preview-publish fence PASS limited to the four fence facets; increment 2c39d7f5 full canonical draft mapping PASS limited to readback/apply consistency, preview-does-not-touch-candidate, bare-fields non-regression",
+   "recordCommit": "76f152396a91dc1ce9b38c075dff22bb2c12900d (recomputed today: tree 4d04d41fe3ee2e899d6d3fe374b7e77bd5a14f81, parent db95ea3, docs-only exactly 1 new file docs/reviews/web-text-intake-preview-fence-20261109-zcode.md +44)",
+   "incrementIdentity": "42d3b8a tree 56b12d11 parent cbb04f7; 2c39d7f tree d77ecf05 parent 42d3b8a (recomputed today)",
+   "receptionScope": "this round accepts per the two dispatch-limited facets only; GAP-5 / DatePoint DTO / D operation-replay and the real-Pi boundary remain reserved per the original review"
+  },
+  "queueSourceAnchor": {
+   "resolvedBy": "coordinator comment 01a1c123",
+   "fact": "blob ef98d1d6c662458a4cd532e647a8ce42a6fa6a15 recomputed today at BOTH e69ee59 and 787db84 (git rev-parse, identical); content sha256 d0060153...bae88 unchanged",
+   "decision": "queue file source anchored to 787db84 (tree 097b494a, parent 0443e00), citing that revision's backend-process fixture 04dcd4c5 + http blob 40237eec and Hermes e645bae (comment 01a1bfab-9f93-7bed-bd4a-8b318b360ac0) two-clients/A5 limited evidence",
+   "history": "e69ee59 whole-candidate NOT-PASS (subprocess-face consumed-code race, Hermes 8635e6f comment 01a1bf64) preserved unrewritten; no retroactive whole-pass is written for e69ee59"
+  },
+  "frontendRestPrecision": {
+   "scope": "B_frontend_frozenI_rest holds 63 entries (count corrected from the record's earlier '60 files' wording)",
+   "fact": "recomputed today against main 1e37044: exactly 5 paths differ (SettingsPanel.vue fa75f477 vs main c412cf3f; Workbench.vue c5af8bac vs 2aa1f2b9; stores/agents.ts da044b6e vs 71abbabf; stores/models.ts 2be89983 vs 52634c43; stores/pairing.ts d04b09a9 vs 3ae7deb3); all 63 identical to cd08588 and to d79b1f6",
+   "policy": "the five carry per-entry coverage citations where locatable; unlocated coverage = pending confirmation and is never marked review-closed; the other 58 are byte-identical to main and carry baseline verification only - 'frozen I unchanged' is never claimed as per-file review"
+  },
+  "writeView": {
+   "singleWriteView": "the write surface of this manifest is the 133 per-path entries of sections A+B+C+D+E+F; G_frozen_check rows are verification-only cross-checks of the SAME three migration files already listed in A (identical blobs) - they are not additional written files, and manifest row count must not be read as written-file count",
+   "revision3Recount": {
+    "totalPerPathEntries": 133,
+    "bySection": {
+     "A_i_production": 23,
+     "B_frontend_b5": 5,
+     "B_frontend_frozenI_rest": 63,
+     "D_ii_suites": 4,
+     "D_ii_fixtures_r5": 9,
+     "D_ii_fixtures_revised": 3,
+     "E_unit_regressions": 17,
+     "F_not_receivable": 9
+    },
+    "note": "revision 3 adds three E entries (receipts-restart test + instance + worker fixtures); F_not_receivable rows are item rows, the two new pending-admission items are not file paths; the count in this field counts all section rows for consistency with how it was written"
+   },
+   "revision4Recount": {
+    "totalPerPathEntries": 133,
+    "bySection": {
+     "A_i_production": 23,
+     "B_frontend_b5": 5,
+     "B_frontend_frozenI_rest": 63,
+     "D_ii_suites": 4,
+     "D_ii_fixtures_r5": 9,
+     "D_ii_fixtures_revised": 3,
+     "E_unit_regressions": 17,
+     "F_not_receivable": 9
+    },
+    "note": "revision 4 updates three frontend entries in place (blob supersede, no new entries) and rewrites two F item rows; per-path entry count unchanged at 133"
+   },
+   "revision5Recount": {
+    "revision": "4 -> 5",
+    "perPathEntryCount": "133 -> 142 (new section Z_capability_ui_suite with 8 entries + one new F_not_receivable row; A 23 + B_b5 5 + B_frozenI_rest 63 + D_ii_suites 4 + D_ii_fixtures_r5 9 + D_ii_fixtures_revised 3 + E_unit_regressions 17 + F_not_receivable 10 + Z_capability_ui_suite 8)",
+    "note": "capability-ui suite reception per coordinator 01a1c1cf; the aggregate command is intentionally NOT extended (package wiring deferred per dispatch)"
+   },
+   "revision6Recount": {
+    "revision": "5 -> 6",
+    "perPathEntryCount": "142 -> 142 (F_not_receivable Task-SSE row status updated in place; no new section entries; adjudications.sseSyncAdmission + writeView.revision6Recount added)",
+    "note": "SSE review-record reception per coordinator 01a1c1f9; docs-only - one received record + README rows + this manifest; the aggregate command is intentionally NOT extended (package wiring deferred per dispatch)"
+   },
+   "revision7Recount": {
+    "revision": "6 -> 7",
+    "perPathEntryCount": "142 -> 144 (new section Z_sse_client_suite with 2 entries; A 23 + B_b5 5 + B_frozenI_rest 63 + D_ii_suites 4 + D_ii_fixtures_r5 9 + D_ii_fixtures_revised 3 + E_unit_regressions 17 + F_not_receivable 10 + Z_capability_ui_suite 8 + Z_sse_client_suite 2)",
+    "note": "SSE client black-box suite engineering reception + aggregate wiring per coordinator 01a1c236: two received test-side files + two received records + README rows + C aggregate_command_after_sse_client_wiring + F Task-SSE row WIRED+RECEIVED (history retained in place) + this adjudication + writeView.revision7Recount; the aggregate itself is NOT run - formal integration remains separately dispatched"
+   }
+  },
+  "capabilityPanelsAdmission": {
+   "admission": "coordinator 01a1c1b6-1679-73dc-be72-0b907fde9c32 (2026-11-09)",
+   "source": "60ecc75594a8c9ecbcf2397d03c843580f36c415 (tree 2e57f7a0da17ca5f5f06828a42d0c4e3ce8eb791, parent 61bd170885d59ea8f44861bca8701012ed2b7417)",
+   "received": {
+    "src/components/AgentSettingsPanel.vue": {
+     "blob": "8a44fc3d279e070d4df3820bd0681bd6def4288d",
+     "sha256": "c44ca75a4780c0ab5135fd361d1c28b61fdd56b2aa0cecfc39e0c393d0ace158",
+     "bytes": 13448,
+     "verified": "git show 60ecc75 extraction + git hash-object recomputation equal"
+    },
+    "src/components/ModelSettingsPanel.vue": {
+     "blob": "e67f8d18d7d17f8dca01699c48e9b2000fcfa15a",
+     "sha256": "8ce5ca2df53814f720844a23f2b37642392155a7c35b4431700843c0b466bad0",
+     "bytes": 21245,
+     "verified": "git show 60ecc75 extraction + git hash-object recomputation equal"
+    },
+    "src/components/SettingsPanel.vue": {
+     "blob": "73c1f643fa15bb1335ee6b628ffe3de1ea182a8c",
+     "sha256": "73e3fea94c482958dbfafee24e0cfa88784550da7294ca6e3905300c33f26436",
+     "bytes": 9226,
+     "verified": "git show 60ecc75 extraction + git hash-object recomputation equal"
+    }
+   },
+   "crossStability": "the same three blobs are present unchanged at 62bdccd / a1e15d4 / 8164dea / 1e679ac (git ls-tree recomputed): the author's later test/record commits carry zero production delta",
+   "branchDelta": "this branch's pre-reception bytes 107b8d74/d8273800/c412cf3f replaced by the three admitted blobs; git diff = exactly +55/-8 across the three files",
+   "reviewBasis": {
+    "independentReview": "Hermes 6094a30 (docs/reviews/web-text-intake-capability-ui-20261110-hermes-review.md): all three PASS",
+    "fiveItemScope": {
+     "origin": "coordinator dispatch 01a1c15f five requirements, verified statically and at runtime per 6094a30",
+     "items": [
+      "1 organizer-only: unwired role tabs disabled with honest not-wired labels, backed by cd08588 WIRED_AGENT_IDS=['organizer']/requireWiredAgent",
+      "2 no unwired-role preloading: onMounted three-role loop removed, only organizer preload remains",
+      "3 trial never unlocked by host flags: trialWired=false constant (not nativeBridgeAvailable gating), honest copy, start button disabled",
+      "4 credential help per actual HTTP capability: keychain/native branches and imports removed, env-reference guidance, honest placeholder and statuses",
+      "5 About/tab copy narrowed: models/agents/About wording states organizer-only wiring honestly"
+     ],
+     "runtimeFaces": "7/8 passed with real Chrome x real compiled components x real backend; face 8 (connection-test completion) honestly registered unobserved in the 91s window at review time"
+    }
+   },
+   "modelConnectionSingleSuccess": {
+    "correctedReplay": "Hermes comment 01a1c1b3: real UI (pairing gate -> workbench -> model service -> test-connection click) -> HTTP -> default Pi -> loopback controlled model; exactly 1 model request, test task one attempt succeeded (506ms) failure=null, totalMs=5539 exitCode=0 pass=true within the 20000ms budget incl. cleanup",
+    "attributionCorrection": "the earlier first-attempt failure was the probe's own double JSON encoding (record 4fea18f); the old failure is no longer attributed to production backoff (coordinator 01a1c1b6 accepted)",
+    "narrowClosure": "Hermes comment 01a1c1c6 (branch 155a116), one necessary replay: per-handle PID exit verification (Chrome / model service / storage / in-case Pi worker individually dead), attempt exit_reason=confirmed read from task_attempts (not inferred from backend.close()), one attempt succeeded 604ms attemptCount=1, totalMs=6251 <= 20000; conclusion scoped to this case and fixture form, not a general hard deadline or whole-tree guarantee"
+   },
+   "probeClaimLimitations": {
+    "origin": "coordinator 01a1c1b6: two probe claims not accepted as-is, registered here as limitations",
+    "residualCheck": "the probe's residual verification only scans storage/organizer process names AND requires argv to contain the root path - it would miss Chrome, the model service, and workers carrying only a runtime path + runId; handle-level per-PID exit verification (01a1c1c6) supersedes it as evidence for that case",
+    "closeContract": "backend.close() best-effort close contract does not substitute confirmed-exit facts; confirmed exit must come from attempt-level facts (task_attempts exit_reason) or per-PID kill -0 verification",
+    "budget": "the probe budget mostly restricts waits after startup completes and re-checks totalMs at the end - not yet a hard deadline covering startup and cleanup failures; the 5539ms figure is kept unmodified and is NOT extended into a general hard deadline or whole-tree guarantee"
+   },
+   "notReceived": {
+    "authorTests": "tests面 web-text-intake-capability-ui.test.mjs 7b9c0e59 / capability-ui-browser.mjs ea0991d7 / capability-ui-session.mjs 486493a8 (8164dea) - test revision stays in Hermes independent review",
+    "fixturesAndRecords": "capability-ui fixtures and the author's whole-branch docs records (8164dea/1e679ac/a1e15d4) not received per dispatch"
+   },
+   "boundaries": "native runtime, overall exit, E/D/GAP-5 preconditions unchanged; admission covers the three production blobs only"
+  },
+  "capabilityUiSuiteAdmission": {
+   "dispatch": "MAYNE-24 comment 01a1c1cf (coordinator receives the Hermes test-face PASS conclusion for 8164dea + record 1e679ac and orders the III engineering reception, serial after the three-panel reception 31d7e04; eight-file closure + two records + the Hermes review attachments; README/manifest register source, reviewed scope, unverified items; no whole-branch coverage)",
+   "reviewBasis": "Hermes 01a1c1cd PASS limited to the test-capability faces: static five-file read (budget split workMs:14000 + cleanupMs:6000 explicit at the case entry, late-continuation no-op handlers, startChrome failure reclaim with error.chromeReclaim, per-step close collection+propagation with error.cleanupReport on the original error, TEST-ONLY fault seam verdict/real-fact structural separation, recording-Backend injection at the documented factory seam with backend-boundary seeds), independent rerun 12/12 exit 0 (wall 6.68s, stderr 29B, residue 0), own mutant (AgentSettingsPanel trialWired false->true) exactly B3+B3b red with the other six faces green and residue 0, startup-failure CC 117ms + close-fault CC 918ms both passed",
+   "effectiveTargetUpdate": "01a1c1c8 (the Hermes review record in-file provenance line mis-records 01a1c1b6; per coordinator 01a1c1cf the effective target update is 01a1c1c8 within the 01a1c1b2 scope; the record file bytes are preserved unchanged and this note is the registration)",
+   "unverifiedRegistered": [
+    "real close-error propagation not dynamically induced (the close-fault CC covers the recorded verdict only; the \"Chrome refuses to exit -> exitConfirmed=false\" branch statically held, not dynamically induced; verdict and real facts do not sign each other)",
+    "Chrome startup-failure CC uses /bin/echo (spawn succeeds then exits); the spawn-rejection (ENOENT) path statically held, not dynamically induced",
+    "the author six-mutant matrix not rerun (old r2 outputs preserved verbatim); the other five mutants load-bearing via r2 outputs + the untouched in-page harness",
+    "recording-Backend command counts and seeded succeeded runs are still not real HTTP/Pi; B3b remains a flag-condition face (native unsigned)",
+    "this reception did NOT rerun the suite (per dispatch: already-passed behavior not re-run); the suite first execution on this branch belongs to the aggregate/integration round",
+    "package wiring NOT done: test:web-text-intake aggregate and check chain unchanged this round, to be wired after the SSE and black-box suites pass their own reviews per dispatch"
+   ],
+   "reception": "eleven files byte-exact into agent/opencode/mayne-24 on top of 31d7e04: eight test files (sections.Z_capability_ui_suite), two records from 1e679ac at original paths (behavioral 1e952f7f, cleanup 23ad196d), the Hermes review record from comment 01a1c1cd (sha256 a192142c, six attachments downloaded via CLI, the four listed identity/run attachment shas recomputed and all matched against its SHA256SUMS.txt); reference closure verified (test -> session + three .vue.txt; session -> browser + index.html; entry -> three received panels + four store factories); zero production/package/lock/aggregate bytes; no main operations; MAYNE-24 stays in_progress"
+  },
+  "sseSyncAdmission": {
+   "dispatch": "MAYNE-24 comment 01a1c1f9 (coordinator receives the v2 binding supplementary evidence, lifts the deferred reception of R2 170f611 sync-discipline scope, and orders the III independent docs/manifest reception small commit parallel to the ZCode black-box regression: receive the Hermes SSE review record verbatim from e7b0977 at its original path, append the README index, the manifest R1-supersession / R2-reviewed-scope registrations with the unverified items, and the reception record; acceptance = record-to-blob/attachment hash correspondence, zero existing production/test bytes, docs check green; Task-SSE must NOT be marked fully accepted; no behavior/build repetition, no package/main changes, no formal integration or full gate)",
+   "reviewBasis": "Hermes 01a1c1f0 (initial) + 01a1c1f7 (v2 rebinding per coordinator 01a1c1f4), record received from e7b0977. R1 b8a659b needs_revision: the three coordinator-flagged defects reproduced on R1 original bytes by the independent probe (S2 smaller-cursor replay -> token regressed e1:3; S3 foreign-epoch frame flips token/epoch in place e9:9; S4 failed read-back still advances the token e1:6; S6 snapshot consumed unconditionally; S5 first same-epoch snapshot wipes generations v3->v2); R1 superseded by R2, elimination conclusion retained. R2 (9cb0b70 + d3feccd, anchored 170f611) PASS limited to the sync-discipline scope: frozen probe v2 (sha256 d7da1fb8b8d0c2976b118e7e5e44f5a15d19497fa05f7d9eaf2119cce4cf7b51, two tree copies byte-identical) - per-scenario isolation (connections/streamQueue/snapshotSpec reset per scenario, snapshots passed per scenario, each scenario reads its own connection index), consumption criteria via real organizer store state (S3 fence -> organizerRun=null, old same-epoch snapshot NOT installed; S6 consumed -> organizerRun=A v9), new S1b pending-read-back counter-control (green conn2=null vs R1 conn2=e1:5 arrival-commit); green 8/8 exit 0 totalMs=2151 on locked 170f611, red 7/7 defect reproductions exit 0 totalMs=4396 on b8a659b (red with --unhandled-rejections=warn: R1 leaks rejected read-back promises as unhandled rejections, itself evidence of missing gated consumption); every-scenario finally dispose, exit via process.exitCode, total budget assertion <=20000ms incl. cleanup",
+   "supersededEvidence": "the first-draft probe script/logs version mismatch (script was an in-iteration earlier copy: S3 wording/criteria, S5 print timing, no per-scenario isolation - all three coordinator-flagged mismatches confirmed); the first-draft green/red logs withdrawn as binding evidence, originals retained unchanged; the corrected record e7b0977 removed the misplaced capability-UI 60ecc75 zero-production-delta wording from the SSE record (that scope belongs to the capability-ui package; the SSE baseline wording follows the R2 record composition-baseline correction: fdf89c1 pairing = 3ae7deb3, true-baseline seven-section differential patch 7670a3a9 - its attachment body not re-verified by Hermes, registered as before); the two previously unpublished coordinator-listed files supplemented (wmi-170f611.err = 0 bytes i.e. clean stderr; parser-b8a659b.tap = 12/12 exit 0), hitting the original list per 01a1c1f9, not fabricated",
+   "received": "docs/reviews/web-text-intake-sse-sync-20261110-hermes-review.md verbatim at its original path from e7b0977 into agent/opencode/mayne-24 on top of 64f7c47: blob ada27a8d0f64251756818c9f7e4a3a45ac04c145 (git hash-object recomputed), sha256 cd71fcecb1f2e2e29bbc017aca5e83172e858fff3b9fa1679631c88b49ee6084, 6233 bytes - identical to the v2 attachment 01a1c1f7-f29e-73fe-be22-752764c1ed58 downloaded via CLI (6233 bytes, sha256 recomputed and matched); coordinator 01a1c1f9 confirmed the corrected record blob = the e7b0977 blob and the six published evidence-item SHAs all matched",
+   "unverifiedRegistered": [
+    "2151ms/4396ms sign ONLY the two in-memory probe observations; the frozen script still contains fixed waits, an end-of-run budget assertion and a catch swallowing close errors - NOT extended to failure-path cleanup verified or a universal hard deadline",
+    "the test adaptation 27/27 and both-tree parser 12/12 conclusions stay limited to their registered scopes",
+    "full composition (complete I cd08588 + b5 + this package), DOM, and 401/dispose dynamic faces remain per the original unverified items",
+    "Task-SSE is NOT marked fully accepted; the delivery bytes remain UNreceived into any aggregate; package.json zero bytes (package wiring deferred per dispatch); the ZCode black-box regression continues on its own line with an uninvolved independent reviewer to be dispatched after its candidate delivery"
+   ],
+   "reception": "exactly one file byte-exact into agent/opencode/mayne-24 on top of 64f7c47 (this reception commit): the Hermes SSE review record from e7b0977 at its original path; README +2 rows (the received record + this reception record, header count 156->158 synced to the actual row count); manifest revision 5->6: F Task-SSE row status REVIEWED in place (R1 superseded / R2 sync-discipline scope accepted, NOT full acceptance), this sseSyncAdmission added, writeView.revision6Recount added, per-path entry count unchanged at 142; zero production/test/package/lock bytes; no main operations; MAYNE-24 stays in_progress"
+  },
+  "sseClientAdmission": {
+   "dispatch": "MAYNE-24 comment 01a1c236-9ffb-7221-ac06-6de91c928d5c: the coordinator receives the ZCode black-box test-capability PASS (bound to the R2 lineage) with the six identity/run attachments SHA-matched, keeps the candidate self-tree ENOENT as a reception constraint (only the audited files are extracted, no whole-branch graft), supplements Hermes finding 2 with the source fact that full I cd08588 ALREADY implements /api/snapshot (server/lib/http-server.mjs:161 registration, :853-879 reads the high watermark, pages all tasks, returns top-level agentConcurrency matching the 170f611 client readSnapshot() and this harness - so 'no actual implementation to adjudicate' applies ONLY to the audited engineering tree and must NOT be generalized to full I lacking the route), and orders the III sole engineering acceptance small commit from 85c7b84: receive the two files + author record verbatim from 9f796f0 (82c8c0e7 / fe2bd6b1), receive the Hermes solo-audit record verbatim from the same post, register sources / R2 dependency / source corrections / unverified items in README + manifest + the reception record without overwriting the whole-branch README or other production bytes, and wire the three individually-reviewed suites into the existing test:web-text-intake appended once each at the end of the original 11 files keeping the original order, --test-timeout=20000, the 107 script names, the check chain, the dependency lock and every other package field. Acceptance: received files blob-identical, TaskQueue/six-path closure complete, aggregate exactly 14 unique files, necessary syntax/type/docs checks green, zero differences outside the authorization; deliver acceptance + wiring evidence only - do NOT run the aggregate, builds, the 19-journey or the full gate. Independently executable; formal integration still separately dispatched.",
+   "reviewBasis": "Hermes 01a1c233-70f7-7d6a-b5f7-27788cd746f3 PASS limited to the test-capability faces, bound to the R2 lineage (comment attachments: review record 01a1c233-6a3c 4940 bytes, identity, sseclient-green2.tap 11/11, sseclient-red2.tap 2-pass-9-fail, sseclient-candidate-tree-ENOENT.tap, SHA256SUMS; the coordinator SHA-matched all six identity/run attachments before dispatching); Kimi 01a1c21d and OhMyPi 01a1c220 solo-audit runs failed on platform errors (unknown / provider capacity 429) with no review produced - not candidate defects, execution reassigned to Hermes",
+   "registeredFinding1_candidateSelfTreeEnoent": "9f796f0's own tree lacks src/components/TaskQueue.vue (pairing 3ae7deb3 / PairingGate 01e43233 are pre-package bytes) so the harness compile hits ENOENT and all 11 cases red on the candidate's own tree (Hermes measured); the author's green/red evidence was obtained on assembled trees - test bytes are valid, but engineering reception must bind to a lineage containing the R2 six paths + TaskQueue. Reception constraint: extract ONLY the audited files, never graft the whole branch. On this receiving branch the constraint is satisfied: TaskQueue 1d9551a5 and the six paths are present and blob-identical to 170f611, zero production bytes touched.",
+   "registeredFinding2_snapshotShapeSourceCorrection": "Per the coordinator in 01a1c236: full I cd08588 server/lib/http-server.mjs:161 registers /api/snapshot and :853-879 reads the high watermark, pages all tasks and returns the TOP-LEVEL agentConcurrency - consistent with the 170f611 client readSnapshot() and this harness's top-level shape; therefore the Hermes finding 'no actual implementation to adjudicate' applies ONLY to the audited engineering tree and must NOT be generalized as full I lacking the route. The frozen sample's nested settings/workspace/generatedAt shape differences REMAIN REGISTERED as unresolved; no combined-tree real HTTP or full contract-consistency acceptance has been done; the frozen sample is NOT changed this round and no owner re-adjudication is requested.",
+   "receivedIdentity": {
+    "tests/unit/web-text-intake-sse-client.test.mjs": "from 9f796f0 via git show, blob 82c8c0e7fcc216f3bfa4b048f0b2479a53b4bb4b (hash-object recomputed = source tree), sha256 4975b8d1b5b08d3541931b8995c75a23275d5aa02c223d230bbf344545977d2f, 23287 bytes",
+    "tests/fixtures/web-text-intake/sse-client-harness.mjs": "from 9f796f0 via git show, blob fe2bd6b15d790710c168df7e62b39e9709675d5f, sha256 5518e905a86783d76f7347b78a2a76772458283977411b77e06f3449b2c5892a, 19992 bytes",
+    "docs/reviews/web-text-intake-sse-client-blackbox-20261110-zcode.md": "from 9f796f0 at its original path, blob a63a594c1996c1bfe64d6121bcfa5b27ea90e78d (matches the Hermes-registered author-record blob), sha256 72885a411dbbf21356485a2b914a023569c2fe88527e1a5f0f113dcf6925c458, 10532 bytes",
+    "docs/reviews/web-text-intake-sse-client-20261110-hermes-review.md": "received verbatim from THIS post: comment 01a1c233 attachment 01a1c233-6a3c-7a1b-a377-e1385d7f1ca6 downloaded via CLI (4940 bytes metadata = downloaded byte count), sha256 81c3f8ef52cc46245734177b77c22ed4a92a241ea1e8ac76317d7d538ebc8757, blob 35f1984cefc48552bf2b07959cd13c8760104ac5; the record's own evidence-h20 SHA256SUMS (six run attachments) is the coordinator-matched set, retained in build/"
+   },
+   "closureVerification": "six SSE paths blob-identical to the R2 anchor 170f611 on this branch: src/stores/pairing.ts 2910c15cd827cc61a8cf3fe00703adc9bb56957c / src/stores/organizer.ts e47ce43025e03a06f4c175c94a3e6358ac377ae3 / src/components/PairingGate.vue 2c164cad6e59c3e25630de091e8830f99745ed4a / src/lib/web-api-client.ts 1b6a6cfb4e4de734827e64a89a0d8f6e236b5964 / src/components/TaskQueue.vue 1d9551a56a06a62e94c8c27c19cc57fa16bd57ee / src/lib/sse-stream.ts 34120cac228a391fdb3588e91442457d486451cd - exactly the R2 anchor blobs registered by the author (2910c15c/1b6a6cfb/2c164cad/1d9551a5/e47ce430/34120cac) and independently confirmed by the coordinator; todos.ts cf2c15d2 present; the aggregate's other nine paths (web-text-intake/lifecycle/mcp-pairing/recovery/events unit + http/queue/controlled-model/static integration) are the ALREADY-REGISTERED I/II reception-set entries living on their own branches - expected-missing on this engineering branch per the 48880a2 precedent, no placeholders created",
+   "packageWiring": "test:web-text-intake appended once each at the end: tests/unit/web-text-intake-sse-stream.test.mjs + tests/unit/web-text-intake-capability-ui.test.mjs + tests/unit/web-text-intake-sse-client.test.mjs -> exactly 14 unique paths, original 11 order byte-identical, node --test + --test-timeout=20000 unchanged, script name unchanged, all 107 script names and the key set byte-identical, check chain unchanged, dependency lock unchanged; git diff --numstat package.json = 1 1",
+   "limitedVerification": "npm ci --ignore-scripts exit 0 (env prep, locked deps); node --check exit 0 on both received test-side files; npm run typecheck exit 0 AFTER reception (vue-tsc whole tree); npm run check:docs exit 0; npm run check:structure FAIL set byte-identical before/after vs a detached 85c7b84 baseline tree (11 registered items: 1 x 003-freeze + 3 x vendor/pi env + 7 x registered reception-set ref.missing; zero new, zero disappeared; zero sse-client mentions); the aggregate command decomposes to node --test + one timeout flag + 14 unique paths with no other args",
+   "unverifiedRegistered": [
+    "the aggregate is NOT run on this branch (execution belongs to the separately-dispatched formal integration round); no builds, no 19-journey, no full gate",
+    "real browser / real HTTP / real Pi journeys remain unverified",
+    "snapshot shape consistency across frozen spec / frozen sample (nested settings + workspace + generatedAt) / client / real HTTP remains unresolved pending the combined-tree contract-consistency acceptance; the frozen sample is unchanged this round",
+    "resolve/retry and concurrency-settings UI remain successor inputs (TaskQueue entries unwired)",
+    "behavior hook one-shot combination and S5 600ms double-check real timing-jitter faces, holdNextTasks fence beyond the S9 single point (Hermes unverified items, carried)",
+    "E/D, GAP-5 and the overall exit boundary unchanged; MAYNE-24 stays in_progress"
+   ],
+   "reception": "OpenCode (III) sole engineering acceptance, small commit directly on top of 85c7b84 on branch agent/opencode/mayne-24: exactly the received files (2 test-side + 2 records) + README rows + this manifest revision 7 + the reception record + the package.json aggregate append; zero production/server/Runtime/DDL/lock bytes; no main operations; the author does not self-sign (author ZCode, reviewer Hermes, receiver OpenCode - all distinct); formal integration and the full gate remain separately dispatched"
+  }
+ }
+}

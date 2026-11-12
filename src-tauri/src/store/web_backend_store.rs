@@ -14,8 +14,31 @@ use std::io::BufRead;
 
 /// Lock file kept inside the workspace root for the process lifetime.
 const ROOT_LOCK_FILE: &str = ".web-backend-lock";
-/// Business tables the `transact` surface may write in this slice.
-const BUSINESS_TABLES: [&str; 2] = ["manual_items", "manual_item_events"];
+/// Business tables the `transact` surface may write in this slice: the frozen
+/// 002 manual-item pair, the five 003 text-intake tables, the 004
+/// candidate-operation ledger, and the eight 001 task-system tables. `settings`
+/// and `schema_meta`/`sqlite_sequence` are deliberately excluded (settings goes
+/// through the exact-template path; the latter two are migration-only). The
+/// ledger is append-only by service-layer protocol, not by an INSERT-only
+/// storage guard: the adapter still validates the real DML target.
+const BUSINESS_TABLES: [&str; 16] = [
+    "manual_items",
+    "manual_item_events",
+    "text_sources",
+    "candidates",
+    "candidate_previews",
+    "manual_item_sources",
+    "sign_off_batches",
+    "candidate_operations",
+    "tasks",
+    "task_attempts",
+    "task_events",
+    "task_result_payloads",
+    "side_effect_receipts",
+    "instance_epochs",
+    "recovery_holds",
+    "recovery_items",
+];
 /// Read-only PRAGMA facts exposed through the `pragma` command.
 const READONLY_PRAGMAS: [&str; 6] = [
     "journal_mode",
@@ -116,11 +139,30 @@ impl From<std::io::Error> for ProtocolError {
     }
 }
 
+/// Deserialize an explicit `null` as `Some(Value::Null)` so a present-but-null
+/// `expectChanges` is rejected instead of silently meaning "no assertion".
+fn deserialize_some<'de, T, D>(deserializer: D) -> std::result::Result<Option<T>, D::Error>
+where
+    T: Deserialize<'de>,
+    D: serde::Deserializer<'de>,
+{
+    T::deserialize(deserializer).map(Some)
+}
+
 #[derive(Debug, Deserialize)]
 struct Op {
     sql: String,
     #[serde(default)]
     params: Value,
+    /// Optional pre-commit assertion: the DML must affect exactly this many
+    /// rows or the whole transaction is rolled back with
+    /// `WEB_BACKEND_CONDITION_FAILED`. Absent keeps the original behaviour.
+    #[serde(
+        default,
+        rename = "expectChanges",
+        deserialize_with = "deserialize_some"
+    )]
+    expect_changes: Option<Value>,
 }
 
 /// The storage adapter: one optional open database plus its root lock.
@@ -210,6 +252,24 @@ impl WebBackendStore {
         let mut results = Vec::with_capacity(ops.len());
         for op in &ops {
             validate_write(&op.sql)?;
+            let expected = match &op.expect_changes {
+                None => None,
+                Some(value) => {
+                    let expected = value.as_i64().ok_or_else(|| {
+                        p(
+                            "WEB_BACKEND_INVALID_PARAMS",
+                            "expectChanges 必须是非负整数。",
+                        )
+                    })?;
+                    if expected < 0 {
+                        return Err(p(
+                            "WEB_BACKEND_INVALID_PARAMS",
+                            "expectChanges 必须是非负整数。",
+                        ));
+                    }
+                    Some(expected as u64)
+                }
+            };
             let params = json_params(&op.params)?;
             let mut stmt = tx.prepare(&op.sql)?;
             let column_count = stmt.column_count();
@@ -223,6 +283,13 @@ impl WebBackendStore {
                 collected.push(Value::Array(values));
             }
             let changes = tx.changes();
+            // Pre-commit assertion: a conditional write that matched the wrong
+            // number of rows aborts the whole transaction before COMMIT.
+            if let Some(expected) = expected {
+                if changes != expected {
+                    return Err(p("WEB_BACKEND_CONDITION_FAILED", "条件更新未匹配。"));
+                }
+            }
             results.push(json!({"rows": collected, "changes": changes}));
         }
         tx.commit()?;
@@ -545,16 +612,21 @@ fn validate_write(sql: &str) -> PResult<()> {
     }
     Err(p(
         "WEB_BACKEND_SQL_DENIED",
-        "transact 语句必须针对 manual_items、manual_item_events 或 settings。",
+        "transact 语句必须针对已登记的业务表或 settings。",
     ))
 }
 
 /// The exact production settings statements. `application-settings-service.mjs`
-/// only ever sends these two parameterized shapes.
+/// only ever sends the `application.timeZone` pair; the task-service sends the
+/// `agentConcurrency` pair. No other settings write is accepted.
 const SETTINGS_INSERT: &str =
     "INSERT INTO settings(key,value,version)VALUES('application.timeZone',?,1)";
 const SETTINGS_UPDATE: &str =
     "UPDATE settings SET value=?,version=version+1 WHERE key='application.timeZone' AND version=?";
+const SETTINGS_AGENT_CONCURRENCY_INSERT: &str =
+    "INSERT INTO settings(key,value,version)VALUES('agentConcurrency',?,1)";
+const SETTINGS_AGENT_CONCURRENCY_UPDATE: &str =
+    "UPDATE settings SET value=?,version=version+1 WHERE key='agentConcurrency' AND version=?";
 
 fn settings_drops_space(out: &str) -> bool {
     out.ends_with('(') || out.ends_with(')') || out.ends_with(',') || out.ends_with('=')
@@ -631,7 +703,11 @@ fn normalize_settings_sql(raw: &str) -> String {
 /// a rewritten key, or the literal appearing anywhere but the key position).
 fn validate_settings_write(raw: &str) -> PResult<()> {
     let normalized = normalize_settings_sql(raw);
-    if normalized == SETTINGS_INSERT || normalized == SETTINGS_UPDATE {
+    if normalized == SETTINGS_INSERT
+        || normalized == SETTINGS_UPDATE
+        || normalized == SETTINGS_AGENT_CONCURRENCY_INSERT
+        || normalized == SETTINGS_AGENT_CONCURRENCY_UPDATE
+    {
         return Ok(());
     }
     Err(p("WEB_BACKEND_SQL_DENIED", "settings 写入形状非法。"))

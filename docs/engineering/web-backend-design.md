@@ -1,8 +1,6 @@
 # Web 与后端优先：服务边界、任务队列与薄壳接入
 
-> 目标契约按 MAYNE-16 的 owner 五项决定更新（2026-11-06）。本文是设计，尚未实现；当前代码结构仍见[工程架构](architecture.md)，交付顺序与实际进度见[实施计划](../product/05-第一阶段实施计划.md)。此前 v0.5 中单飞、旧版兼容及 G2/G3 排在薄壳之后的建议已被本次决定替代。
-> **2026-11-07 状态**：owner 已授权按全新建表实施独立新库（web-backend/1 lineage，路径 `<workspaceRoot>/data/web-backend.sqlite`，11 表含 `task_result_payloads`，不做历史迁移或兼容桥）；最终 DDL、实施候选 `67860d3` 及其 F-1 修订 `cab73aa` 均已独立评审通过，最终集成候选已逐字节接入修订、迁移哈希冻结与复核记录——未合入 main；完整门禁在冻结候选上按原预算重跑，结果以回执为准，状态以[实施计划](../product/05-第一阶段实施计划.md)为准。
-> **2026-11-08 状态**：W0 已关闭（本地 main `6546990` 与已测树一致，完整门禁通过）。W1 手工事项切片进入受控实施：owner 批准 A–D（具体 DDL `b6cb8e61…f97e`、`server/` 与 `src-tauri/src/bin/` 布局守卫、`[[bin]]` 登记、`build-backend.mjs` 构建接入），纵向契约定稿见[手工事项契约](web-manual-items-contract.md)（含附录A/B 实施期裁定：接口字面名、幂等作用域、最小启动契约、应用时区 HTTP-CAS 单 key 写范围、DML 写目标分派）、授权与实施登记见[授权清单 §12](../reviews/web-manual-items-authorization-20261108.md)；三候选及全部独审已齐备并随 MAYNE-23 任务分支第五轮集成原样接入，第五轮冻结版 `eca807b` 完整门禁已由唯一集成执行者串行执行 **exit 0**（51 组、新 Web 五文件 59/59），原样真实 UI 浏览器旅程 34/34 独立验收通过（OhMyPi `9c0f202`）、集成公共增量只读复核通过（Kimi `2ad7a48`，见[集成回执 §14–§15](../reviews/web-manual-items-integration-20261108.md)）；仍未合入 main，主线收口留队长按 owner 既有授权确认精确版本。本文仍描述目标设计；实际进度以[实施计划](../product/05-第一阶段实施计划.md)为准。
+> 目标方向沿用 MAYNE-16 的五项决定。当前实现已有独立 Node HTTP/SSE 后端、Rust SQLite 写入适配、Vue Web 与随包 Pi Runtime；现行公开线域为 [API2](web-api-contract-v2.md)，API1 与原批准记录保留溯源。设计描述仍包括未交付目标，当前进度只见[实施计划](../product/05-第一阶段实施计划.md)；本轮组合与未验证边界见[收束记录](../reviews/branch-consolidation-20261112.md)。
 
 ## 1. 已确认的边界
 
@@ -91,7 +89,7 @@ SQLite 足以作为当前**单后端实例**的队列与状态来源；并发 3 
 
 以下是待实施的数据契约，表名与 DDL 在对应切片定案。逻辑字段包含 taskId、操作幂等键、类型/角色、输入引用、配置修订、state、attemptId、owner epoch、进度、取消意图、nextAttemptAt、结果引用和有序事件游标。业务结果、任务终态及可见事件在同一事务提交，签收仍单独由用户确认，不能把 task success 当正式事项已签收。
 
-> **2026-11-07 定案（已授权实施中）**：新库为独立 web-backend/1 lineage（application_id `0x57424b31`），路径 `<workspaceRoot>/data/web-backend.sqlite`，11 表并采纳 `task_result_payloads` 承载 `result://<attemptId>/<name>` 结果负载；每任务至多一个未结束 attempt 由部分唯一索引在 schema 层强制；迁移进度以 `PRAGMA user_version` 为权威、`schema_meta.schema_version` 为同事务镜像，不符显式拒绝。旧库与既有 001–005 不动，不做历史迁移或兼容桥。最终 DDL 以 `docs/reviews/web-foundation-integration-schema-authorization-20261107.md`（本批准备轮已随已审候选接入）及实施计划登记为准；实现候选 `67860d3` 及其 F-1 修订 `cab73aa` 均已过独立评审、已随最终集成候选接入，未合入 main；完整门禁回执前，本节其余内容仍区分设计与已验证现状。
+> **2026-11-07 定案（已授权实施中）**：新库为独立 web-backend/1 lineage（application_id `0x57424b31`），路径 `<workspaceRoot>/data/web-backend.sqlite`，11 表并采纳 `task_result_payloads` 承载 `result://<attemptId>/<name>` 结果负载；每任务至多一个未结束 attempt 由部分唯一索引在 schema 层强制；迁移进度以 `PRAGMA user_version` 为权威、`schema_meta.schema_version` 为同事务镜像，不符显式拒绝。旧库与既有 001–005 不动，不做历史迁移或兼容桥。最终 DDL 以 `docs/reviews/web-foundation-integration-schema-authorization-20261107.md`（本批准备轮已随已审候选接入）及实施计划登记为准；实现候选 `67860d3` 及其 F-1 修订 `cab73aa` 均已过独立评审、已在生产树接入；后续迁移按追加和单独授权办理，当前验收状态见实施计划。
 
 | 状态/动作 | 规则 |
 |---|---|

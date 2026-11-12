@@ -1,0 +1,67 @@
+{
+  "contractVersion": "web-api/2",
+  "taskId": "tsk_6d0a3f8c2e5b1479da3c6e8a0b2d4f17",
+  "operationId": "op_9e2d5a7c1b4f3068da2c4e6b8a0d1f35",
+  "type": "organize_text",
+  "role": "organizer",
+  "state": "failed",
+  "version": 6,
+  "createdAt": "2026-11-06T12:36:12.000Z",
+  "updatedAt": "2026-11-06T12:44:00.000Z",
+  "terminalAt": "2026-11-06T12:44:00.000Z",
+  "submitSeq": 1046,
+  "queuePosition": null,
+  "attemptCount": 3,
+  "attemptId": "att_1d4f7a0c3e6b2598da4c7e9b1a3d5f26",
+  "cancelIntent": false,
+  "configRevision": "cfgrev_0d81fe22",
+  "inputRef": {
+    "kind": "inline_text",
+    "byteSize": 390,
+    "contentHash": "sha256:c2f5a8d1b4e790c3f6a9d2b5e8c1f4a7d0b3e6c9f2a5d8e1b4c7f0a3d6e9b2c5"
+  },
+  "progress": null,
+  "result": null,
+  "failure": {
+    "code": "model_request_failed",
+    "message": "model request failed after the retry budget was exhausted",
+    "retryable": "manual",
+    "sideEffectSafety": "proven_safe",
+    "nextAttemptAt": null
+  },
+  "recovery": null,
+  "attemptExitState": "exited_confirmed",
+  "attemptExitEvidence": {
+    "verdict": "registry_extinct",
+    "workerExited": true,
+    "groupAbsent": true,
+    "registry": {
+      "total": 1,
+      "confirmedExtinct": 1,
+      "unobservable": 0,
+      "survivors": []
+    },
+    "argvScan": {
+      "performed": true,
+      "hits": 0
+    },
+    "veto": {
+      "triggered": false,
+      "reason": null,
+      "detail": null
+    },
+    "residual": {
+      "treeExtinctProven": false,
+      "scope": "registry_domain",
+      "strayLedger": {
+        "found": 0,
+        "swept": 0,
+        "pending": 0
+      }
+    },
+    "confirmedAt": "2026-11-06T12:44:00.000Z"
+  },
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "resultPendingExit": false,
+  "note": "attempt_budget exhausted: the task stays failed, retryable degrades from auto_backoff to manual and nextAttemptAt is cleared; a user retry resets the remaining budget"
+}

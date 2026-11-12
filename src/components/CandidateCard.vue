@@ -9,7 +9,7 @@ import SkFieldset from './ui/SkFieldset.vue';
 import SkCheckbox from './ui/SkCheckbox.vue';
 import { runError,mcpCloseWarning,type Candidate } from '../domain/organizer';
 import { candidateFields,editorSignature } from '../domain/candidate';
-import type { Todo } from '../domain/todos';
+import type { Todo,TodoInput,TimePoint } from '../domain/todos';
 import { displayPoint } from '../domain/todos';
 import { useOrganizer } from '../stores/organizer';
 import { errorMessage } from '../stores/todos';
@@ -21,12 +21,31 @@ watch(()=>props.candidate.version,()=>organizer.sync(props.candidate));
 const dirty=computed(()=>editorSignature(state.value)!==state.value.baseline);
 const previews=computed(()=>organizer.batch?.previews.filter(r=>r.candidateId===props.candidate.id)||[]);
 const related=computed(()=>props.todos.filter(t=>t.status!=='deleted'&&t.data.title.trim()===state.value.title.trim()));
-let lastSignature='',operationId='';
-function operation(value:unknown){const signature=JSON.stringify(value);if(signature!==lastSignature){lastSignature=signature;operationId=crypto.randomUUID();}return operationId;}
-async function save(){error.value='';try{const fields=candidateFields(state.value);await organizer.saveCandidate(props.candidate,fields,state.value.timeReviewed,operation(['save',props.candidate.version,fields,state.value.timeReviewed]));}catch(e){error.value=e instanceof Error?e.message:errorMessage(e);}}
-async function discard(){error.value='';try{await organizer.discard(props.candidate,operation(['discard',props.candidate.version]));}catch(e){error.value=errorMessage(e);}}
+/// 保存/丢弃/应用各持一个独立（规范请求签名→operationId）槽位：同一动作、同一候选、
+/// 同一版本、同一规范请求在传输失败后的重试必须复用原键，不得悄悄新建；另一个动作
+/// 的点击不得覆盖本动作待重试的键（共享单槽会在“先保存后丢弃”等顺序里丢失原键）。
+/// 签名只认服务端规范请求语义（见 canonicalRequest），动作/候选/版本/规范输入任何
+/// 一项真正变化时签名随之变化，才会生成新键。
+let operationSlots=new Map<string,{signature:string;operationId:string}>();
+/// 与服务端 web-api/1 canonicalize 等价：对象键排序、数组保序、原始值 JSON 化。
+function canonicalize(value:unknown):string{if(Array.isArray(value))return `[${value.map(canonicalize).join(',')}]`;if(value&&typeof value==='object'){const keys=Object.keys(value).sort();return `{${keys.map(key=>`${JSON.stringify(key)}:${canonicalize((value as Record<string,unknown>)[key])}`).join(',')}}`;}return JSON.stringify(value)??'undefined';}
+/// 服务端 normalizeInput 的客户端等价：标题/负责人 trim、标签去空去重保序、时间点
+/// 补 precision 并带 ISO at。签名只认这些规范字段——仅改空白、标签顺序或重复不换键，
+/// 真实语义变化才换键。
+function canonicalInput(input:TodoInput):Record<string,unknown>{
+  const tags:string[]=[];const seen=new Set<string>();
+  for(const entry of input.tags){const tag=entry.trim();if(!tag||seen.has(tag))continue;seen.add(tag);tags.push(tag);}
+  const point=(value:TimePoint|null)=>value?{atMs:value.atMs,at:new Date(value.atMs).toISOString(),timeZone:value.timeZone,localText:value.localText,precision:value.precision??'minute'}:null;
+  return {title:input.title.trim(),kind:input.kind,owner:input.owner.trim(),priority:input.priority,due:point(input.due),followup:point(input.followup),tags};
+}
+/// 服务端三直改操作 canonical 请求的客户端同构：edit/discard/apply_preview 的字段
+/// 与顺序均与锁定后端 text-intake-service.mjs 的 canonicalize 入参一致。
+function canonicalRequest(kind:'save'|'discard'|'apply',candidateId:string,expectedVersion:number|null,input:TodoInput|null,timeReviewed:boolean,runId:string|null){return kind==='save'?{action:'edit',candidateId,expectedVersion,input:canonicalInput(input!),timeReviewed:Boolean(timeReviewed)}:kind==='discard'?{action:'discard',candidateId,expectedVersion}:{action:'apply_preview',candidateId,runId,expectedVersion};}
+function operation(slot:string,value:unknown){const signature=canonicalize(value);const known=operationSlots.get(slot);if(!known||known.signature!==signature){const next={signature,operationId:crypto.randomUUID()};operationSlots.set(slot,next);return next.operationId;}return known.operationId;}
+async function save(){error.value='';try{const fields=candidateFields(state.value);await organizer.saveCandidate(props.candidate,fields,state.value.timeReviewed,operation('save',canonicalRequest('save',props.candidate.id,props.candidate.version,fields,state.value.timeReviewed,null)));}catch(e){error.value=e instanceof Error?e.message:errorMessage(e);}}
+async function discard(){error.value='';try{await organizer.discard(props.candidate,operation('discard',canonicalRequest('discard',props.candidate.id,props.candidate.version,null,false,null)));}catch(e){error.value=errorMessage(e);}}
 async function revise(){error.value='';try{await organizer.revise(props.candidate,state.value.instruction);}catch(e){error.value=errorMessage(e);}}
-async function apply(id:string){error.value='';const preview=previews.value.find(r=>r.id===id);if(!preview)return;try{await organizer.apply(preview,operation(['apply',id,preview.candidateVersion]));}catch(e){error.value=errorMessage(e);}}
+async function apply(id:string){error.value='';const preview=previews.value.find(r=>r.id===id);if(!preview)return;try{await organizer.apply(preview,operation('apply',canonicalRequest('apply',props.candidate.id,preview.candidateVersion,null,false,id)));}catch(e){error.value=errorMessage(e);}}
 function target(){state.value.targetVersion=props.todos.find(t=>t.id===state.value.targetId)?.version||0;}
 </script>
 <template><article class="candidate-card" :aria-label="`候选：${candidate.draft.fields.title}`"><header class="candidate-heading"><SkCheckbox v-if="candidate.status==='pending'" v-model="state.selected" class="candidate-select" :disabled="organizer.saving"><strong>{{candidate.draft.fields.title}}</strong></SkCheckbox><strong v-else>{{candidate.draft.fields.title}}</strong><span class="pill">{{ candidate.status==='pending'?'未签收':candidate.status==='accepted'?'已签收':'已丢弃' }}</span></header>

@@ -1,0 +1,15 @@
+{
+  "contractVersion": "web-api/2",
+  "status": 403,
+  "error": {
+    "code": "workspace_manage_denied",
+    "message": "workspace.manage is not issued for this session (proxy deployment); root switching is refused; backup create/download/restore via workspace.backup remain available",
+    "details": {
+      "mode": "proxy",
+      "missingCapability": "workspace.manage",
+      "retainedCapabilities": [
+        "workspace.backup"
+      ]
+    }
+  }
+}

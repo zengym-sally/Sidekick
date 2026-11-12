@@ -1384,7 +1384,9 @@ fn formal_output_diagnostic_roundtrip_records_all_real_boundaries() {
     let events = fixture.runtime.output_diagnostics.lock().unwrap();
     assert_eq!(events.len(), 9);
     for ((group, kind), id) in events
-        .chunks_exact(3)
+        .as_chunks::<3>()
+        .0
+        .iter()
         .zip(["extract", "revise", "trial"])
         .zip(ids)
     {

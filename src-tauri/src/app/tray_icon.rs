@@ -9,7 +9,7 @@ mod tests {
     #[test]
     fn tray_glyph_has_transparent_background_and_monochrome_detail() {
         let icon = image();
-        let pixels: Vec<_> = icon.rgba().chunks_exact(4).collect();
+        let pixels: Vec<_> = icon.rgba().as_chunks::<4>().0.iter().collect();
         assert!(
             pixels.iter().any(|p| p[3] == 0),
             "tray background is an opaque square"

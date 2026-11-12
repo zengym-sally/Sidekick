@@ -5,7 +5,7 @@
 
 ## Web/后端阶段的证据边界
 
-新交付顺序为 W0–W5 浏览器完整业务后 D1 薄壳，详见[分期验收](../product/04-分期交付与验收.md)。当前命令矩阵仍对应旧生产代码，不构成新 Web/Linux 功能通过证据；实现切片接入新的队列、HTTP/SSE、凭据与代理测试时再同步可执行门禁。浏览器真实 HTTP 组装路径、后端集成、Linux 代理部署和 macOS 原生各自留证；原生专属能力不提前阻断独立 Web 业务，也不提前关闭。纯文档同步运行链接/一致性检查，不以此代替实现全量门禁。
+交付顺序仍为 W0–W5 完整浏览器业务后 D1 薄壳，详见[分期验收](../product/04-分期交付与验收.md)。`npm run check` 已纳入 Web 手工事项、文本整理、任务控制、候选操作幂等、API2 客户端和退出证据生产/消费套件。浏览器真实 HTTP、受控模型/进程、真实服务、Linux 代理和 macOS 原生各自留证，不能相互代签。API1 历史夹具不再作为现行 API2 组合的正控；正控必须含现行规范字段，版本拒绝等负控保留。
 
 ## 1. 门禁矩阵
 
@@ -19,6 +19,9 @@
 | 聚焦脚本（`npm run test:*`、`npm run probe:*`） | 单切片业务规则、schema、配置、失败反例 | 开发中逐步回归 | 脚本名是稳定接口，不因目录调整改名 |
 | `npm run check:s33-p2` | MCP P2 的域／存储／宿主／隔离护栏、类型与双特性 Clippy、先专用后普通构建与包排除 | 只改 P2 相关面时 | 有界聚合，**不能**代替完整 `npm run check` |
 | 显式真实环境命令 | `npm run test:s2-live`／`test:s31-live`／`test:s32-live`、原生验收包 `build:*-verify`、`probe:app` | 需要真实模型、原生或安装包时 | 不进自动门禁；需要 owner 指定配置与显式授权，见第 3 节 |
+| `npm run test:web-text-intake` / `test:web-task-controls` | 来源/候选/签收、队列/恢复/权威条目、SSE 与生产工作台；任务控制读回与并发围栏 | Web 切片与整合后 | 使用真实存储、受控服务；不代表真实外部服务 |
+| `npm run test:web-candidate-operations` | HTTP 重放/重启幂等与生产 CandidateCard 的 operationId 生命周期 | 候选操作或集成后 | 默认验证当前树，历史 D 基座可显式指定并核身份；无需另一个任务工作区 |
+| `npm run test:web-api-v2` / `test:web-exit-evidence` | 现行接口/快照、证据披露、登记域生产与消费、持久化失败关闭 | API2 / 退出 / 集成后 | 不声称证明任意逃逸进程树消亡；真实 OS 观察边界单列 |
 | `node --check <script>` | 新增／修改的 `.mjs` 脚本语法 | 触碰守卫或打包脚本后 | 轻量前置，不替代执行 |
 
 已知非阻断输出：esbuild 对随包 Runtime 的体积提示、Vite chunk 体积提示、ad-hoc 签名与未公证提示。它们属于既有基线；**新增**警告必须在验证记录里逐项归因，不能默认忽略。

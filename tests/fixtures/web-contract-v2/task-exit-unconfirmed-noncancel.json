@@ -1,0 +1,70 @@
+{
+  "contractVersion": "web-api/2",
+  "taskId": "tsk_3a6d8f1c5e9b2704da6f8b2e7c1a4d93",
+  "operationId": "op_6c9e2a5d8f1b3704da8c1e4b7a2d5f93",
+  "type": "organize_text",
+  "role": "organizer",
+  "state": "needs_review",
+  "version": 3,
+  "createdAt": "2026-11-06T12:20:00.000Z",
+  "updatedAt": "2026-11-06T12:33:00.000Z",
+  "terminalAt": null,
+  "submitSeq": 1039,
+  "queuePosition": null,
+  "attemptCount": 1,
+  "attemptId": "att_4b7e1d9a3c6f2508da1c4e7b9a3d6f25",
+  "attemptExitState": "exited_unknown",
+  "attemptExitEvidence": {
+    "verdict": "unresolved",
+    "workerExited": true,
+    "groupAbsent": true,
+    "registry": {
+      "total": 2,
+      "confirmedExtinct": 1,
+      "unobservable": 0,
+      "survivors": [
+        {
+          "pid": 47123,
+          "identity": "grandchild registered via the lifetime ppid chain at spawn; setsid escape now in its own process group",
+          "evidence": "identity still present in the process table at the last observation"
+        }
+      ]
+    },
+    "argvScan": {
+      "performed": true,
+      "hits": 0
+    },
+    "veto": {
+      "triggered": true,
+      "reason": "known_survivor",
+      "detail": "a registered member is still alive; the slot stays held and resolve is refused"
+    },
+    "residual": {
+      "treeExtinctProven": false,
+      "scope": "registry_domain",
+      "strayLedger": null
+    },
+    "confirmedAt": null
+  },
+  "resultPendingExit": false,
+  "cancelIntent": false,
+  "configRevision": "cfgrev_0d81fe22",
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "inputRef": {
+    "kind": "inline_text",
+    "byteSize": 842,
+    "contentHash": "sha256:1f3a9c07e5b2d84c0a6f1e93b7d5c2a8094e6f1bd3c7a5029e8b1d4f6a0c3e52"
+  },
+  "progress": null,
+  "result": null,
+  "failure": null,
+  "recovery": {
+    "cause": "exit_unconfirmed",
+    "sideEffectKnown": false,
+    "autoResume": false,
+    "itemVersion": 1,
+    "stagedResult": false,
+    "reason": "running task lost its worker before any result was staged; the registry-domain exit is unresolved (a registered member is still alive), so the slot stays occupied and resolve is refused",
+    "receipts": []
+  }
+}

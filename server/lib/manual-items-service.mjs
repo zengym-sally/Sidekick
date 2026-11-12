@@ -11,7 +11,7 @@
 import { randomBytes } from 'node:crypto';
 import { zonedCandidates } from '../../shared/dates.mjs';
 
-export const CONTRACT_VERSION = 'web-api/1';
+export const CONTRACT_VERSION = 'web-api/2';
 
 /// Reviewed wire format for `TimePoint.at`: ISO 8601 UTC with millisecond
 /// precision (contract §4.2). Anything else is rejected rather than parsed in
@@ -73,7 +73,11 @@ export function canonicalize(value) {
   return JSON.stringify(value);
 }
 
-function normalizePoint(value, label) {
+/// Validate a date point on the shared `{at,timeZone,localText,precision}`
+/// line (frozen web-api/1 §1 time format). Exported so the text-intake source
+/// anchor validates on exactly the same line as a manual item's due/followup
+/// point instead of a second, drifting implementation.
+export function normalizePoint(value, label) {
   if (value === null || value === undefined) return null;
   if (typeof value !== 'object') throw validation(`${label}格式无效。`);
   const raw = value.at;
@@ -111,7 +115,7 @@ function normalizePoint(value, label) {
   return { atMs, at: raw, timeZone, localText, precision };
 }
 
-function normalizeTags(value) {
+export function normalizeTags(value) {
   if (value === null || value === undefined) return [];
   if (!Array.isArray(value)) throw validation('标签必须是数组。');
   const seen = new Set();
@@ -130,7 +134,7 @@ function normalizeTags(value) {
   return tags;
 }
 
-function normalizeInput(input) {
+export function normalizeInput(input) {
   if (!input || typeof input !== 'object' || Array.isArray(input)) {
     throw validation('input 必须是对象。');
   }
@@ -148,7 +152,7 @@ function normalizeInput(input) {
   return { title, kind: input.kind, owner, priority: input.priority, due, followup, tags };
 }
 
-function pointParameters(point) {
+export function pointParameters(point) {
   return [
     point?.atMs ?? null,
     point?.timeZone ?? null,
@@ -196,13 +200,18 @@ function rowToInternal(row) {
   };
 }
 
-function wirePoint(point) {
+/// The HTTP serialization boundary for a date point: the internal `atMs`
+/// shape crosses it as the established DatePoint line (`{at,timeZone,
+/// localText,precision}`, frozen web-api/1 §1). Exported so the text-intake
+/// candidate/preview wire converts on exactly this line instead of a second,
+/// drifting implementation.
+export function wirePoint(point) {
   return point
     ? { at: new Date(point.atMs).toISOString(), timeZone: point.timeZone, localText: point.localText, precision: point.precision }
     : null;
 }
 
-function toWire(item) {
+export function toWire(item) {
   return {
     contractVersion: CONTRACT_VERSION,
     itemId: item.itemId,

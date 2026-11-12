@@ -13,6 +13,46 @@ const effectiveTest=computed(()=>model.selectedModel||testChoice.value),testOpti
 const testRun=computed(()=>organizer.run?.kind==='test'&&organizer.run.snapshot.modelId===effectiveTest.value?organizer.run:null);
 const testBusy=computed(()=>!!testRun.value&&organizer.running),blocked=computed(()=>!model.ready||model.loading||model.saving);
 const credential=computed(()=>model.configuration?.credentialStatus[model.selectedProvider]);
+// Credential reference status. The web surface speaks the frozen §7 vocabulary
+// `available | missing | unavailable`; the native bridge historically reported
+// `stored` / `environment`.
+//
+//   `available`  the REFERENCE RESOLVES — it is NOT a claim that a secret is
+//                persisted in an OS store, so it must never be rendered as
+//                "已保存".
+//   `missing`    the reference is KNOWN but no value resolves for it. That says
+//                nothing about whether anything was ever saved, so the copy is
+//                deliberately neutral ("未解析到值") and never asserts
+//                "尚未保存" — the reference being configured and its value
+//                being absent are different facts.
+//
+// The internal status shape is unchanged.
+const credentialLabel=computed(()=>{
+  if(credential.value==='available')return '凭据引用可解析';
+  if(credential.value==='stored')return '已有钥匙串凭据';
+  if(credential.value==='environment')return '当前使用宿主环境变量';
+  if(credential.value==='missing')return '凭据引用未解析到值';
+  if(credential.value==='unavailable')return '凭据引用不可用';
+  return '凭据状态未知';
+});
+const credentialResolved=computed(()=>credential.value==='available'||credential.value==='stored'||credential.value==='environment');
+// Credential input copy, by the pipe that will actually run.
+//
+// Every host — browser and desktop alike — reads and saves model configuration
+// through the web API adapter (`getWebApiClient().asBackend()` in the stores).
+// That configuration interface never accepts plaintext secrets: a save that
+// carries `apiKeys` is refused (`plain_credential`) with the draft kept, so a
+// typed key has nowhere to go in this pipe on any host. What works is a
+// REFERENCE — an environment-variable name resolved privately by the backend,
+// or an existing reference left untouched (留空保留). There is no OS-keychain
+// write in this pipe on any host; the keychain copy therefore must not be
+// gated on the bridge flag, and D1/OS credential providers stay out of scope.
+const keyHelp=computed(()=>{
+  if(credential.value==='available')return '凭据引用可解析；留空保留原引用。';
+  if(credential.value==='missing')return '凭据引用未解析到值；请改用环境变量引用，保存失败时草稿会保留。';
+  return '当前管道不接收明文密钥：请改用环境变量引用；已有引用留空保留。';
+});
+const keyPlaceholder=computed(()=>credentialResolved.value?'引用已配置 · 留空保留':'当前管道不保存明文 · 请改用环境变量引用');
 const effortOptions=computed(()=>{const declaration=object(model.findModel(model.selectedModel||'')?.reasoning);const allowed=Array.isArray(declaration.supportedEfforts)?declaration.supportedEfforts:['minimal','low','medium','high','xhigh','max'];return [{value:'default',label:'由服务决定'},{value:'off',label:'关闭',disabled:declaration.canDisableThinking===false||declaration.onlyReasoning===true},...(['minimal','low','medium','high','xhigh','max'] as const).filter(v=>allowed.includes(v)).map(v=>({value:v,label:({minimal:'最少',low:'较低',medium:'标准',high:'较高',xhigh:'更高',max:'最高'})[v]}))];});
 watch(()=>model.selectedProvider,()=>{testChoice.value=testOptions.value[0]?.value||'';},{immediate:true});watch(testOptions,value=>{if(!value.some(o=>o.value===testChoice.value))testChoice.value=value[0]?.value||'';});
 function isDraft(id:string){return !model.findModel(id)&&!!model.modelDrafts[id];}
@@ -22,14 +62,17 @@ async function applyDefault(){try{await model.applyDefault();}catch{}}
 async function test(){if(model.dirty||blocked.value||!usableModel(model.configuration,effectiveTest.value))return;try{await organizer.testModel(effectiveTest.value);}catch{}}
 function ask(kind:'provider'|'model',id:string,name:string){deletion.value={kind,id,name};confirmDialog.value?.showModal();}
 async function remove(){if(!deletion.value)return;try{if(deletion.value.kind==='provider')await model.removeProvider(deletion.value.id);else await model.removeModel(deletion.value.id);confirmDialog.value?.close();}catch{confirmDialog.value?.close();}}
-onMounted(async()=>{if(!model.ready)try{await model.load();}catch{}for(const role of ['organizer','tracker','advisor'] as const)if(!agents.states[role].ready)void agents.load(role).catch(()=>{});});
+// Only the wired role is pre-read: the HTTP read/write/reset endpoints all pass
+// requireWiredAgent first (WIRED_AGENT_IDS=['organizer'], server/lib/http-server.mjs),
+// so tracker/advisor answer 404 — pre-reading them would only manufacture errors.
+onMounted(async()=>{if(!model.ready)try{await model.load();}catch{}if(!agents.states.organizer.ready)void agents.load('organizer').catch(()=>{});});
 </script>
 <template><div class="catalog-page"><Teleport defer to="#settings-heading-actions"><div class="catalog-default"><SkField label="全局默认模型"><div class="catalog-default-row"><SkSelect v-model="defaultChoice" :options="options" :disabled="blocked||!model.configuration" searchable placeholder="先添加模型服务"/><SkButton v-if="model.globalDraft" kind="entry" :disabled="blocked" @click="applyDefault">应用</SkButton></div></SkField></div></Teleport>
 <p v-if="model.loading" role="status">正在读取模型配置…</p><div v-if="!model.ready&&!model.loading" class="profile-alert" role="alert"><p>{{model.error||'模型配置尚未确认，请重新读取后继续。'}}</p><SkButton kind="entry" :disabled="model.loading" @click="model.load().catch(()=>{})">重新读取，保留草稿</SkButton></div>
 <div v-if="!providers.length&&!model.loading" class="catalog-empty"><h2>先为班班接入一个模型服务。</h2><p>供应商统一管理认证，多个模型可分配给不同的内置智能体。</p><SkButton kind="entry" :disabled="!model.ready" @click="model.addProvider()"><Icon name="plus"/>添加第一个服务</SkButton></div>
 <div v-else class="catalog-layout"><aside class="catalog-rail" aria-label="供应商列表"><div class="catalog-rail-title"><span>供应商</span><span>{{providers.length}}</span></div><button v-for="provider in providers" :key="provider.id" class="catalog-provider" :class="{active:model.selectedProvider===provider.id}" :disabled="model.saving" @click="model.selectProvider(provider.id)"><span><strong>{{provider.name}}</strong><small>{{model.configuration?.models.models.filter(m=>m.providerId===provider.id).length||0}} 个模型 · {{provider.enabled?'已启用':'已停用'}}</small></span><Icon v-if="model.selectedProvider===provider.id" name="check"/></button><SkButton kind="quiet" :disabled="blocked" @click="model.addProvider()"><Icon name="plus"/>新增供应商</SkButton></aside>
 <section class="catalog-editor" aria-label="服务与模型编辑"><template v-if="p&&!m"><div class="catalog-object-heading"><div><h2>{{model.findProvider(p.id)?.name||'新增供应商'}}</h2><p>{{model.findProvider(p.id)?.apiFormat&&model.findProvider(p.id)?.apiFormat!=='openai-compatible'?'未适配：'+model.findProvider(p.id)?.apiFormat:'OpenAI兼容接口'}} · {{rows.length}} 个模型</p></div><div class="catalog-object-actions"><SkSwitch v-model="p.enabled" label="启用供应商" :disabled="blocked"/><template v-if="model.findProvider(p.id)"><SkSelect v-model="testChoice" :options="testOptions" aria-label="连接测试使用的模型" :disabled="blocked||model.dirty" placeholder="先添加模型"/><SkButton :disabled="blocked||model.dirty||organizer.running||agents.running||!effectiveTest" :loading="testBusy" @click="test"><Icon name="refresh"/>测试连接</SkButton><button class="icon-button" type="button" aria-label="删除供应商" title="删除供应商" :disabled="blocked" @click="ask('provider',p.id,p.name)"><Icon name="trash"/></button></template></div></div>
-<SkFieldset :disabled="blocked"><form @submit.prevent="save"><div class="form-grid"><SkField label="显示名称" required><SkInput v-model="p.name" maxlength="100" placeholder="例如：公司模型网关"/></SkField><SkField label="接口协议"><div class="catalog-protocol">{{model.findProvider(p.id)?.apiFormat&&model.findProvider(p.id)?.apiFormat!=='openai-compatible'?'当前未适配':'OpenAI兼容'}}<small>当前适配路径</small></div></SkField><SkField class="full" label="服务地址" required><SkInput v-model="p.baseUrl" type="url" placeholder="https://gateway.example.com/v1"/></SkField><SkField label="认证方式"><SkSelect v-model="p.authMode" :options="[{value:'key',label:'API Key · 钥匙串'},{value:'env',label:'环境变量引用'}]"/></SkField><SkField v-if="p.authMode==='env'" label="环境变量名称" required><SkInput v-model="p.env" placeholder="例如：SIDEKICK_API_KEY" autocomplete="off"/></SkField><SkField v-else label="API Key" :help="credential==='stored'?'已有钥匙串凭据；留空保留原Key。':'只写入系统钥匙串，不回读已有密钥明文。'"><SkSecretInput :model-value="model.keys[p.id]||''" :placeholder="credential==='stored'?'已保存 · 留空保留原Key':'填写后保存到钥匙串'" @update:model-value="model.keys[p.id]=$event"/></SkField></div>
+<SkFieldset :disabled="blocked"><form @submit.prevent="save"><div class="form-grid"><SkField label="显示名称" required><SkInput v-model="p.name" maxlength="100" placeholder="例如：公司模型网关"/></SkField><SkField label="接口协议"><div class="catalog-protocol">{{model.findProvider(p.id)?.apiFormat&&model.findProvider(p.id)?.apiFormat!=='openai-compatible'?'当前未适配':'OpenAI兼容'}}<small>当前适配路径</small></div></SkField><SkField class="full" label="服务地址" required><SkInput v-model="p.baseUrl" type="url" placeholder="https://gateway.example.com/v1"/></SkField><SkField label="认证方式"><SkSelect v-model="p.authMode" :options="[{value:'key',label:'API Key · 凭据引用'},{value:'env',label:'环境变量引用'}]"/></SkField><SkField v-if="p.authMode==='env'" label="环境变量名称" required><SkInput v-model="p.env" placeholder="例如：SIDEKICK_API_KEY" autocomplete="off"/></SkField><SkField v-else label="API Key" :help="keyHelp"><SkSecretInput :model-value="model.keys[p.id]||''" :placeholder="keyPlaceholder" @update:model-value="model.keys[p.id]=$event"/><p class="muted" role="status">{{ credentialLabel }}</p></SkField></div>
 <details class="catalog-advanced"><summary>连接选项</summary><div class="form-grid"><SkField label="单次请求超时（秒）"><SkNumberInput v-model="p.timeout" :min="1" :max="120"/></SkField><SkField label="失败重试次数"><SkNumberInput v-model="p.retries" :min="0" :max="2"/></SkField></div><p class="muted">重试与工具循环共同受任务总时限约束。</p><div class="catalog-section-heading"><h3>非秘密请求头</h3><button class="text-button" type="button" @click="p.headers.push({name:'',value:''})"><Icon name="plus"/>添加</button></div><div v-for="(header,index) in p.headers" :key="index" class="catalog-header-row"><SkInput v-model="header.name" :aria-label="`请求头${index+1}名称`" placeholder="请求头名称"/><SkInput v-model="header.value" :aria-label="`请求头${index+1}值`" placeholder="固定值，认证信息请用凭据引用"/><button class="icon-button" type="button" :aria-label="`移除请求头${index+1}`" @click="p.headers.splice(index,1)"><Icon name="close"/></button></div></details>
 <section v-if="initial" class="catalog-model-section"><div class="catalog-section-heading"><h3>第一个模型</h3><small class="muted">与供应商一起保存</small></div><div class="form-grid"><SkField label="模型显示名称" required><SkInput v-model="initial.name" placeholder="例如：我的主力模型"/></SkField><SkField label="API 模型标识" required><SkInput v-model="initial.apiModelId" placeholder="服务商提供的model / deployment ID"/></SkField></div></section></form></SkFieldset>
 <section v-if="!initial" class="catalog-model-section"><div class="catalog-section-heading"><h3>模型 <small>{{rows.length}} 个</small></h3><SkButton kind="entry" :disabled="blocked||!model.findProvider(p.id)" @click="model.addModel()"><Icon name="plus"/>新增模型</SkButton></div><p v-if="!rows.length" class="muted">为这个服务添加第一个模型，再分配给班班的不同角色。</p><table v-else class="catalog-model-table"><thead><tr><th>模型</th><th>能力</th><th class="catalog-limits">上下文／输出</th><th class="catalog-bindings">正在使用</th><th>操作</th></tr></thead><tbody><tr v-for="row in rows" :key="row.id"><td><button class="text-button catalog-model-name" :disabled="blocked" @click="model.editModel(row.id)">{{row.name||row.apiModelId}}</button><span v-if="row.id===model.configuration?.defaultModelId" class="pill catalog-default-tag">默认</span><small>{{row.apiModelId}}{{isDraft(row.id)?' · 未保存':usableModel(model.configuration,row.id)?'':' · 已停用'}}</small></td><td><span class="pill">{{object(row.capabilities).toolCall!==false?'工具调用':'文本'}}</span><span v-if="object(row.reasoning).supported" class="pill">推理</span></td><td class="catalog-limits">{{Number(object(row.limits).maxInputTokens||32000).toLocaleString()}} / {{Number(object(row.limits).maxOutputTokens||4096).toLocaleString()}}</td><td class="catalog-bindings">{{uses(row.id)}}</td><td><div class="catalog-row-actions"><button class="icon-button" type="button" title="编辑模型" :aria-label="`编辑模型 ${row.name||row.apiModelId}`" :disabled="blocked" @click="model.editModel(row.id)"><Icon name="edit"/></button><button class="icon-button" type="button" title="删除模型" :aria-label="`删除模型 ${row.name||row.apiModelId}`" :disabled="blocked" @click="ask('model',row.id,row.name||row.apiModelId)"><Icon name="trash"/></button></div></td></tr></tbody></table></section>

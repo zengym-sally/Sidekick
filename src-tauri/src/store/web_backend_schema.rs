@@ -10,23 +10,37 @@ pub const SCHEMA_LINEAGE: &str = "web-backend/1";
 /// File-level application id, distinct from the legacy store (`0x53444b31`).
 pub const WEB_BACKEND_APPLICATION_ID: i64 = 0x57424b31;
 /// Highest schema version this build knows how to operate.
-pub const SCHEMA_VERSION: i64 = 2;
+pub const SCHEMA_VERSION: i64 = 4;
 /// Default database location relative to the workspace root.
 pub const DEFAULT_DB_FILE: &str = "data/web-backend.sqlite";
 
 const SQL_001: &str = include_str!("../../migrations/web-backend/001_web_backend.sql");
 const SQL_002: &str = include_str!("../../migrations/web-backend/002_manual_items.sql");
+const SQL_003: &str = include_str!("../../migrations/web-backend/003_text_intake.sql");
+const SQL_004: &str = include_str!("../../migrations/web-backend/004_candidate_operations.sql");
 
 #[derive(Clone, Copy, Default, PartialEq)]
 pub(crate) enum WebBackendMigrationFault {
     #[default]
     None,
+    /// Inject the failure into the third migration (the pre-004 behaviour): a
+    /// fresh init rolls the whole pending set back to blank, and an existing
+    /// v2 database rolls back to v2.
     #[cfg(test)]
-    Ddl,
+    AfterThird,
+    /// Inject the failure into the fourth migration: an existing v3 database
+    /// rolls back to v3, leaving 003's rows and mirror untouched.
+    #[cfg(test)]
+    AfterFourth,
 }
 
 fn migrations() -> Migrations<'static> {
-    Migrations::new(vec![M::up(SQL_001), M::up(SQL_002)])
+    Migrations::new(vec![
+        M::up(SQL_001),
+        M::up(SQL_002),
+        M::up(SQL_003),
+        M::up(SQL_004),
+    ])
 }
 
 fn missing_database() -> StoreError {
@@ -388,16 +402,31 @@ fn validate(conn: &Connection) -> Result<()> {
 
 #[cfg(test)]
 fn apply_migrations(conn: &mut Connection, fault: WebBackendMigrationFault) -> Result<()> {
-    if fault == WebBackendMigrationFault::Ddl {
-        // Inject the failure after the second migration so the fault branch
-        // exercises the dual-migration rollback: 002 must roll back together
-        // with its schema_meta mirror update, leaving the database at v1.
-        let sql = format!("{SQL_002}\nINSERT INTO missing_web_backend_table VALUES(1);");
-        return Migrations::new(vec![M::up(SQL_001), M::up(&sql)])
-            .to_latest(conn)
-            .map_err(|_| migration_failed());
-    }
-    migrations().to_latest(conn).map_err(|_| migration_failed())
+    // The fault is a trailing statement that references a missing table, so the
+    // migration carrying it fails. rusqlite_migration applies every pending
+    // migration in one transaction, so the whole pending set rolls back: a
+    // fresh init lands blank, an existing v2 database stays at v2 (003's
+    // mirror update and sqlite_sequence high-water restore included), and an
+    // existing v3 database stays at v3.
+    let bad = |sql: &str| format!("{sql}\nINSERT INTO missing_web_backend_table VALUES(1);");
+    let pending = match fault {
+        WebBackendMigrationFault::None => migrations().to_latest(conn),
+        WebBackendMigrationFault::AfterThird => Migrations::new(vec![
+            M::up(SQL_001),
+            M::up(SQL_002),
+            M::up(&bad(SQL_003)),
+            M::up(SQL_004),
+        ])
+        .to_latest(conn),
+        WebBackendMigrationFault::AfterFourth => Migrations::new(vec![
+            M::up(SQL_001),
+            M::up(SQL_002),
+            M::up(SQL_003),
+            M::up(&bad(SQL_004)),
+        ])
+        .to_latest(conn),
+    };
+    pending.map_err(|_| migration_failed())
 }
 
 #[cfg(not(test))]

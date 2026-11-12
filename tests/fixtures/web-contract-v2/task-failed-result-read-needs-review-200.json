@@ -1,0 +1,23 @@
+{
+  "contractVersion": "web-api/2",
+  "status": 200,
+  "taskId": "tsk_1f4b7d0a6c3e9258da0f5b3e8c2a6d14",
+  "outcome": "failed",
+  "kind": null,
+  "payload": null,
+  "failure": {
+    "code": "model_request_failed",
+    "message": "the staged failure is retained and visible for verification before resume/cancel",
+    "retryable": "manual",
+    "sideEffectSafety": "unknown",
+    "nextAttemptAt": null
+  },
+  "acceptedByAttempt": "att_8d1f4b7c0a3e2596da5c7e2b1a4d8f13",
+  "completedAt": "2026-11-06T12:34:20.000Z",
+  "readGuard": {
+    "state": "needs_review",
+    "cause": "result_exit_unconfirmed",
+    "attemptExitState": "exited_confirmed"
+  },
+  "note": "GET /api/tasks/{taskId}/result returns outcome=failed with the failure envelope for the guarded recovery state; it is not segmented and rejects offset/limit"
+}

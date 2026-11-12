@@ -8,7 +8,7 @@
 |---|---|---|
 | 产品承诺、用户流程、分期验收 | `product/01`–`04` | 目标能力与验收要求，不随实现进度改写 |
 | 当前实施状态与切片证据 | [第一阶段实施计划](product/05-第一阶段实施计划.md) | 唯一当前状态源，顶部写明 as-of 基点；未验证项保持开放 |
-| Web/后端目标契约 | [Web/后端设计](engineering/web-backend-design.md) | owner 新方向、部署/凭据/队列/薄壳接缝；目标尚未实现，执行顺序看 product/04–05 |
+| Web/后端目标契约 | [Web/后端设计](engineering/web-backend-design.md) | owner 新方向、部署/凭据/队列/薄壳接缝；实现状态看 product/05，目标与退出条件看 product/04–05 |
 | 工程结构、依赖边界、新代码放置 | [工程架构](engineering/architecture.md) | 与 `scripts/checks/check-structure.mjs` 同源；改结构必须同步守卫 |
 | 验证门禁、测试分层、证据与评审要求 | [验证约定](engineering/verification.md) | 与 `package.json` 脚本及 `check:docs` 同源 |
 | 已授权连续目标的准入、选取与无人值守流程 | [无人值守约定](engineering/unattended.md) | 授权及进度仍以实施计划和当次用户指令为准 |
@@ -37,8 +37,10 @@ docs/product/
   05-第一阶段实施计划.md      # 切片计划、契约、证据与当前状态
 docs/engineering/
   web-backend-design.md       # Web/后端目标、持久队列、代理与凭据、薄壳接口
-  web-api-contract.md         # 冻结 Web API 契约（web-api/1）：会话/CSRF/Origin、任务流 SSE、错误包络
+  web-api-contract.md         # 历史冻结 API1 契约（保留溯源）
+  web-api-contract-v2.md      # 现行 API2：typed 退出证据、快照/水位、版本与处置边界
   web-manual-items-contract.md # W1 手工事项纵向契约（定稿 2026-11-08）：端点/版本/幂等/软删历史/验收
+  web-text-intake-contract.md # W1 文本整理纵向契约（owner 批准 A–C 实施中，2026-11-08）：文本→候选→签收端点、任务/队列、003 DDL
   architecture.md             # 结构、边界、模块职责、放置决策表、后续落点、已知债
   verification.md             # 门禁矩阵、测试分层、证据新鲜度、留存、独立验证、CI 缺口
   unattended.md               # 已授权连续目标的准入、选取、预算与收口流程

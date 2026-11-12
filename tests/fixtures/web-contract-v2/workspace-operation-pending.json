@@ -1,0 +1,9 @@
+{
+  "contractVersion": "web-api/2",
+  "operationId": "op_c41d7e2a90b34856ae1f0d2c5b8a7e64",
+  "kind": "switch",
+  "state": "pending",
+  "targetId": "root_b7d2e1c4a9f3",
+  "requestedAt": "2026-11-06T12:40:10.000Z",
+  "updatedAt": "2026-11-06T12:40:42.000Z"
+}

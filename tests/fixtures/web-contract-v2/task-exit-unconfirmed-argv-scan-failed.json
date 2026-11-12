@@ -1,0 +1,64 @@
+{
+  "contractVersion": "web-api/2",
+  "taskId": "tsk_1d6a9e3f5b8c2407da2c7f4a9e1b5d68",
+  "operationId": "op_7b2e5a8d1f4c3609da5e8b2c6f1a9d34",
+  "type": "organize_text",
+  "role": "organizer",
+  "state": "needs_review",
+  "version": 3,
+  "createdAt": "2026-11-06T12:20:00.000Z",
+  "updatedAt": "2026-11-06T12:33:00.000Z",
+  "terminalAt": null,
+  "submitSeq": 1039,
+  "queuePosition": null,
+  "attemptCount": 1,
+  "attemptId": "att_4a7d2f6b9c1e5803da8f3c5b7e2a1d96",
+  "attemptExitState": "exited_unknown",
+  "attemptExitEvidence": {
+    "verdict": "unresolved",
+    "workerExited": true,
+    "groupAbsent": true,
+    "registry": {
+      "total": 1,
+      "confirmedExtinct": 1,
+      "unobservable": 0,
+      "survivors": []
+    },
+    "argvScan": {
+      "performed": false,
+      "hits": 0
+    },
+    "veto": {
+      "triggered": true,
+      "reason": "insufficient_evidence",
+      "detail": "the argv scan failed to execute (argvScan.performed=false); a confirmed exit requires an executed scan with zero hits, so the slot stays held and resolve is refused"
+    },
+    "residual": {
+      "treeExtinctProven": false,
+      "scope": "registry_domain",
+      "strayLedger": null
+    },
+    "confirmedAt": null
+  },
+  "resultPendingExit": false,
+  "cancelIntent": false,
+  "configRevision": "cfgrev_0d81fe22",
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "inputRef": {
+    "kind": "inline_text",
+    "byteSize": 842,
+    "contentHash": "sha256:1f3a9c07e5b2d84c0a6f1e93b7d5c2a8094e6f1bd3c7a5029e8b1d4f6a0c3e52"
+  },
+  "progress": null,
+  "result": null,
+  "failure": null,
+  "recovery": {
+    "cause": "exit_unconfirmed",
+    "sideEffectKnown": false,
+    "autoResume": false,
+    "itemVersion": 1,
+    "stagedResult": false,
+    "reason": "running task lost its worker before any result was staged; the registry-domain exit is unresolved because the argv scan failed to execute, so the slot stays occupied and resolve is refused",
+    "receipts": []
+  }
+}

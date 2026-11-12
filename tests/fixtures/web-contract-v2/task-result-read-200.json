@@ -1,0 +1,34 @@
+{
+  "contractVersion": "web-api/2",
+  "status": 200,
+  "taskId": "tsk_1a2b3c4d5e6f708192a3b4c5d6e7f809",
+  "kind": "organize_text_result",
+  "payload": {
+    "candidates": [
+      {
+        "title": "整理接入清单",
+        "kind": "action",
+        "owner": "本人",
+        "dueExpression": "下周五17点前",
+        "evidence": "合成示例"
+      },
+      {
+        "title": "确认试用名单",
+        "kind": "action",
+        "owner": "本人",
+        "dueExpression": null,
+        "evidence": "合成示例"
+      }
+    ]
+  },
+  "payloadRef": "result://att_77c1e4a09b3d42f58c6e01a2d9b48e77/payload",
+  "acceptedByAttempt": "att_77c1e4a09b3d42f58c6e01a2d9b48e77",
+  "completedAt": "2026-11-06T12:33:05.000Z",
+  "note": "GET /api/tasks/{taskId}/result inline path: totalBytes <= maxInlineBytes; payload is inline JSON. The oversized path is scenario 25.",
+  "totalBytes": 1024,
+  "maxInlineBytes": 65536,
+  "maxSegmentBytes": 65536,
+  "inline": true,
+  "outcome": "succeeded",
+  "failure": null
+}

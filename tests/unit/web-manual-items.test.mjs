@@ -14,7 +14,9 @@ import { fromWireItem, toDomainPoint, toWireInput, toWirePoint } from '../../src
 import { SseHub } from '../../server/lib/sse-hub.mjs';
 import { ApplicationSettingsService } from '../../server/lib/application-settings-service.mjs';
 import { createPairing } from '../../src/stores/pairing.ts';
+import { useOrganizer } from '../../src/stores/organizer.ts';
 import { getWebApiClient } from '../../src/lib/web-api-client.ts';
+import { createPinia, setActivePinia } from 'pinia';
 
 class StorageError extends Error {
   constructor(code, message) {
@@ -531,34 +533,90 @@ test('item.changed frames carry no id and do not advance the task cursor', () =>
 });
 
 test('pairing re-reads on stream.ready/stream.reset/item.changed', async () => {
-  let lastSource;
-  globalThis.EventSource = class {
-    constructor() {
-      this.listeners = {};
-      lastSource = this;
-    }
-    addEventListener(event, handler) {
-      (this.listeners[event] ??= []).push(handler);
-    }
-    close() {}
-    emit(event) {
-      for (const handler of this.listeners[event] ?? []) handler();
+  // The pairing transport is a same-origin fetch stream (frozen web-api/1 §6:
+  // the resubscribe token rides the Last-Event-ID REQUEST HEADER, which native
+  // EventSource cannot carry). The seam below drives that real transport: a
+  // controllable text/event-stream body for /api/events plus a real-shaped §6
+  // snapshot response for the reset resync. The assertion intent is
+  // unchanged — the three hints (stream.ready / item.changed / stream.reset)
+  // each notify the hint handler exactly once — with the contract timing made
+  // explicit: stream.reset notifies only AFTER the snapshot has been consumed
+  // into the organizer baseline, and the resubscribe carries the snapshot's
+  // lastEventId as the request header. Session-loss/dispose semantics stay in
+  // their own case below; dispose here is unconditional so a failed assertion
+  // cannot leave a reconnect loop behind.
+  globalThis.window = { location: { host: 'h', origin: 'http://h' } };
+  const connections = [];
+  const calls = [];
+  const encoder = new TextEncoder();
+  globalThis.fetch = async (path, options = {}) => {
+    calls.push({ path: String(path), headers: { ...(options.headers ?? {}) } });
+    const stream = new ReadableStream({ start(c) { connections.push(c); } });
+    return new Response(stream, { status: 200, headers: { 'content-type': 'text/event-stream' } });
+  };
+  const emit = (controller, text) => controller.enqueue(encoder.encode(text));
+  const frame = (event, data) => `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
+  const waitFor = async (predicate, what) => {
+    const start = Date.now();
+    while (!predicate()) {
+      if (Date.now() - start > 3000) throw new Error(`timeout waiting for ${what}`);
+      await new Promise((resolve) => setTimeout(resolve, 5));
     }
   };
+  setActivePinia(createPinia());
+  const organizer = useOrganizer();
+  const pairing = createPairing({
+    readSession: async () => null,
+    pair: async () => ({}),
+    onSessionLost() {},
+    readSnapshot: async () => ({
+      // The real §6.1 response shape, tasks mapped the way the client maps
+      // them (the same StoreRun rows the regular read path produces).
+      contractVersion: 'web-api/2',
+      highWatermark: 7,
+      lastEventId: 'inst_probe:7',
+      epoch: 'inst_probe',
+      settings: { agentConcurrency: 3, version: 5 },
+      workspace: { mode: 'local', currentRoot: { id: 'root_probe', label: '探针' }, capabilities: [], recovery: null },
+      agentConcurrency: 3,
+      generatedAt: '2026-11-11T00:00:00.000Z',
+      tasks: [{
+        id: 'tsk_snap_1', sourceId: null, kind: 'extract', status: 'running',
+        snapshot: {}, input: {}, candidateId: null, candidateVersion: null,
+        preview: null, errorCode: null, createdAtMs: 1, finishedAtMs: null,
+        wireVersion: 2, wireAttemptCount: 1, wireState: 'running',
+        wireAttemptId: null, wireExitState: '', wireExitEvidence: null, wireExitEvidenceError: null,
+      }],
+    }),
+  });
+  let refreshes = 0;
+  let disposed = false;
   try {
-    const pairing = createPairing({ readSession: async () => null, pair: async () => {} });
-    let refreshes = 0;
     pairing.setOnItemChanged(() => { refreshes += 1; });
     await pairing.start();
     await pairing.pair();
-    assert.ok(lastSource);
-    lastSource.emit('stream.ready');
-    lastSource.emit('item.changed');
-    lastSource.emit('stream.reset');
+    await waitFor(() => connections.length >= 1, 'the first subscription');
+    emit(connections[0], frame('stream.ready', { contractVersion: 'web-api/2', epoch: 'inst_probe', cursor: 0 }));
+    emit(connections[0], frame('item.changed', { contractVersion: 'web-api/2', objectType: 'item', itemId: 'mi_1', itemVersion: 2 }));
+    await waitFor(() => refreshes >= 2, 'ready and item notifications');
+    assert.ok(connections.length >= 1);
+    emit(connections[0], frame('stream.reset', { contractVersion: 'web-api/2', epoch: 'inst_probe', reason: 'cursor_out_of_window' }));
+    // reset: close -> GET /api/snapshot -> CONSUME into the organizer
+    // baseline -> notify. The third notification can only land after the
+    // snapshot task is installed.
+    await waitFor(() => refreshes >= 3, 'the reset notification after snapshot install');
     assert.equal(refreshes, 3);
+    // The store unwraps refs: `organizer.run` IS the displayed run here.
+    assert.equal(organizer.run?.id, 'tsk_snap_1');
+    await waitFor(() => connections.length >= 2, 'the header-carried resubscribe');
+    assert.equal(calls[calls.length - 1].headers['Last-Event-ID'], 'inst_probe:7');
     pairing.dispose();
+    disposed = true;
   } finally {
-    delete globalThis.EventSource;
+    if (!disposed) pairing.dispose();
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    delete globalThis.fetch;
+    delete globalThis.window;
   }
 });
 
@@ -634,8 +692,8 @@ test('the shared web api client is a singleton and carries CSRF into settings wr
   globalThis.fetch = async (url, options) => {
     seen.push({ url, headers: options.headers });
     const body = url.includes('/api/pair')
-      ? { session: { capabilities: [] }, csrfToken: 'csrf-1' }
-      : { settings: { timeZone: 'UTC' }, version: 1 };
+      ? { contractVersion: 'web-api/2', session: { capabilities: [] }, csrfToken: 'csrf-1' }
+      : { contractVersion: 'web-api/2', settings: { timeZone: 'UTC' }, version: 1 };
     return { ok: true, text: async () => JSON.stringify(body) };
   };
   try {
@@ -658,12 +716,12 @@ test('an in-session 401 clears the shared CSRF token', async () => {
   globalThis.fetch = async (url, options) => {
     seen.push({ url, headers: options.headers });
     if (url.includes('/api/pair')) {
-      return { ok: true, text: async () => JSON.stringify({ session: { capabilities: [] }, csrfToken: 'csrf-1' }) };
+      return { ok: true, text: async () => JSON.stringify({ contractVersion: 'web-api/2', session: { capabilities: [] }, csrfToken: 'csrf-1' }) };
     }
     return {
       ok: false,
       status: 401,
-      text: async () => JSON.stringify({ error: { code: 'unauthenticated', message: '会话已过期' } }),
+      text: async () => JSON.stringify({ contractVersion: 'web-api/2', error: { code: 'unauthenticated', message: '会话已过期' } }),
     };
   };
   try {

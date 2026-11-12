@@ -1,0 +1,13 @@
+{
+  "contractVersion": "web-api/2",
+  "operationId": "op_5f2b91c7a4d63e0817bc2f0a9d4e1b53",
+  "type": "organize_text",
+  "role": "organizer",
+  "configRevision": "cfgrev_0d81fe22",
+  "input": {
+    "kind": "inline_text",
+    "text": "（合成示例：包含本人执行、本人跟进与未定期事项各一条的非敏感文本）",
+    "sourceAnchor": null
+  },
+  "clientSubmittedAt": "2026-11-06T12:29:58.000Z"
+}

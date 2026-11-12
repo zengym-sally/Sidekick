@@ -10,7 +10,7 @@
 - 功能实现、受控服务、真实模型、浏览器与原生验收分别记账。安装包可构建或合成验证通过，不代表原生完整动线、真实服务、真实用户根或同事试用验收通过。
 - 规划中的能力只出现在产品基线里，未经业务实测；文档不会把计划、原型或合成替身写成已实现。
 
-目标方向与当前代码分开阅读：新目标为 Node/TypeScript 后端＋SQLite 持久队列（默认 3 并发）＋Vue Web，支持本机及 Linux 主机反向代理；当前代码仍为 Rust/Tauri 宿主。新后端尚未实现，目标契约见[Web/后端设计](docs/engineering/web-backend-design.md)。下列构建与使用命令仍适用于现有桌面代码，不是新 Web 部署说明。
+当前生产树包含 Vue Web、独立 Node 后端、Rust SQLite 存储适配与既有 Tauri 宿主。Web 使用持久队列（默认 3 并发）和 `web-api/2`；完整产品、Linux 代理部署及原生能力的验收范围见[实施计划](docs/product/05-第一阶段实施计划.md)与[Web/后端设计](docs/engineering/web-backend-design.md)。
 
 ## 产品基线
 
@@ -30,6 +30,7 @@
 AGENTS.md            # 每轮必读：项目事实、命令、硬约束、文档地图
 shared/              # 跨进程纯逻辑（日期与时间锚点），前端与 Runtime 共用
 src/                 # Vue 3 前端：components/（含 ui/ 公共控件）、domain/、stores/、styles/、assets/
+server/              # 独立 Node HTTP/SSE 后端；SQLite 写入经 Rust 存储适配
 runtime/             # 随包 Node Runtime：entries/ 任务入口、lib/ 库、workers/ 子进程
 src-tauri/src/       # Rust 宿主：app/ 装配与 IPC、store/ 业务存储、host/ 外部宿主、diagnostics/ 探针
 tests/               # unit/、integration/、probes/、fixtures/
@@ -79,9 +80,21 @@ npm run check
 npm run probe:app
 ```
 
-Pi 从 `vendor/pi/` 固定源码构建，准备阶段会获取上游公开模型目录数据，需要网络；不是完全离线或逐字节可复现的构建。模型目录与构建产物不提交，源码和两份锁文件保留版本依据。安装包为 `src-tauri/target/release/bundle/macos/Sidekick.app`，使用 ad-hoc 签名、未经公证。正常启动不自动调用模型或飞书、不种入演示数据；用户发起连接测试、文本整理或候选修改时才调用所配模型。S0 诊断页保留为开发路由 `?probe=1`。
+Pi 从 `vendor/pi/` 固定源码构建，准备阶段会获取上游公开模型目录数据，需要网络；不是完全离线或逐字节可复现的构建。模型目录与构建产物不提交，源码和两份锁文件保留版本依据。安装包为 `src-tauri/target/release/bundle/macos/Sidekick.app`，使用 ad-hoc 签名、未经公证。全新工作根不自动调用模型或飞书、不种入演示数据；用户发起连接测试、文本整理或候选修改时调用所配模型，已接收的持久队列任务按恢复规则继续。S0 诊断页保留为开发路由 `?probe=1`。
 
 真实模型验证为显式可选命令：`SIDEKICK_MODEL_ENV="$PWD/.env.deepseek" npm run test:s2-live`，使用已选配置、合成文本、临时工作根及隔离钥匙串条目，结束后清理。它会访问所选模型服务，不属于自动 `check`；产品不会自行读取 `.env`。S0 原探针仍可单独运行，详细前提见 S0 记录。
+
+## 本地 Web 开发
+
+准备依赖与固定 Pi Runtime 后，在空的合成工作根试运行：
+
+```sh
+npm run probe:bundle
+npm run build:backend
+npm run start:backend -- --root /tmp/sidekick-web-synthetic --init
+```
+
+按后端输出的回环地址打开浏览器，并在产品配对页输入该进程提供的一次性配对码。`--root` 应使用空测试目录；不要用此示例升级真实用户目录。构建包含真实 Pi Runtime 闭包，模型/飞书调用仍需用户配置及发起操作。入口参数见 [后端入口](server/entries/web-backend-entry.mjs)。
 
 ## 本地手工使用
 

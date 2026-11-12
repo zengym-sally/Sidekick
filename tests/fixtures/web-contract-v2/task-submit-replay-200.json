@@ -1,0 +1,39 @@
+{
+  "contractVersion": "web-api/2",
+  "status": 200,
+  "replayed": true,
+  "task": {
+    "contractVersion": "web-api/2",
+    "taskId": "tsk_1a2b3c4d5e6f708192a3b4c5d6e7f809",
+    "operationId": "op_5f2b91c7a4d63e0817bc2f0a9d4e1b53",
+    "type": "organize_text",
+    "role": "organizer",
+    "state": "running",
+    "version": 2,
+    "createdAt": "2026-11-06T12:30:00.000Z",
+    "updatedAt": "2026-11-06T12:30:41.000Z",
+    "terminalAt": null,
+    "submitSeq": 1041,
+    "queuePosition": null,
+    "attemptCount": 1,
+    "attemptId": "att_77c1e4a09b3d42f58c6e01a2d9b48e77",
+    "cancelIntent": false,
+    "configRevision": "cfgrev_0d81fe22",
+    "inputRef": {
+      "kind": "inline_text",
+      "byteSize": 842,
+      "contentHash": "sha256:1f3a9c07e5b2d84c0a6f1e93b7d5c2a8094e6f1bd3c7a5029e8b1d4f6a0c3e52"
+    },
+    "progress": {
+      "stage": "extracting",
+      "detail": "organizer pass 1/2 (synthetic sample)"
+    },
+    "result": null,
+    "failure": null,
+    "recovery": null,
+    "attemptExitState": "active",
+    "attemptExitEvidence": null,
+    "originalConfigRevision": "cfgrev_0d81fe22",
+    "resultPendingExit": false
+  }
+}

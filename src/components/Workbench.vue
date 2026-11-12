@@ -16,6 +16,7 @@ import Icon from './Icon.vue';
 import TodoRow from './TodoRow.vue';
 import TimeField from './TimeField.vue';
 import InboxView from './InboxView.vue';
+import TaskQueue from './TaskQueue.vue';
 import TextIntake from './TextIntake.vue';
 import { useOrganizer } from '../stores/organizer';
 import {useAgents} from '../stores/agents';
@@ -34,7 +35,8 @@ const settings=useApplicationSettings(),modelSettings=useModelSettings();
 const store=useTodos(),profile=useProfile(),organizer=useOrganizer(),agents=useAgents(),skills=useSkills();
 const todayAdvice=useTodayAdvice();
 const nativeAvailable=nativeBridgeAvailable();
-function loadNative(){void modelSettings.load().catch(()=>{});void agents.load('organizer').catch(()=>{});void agents.load('advisor').catch(()=>{});void todayAdvice.load().catch(()=>{});void skills.scan().catch(()=>{});void profile.load();void organizer.refresh().catch(()=>{});}
+function loadTextIntake(){void modelSettings.load().catch(()=>{});void agents.load('organizer').catch(()=>{});void organizer.refresh().catch(()=>{});}
+function loadNative(){loadTextIntake();if(!nativeAvailable)return;void agents.load('advisor').catch(()=>{});void todayAdvice.load().catch(()=>{});void skills.scan().catch(()=>{});void profile.load();}
 const captureMode=ref<'manual'|'text'>('manual');
 const settingsTab=ref<'profile'|'general'|'desktop'|'models'|'agents'|'tools'|'about'>('profile');
 const address=computed(()=>profile.ready?profile.saved.address:'BOSS');
@@ -77,7 +79,7 @@ let workspaceObservation:ReturnType<typeof observeWorkspaceChanges>|undefined;
 let operationId='',signature='',deleteOperation='',historyRequest=0,lastFocus:HTMLElement|null=null,clock:ReturnType<typeof setInterval>|undefined,toastTimer:ReturnType<typeof setTimeout>|undefined;
 const actionNames:Record<string,string>={create:'手工录入',update:'修改事项',complete:'标记完成',reopen:'重新打开',delete:'删除事项',link:'关联来源'};
 
-async function boot(){booting.value=true;startupError.value='';try{await store.boot();if(!workbenchAlive)return;if(!store.workspace?.needsSetup){await settings.load();if(!workbenchAlive)return;if(nativeAvailable)loadNative();}}catch(e){startupError.value=errorMessage(e);}finally{booting.value=false;}}
+async function boot(){booting.value=true;startupError.value='';try{await store.boot();if(!workbenchAlive)return;if(!store.workspace?.needsSetup){await settings.load();if(!workbenchAlive)return;loadNative();}}catch(e){startupError.value=errorMessage(e);}finally{booting.value=false;}}
 async function initialize(path:string|null){initializing.value=true;setupError.value='';try{await store.initialize(path);await settings.load();if(nativeAvailable)loadNative();}catch(e){setupError.value=errorMessage(e);}finally{initializing.value=false;}}
 async function chooseDirectory(){
   setupError.value='';initializing.value=true;
@@ -116,7 +118,7 @@ function keyboard(event:KeyboardEvent){if(isLocalCaptureShortcut(event)&&!store.
 function showUndated(){page.value='all';Object.assign(filters,{date:'undated',status:'open',kind:'all',owner:'',tag:'',query:''});}
 onMounted(async()=>{
  document.addEventListener('keydown',keyboard);document.addEventListener('visibilitychange',checkVisibleFacts);window.addEventListener('pageshow',checkRestoredFacts);window.addEventListener('focus',windowFocused);
- poller=setInterval(()=>{if(!nativeAvailable)return;if(organizer.running&&!organizer.loading)void organizer.refresh().catch(()=>{});if(agents.running&&!agents.polling)void agents.refreshTrial();if(todayAdvice.running&&!todayAdvice.loading)void todayAdvice.load().catch(()=>{});},1000);
+ poller=setInterval(()=>{if(organizer.running&&!organizer.loading)void organizer.refresh().catch(()=>{});if(!nativeAvailable)return;if(agents.running&&!agents.polling)void agents.refreshTrial();if(todayAdvice.running&&!todayAdvice.loading)void todayAdvice.load().catch(()=>{});},1000);
  clock=setInterval(()=>{now.value=Date.now();if(!nativeAvailable)return;todayAdvice.checkCurrentness();if(!booting.value&&store.workspace&&!store.workspace.needsSetup&&!todayAdvice.loading)void todayAdvice.load().catch(()=>{});},60000);
  workspaceObservation=observeWorkspaceChanges(handler=>listen('todos-changed',handler),boot,readWindowFacts);
  await workspaceObservation.ready;
@@ -138,7 +140,7 @@ onUnmounted(()=>{workbenchAlive=false;factsTimerGeneration++;clearTimeout(factsT
   </main>
   <div v-else class="workbench">
     <aside class="sidebar" aria-label="主导航"><button class="identity" aria-label="跟班 Sidekick，打开今日工作台" @click="page='today'"><img :src="mark" alt=""><span>sidekick<small>盯着呢，老板。</small></span></button>
-      <nav><button class="nav-item" :class="{active:page==='today'}" :aria-current="page==='today'?'page':undefined" title="今日工作台" @click="page='today'"><Icon name="today"/><span>今日工作台</span><small class="nav-short">今日</small></button><button class="nav-item" :class="{active:page==='inbox'}" :aria-current="page==='inbox'?'page':undefined" :title="nativeAvailable?'待确认':'未接通：浏览器模式不加载智能体收件箱'" :disabled="!nativeAvailable" @click="page='inbox'"><Icon name="inbox"/><span>待确认</span><small class="nav-short">确认</small><b v-if="organizer.pending">{{ organizer.pending }}</b></button><button class="nav-item" :class="{active:page==='all'}" :aria-current="page==='all'?'page':undefined" title="全部事项" @click="page='all'"><Icon name="list"/><span>全部事项</span><small class="nav-short">事项</small><b>{{ active.length }}</b></button></nav>
+      <nav><button class="nav-item" :class="{active:page==='today'}" :aria-current="page==='today'?'page':undefined" title="今日工作台" @click="page='today'"><Icon name="today"/><span>今日工作台</span><small class="nav-short">今日</small></button><button class="nav-item" :class="{active:page==='inbox'}" :aria-current="page==='inbox'?'page':undefined" title="待确认" @click="page='inbox'"><Icon name="inbox"/><span>待确认</span><small class="nav-short">确认</small><b v-if="organizer.pending">{{ organizer.pending }}</b></button><button class="nav-item" :class="{active:page==='all'}" :aria-current="page==='all'?'page':undefined" title="全部事项" @click="page='all'"><Icon name="list"/><span>全部事项</span><small class="nav-short">事项</small><b>{{ active.length }}</b></button></nav>
       <div class="sidebar-bottom"><button class="nav-item profile" :class="{active:page==='settings'}" :aria-label="`个人信息与设置，${profileName}`" :aria-current="page==='settings'?'page':undefined" title="个人信息与设置" @click="openSettings"><span class="avatar" aria-hidden="true">{{ Array.from(profileName)[0] }}</span><span class="profile-copy"><strong>{{ profileName }}</strong><small>个人信息与设置</small></span></button></div>
     </aside>
     <section class="workspace">
@@ -157,6 +159,7 @@ onUnmounted(()=>{workbenchAlive=false;factsTimerGeneration++;clearTimeout(factsT
           </div><aside class="brief-rail" aria-label="班班简报"><h2><img :src="mark" alt="">班班简报</h2><div class="brief-message"><h3>{{ active.length?`${address}，事项都记着呢。`:`${address}，随时交给我。` }}</h3><p>{{ active.length?`目前还有 ${active.length} 项待闭环。先看时间，再看谁来处理。`:'先从一件小事开始，把靠记忆盯着的工作留下来。' }}</p><img class="brief-pet" :src="pet" alt="班班"></div><div class="rail-facts"><p><span>待我处理</span><strong>{{ active.filter(t=>t.data.kind==='action').length }}</strong></p><p><span>待我跟进</span><strong>{{ active.filter(t=>t.data.kind==='followup').length }}</strong></p><p><span>交付已逾期</span><strong :class="{danger:overdue}">{{ overdue }}</strong></p></div><p class="muted rail-note">依据已保存的本地事项统计。截止与下次跟进时间分别保留。</p><TodayAdvice/></aside></div>
         </template>
         <InboxView v-else-if="page==='inbox'" @capture="captureText" @models="openModels" @signed="signed"/>
+        <TaskQueue v-if="page==='inbox'"/>
         <template v-else-if="page==='all'"><div class="page-intro"><h1>每件事，都有个着落。</h1><p>按执行、跟进或时间筛选；已完成和未定期的事项也在这里。</p></div>
           <div class="filter-bar"><SkInput v-model="filters.query" class="search-field" aria-label="搜索事项标题" placeholder="搜索事项标题"><template #prefix><Icon name="search"/></template><template #suffix><button v-if="filters.query" class="icon-button small" aria-label="清除搜索" @click="filters.query=''"> <Icon name="close"/></button></template></SkInput>
             <SkSelect v-model="filters.kind" aria-label="事项类型筛选" :options="[{value:'all',label:'所有类型'},{value:'action',label:'待我处理'},{value:'followup',label:'待我跟进'}]"/><SkSelect v-model="filters.status" aria-label="状态筛选" :options="[{value:'all',label:'全部状态'},{value:'open',label:'未完成'},{value:'completed',label:'已完成'},{value:'deleted',label:'已删除'}]"/><SkSelect v-model="filters.date" aria-label="时间筛选" :options="[{value:'all',label:'所有时间'},{value:'today',label:'今天及之前'},{value:'week',label:'本周'},{value:'overdue',label:'已逾期'},{value:'undated',label:'未定期'}]"/><SkSelect v-model="filters.owner" aria-label="负责人筛选" placeholder="所有负责人" :options="[{value:'',label:'所有负责人'},...owners.map(value=>({value,label:value}))]" searchable/><SkSelect v-model="filters.tag" aria-label="标签筛选" placeholder="所有标签" :options="[{value:'',label:'所有标签'},...tags.map(value=>({value,label:value}))]" searchable/>
@@ -168,7 +171,7 @@ onUnmounted(()=>{workbenchAlive=false;factsTimerGeneration++;clearTimeout(factsT
     </section>
   </div>
   <dialog ref="formDialog" class="dialog capture-dialog" aria-labelledby="capture-heading" @cancel.prevent="close(formDialog)"><header class="dialog-header"><h2 id="capture-heading">{{ editing?'把这件事改清楚。':captureMode==='text'?'让班班先整理一遍。':'交给班班，先记下来。' }}</h2><button class="icon-button" aria-label="关闭录入" :disabled="store.saving||organizer.starting" @click="close(formDialog)"><Icon name="close"/></button></header>
-    <div v-if="!editing" class="capture-tabs" role="tablist" aria-label="录入方式"><button role="tab" :aria-selected="captureMode==='manual'" :disabled="store.saving||organizer.starting" @click="captureMode='manual'">手工录入</button><button role="tab" :aria-selected="captureMode==='text'" :disabled="store.saving||organizer.starting||!nativeAvailable" :title="nativeAvailable?undefined:'未接通：浏览器模式不提供文本智能整理'" @click="captureMode='text'">文本智能整理</button></div>
+    <div v-if="!editing" class="capture-tabs" role="tablist" aria-label="录入方式"><button role="tab" :aria-selected="captureMode==='manual'" :disabled="store.saving||organizer.starting" @click="captureMode='manual'">手工录入</button><button role="tab" :aria-selected="captureMode==='text'" :disabled="store.saving||organizer.starting" @click="captureMode='text'">文本智能整理</button></div>
     <TextIntake v-if="captureMode==='text'&&!editing" @submitted="sourceSubmitted" @models="openModels"/>
     <form v-else @submit.prevent="save"><SkFieldset :disabled="store.saving||!settings.ready||settings.loading||settings.saving"><div class="dialog-body"><div class="form-grid"><SkField class="full" label="事项标题" required><SkInput v-model="form.title" required maxlength="200" autofocus placeholder="要做什么，或需要盯住什么？"/></SkField><SkField label="事项类型"><SkSelect v-model="form.kind" :options="[{value:'action',label:'待我处理'},{value:'followup',label:'待我跟进'}]" @change="kindChanged"/></SkField><SkField :label="form.kind==='followup'?'对方负责人':'实际负责人'" required><SkInput v-model="form.owner" required maxlength="100" :placeholder="form.kind==='followup'?'由谁实际交付？':'我'"/></SkField><TimeField :state="form.due" label="交付截止"/><TimeField v-if="form.kind==='followup'" :state="form.followup" label="下次跟进"/><SkField label="优先级"><SkSelect v-model="form.priority" :options="[{value:'low',label:'低'},{value:'medium',label:'中'},{value:'high',label:'高'}]"/></SkField><SkField label="标签"><SkInput v-model="form.tags" placeholder="用逗号分隔"/></SkField>
 

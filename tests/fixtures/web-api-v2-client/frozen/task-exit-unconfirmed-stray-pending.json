@@ -1,0 +1,68 @@
+{
+  "contractVersion": "web-api/2",
+  "taskId": "tsk_5c1e9a7b3d8f4206da9c1e5b7f3a2d84",
+  "operationId": "op_8d4b2f6a1c9e3705da2b8e4f6a0c1d93",
+  "type": "organize_text",
+  "role": "organizer",
+  "state": "needs_review",
+  "version": 3,
+  "createdAt": "2026-11-06T12:20:00.000Z",
+  "updatedAt": "2026-11-06T12:33:00.000Z",
+  "terminalAt": null,
+  "submitSeq": 1039,
+  "queuePosition": null,
+  "attemptCount": 1,
+  "attemptId": "att_6f3a1c9e5b7d2408da1c4e7b9a3d6f25",
+  "attemptExitState": "exited_unknown",
+  "attemptExitEvidence": {
+    "verdict": "unresolved",
+    "workerExited": true,
+    "groupAbsent": true,
+    "registry": {
+      "total": 1,
+      "confirmedExtinct": 1,
+      "unobservable": 0,
+      "survivors": []
+    },
+    "argvScan": {
+      "performed": true,
+      "hits": 0
+    },
+    "veto": {
+      "triggered": true,
+      "reason": "known_survivor",
+      "detail": "a discovered stray is still alive and unswept (strayLedger.pending=1); the slot stays held and resolve is refused"
+    },
+    "residual": {
+      "treeExtinctProven": false,
+      "scope": "registry_domain",
+      "strayLedger": {
+        "found": 1,
+        "swept": 0,
+        "pending": 1
+      }
+    },
+    "confirmedAt": null
+  },
+  "resultPendingExit": false,
+  "cancelIntent": false,
+  "configRevision": "cfgrev_0d81fe22",
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "inputRef": {
+    "kind": "inline_text",
+    "byteSize": 842,
+    "contentHash": "sha256:1f3a9c07e5b2d84c0a6f1e93b7d5c2a8094e6f1bd3c7a5029e8b1d4f6a0c3e52"
+  },
+  "progress": null,
+  "result": null,
+  "failure": null,
+  "recovery": {
+    "cause": "exit_unconfirmed",
+    "sideEffectKnown": false,
+    "autoResume": false,
+    "itemVersion": 1,
+    "stagedResult": false,
+    "reason": "running task lost its worker before any result was staged; the registry-domain exit is unresolved because a discovered stray is still alive and unswept, so the slot stays occupied and resolve is refused",
+    "receipts": []
+  }
+}

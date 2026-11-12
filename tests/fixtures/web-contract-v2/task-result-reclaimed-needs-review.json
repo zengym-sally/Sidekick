@@ -1,0 +1,77 @@
+{
+  "contractVersion": "web-api/2",
+  "taskId": "tsk_7e0b3d6a9f2c4185da4e7b1c3a6f8d25",
+  "operationId": "op_2d5a8c1f4e7b3069da5f8b2c7e1a4d93",
+  "type": "organize_text",
+  "role": "organizer",
+  "state": "needs_review",
+  "version": 4,
+  "createdAt": "2026-11-06T12:28:00.000Z",
+  "updatedAt": "2026-11-06T12:50:00.000Z",
+  "terminalAt": null,
+  "submitSeq": 1040,
+  "queuePosition": null,
+  "attemptCount": 1,
+  "attemptId": "att_9d2e5a8c1f4b3067da4c6e9b2a5d8f13",
+  "attemptExitState": "exited_confirmed",
+  "attemptExitEvidence": {
+    "verdict": "registry_extinct",
+    "workerExited": true,
+    "groupAbsent": true,
+    "registry": {
+      "total": 1,
+      "confirmedExtinct": 1,
+      "unobservable": 0,
+      "survivors": []
+    },
+    "argvScan": {
+      "performed": true,
+      "hits": 0
+    },
+    "veto": {
+      "triggered": false,
+      "reason": null,
+      "detail": null
+    },
+    "residual": {
+      "treeExtinctProven": false,
+      "scope": "registry_domain",
+      "strayLedger": {
+        "found": 1,
+        "swept": 1,
+        "pending": 0
+      }
+    },
+    "confirmedAt": "2026-11-06T12:50:00.000Z"
+  },
+  "resultPendingExit": false,
+  "cancelIntent": false,
+  "configRevision": "cfgrev_0d81fe22",
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "inputRef": {
+    "kind": "inline_text",
+    "byteSize": 842,
+    "contentHash": "sha256:1f3a9c07e5b2d84c0a6f1e93b7d5c2a8094e6f1bd3c7a5029e8b1d4f6a0c3e52"
+  },
+  "progress": null,
+  "result": {
+    "kind": "organize_text_result",
+    "payloadRef": "result://att_9d2e5a8c1f4b3067da4c6e9b2a5d8f13/payload",
+    "acceptedByAttempt": "att_9d2e5a8c1f4b3067da4c6e9b2a5d8f13",
+    "completedAt": "2026-11-06T12:31:10.000Z"
+  },
+  "failure": null,
+  "recovery": {
+    "cause": "result_exit_unconfirmed",
+    "sideEffectKnown": false,
+    "autoResume": false,
+    "itemVersion": 2,
+    "stagedResult": true,
+    "reason": "recovery scan re-verified the registry-domain exit predicate and swept the one discovered stray (found=1/swept=1/pending=0), but the side effect is unknown; the staged result is now visible for the user to verify before resume/cancel",
+    "receipts": [],
+    "decisionOptions": [
+      "resume",
+      "cancel"
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 import {computed,reactive,ref} from 'vue';
 import {defineStore} from 'pinia';
-import {invoke} from '@tauri-apps/api/core';
+import {getWebApiClient} from '../lib/web-api-client.ts';
 import {errorMessage} from './todos.ts';
 import {useModelSettings} from './models.ts';
 import {requireApplicationZone} from '../domain/todos.ts';
@@ -25,4 +25,4 @@ export function createAgentSettings(api:Backend,guard:()=>void=()=>{}){
  function stageReset(){const row=current.value;if(!row.ready||row.loading||row.saving)return;row.draft={modelId:null,preferences:{focus:agents.find(a=>a.id===selected.value)!.focus[0][0],detail:'standard'},supplementalInstructions:''};row.notice='默认偏好已成为草稿，保存后生效。';}
  return {discard,stageReset,selected,states,current,dirty,trials,trialError,starting,polling,sample,running,load,select,save,reset:()=>save(true),startTrial,cancelTrial,refreshTrial};
 }
-export const useAgents=defineStore('agents',()=>createAgentSettings(invoke,()=>{const model=useModelSettings();if(!model.ready||model.loading||model.saving)throw Error('请先在模型服务重新读取并核对配置。');}));
+export const useAgents=defineStore('agents',()=>createAgentSettings(getWebApiClient().asBackend(),()=>{const model=useModelSettings();if(!model.ready||model.loading||model.saving)throw Error('请先在模型服务重新读取并核对配置。');}));

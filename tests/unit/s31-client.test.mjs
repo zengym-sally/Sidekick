@@ -98,15 +98,16 @@ test('a late role trial response remains associated with its requested role',asy
  await s.load('organizer');const selecting=s.select('organizer');await s.select('advisor');latest.resolve(organizer);await selecting;
  assert.equal(s.selected.value,'advisor');assert.deepEqual(s.trials.advisor,advisor);assert.deepEqual(s.trials.organizer,organizer);
 });
-test('the process-isolated Pinia agents store keeps polling unknown when the Tauri latest response arrives late',async()=>{
- const previousWindow=Object.getOwnPropertyDescriptor(globalThis,'window'),latest=deferred(),persisted=unknown(),calls=[];let s;
+test('the process-isolated Pinia agents store uses Web configuration and leaves unwired role trials unavailable',async()=>{
+ const previousWindow=Object.getOwnPropertyDescriptor(globalThis,'window'),previousFetch=Object.getOwnPropertyDescriptor(globalThis,'fetch'),calls=[];let s;
  assert.throws(()=>useAgents(),/no active Pinia/);
  try{
-  Object.defineProperty(globalThis,'window',{configurable:true,writable:true,value:{__TAURI_INTERNALS__:{invoke:async(command,args)=>{calls.push(command);if(command==='read_agent_configuration')return config(args.agentId);if(command==='latest_agent_trial')return latest.promise;if(command==='active_agent_trial')return 'A';if(command==='read_agent_trial')return persisted;throw Error(command);}}}});
-  const app=createApp({});app.use(createPinia());s=app.runWithContext(()=>useAgents());await s.load('organizer');const selecting=s.select('organizer');await s.refreshTrial();latest.resolve(trial());await selecting;
-  assert.deepEqual(s.trials.organizer,persisted);assert.equal(s.running,false);assert.deepEqual(calls,['read_agent_configuration','latest_agent_trial','active_agent_trial','read_agent_trial']);
+  Object.defineProperty(globalThis,'window',{configurable:true,writable:true,value:{location:{host:'agents.test',origin:'http://agents.test'},__TAURI_INTERNALS__:{invoke:async()=>{throw Error('Unexpected native transport');}}}});
+  globalThis.fetch=async(url)=>{calls.push(String(url));return new Response(JSON.stringify({contractVersion:'web-api/2',configuration:config('organizer')}),{status:200,headers:{'content-type':'application/json'}});};
+  const app=createApp({});app.use(createPinia());s=app.runWithContext(()=>useAgents());await s.load('organizer');await s.select('organizer');await s.refreshTrial();
+  assert.deepEqual(s.states.organizer.config,config('organizer'));assert.equal(s.trials.organizer,null);assert.equal(s.running,false);assert.deepEqual(calls,['/api/agents/organizer']);
  }finally{
-  s?.$dispose();setActivePinia(undefined);if(previousWindow)Object.defineProperty(globalThis,'window',previousWindow);else delete globalThis.window;
+  s?.$dispose();setActivePinia(undefined);if(previousWindow)Object.defineProperty(globalThis,'window',previousWindow);else delete globalThis.window;if(previousFetch)Object.defineProperty(globalThis,'fetch',previousFetch);else delete globalThis.fetch;
  }
  assert.throws(()=>useAgents(),/no active Pinia/);
 });

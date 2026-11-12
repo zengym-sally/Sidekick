@@ -1,0 +1,64 @@
+{
+  "contractVersion": "web-api/2",
+  "taskId": "tsk_bad0d81e9b2d4706fa1c3e5b7d9a2f05",
+  "operationId": "op_6c0d2e4f8a1b3579df2e4a6c8b0d2f46",
+  "type": "organize_text",
+  "role": "organizer",
+  "state": "needs_review",
+  "version": 5,
+  "createdAt": "2026-11-06T12:30:00.000Z",
+  "updatedAt": "2026-11-06T12:50:00.000Z",
+  "terminalAt": null,
+  "submitSeq": 1043,
+  "queuePosition": null,
+  "attemptCount": 1,
+  "attemptId": "att_2b9e4d6f8a0c1357fb1d3a5c7e9b0d24",
+  "attemptExitState": "exited_confirmed",
+  "attemptExitEvidence": {
+    "verdict": "unresolved",
+    "workerExited": false,
+    "groupAbsent": false,
+    "registry": {
+      "total": 1,
+      "confirmedExtinct": 0,
+      "unobservable": 1,
+      "survivors": []
+    },
+    "argvScan": null,
+    "veto": {
+      "triggered": true,
+      "reason": "insufficient_evidence",
+      "detail": null
+    },
+    "residual": {
+      "treeExtinctProven": false,
+      "scope": "registry_domain",
+      "strayLedger": null
+    },
+    "confirmedAt": null
+  },
+  "cancelIntent": true,
+  "configRevision": "cfgrev_0d81fe22",
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "inputRef": {
+    "kind": "inline_text",
+    "byteSize": 842,
+    "contentHash": "sha256:1f3a9c07e5b2d84c0a6f1e93b7d5c2a8094e6f1bd3c7a5029e8b1d4f6a0c3e52"
+  },
+  "progress": null,
+  "result": null,
+  "failure": null,
+  "recovery": {
+    "cause": "cancel_unknown_side_effect",
+    "sideEffectKnown": false,
+    "autoResume": false,
+    "itemVersion": 2,
+    "reason": "recovery scan re-verified the registry-domain exit predicate; the side effect is still unknown, so the cause migrates from cancel_exit_unconfirmed and resolve becomes available",
+    "receipts": [],
+    "decisionOptions": [
+      "resume",
+      "cancel"
+    ]
+  },
+  "resultPendingExit": false
+}

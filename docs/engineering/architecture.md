@@ -4,7 +4,7 @@
 > 适用范围：所有新增、移动、重命名的源码与脚本。改动本文中的边界、顶层目录或打包入口时，必须同时改守卫规则，否则 `npm run check:structure` 失败。
 > 最近一次结构调整：2026-11-08 W1 手工事项实施准入（owner 批准 A–D 后新增 `server/` 与 `src-tauri/src/bin/`，守卫同步，见 §2）；2026-10-31 结构治理（前端跨层依赖修复、`runtime/` 与 `src-tauri/` 归组、`tests/` 分层、`scripts/` 归组）。历史记录保留当时路径，见 [实施计划](../product/05-第一阶段实施计划.md) 的路径说明。
 
-> **当前代码与下一目标分开**：本文的结构/守卫规则描述当前实现与已批准的落地布局。owner 已确认 Web/后端优先目标，详见[Web/后端设计](web-backend-design.md)；产品边界与执行次序以 product/01–05 为准。2026-11-08 owner 批准 W1 A–D 后，`server/`、`src-tauri/src/bin/` 的布局与依赖边界已写入守卫并生效；对应生产代码（后端入口/库、存储适配二进制、浏览器接线，含启动/会话共享客户端与应用时区接线）已按候选 I 随 MAYNE-23 任务分支第五轮集成原样接入（含 OpenCode R3 写目标分派收口独审通过），**未合入 main**；第五轮冻结版 `eca807b` 完整门禁已串行执行 exit 0（51 组），原样真实 UI 浏览器旅程 34/34 独立验收通过（OhMyPi `9c0f202`）、集成公共增量复核通过（Kimi `2ad7a48`，见[集成回执 §14–§15](../reviews/web-manual-items-integration-20261108.md)），主线合入留队长按 owner 既有授权确认精确版本，本文不假称已交付。手工事项纵向接口见[手工事项契约](web-manual-items-contract.md)。
+> **当前代码与下一目标分开**：生产树已有独立 `server/`、Rust SQLite 适配、真实 Pi Runtime 闭包与 Vue Web 接线；本轮按 33/35/37/38 的有效增量整合。HTTP/SSE 现行契约为 [API2](web-api-contract-v2.md)，[API1](web-api-contract.md)按原版本保留。003 文本整理与 004 候选操作迁移同时冻结并有独立正/负例；结构与字节守卫必须取并集。当前进度、验证和剩余工作只在[实施计划](../product/05-第一阶段实施计划.md)及[收束记录](../reviews/branch-consolidation-20261112.md)维护；产品目标不因代码存在而签通过。
 
 ## 1. 当前代码结构
 
@@ -73,13 +73,15 @@ build/  dist/  src-tauri/target/   # 本地产物与原始证据，不入库
 
 - **顶层目录白名单**（以 `git ls-files` 为准）：`.cargo`、`.impeccable`、`design`、`docs`、`resources`、`runtime`、`scripts`、`server`、`shared`、`src`、`src-tauri`、`tests`、`vendor`，外加根文件白名单。新增一级目录必须同步本文与守卫。`server` 于 2026-11-08 随 W1 A–D 批准加入（不建仓库根级 `bin/`；Rust 二进制源码收敛在 `src-tauri/src/bin/`）。
 - **本地运行时元数据**：编码代理平台写进检出目录的机器本地元数据（当前仅 `.multica/`、`.opencode/`）不参与顶层白名单判定，本地保持可用、不入库、不打包。它们一旦被 git 跟踪即被拒绝（守卫规则 `metadata.tracked`）；`.multica/` 是守护进程数据目录，其中伪装成元数据的可执行代码仍按生产源码拒绝（`metadata.code`）。这两个目录不进入引用扫描与打包输入；其他任何新顶层目录（含未来新平台目录）仍走 `top.dir`，须先同步本文与守卫并经评审。
-- **入库卫生**：`git ls-files` 不得包含 `build/`、`dist/`、`src-tauri/target/`、`node_modules/`、`.env*`（`.env.example` 除外）。
+- **入库卫生**：`git ls-files` 不得包含 `build/`、`dist/`、`src-tauri/target/`、`node_modules/`、`.env*`（`.env.example` 除外）；这些产物根路径自身（包括符号链接）同样禁止，近似名称的源文件不受误伤。
 - **测试分层**：`tests/**.test.mjs` 只能位于 `unit/`、`integration/`、`probes/`；`fixtures/` 只放输入，不放断言。
 - **目录收敛**：`runtime/` 顶层只允许 `entries/`、`lib/`、`workers/`；`scripts/` 顶层只允许 `build/`、`checks/`、`probes/`；`server/` 顶层只允许 `entries/`、`lib/`（守卫规则 `layout.server-top`）；`src-tauri/src/` 顶层只允许 `lib.rs`、`main.rs`、`app/`、`bin/`、`store/`、`host/`、`diagnostics/`，其中 `bin/` 只允许 `web-backend-storage.rs`（守卫规则 `layout.src-tauri-bin`）。
 - **打包入口存在性**：`runtime/entries/{probe-entry,organizer-entry,mcp-probe-entry,skills-manager,today-facts}.mjs`、`runtime/workers/{bash-worker,mcp-guardian}.mjs` 必须存在（产物名 `probe.mjs`／`organizer.mjs`／`skills-manager.mjs`／`mcp-probe.mjs`／`bash-worker.mjs`／`mcp-guardian.mjs` 不变，新增窄纯事实计算产物 `today-facts.mjs`）。
 - **旧路径不得回流**：`package.json` 不得残留 `tests/s[0-9]`、`tests/layout-`、`scripts/probes/bundle-runtime` 等迁移前路径；`check` 必须包含 `check:structure` 与 `check:docs`。
-- **历史迁移字节**：001–004 的原始SHA-256由结构守卫固定；只追加新迁移，禁止原地重写历史SQL。**2026-11-07**：owner 授权全新建表方案后，新独立 web-backend/1 lineage 迁移落 `src-tauri/migrations/web-backend/`（不触碰既有 001–005）；其 `001_web_backend.sql` 的精确 SHA-256（`8511907c…143d`，与审定 DDL 逐字节一致）现同样由结构守卫冻结并纳入原地自测正/负例（见[准备记录](../reviews/web-foundation-integration-schema-integration-prep-20261107.md)）。既有守卫对该路径无需新收敛规则：`src-tauri/src/` 顶层收敛只约束第一层（`store/` 已允许）、`src-tauri/migrations/` 无顶层限制、引用扫描不覆盖 `src-tauri`（见[集成记录](../reviews/web-foundation-integration-main-ff-20261107.md)）。迁移文件已接入但未合入 main，状态见[实施计划](../product/05-第一阶段实施计划.md)。**2026-11-08**：W1 手工事项迁移 `002_manual_items.sql` 获 owner 批准（A 项，原样 SHA-256 `b6cb8e61…f97e`，含块内注释行），其精确哈希同样入守卫冻结并纳入原地自测正/负例（缺失/篡改拒绝；批准事实见[授权清单 §12](../reviews/web-manual-items-authorization-20261108.md)）；迁移文件本身属候选 I，集成前守卫按“冻结文件缺失”如实报违规。
+- **历史迁移字节**：001–004 的原始SHA-256由结构守卫固定；只追加新迁移，禁止原地重写历史SQL。**2026-11-07**：owner 授权全新建表方案后，新独立 web-backend/1 lineage 迁移落 `src-tauri/migrations/web-backend/`（不触碰既有 001–005）；其 `001_web_backend.sql` 的精确 SHA-256（`8511907c…143d`，与审定 DDL 逐字节一致）现同样由结构守卫冻结并纳入原地自测正/负例（见[准备记录](../reviews/web-foundation-integration-schema-integration-prep-20261107.md)）。既有守卫对该路径无需新收敛规则：`src-tauri/src/` 顶层收敛只约束第一层（`store/` 已允许）、`src-tauri/migrations/` 无顶层限制、引用扫描不覆盖 `src-tauri`（见[集成记录](../reviews/web-foundation-integration-main-ff-20261107.md)）。迁移文件已在生产树接入，状态见[实施计划](../product/05-第一阶段实施计划.md)。**2026-11-08**：W1 手工事项迁移 `002_manual_items.sql` 获 owner 批准（A 项，原样 SHA-256 `b6cb8e61…f97e`，含块内注释行），其精确哈希同样入守卫冻结并纳入原地自测正/负例（缺失/篡改拒绝；批准事实见[授权清单 §12](../reviews/web-manual-items-authorization-20261108.md)）；迁移文件本身属候选 I，集成前守卫按“冻结文件缺失”如实报违规。**同日（MAYNE-24）**：文本整理迁移 `003_text_intake.sql` 获 owner 批准（A 项，原样 SHA-256 `8e4e3159…7870`），精确哈希以同一方式入守卫冻结并纳入原地自测正/负例（批准事实见[文本整理授权清单](../reviews/web-text-intake-authorization-20261108.md)）；迁移文件属候选 I，落地前守卫按“冻结文件缺失”如实报违规。
 - **守卫自测**：`check:structure` 带 `--self-test`，用临时目录合成违规样本逐条断言可检出，再检查仓库；规则不能只写在文档里。
+
+004 候选操作台账 `src-tauri/migrations/web-backend/004_candidate_operations.sql` 的批准 SHA-256 为 `5de175b6f00ae40d8a1ed5272b6225dc5f98434815a1d089062ed34a7f39c5bf`；与 003 一同进入冻结 map，并各自执行原字节正控、缺失/篡改负控。不得用一个分支的守卫覆盖另一个分支的冻结项。
 
 文档规则（`check:docs` 强制）：只校验 `README.md`、`AGENTS.md`、`DESIGN.md`、`design/README.md`、`docs/**/*.md`（`docs/reviews/**` 的历史记录除外，但包含 `docs/reviews/README.md`）；跳过代码围栏、行内代码、外部链接与锚点。新增或修改文档后本地相对链接必须存在。
 
@@ -97,7 +99,7 @@ build/  dist/  src-tauri/target/   # 本地产物与原始证据，不入库
 
 跨进程纯逻辑，当前为日期与时间锚点（`dates.mjs`／`dates.d.mts`）。不含框架与平台依赖；前端、server 与 Runtime 的相对引用都必须落回本目录。
 
-**独立后端 `server/`（W1 起步，候选 I 已随 MAYNE-23 任务分支集成，未合入 main）**
+**独立后端 `server/`**
 
 - `entries/web-backend-entry.mjs`：后端进程唯一入口；显式配置（root/port/staticRoot/storageBin 等）启动，模块导入本身不监听，成功返回 `{origin, close}`。
 - `lib/`：`node:http` 路由与会话/CSRF、事项业务事务、应用时区设置（单 key HTTP 读/CAS 写）、Rust 存储适配 stdio 客户端、SSE 广播与同源静态供给；只引用 `server/`、`shared/` 与 Node 内置模块（零 npm 依赖，守卫与打包脚本双重强制）。
@@ -148,7 +150,7 @@ build/  dist/  src-tauri/target/   # 本地产物与原始证据，不入库
 | 数据模型、迁移、事务 | `src-tauri/src/store/` | 迁移只追加；备份失败不覆盖原根 |
 | 外部宿主生命周期 | `src-tauri/src/host/` | 不直接写业务表 |
 | 探针、诊断、验证载体 | `src-tauri/src/diagnostics/` | 业务路径不得依赖 |
-| 生产打包脚本 | `scripts/build/` | 产物名与资源目录名保持兼容；`build-backend.mjs` 输出统一 `build/web-backend/`（server 布局、实际引用的 shared、`bin/web-backend-storage`、`static/`=前端 dist） |
+| 生产打包脚本 | `scripts/build/` | 产物名与资源目录名保持兼容；`build-backend.mjs` 输出统一 `build/web-backend/`（server 布局、实际引用的 shared、`bin/web-backend-storage`、`static/`=前端 dist、`runtime/`=随包 Pi Runtime 闭包——自真实 `build/s0-runtime` 整体装载（MAYNE-24 项 C），缺失时以命名前置命令显式失败，不造占位） |
 | 结构/文档守卫 | `scripts/checks/` | 无第三方依赖，带 `--self-test` 负例 |
 | 一次性探针辅助脚本 | `scripts/probes/` | 可重建，产物写入 `build/` |
 | 单元测试 | `tests/unit/` | 用领域名，不依赖构建产物 |

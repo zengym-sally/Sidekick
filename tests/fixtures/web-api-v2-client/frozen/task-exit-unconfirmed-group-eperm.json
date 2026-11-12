@@ -1,0 +1,64 @@
+{
+  "contractVersion": "web-api/2",
+  "taskId": "tsk_2d8f4b1c6e9a3705da1c5e8b2f4a7c03",
+  "operationId": "op_4b7e1d9a3c6f2508da9c2e5b8f1a4d76",
+  "type": "organize_text",
+  "role": "organizer",
+  "state": "needs_review",
+  "version": 3,
+  "createdAt": "2026-11-06T12:20:00.000Z",
+  "updatedAt": "2026-11-06T12:33:00.000Z",
+  "terminalAt": null,
+  "submitSeq": 1039,
+  "queuePosition": null,
+  "attemptCount": 1,
+  "attemptId": "att_9c2e5a8d1f4b3607da3c6e9b1a5d8f14",
+  "attemptExitState": "exited_unknown",
+  "attemptExitEvidence": {
+    "verdict": "unresolved",
+    "workerExited": true,
+    "groupAbsent": false,
+    "registry": {
+      "total": 1,
+      "confirmedExtinct": 1,
+      "unobservable": 0,
+      "survivors": []
+    },
+    "argvScan": {
+      "performed": true,
+      "hits": 0
+    },
+    "veto": {
+      "triggered": true,
+      "reason": "eperm",
+      "detail": "the process-group observation was refused by the OS (EPERM); group absence cannot be confirmed even though every registered member is dead, so the slot stays held and resolve is refused"
+    },
+    "residual": {
+      "treeExtinctProven": false,
+      "scope": "registry_domain",
+      "strayLedger": null
+    },
+    "confirmedAt": null
+  },
+  "resultPendingExit": false,
+  "cancelIntent": false,
+  "configRevision": "cfgrev_0d81fe22",
+  "originalConfigRevision": "cfgrev_0d81fe22",
+  "inputRef": {
+    "kind": "inline_text",
+    "byteSize": 842,
+    "contentHash": "sha256:1f3a9c07e5b2d84c0a6f1e93b7d5c2a8094e6f1bd3c7a5029e8b1d4f6a0c3e52"
+  },
+  "progress": null,
+  "result": null,
+  "failure": null,
+  "recovery": {
+    "cause": "exit_unconfirmed",
+    "sideEffectKnown": false,
+    "autoResume": false,
+    "itemVersion": 1,
+    "stagedResult": false,
+    "reason": "running task lost its worker before any result was staged; the registry-domain exit is unresolved because the process-group observation was refused (EPERM), so the slot stays occupied and resolve is refused",
+    "receipts": []
+  }
+}

@@ -46,7 +46,7 @@ export function serveStatic(req, res, { staticRoot }) {
   const pathname = decodeURIComponent(url.pathname);
   if (pathname === '/api' || pathname.startsWith('/api/')) {
     res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
-    res.end(JSON.stringify({ contractVersion: 'web-api/1', status: 404, error: { code: 'not_found' } }));
+    res.end(JSON.stringify({ contractVersion: 'web-api/2', status: 404, error: { code: 'not_found' } }));
     return;
   }
   const root = resolve(staticRoot);

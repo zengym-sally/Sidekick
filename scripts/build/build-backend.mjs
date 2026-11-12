@@ -8,6 +8,10 @@
 //   bin/web-backend-storage                Rust storage adapter (release build of the
 //                                          src-tauri [[bin]] web-backend-storage)
 //   static/...                             frontend dist/ served same-origin by the backend
+//   runtime/...                            bundled Pi Runtime closure staged from the real
+//                                          build/s0-runtime output (organizer.mjs, bundled
+//                                          Node, workers, builtin skills, licenses;
+//                                          MAYNE-24 item C - never fabricated here)
 //
 // Packaging rules (enforced here, mirroring scripts/checks/check-structure.mjs):
 //   - server/ code may import relative targets only inside server/ or shared/, and bare
@@ -19,13 +23,14 @@
 import { execFileSync } from 'node:child_process';
 import { builtinModules } from 'node:module';
 import { existsSync } from 'node:fs';
-import { cp, mkdir, readFile, readdir, rm, stat } from 'node:fs/promises';
+import { cp, chmod, mkdir, readFile, readdir, rm, stat } from 'node:fs/promises';
 import { dirname, join, relative, resolve } from 'node:path';
 import { copyExecutable } from './copy-executable.mjs';
 
 const bundleRoot = resolve('build/web-backend');
 const serverRoot = resolve('server');
 const cargoBinary = resolve('src-tauri/target/release/web-backend-storage');
+const runtimeSource = resolve('build/s0-runtime');
 const entryRelative = 'server/entries/web-backend-entry.mjs';
 
 function importSpecifiers(text) {
@@ -122,6 +127,21 @@ async function resolveServerDependencies() {
 
 const { sharedFiles } = await resolveServerDependencies();
 
+// Text-intake phase (MAYNE-24 item C): the bundle must carry the real bundled Pi
+// Runtime closure, staged from build/s0-runtime - the output of
+// scripts/build/bundle-runtime.mjs ("npm run probe:bundle", built from the pinned
+// vendor/pi source). This check runs before the expensive builds so a missing
+// prerequisite fails fast with its named command instead of after the frontend and
+// Rust builds.
+function requireRuntimeClosure() {
+  for (const name of ['organizer.mjs', 'node', 'source.json']) {
+    if (!existsSync(join(runtimeSource, name))) {
+      throw new Error(`Missing build/s0-runtime/${name}. The backend bundle stages the real Pi Runtime closure; run "npm run probe:prepare-cli && npm run probe:prepare-pi && npm run probe:bundle" first (build-backend refuses to fabricate runtime output).`);
+    }
+  }
+}
+requireRuntimeClosure();
+
 console.log('Building frontend dist/ (npm run build)...');
 execFileSync('npm', ['run', 'build'], { stdio: 'inherit' });
 if (!existsSync(resolve('dist'))) throw new Error('Frontend build did not produce dist/.');
@@ -141,7 +161,16 @@ for (const file of sharedFiles) {
 await mkdir(join(bundleRoot, 'bin'), { recursive: true });
 await copyExecutable(cargoBinary, join(bundleRoot, 'bin/web-backend-storage'));
 await cp(resolve('dist'), join(bundleRoot, 'static'), { recursive: true });
+// Stage the bundled Pi Runtime closure wholesale so the backend bundle carries the
+// same reviewed runtime layout as the packaged app (s0-runtime), then restore the
+// executable bits the bundled Node interpreter and lark-cli need to stay directly
+// spawnable by the backend worker host.
+await cp(runtimeSource, join(bundleRoot, 'runtime'), { recursive: true });
+for (const executable of ['runtime/node', 'runtime/lark-cli']) {
+  await chmod(join(bundleRoot, executable), 0o755);
+}
 
 const bundleBinary = await stat(join(bundleRoot, 'bin/web-backend-storage'));
-console.log(`Web backend bundle assembled at build/web-backend/ (server sources copied, ${sharedFiles.size} shared module(s), storage binary ${bundleBinary.size} bytes, frontend dist/ -> static/).`);
+const bundleRuntimeNode = await stat(join(bundleRoot, 'runtime/node'));
+console.log(`Web backend bundle assembled at build/web-backend/ (server sources copied, ${sharedFiles.size} shared module(s), storage binary ${bundleBinary.size} bytes, frontend dist/ -> static/, Pi runtime closure staged with bundled Node ${bundleRuntimeNode.size} bytes).`);
 console.log('Start it with: npm run start:backend -- --root <workspaceRoot> (see server/entries/web-backend-entry.mjs for the CLI contract).');

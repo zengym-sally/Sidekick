@@ -1,0 +1,116 @@
+{
+  "contractVersion": "web-api/2",
+  "stream": "GET /api/events (text/event-stream); each entry below is one SSE frame: `event:` line, the JSON in `data:`, and an `id:` line `<epoch>:<cursor>` for event frames (stream.ready/stream.reset carry no `id`)",
+  "events": [
+    {
+      "event": "stream.ready",
+      "data": {
+        "contractVersion": "web-api/2",
+        "epoch": "inst_9f27c1aa40b2",
+        "cursor": 1039,
+        "note": "sent first on every subscription (initial or reconnect); no `id` line, does not advance the cursor"
+      }
+    },
+    {
+      "event": "task.changed",
+      "id": "inst_9f27c1aa40b2:1040",
+      "data": {
+        "contractVersion": "web-api/2",
+        "cursor": 1040,
+        "epoch": "inst_9f27c1aa40b2",
+        "objectType": "task",
+        "objectId": "tsk_3f8a1c5e9b2d4706fa1c3e5b7d9a2f48",
+        "objectVersion": 2,
+        "taskState": "running",
+        "attemptExitState": "active",
+        "at": "2026-11-06T12:30:41.000Z"
+      }
+    },
+    {
+      "event": "task.progress",
+      "id": "inst_9f27c1aa40b2:1041",
+      "data": {
+        "contractVersion": "web-api/2",
+        "cursor": 1041,
+        "epoch": "inst_9f27c1aa40b2",
+        "objectType": "task",
+        "objectId": "tsk_3f8a1c5e9b2d4706fa1c3e5b7d9a2f48",
+        "objectVersion": 2,
+        "progress": {
+          "stage": "extracting",
+          "detail": "organizer pass 1/2 (synthetic sample)"
+        },
+        "at": "2026-11-06T12:31:02.000Z"
+      }
+    },
+    {
+      "event": "task.changed",
+      "id": "inst_9f27c1aa40b2:1042",
+      "data": {
+        "contractVersion": "web-api/2",
+        "cursor": 1042,
+        "epoch": "inst_9f27c1aa40b2",
+        "objectType": "task",
+        "objectId": "tsk_3f8a1c5e9b2d4706fa1c3e5b7d9a2f48",
+        "objectVersion": 3,
+        "taskState": "cancelling",
+        "attemptExitState": "exiting",
+        "at": "2026-11-06T12:31:20.000Z"
+      }
+    },
+    {
+      "event": "settings.changed",
+      "id": "inst_9f27c1aa40b2:1043",
+      "data": {
+        "contractVersion": "web-api/2",
+        "cursor": 1043,
+        "epoch": "inst_9f27c1aa40b2",
+        "objectType": "setting",
+        "objectId": "agentConcurrency",
+        "objectVersion": 6,
+        "setting": {
+          "agentConcurrency": 4
+        },
+        "at": "2026-11-06T12:31:45.000Z"
+      }
+    },
+    {
+      "event": "workspace.changed",
+      "id": "inst_9f27c1aa40b2:1044",
+      "data": {
+        "contractVersion": "web-api/2",
+        "cursor": 1044,
+        "epoch": "inst_9f27c1aa40b2",
+        "objectType": "workspace",
+        "objectId": "root_a1b2c3d4e5f6",
+        "objectVersion": 5,
+        "change": "backup_created",
+        "backupId": "bak_6e2c9a4d0f8b",
+        "at": "2026-11-06T12:44:00.000Z"
+      }
+    },
+    {
+      "event": "recovery.changed",
+      "id": "inst_9f27c1aa40b2:1045",
+      "data": {
+        "contractVersion": "web-api/2",
+        "cursor": 1045,
+        "epoch": "inst_9f27c1aa40b2",
+        "objectType": "recovery_hold",
+        "objectId": "rec_3d81f0c2b6a4",
+        "objectVersion": 1,
+        "holdState": "open",
+        "at": "2026-11-06T12:45:00.000Z"
+      }
+    },
+    {
+      "event": "stream.reset",
+      "data": {
+        "contractVersion": "web-api/2",
+        "epoch": "inst_c4018ee7b5a9",
+        "reason": "reconnect token epoch inst_9f27c1aa40b2 does not match the current instance; fetch GET /api/snapshot and resubscribe with its lastEventId",
+        "note": "sent instead of replay when the reconnect token epoch differs from the current instance, the token is unparsable, or the cursor is beyond retention; no `id` line"
+      }
+    }
+  ]
+}

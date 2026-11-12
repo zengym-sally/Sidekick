@@ -3,14 +3,31 @@ import {onMounted,onUnmounted} from 'vue';
 import {storeToRefs} from 'pinia';
 import {usePairing} from '../stores/pairing';
 import {useTodos} from '../stores/todos';
+import {useOrganizer} from '../stores/organizer';
 import SkButton from './ui/SkButton.vue';
 import SkInput from './ui/SkInput.vue';
 import Icon from './Icon.vue';
 import mark from '../assets/brand/sidekick-mark.svg';
 
-const pairing=usePairing(),todos=useTodos();
+const pairing=usePairing(),todos=useTodos(),organizer=useOrganizer();
 const {ready,paired,busy,code,error}=storeToRefs(pairing);
-pairing.setOnItemChanged(()=>{void todos.refresh().catch(()=>{});});
+// Event-name routing (web-api/1 §6 + intake §6.3): item hints refresh manual
+// items; task/candidate/settings hints and every (re)connect handshake
+// (stream.ready) refresh the organizer's authoritative sources/candidates/
+// tasks — a ready frame is never a todos-only refresh. stream.reset arrives
+// AFTER the pairing store consumed the snapshot into the organizer baseline,
+// so the refresh here covers the sources/candidates the task snapshot does
+// not carry. Handlers get the event name only, never frame payloads.
+// The handler RETURNS the raw read-back promises: the pairing store gates the
+// reconnect-token commit on their completion (a frame counts as applied only
+// once its authoritative read-back succeeded — §6 "最后应用的 (epoch,cursor)");
+// failures propagate to that gate instead of being swallowed here.
+pairing.setOnItemChanged((event)=>{
+  const reads:Promise<unknown>[]=[];
+  if(event==='item.changed'||event==='stream.ready'||event==='stream.reset'){reads.push(todos.refresh());}
+  if(event==='candidate.changed'||event==='task.changed'||event==='settings.changed'||event==='stream.ready'||event==='stream.reset'){reads.push(organizer.refresh());}
+  return Promise.all(reads);
+});
 onMounted(()=>{void pairing.start();});
 onUnmounted(()=>pairing.dispose());
 </script>
